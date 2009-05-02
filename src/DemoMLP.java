@@ -53,15 +53,19 @@ public class DemoMLP {
 		}
 
 		int nperlayer[]={m,4,l};
-		MLP net = new MLP(nperlayer,new Function[]{NeuralNetwork.identity,NeuralNetwork.sigmoid,NeuralNetwork.identity},-0.4);
+		MLP net = new MLP(nperlayer,
+							new Function[]{NeuralNetwork.identity,NeuralNetwork.sigmoid,NeuralNetwork.identity},
+							-0.4);
 		net.setPlotter(plotter);
-		net.train(p, t, 0.2,5000, 0, n);
+		net.train(p, t, 0.2,50000, 0, n);
 
 		System.out.printf("Error: %.8f\n",net.error(p,t,n,test));
 
 		for(int i=n;i<p.length;i++){
 			System.out.println(net.simulate(p[i]).position(0, 0) +" vs "+ t[i].position(0, 0));
 		}
+
+		System.exit(0);
 	}
 
 }

@@ -7,22 +7,38 @@ import net.sf.libai.common.*;
 import net.sf.libai.nn.NeuralNetwork;
 
 /**
- * TODO: too slow, to implement a batch update algorithm or RProp 
- * @author kronenthaler
+ *	Multi Layer Perceptron or MLP. MLP was the first algorithm proposed to train
+ *	multilayer neurons using the general delta rule.
+ *	This implementation has the classical backpropagation algorithm and the main variant
+ *	the backpropagation with momemtum.
+ *	NOTE: The backpropagation is a very slow algorithm involves MANY matrix operation.
+ *	I have planned to implement a batch algorithm or Resilent Backpropagation (Rprop)
+ *	to replace this algorithm. Meanwhile be patient.
+ *	@author kronenthaler
  */
 public class MLP extends NeuralNetwork{
 	private Matrix W[], b[], 
 					Y[], d[], u[],
 					Wt[], Yt[], 
 					Wprev[], bprev[],//momemtum
-					I[], M[];//momentum
+					I[], M[];
 	private int nperlayer[]; //number of neurons per layer, including the input layer
 	private int layers;
 	private Function[] func;
-	double beta;	//momentum term should be in [0,1], if is 0 there is not momentum term.
+	private double beta;	//momentum term should be in [0,1], if is 0 there is not momentum term.
 
 	public MLP(){}
 
+	/**
+	 *	Constructor. Creates a MLP with nperlayer.length layers. The number of neurons
+	 *	per layer is defined in <code>nperlayer</code>. The nperlayer[0] means the input layer.
+	 *	For each layer the neurons applys the output function <code>funcs[i]</code>. These functions
+	 *	must be derivable. The parameter <code>beta</code> means the momemtum influence. If beta &lt;= 0
+	 *	the momentum has no influence. if beta &gt; 0 and &lt; 1 that's the influence.
+	 *	@param nperlayer Number of neurons per layer including the input layer.
+	 *	@param funcs Function to apply per layer. The function[0] could be null.
+	 *	@param beta The influence of momentum term.
+	 */
 	public MLP(int[] nperlayer,Function[] funcs,double beta){
 		this.nperlayer = nperlayer;
 		func = funcs;
@@ -44,6 +60,9 @@ public class MLP extends NeuralNetwork{
 		init();
 	}
 
+	/**
+	 *	Initialize the matrix and auxiliar buffers.
+	 */
 	private void init(){
 		Yt[0]=new Matrix(1,nperlayer[0]);
 		Y[0]=new Matrix(nperlayer[0],1);
@@ -60,9 +79,9 @@ public class MLP extends NeuralNetwork{
 			b[i].fill(); //llenar de manera aleatoria
 			b[i].copy(bprev[i]);
 
-			u[i]=new Matrix(W[i].getRows(),Y[i-1].getCols());
-			Y[i]=new Matrix(u[i].getRows(),u[i].getCols());
-			Yt[i]=new Matrix(u[i].getCols(),u[i].getRows());
+			u[i]=new Matrix(W[i].getRows(),Y[i-1].getColumns());
+			Y[i]=new Matrix(u[i].getRows(),u[i].getColumns());
+			Yt[i]=new Matrix(u[i].getColumns(),u[i].getRows());
 
 			I[i]=new Matrix(u[i].getRows(),u[i].getRows());
 			M[i]=new Matrix(u[i].getRows(),Y[i-1].getRows());
@@ -73,16 +92,30 @@ public class MLP extends NeuralNetwork{
 			d[k]=new Matrix(u[k].getRows(),1);
 	}
 
-	//TODO: implementar un algoritmo tipo batch RPROP seria una buena opcion.
+	/**
+	 *	Train the network using the standard backpropagation algorithm.
+	 *	The pattern is propagated from the input to the final layer (the output).
+	 *	Then the error for the final layer is computed. The error is calculated backwards to the first
+	 *	hidden layer, calculating the diferentials between input and expected output (backpropagation).
+	 *	Finally, the weights and biases are updated using the delta rule:<br/>
+	 *	W[i] = W[i] + beta*(W[i]-Wprev[i]) - (1-beta)*alpha.d[i].Y[i-1]^t <br/>
+	 *	B[i] = B[i] + beta*(B[i]-Bprev[i]) - (1-beta)*alpha.d[i]<br/>
+	 *	@param patterns	The patterns to be learned.
+	 *	@param answers The expected answers.
+	 *	@param alpha	The learning rate.
+	 *	@param epochs	The maximum number of iterations
+	 *	@param offset	The first pattern position
+	 *	@param length	How many patterns will be used.
+	 *	@param minerror The minimal error expected.
+	 */
 	@Override
 	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 		double error=error(patterns,answers,offset,length),prevError=error;
-		int i,j,k,l;
+		int i,k,l;
 
-		Matrix temp,temp3,
-			temp2=new Matrix(answers[0].getRows(),answers[0].getCols()),
-			e=new Matrix(answers[0].getRows(),answers[0].getCols());
-			//I=new Matrix(u[layers-1].getRows(),u[layers-1].getRows());
+		Matrix temp3,
+				temp2=new Matrix(answers[0].getRows(),answers[0].getColumns()),
+				e=new Matrix(answers[0].getRows(),answers[0].getColumns());
 		
 		while(error > minerror && /*(error=error(patterns,answers,offset,length)) > minerror &&/**/ epochs-- > 0){ //<-- cuello de botella...
 			//if(error > prevError) break;
@@ -91,43 +124,39 @@ public class MLP extends NeuralNetwork{
 			for(i=0;i<length;i++){
 				//Y[i]=Fi(<W[i],Y[i-1]>+b)
 				simulate(patterns[i+offset]);
-				
+
 				//e=-2(t-Y[n-1])
-				answers[i+offset].subtract(Y[layers-1],temp2);
+				answers[i+offset].subtract(Y[layers-1],e);
 				
 				//calcular el error
 				for(int m=0;m<nperlayer[layers-1];m++)
-					error += (temp2.position(m,0)*temp2.position(m,0));
+					error += (e.position(m,0)*e.position(m,0));
 
-				temp2.multiply(-2,e);
-
-				//d[0] = F0'(<W[i],Y[i-1]>+b).e
-				u[layers-1].applyInIdentity(func[layers-1].getDerivate(),I[layers-1]);
-				I[layers-1].multiply(e,d[layers-1]);
-								
-				//d[i]=Fi'(<W[i],Y[i-1]>+b).W[i+1]^t.d[i+1]
+				//d[0] = F0'(<W[i],Y[i-1]>).e
+				for(int j=0;j<u[layers-1].getRows();j++)
+					d[layers-1].position(j,0,-2*alpha*func[layers-1].getDerivate().eval(u[layers-1].position(j,0))*e.position(j, 0));
+				
+				//d[i]=Fi'(<W[i],Y[i-1]>).W[i+1]^t.d[i+1]
 				for(k=layers-2;k>0;k--){
-					temp3 = new Matrix(u[k].getRows(),W[k+1].getRows());
-					u[k].applyInIdentity(func[k].getDerivate(),I[k]);
-					W[k+1].transpose(Wt[k+1]);
-					I[k].multiply(Wt[k+1],temp3);
-					temp3.multiply(d[k+1],d[k]);
+					for(int j=0;j<u[k].getRows();j++){
+						double acum = 0;
+						for(int t=0; t<W[k+1].getRows(); t++)
+							acum += W[k+1].position(t,j)*d[k+1].position(t,0);
+						d[k].position(j, 0, alpha*acum*func[k].getDerivate().eval(u[k].position(j,0)));//cual es el valor que se agrega al delta?
+					}
 				}
 
 				//actualizar pesos y umbrales
 				for(l=1;l<layers;l++){
 					Y[l-1].transpose(Yt[l-1]);
 					if(beta <= 0){// BP without momentum
-						//temp = new Matrix(d[l].getRows(),Y[l-1].getRows());
-						d[l].multiply(alpha,d[l]);
 						d[l].multiply(Yt[l-1],M[l]);
 						W[l].subtract(M[l],W[l]);
 						b[l].subtract(d[l],b[l]);
-						//temp = null;
 					}else{// BP with momentum */
 						temp3 = new Matrix(d[l].getRows(),Y[l-1].getRows());
 
-						d[l].multiply(alpha*(1-beta),d[l]);	//(1-beta)*alpha.d[i]
+						d[l].multiply(1-beta,d[l]);	//(1-beta)*alpha.d[i]
 						d[l].multiply(Yt[l-1],temp3);		//(1-beta)*alpha.d[i].Y[i-1]^t
 
 						//W[i]=W[i] + beta*(W[i]-Wprev[i]) - (1-beta)*alpha.d[i].Y[i-1]^t
@@ -138,7 +167,7 @@ public class MLP extends NeuralNetwork{
 						W[l].subtract(temp3,W[l]);			//W[i] + beta*(W[i]-Wprev[i]) - (1-beta)*alpha.d[i].Y[i-1]^t
 
 						temp3 = null;
-						temp3 = new Matrix(b[l].getRows(),b[l].getCols());
+						temp3 = new Matrix(b[l].getRows(),b[l].getColumns());
 
 						//B[i]=B[i]+ beta*(B[i]-Bprev[i]) - (1-beta)*alpha.d[i];
 						b[l].subtract(bprev[l],temp3);	//(B[i]-Bprev[i])
@@ -158,13 +187,13 @@ public class MLP extends NeuralNetwork{
 
 			if(plotter!=null) plotter.setError(epochs, error);
 		}
+		//System.out.println("last epoch: "+epochs);
 		temp2 = null;
 	}
 
 	@Override
 	public Matrix simulate(Matrix pattern) {
 		simulate(pattern, null);
-
 		return Y[layers-1];
 	}
 
@@ -183,7 +212,8 @@ public class MLP extends NeuralNetwork{
 		if(result!=null)
 			Y[layers-1].copy(result);
 	}
-
+	
+	@Override
 	public boolean open(String path){
 		try{
 			Scanner in = new Scanner(new FileInputStream(path));
@@ -210,13 +240,13 @@ public class MLP extends NeuralNetwork{
 			//fill W[i], b[i]
 			for(int l=1;l<layers;l++){
 				for(int i=0;i<W[l].getRows();i++){
-					for(int j=0;j<W[l].getCols();j++){
+					for(int j=0;j<W[l].getColumns();j++){
 						W[l].position(i,j,in.nextDouble());
 					}
 				}
 
 				for(int i=0;i<b[l].getRows();i++){
-					for(int j=0;j<b[l].getCols();j++){
+					for(int j=0;j<b[l].getColumns();j++){
 						b[l].position(i,j,in.nextDouble());
 					}
 				}
@@ -228,6 +258,7 @@ public class MLP extends NeuralNetwork{
 		return true;
 	}
 
+	@Override
 	public boolean save(String path){
 		try{
 			PrintStream out = new PrintStream(new FileOutputStream(path), true);

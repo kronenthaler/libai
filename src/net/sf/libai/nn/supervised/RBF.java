@@ -7,8 +7,15 @@ import net.sf.libai.common.*;
 import net.sf.libai.nn.NeuralNetwork;
 
 /**
- *
- * @author kronenthaler
+ *	Radial Basis Function or RBF. Is an hybrid neural network with 3 layers
+ *	(1-input, 1-hidden, 1-output). The hidden layers is trained using a stochactic
+ *	clustering algorithm: k-means. The final layer is trained using the Adaline
+ *	rule.
+ *	The k-means algorithm is used to set up the position of the "centers" of the
+ *	radial basis functions, as this process is regardless of the output and invariant
+ *	over the input, could be used a highly efficient algorithm.
+ *	This implementation uses only Gaussian functions as radial basis functions.
+ *	@author kronenthaler
  */
 public class RBF extends Adaline{
 	private Matrix c[];
@@ -17,6 +24,14 @@ public class RBF extends Adaline{
 
 	public RBF(){}
 
+	/**
+	 *	Constructor. Receives an array with the information of the number of neurons
+	 *	per layer.
+	 *	Layer[0] is the input layer.
+	 *	Layer[1] is the hidden layer and represents the number radial functions to use.
+	 *	layer[2] is the output layer.
+	 *	@param nperlayer Neurons Per Layer.
+	 */
 	public RBF(int[] nperlayer){
 		super(nperlayer[1],nperlayer[2]); // input, outputs
 
@@ -25,6 +40,19 @@ public class RBF extends Adaline{
 		sigma=new double[nperlayer[1]];
 	}
 
+	/**
+	 *	Train the network using a hybrid scheme.
+	 *	First set the centers of the radial basis functions using k-means algorithm.
+	 *	After that the radius of the function is calculated using n-nearest neighbors. When n = the number of inputs.
+	 *	Then the output for the hidden layer are precalculated and used as input for the Adaline trainning.
+	 *	@param patterns	The patterns to be learned.
+	 *	@param answers The expected answers.
+	 *	@param alpha	The learning rate.
+	 *	@param epochs	The maximum number of iterations
+	 *	@param offset	The first pattern position
+	 *	@param length	How many patterns will be used.
+	 *	@param minerror The minimal error expected.
+	 */
 	@Override
 	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 		double error,prevError,current;
@@ -53,7 +81,7 @@ public class RBF extends Adaline{
 			sigma[i] = acum/nperlayer[0];
 		}
 
-		//precalculate the aouputs for each pattern in the hidden layer
+		//precalculate the ouputs for each pattern in the hidden layer
 		Matrix Y[]=new Matrix[length];
 		Matrix Yt[]=new Matrix[length];
 		for(int j=0;j<length;j++){
@@ -90,17 +118,27 @@ public class RBF extends Adaline{
 		}
 	}
 
+	/**
+	 *	k-means clustering algorithm.
+	 *	For the cloud of patterns found the k points closest to every point in the cloud.
+	 *	The centroids found probably will no be any of the patterns in the cloud.
+	 *	@param k Number of centroids to find.
+	 *	@param patterns The cloud of patterns
+	 *	@param offset Initial position of the cloud.
+	 *	@param length How many patterns are in the cloud.
+	 *	@return An array with the centroids.
+	 */
 	private Matrix[] kmeans(int k, Matrix[] patterns,int offset,int length){
 		int i,j,l;
 		Random rand = new Random();
 
 		Matrix[] ctemp=new Matrix[k];
 		ArrayList<Integer>[] partitions = new ArrayList[k];
-		Matrix aux=new Matrix(patterns[0].getRows(),patterns[0].getCols());
-		Matrix aux1=new Matrix(patterns[0].getRows(),patterns[0].getCols());
+		Matrix aux=new Matrix(patterns[0].getRows(),patterns[0].getColumns());
+		Matrix aux1=new Matrix(patterns[0].getRows(),patterns[0].getColumns());
 
 		for(i=0;i<k;i++){
-			ctemp[i]=new Matrix(patterns[0].getRows(),patterns[0].getCols());
+			ctemp[i]=new Matrix(patterns[0].getRows(),patterns[0].getColumns());
 			int index = rand.nextInt(length) + offset;//abs((int)(ctemp[i].random(&xzxzx)*npatterns));;
 			patterns[index].copy(ctemp[i]);
 			partitions[i]=new ArrayList<Integer>();
@@ -134,7 +172,7 @@ public class RBF extends Adaline{
 
 				if(total==0){
 					//empty partition take a random pattern as centroid
-					ctemp[i]=new Matrix(patterns[0].getRows(),patterns[0].getCols());
+					ctemp[i]=new Matrix(patterns[0].getRows(),patterns[0].getColumns());
 					int index=rand.nextInt(length) + offset;
 					patterns[index].copy(ctemp[i]);
 
@@ -166,6 +204,12 @@ public class RBF extends Adaline{
 		super.simulate(aux,result);
 	}
 
+	/**
+	 *	Calculate the distance from the pattern to each centroid and apply the gaussian
+	 *	function to that distance left the result in <code>result</code>.
+	 *	@param pattern Pattern to evaluate
+	 *	@param result The matrix to put the result.
+	 */
 	private void simulateNoChange(Matrix pattern, Matrix result){
 		for(int i=0;i<nperlayer[1];i++){
 			double current=euclideanDistance2(pattern,c[i]);
@@ -173,6 +217,7 @@ public class RBF extends Adaline{
 		}
 	}
 
+	@Override
 	public boolean save(String path){
 		try{
 			PrintStream out = new PrintStream(new FileOutputStream(path), true);

@@ -15,9 +15,17 @@ import net.sf.libai.fuzzy.sets.*;
  * @author kronenthaler
  */
 public class FuzzyGroup {
+	/** The members of this group. */
 	private HashSet<FuzzySet> members;
+
+	/** The variable associated with this group. */
 	private Variable v;
-	
+
+	/**
+	 *	Constructor.
+	 *	Creates a FuzzyGroup with a list of members.
+	 *	@param mems List of members for this fuzzy group.
+	 */
 	public FuzzyGroup(FuzzySet... mems){
 		v = new Variable(0);
 		members = new HashSet<FuzzySet>();
@@ -36,7 +44,7 @@ public class FuzzyGroup {
 	}
 
 	/**
-	 * Set the value for this group. NOT MUST be invke by the user.
+	 * Set the value for this group. NOT MUST be invoked by the user.
 	 * @param d value to set.
 	 */
 	public void setValue(double d){

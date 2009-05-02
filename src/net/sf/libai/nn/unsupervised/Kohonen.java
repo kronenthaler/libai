@@ -7,8 +7,14 @@ import net.sf.libai.common.*;
 import net.sf.libai.nn.NeuralNetwork;
 
 /**
- *
- * @author kronenthaler
+ *	Kohonen's Self-organizative Maps or SOM or Kohonen. This maps are one of the most important
+ *	unsupervised neural networks of the history. The most important feature of the kohonen's maps
+ *	is the possibility of transform any multidimensional space into a R^2 space, providing a highly
+ *  precise clusteing method.
+ *	One of the most famous examples for the kohonen's maps is the transform the RGB color cube into
+ *	a plane where the reds, greens, blues, etc are clustered in a very similar way of the any color picker
+ *	utility.
+ *	@author kronenthaler
  */
 public class Kohonen extends NeuralNetwork{
 	private Matrix W[];					//array of weights ijk, with k positions.
@@ -19,6 +25,14 @@ public class Kohonen extends NeuralNetwork{
 
 	public Kohonen(){}
 
+	/**
+	 *	Constructor. Creates a kohonen's map with nperlayer[0] inputs, nperlayer[1] rows and nperlayer[2] columns.
+	 *	Additional set the initial size of the neighborhood and the way in the neighbors are connected.
+	 *	@param nperlayer Number of neurons (input, rows and columns)
+	 *	@param _neighborhood Initial size of the neighborhood
+	 *	@param neighboursX neighbors along the X-axis
+	 * 	@param neighboursY neighbors along the Y-axis
+	 */
 	public Kohonen(int[] nperlayer,double _neighborhood,int[] neighboursX,int[] neighboursY){
 		this.nperlayer = nperlayer;
 		neighborhood = _neighborhood;
@@ -38,10 +52,26 @@ public class Kohonen extends NeuralNetwork{
 			Arrays.fill(map[i], -1);
 	}
 
+	/**
+	 *	Constructor. Creates a kohonen's map using the standard neighborhood (up, down, left, right).
+	 *	Alias of Kohonen(nperlayer, _neighborhood, new int[]{0,0,1,-1}, new int[]{-1,1,0,0});
+	 *	@param nperlayer Number of neurons (input, rows and columns)
+	 *	@param _neighborhood Initial size of the neighborhood
+	 */
 	public Kohonen(int[] nperlayer, double _neighborhood){
 		this(nperlayer, _neighborhood, new int[]{0,0,1,-1}, new int[]{-1,1,0,0});
 	}
 
+	/**
+	 *	Train the map. The answers are omitted for the training process but are necessary for the labeling of the map.
+	 *	@param patterns	The patterns to be learned.
+	 *	@param answers The expected answers.
+	 *	@param alpha	The learning rate.
+	 *	@param epochs	The maximum number of iterations
+	 *	@param offset	The first pattern position
+	 *	@param length	How many patterns will be used.
+	 *	@param minerror The minimal error expected.
+	 */
 	@Override
 	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 		int curr_epoch=0,ig=0,jg=0;
@@ -56,7 +86,7 @@ public class Kohonen extends NeuralNetwork{
 		Matrix winner=new Matrix(2,1);
 
 		while(curr_epoch++ < epochs){
-			System.out.println("epoch: "+curr_epoch);
+			//System.out.println("epoch: "+curr_epoch);
 			//shuffle
 			for(int i=0;i<length;i++){
 				int j = rand.nextInt(length);
@@ -117,6 +147,16 @@ public class Kohonen extends NeuralNetwork{
 		}
 	}
 
+	/**
+	 *	The error metric used for the Kohonen's map is the mean of the border distance. For a projection point
+	 *	the shortest distance to the right cluster. Average for each distance. Lower distance means less error
+	 *	Higher distance means bigger error.
+	 *	@param patterns The array with the patterns to test
+	 *	@param answers The array with the expected answers for the patterns.
+	 *	@param offset The initial position inside the array.
+	 *	@param length How many patterns must be taken from the offset.
+	 *	@return The mean cuadratic error.
+	 */
 	@Override
 	public double error(Matrix[] patterns, Matrix[] answers, int offset, int length) {
 		double error=0;
@@ -179,12 +219,24 @@ public class Kohonen extends NeuralNetwork{
 		return (((i-ig)*(i-ig)) + ((j-jg)*(j-jg)));
 	}
 
-
+	/**
+	 *	@return  The label map.
+	 */
 	public int[][] getMap(){ return map; }
 
+	/**
+	 *	Label the output for the patterns and expand the results through the neighbors until
+	 *  the map is completely fill.
+	 *	NOTE: The expansion isn't an standard process but is very helpful
+	 *	to avoid unknown answers.
+	 *	@param patterns The patterns to label
+	 *	@param answers	The expected answer for the patterns
+	 *	@param offset	The initial pattern position
+	 *	@param length	How many patterns to label.
+	 */
 	private void expandMap(Matrix[] patterns, Matrix[] answers, int offset, int length){
 		Matrix winner = new Matrix(2,1);
-		System.out.println("labelling...");
+		//System.out.println("labelling...");
 		for(int k=0;k<length;k++){
 			simulate(patterns[k+offset],winner);
 
@@ -195,8 +247,6 @@ public class Kohonen extends NeuralNetwork{
 				map[i][j]=(int)answers[k+offset].position(0,0); //must have just one position and should be an integer
 		}
 
-		//if(!expand) return map;
-
 		ArrayList<Pair<Integer,Integer>> q = new ArrayList<Pair<Integer,Integer>>();
 
 		for(int i=0;i<nperlayer[1];i++)
@@ -204,7 +254,7 @@ public class Kohonen extends NeuralNetwork{
 				if(map[i][j]!=-1)
 					q.add(new Pair<Integer,Integer>(i,j));
 
-		System.out.println("BFS...");
+		//System.out.println("BFS...");
 		while(!q.isEmpty()){
 			Pair<Integer,Integer> current=q.remove(0);
 			int c=map[current.first][current.second];

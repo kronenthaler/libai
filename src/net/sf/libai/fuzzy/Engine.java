@@ -15,8 +15,13 @@ import net.sf.libai.common.*;
  * @author kronenthaler
  */
 public class Engine {
+	/** List of rules for the reasoning process. */
 	private ArrayList<Rule> rules;
+	
+	/** List of fuzzy groups associated to the different contexts of the actions and rules. */
 	private ArrayList<FuzzyGroup> groups;
+
+	/** Flag to print verbose information over the reasoning process. */
 	private boolean debug=false;
 
 	public Engine(){
@@ -24,7 +29,12 @@ public class Engine {
 		groups = new ArrayList<FuzzyGroup>();
 	}
 
+	/**
+	 *	Constructor.
+	 *	Creates a Engine with verbose output.
+	 */
 	public Engine(boolean _debug){
+		this();
 		debug = _debug;
 	}
 
@@ -86,7 +96,6 @@ public class Engine {
 		for(Rule r : rules){
 			ArrayList<Pair<Double,Double>>[] fireResult = r.fire();
 			
-			//FOR DEBUG:
 			if(debug){
 				System.err.println("\n\nRule fired: ");
 				for(int i=0;i<fireResult.length;i++){
@@ -94,8 +103,7 @@ public class Engine {
 				}
 				System.err.println("end rule");
 			}
-			//END FOR DEBUG
-
+			
 			if(allResults == null){
 				allResults = new HashMap<FuzzyGroup, ArrayList<Pair<Double,Double>>>();
 
@@ -129,9 +137,6 @@ public class Engine {
 		}
 
 		//defuzzify
-		//allResults deberia ser una tabla hash que indica sobre cual variable estoy actuando.
-		//hasta ahora se refire a la accion que se esta disparando.
-		//asume que todas las activaciones corren sobre el mismo conjunto difuso.
 		for(FuzzyGroup action : allResults.keySet()){
 			double nominator=0,denominator=0;
 			for(Pair<Double,Double> d : allResults.get(action)){

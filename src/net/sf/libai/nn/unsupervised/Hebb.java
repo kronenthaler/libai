@@ -31,7 +31,7 @@ public class Hebb extends NeuralNetwork{
 		Random rand = new Random();
 		int[] sort=new int[length];
 		Matrix Y=new Matrix(W.getRows(),1);
-		Matrix temp=new Matrix(W.getRows(),W.getCols());
+		Matrix temp=new Matrix(W.getRows(),W.getColumns());
 
 		Matrix[] patternsT=new Matrix[length];
 		for(int i=0;i<length;i++){
@@ -74,7 +74,7 @@ public class Hebb extends NeuralNetwork{
 
 	@Override
 	public Matrix simulate(Matrix pattern) {
-		Matrix ret = new Matrix(pattern.getRows(),pattern.getCols());
+		Matrix ret = new Matrix(pattern.getRows(),pattern.getColumns());
 		simulate(pattern, ret);
 		return ret;
 	}
@@ -87,8 +87,8 @@ public class Hebb extends NeuralNetwork{
 
 	@Override
 	public double error(Matrix[] patterns, Matrix[] answers, int offset, int length) {
-		Matrix X=new Matrix(patterns[0].getRows(),patterns[0].getCols());
-		Matrix Y=new Matrix(patterns[0].getRows(),patterns[0].getCols());
+		Matrix X=new Matrix(patterns[0].getRows(),patterns[0].getColumns());
+		Matrix Y=new Matrix(patterns[0].getRows(),patterns[0].getColumns());
 
 		double error=0;
 		for(int i=0;i<length;i++){

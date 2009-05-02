@@ -1,8 +1,9 @@
 package net.sf.libai.common;
 
 /**
- *
- * @author kronenthaler
+ *	Signum function F(x) = 0 if x &lt; 0 or 1 if x &gt;= 1
+ *	This function is not derivable.
+ *	@author kronenthaler
  */
 public class Signum implements Function{
 	public double eval(double x) {

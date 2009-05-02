@@ -2,6 +2,10 @@ package net.sf.libai.genetics;
 
 import net.sf.libai.genetics.chromosomes.Chromosome;
 
+/**
+ *	Class to handle the fitness specification for the problem.
+ *	@author kronenthaler
+ */
 public interface Fitness {
 	/** evaluate the fitnes of the passed chromosome. */
 	public double fitness(Chromosome c);

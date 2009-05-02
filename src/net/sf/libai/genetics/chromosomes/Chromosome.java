@@ -1,20 +1,27 @@
 package net.sf.libai.genetics.chromosomes;
 
+/**
+ *	The chromosome abstraction. Keeps the fitness and the chance to be selected by the roulette.
+ *	Also has the methods to mutate and cross with another chromosome in an specific point.
+ *	@author kronenthaler
+ */
 public abstract class Chromosome {
 	/** What is my current fitness */
-	/** What is my chance to be selected (by roulette)*/
 	private double fitness;
+	
+	/** What is my chance to be selected (by roulette)*/
 	private double chance;
+
 	private double fitnessReal;
 
 	/**
-	 *	Split the genes by <i>position</i> and swap lower portion of this with 
-	 *	the lower portion of b and return the new individual 
+	 *	Split the genes by <code>position</code> and swap lower portion of this with 
+	 *	the lower portion of <code>b</code> and return the new individual
 	 */
 	public abstract Chromosome[] cross(Chromosome b,int position);
 		
 	/** 
-	 * Flip a bit of the genes
+	 * Change one gene of the chromosome
 	 */
 	public abstract Chromosome mutate(double pm);
 	
@@ -36,21 +43,21 @@ public abstract class Chromosome {
 	}
 
 	/**
-	 * @param fitness the fitness to set
+	 * @param fitness The new fitness
 	 */
 	public void setFitness(double fitness) {
 		this.fitness = fitness;
 	}
 
 	/**
-	 * @return the chance
+	 * @return the chance to be selected
 	 */
 	public double getChance() {
 		return chance;
 	}
 
 	/**
-	 * @param chance the chance to set
+	 * @param chance The new chance.
 	 */
 	public void setChance(double chance) {
 		this.chance = chance;
@@ -64,7 +71,7 @@ public abstract class Chromosome {
 	}
 
 	/**
-	 * @param fitnessReal the fitnessReal to set
+	 * @param fitnessReal The new fitnessReal.
 	 */
 	public void setFitnessReal(double fitnessReal) {
 		this.fitnessReal = fitnessReal;

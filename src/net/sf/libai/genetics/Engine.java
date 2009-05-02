@@ -3,13 +3,56 @@ package net.sf.libai.genetics;
 import net.sf.libai.genetics.chromosomes.Chromosome;
 import java.util.Random;
 
+/**
+ *	Engine class provides complete algorithm to evolve populations of chormosomes,
+ *	regardless of these kind.
+ *	This implementation of the genetic algorithm contemplates the ellitism variant
+ *  for the selection.
+ *	The mutation and cross are more chromosome-dependent that the algorithm-dependent,
+ *	therefore, chromosomes are instantiated for its class and evaluateds through the Fitness
+ *	instance.
+ *
+ *	@author kronenthaler
+ */
 public class Engine{
-	private Chromosome population[],newpopulation[],toCross[],best;//population
+	/** The current population */
+	private Chromosome population[];
+
+	/** The offsprings of the current population */
+	private Chromosome newpopulation[];
+
+	/** The chrmosomes selected to crossing */
+	private Chromosome toCross[];
+
+	/** The best solution so far. */
+	private Chromosome best;//population
+
+	/** Utility random instance. */
 	public static Random r;
+
+	/** The fitness evaluator */
 	private Fitness evaluator;
+
+	/** The size of each chromosome */
 	private int chromosomeSize;
-	private double pc=.6,pm=.01;//probability of cross and mutation respectively.
+
+	/** The cross probablilty */
+	private double pc=.6;
 	
+	/** The mutation probablilty */
+	private double pm=.01;
+
+	/**
+	 *	Constructor. Initialize a population of <code>individuals</code> of type <code>chromotype</code>. Each
+	 *	chromosome has a length of <code>_chromosomeSize</code>, with a crossing probability of <code>_pc</code>
+	 *	and a mutation probability of <code>_pm</code>. To evaluate the fitness of each chromosome will use <code>_evaluator</code>.
+	 *	@param chromotype	The class for the chromosomes
+	 *	@param individuals	The number of individuals for this population
+	 *	@param _chromosomeSize	The size of each chromosome
+	 *	@param _pc	The crossing probability.
+	 *	@param _pm	The mutation probability.
+	 *	@param _evaluator	The fitness evaluator.
+	 */
 	public Engine(Class chromotype, int individuals, int _chromosomeSize, double _pc, double _pm, Fitness _evaluator){
 		evaluator=_evaluator;
 		chromosomeSize=_chromosomeSize;
@@ -32,13 +75,19 @@ public class Engine{
 		initialize(chromosomeSize);
 	}
 	
-	/** Initialize population */
+	/** 
+	 *	Initialize population with size <code>chromosomeSize</code>
+	 *	@param chromosomeSize The size of the chromosome.
+	 */
 	protected void initialize(int chromosomeSize){
 		for(int i=0;i<population.length;i++)
 			population[i]=best.getInstance(chromosomeSize);
 	}
 	
-	/** Roulette determinate individuals to cross */
+	/**
+	 *	Roulette determinate individuals to cross
+	 *	@param maximum The maximum value for the fitness in this population.
+	 */
 	private void roulette(double maximum){
 		Chromosome current=null;
 		double q=0;
@@ -69,8 +118,9 @@ public class Engine{
 		}
 	}
 	
-	/** Cross population. Elitish style. */
-	/* revisar el elitismo de esta formula porque deberia tomar en cuenta el fitness no el chance*/
+	/**
+	 *	Cross population. Elitish style.
+	 */
 	private void cross(){
 		int a=0,b=0,pos=0,j=0,i=0;
 		boolean wait=false;
@@ -90,7 +140,9 @@ public class Engine{
 			newpopulation[j]=toCross[a].getCopy();
 	}
 	
-	/** Mutate random bits in each chromosome */
+	/**
+	 *	Mutate random genes in each chromosome
+	 */
 	private void mutate(){
 		for(int i=0;i<population.length;i++){
 			if(newpopulation[i]!=best)
@@ -99,7 +151,10 @@ public class Engine{
 		population=newpopulation;
 	}
 	
-	/** Evolve the population */
+	/**
+	 *	Evolve the population for <code>ages</code>
+	 *	@return The best chromosome for all these epochs.
+	 */
 	public Chromosome evolve(int ages){
 		double maximum=0;
 		for(int iter=0;iter<ages;iter++){

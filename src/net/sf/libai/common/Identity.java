@@ -1,11 +1,14 @@
 package net.sf.libai.common;
 
 /**
- *
- * @author kronenthaler
+ *	Identity function f(x) = x;
+ *	The first derivate of I(x), I'(x) = 1.
+ *	@author kronenthaler
  */
 public class Identity implements Function{
+	/** Singleton variable for the first derivate. */
 	private static Function derivate;
+
 	public double eval(double x) {
 		return x;
 	}

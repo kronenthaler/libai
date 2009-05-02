@@ -1,8 +1,10 @@
 package net.sf.libai.common;
 
 /**
- *
- * @author kronenthaler
+ *	Sigmoid function: f(x) = 1/(1+e^-x)
+ *	The first derivate of the sigmoid function S(x)
+ *	S'(x) = S(x)*(1-S(x))
+ *	@author kronenthaler
  */
 public class Sigmoid implements Function{
 	private static Function derivate;

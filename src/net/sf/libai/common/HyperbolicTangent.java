@@ -1,10 +1,11 @@
 package net.sf.libai.common;
 
 /**
- *
- * @author kronenthaler
+ *	Hyperbolic Tangent. F(x) = tanh(x).
+ *	The first derivate of tanh(x) = 1-(tanh(x)*tanh(x))
+ *	@author kronenthaler
  */
-public class TangentHyperbolic implements Function{
+public class HyperbolicTangent implements Function{
 	private static Function derivate;
 
 	public double eval(double x) {

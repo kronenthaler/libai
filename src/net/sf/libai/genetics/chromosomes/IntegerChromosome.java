@@ -5,10 +5,11 @@ import net.sf.libai.genetics.*;
 import java.util.Random;
 
 /**
- *	Implementation of a permutation chromosome
+ *	Implementation of a permutation chromosome.
  *	@author kronenthaler
  */
 public class IntegerChromosome extends Chromosome{
+	/** The genetic charge */
 	protected int[] genes;
 	
 	public IntegerChromosome(){}
@@ -31,7 +32,18 @@ public class IntegerChromosome extends Chromosome{
 		genes=new int[b.genes.length];
 		System.arraycopy(b.genes,0,genes,0,genes.length);
 	}
-	
+
+	/**
+	 *	Cross the chromosomes, using a mask template. The position parameter is omitted.
+	 *	A random mask is generated.
+	 *	The first offspring takes the genes of this if the mask value is true.
+	 *	The second offspring takes the genes of the other parent if the mask value is false.
+	 *	Then for the empty positions, the first not contained genes of the other parent are taken
+	 *  until the chromosomes are completely fill.
+	 *	@param b Chromosome to cross
+	 *	@param position Omitted.
+	 *	@return A two position array with the new offsprings.
+	 */
 	public Chromosome[] cross(Chromosome b, int position){
 		/*int[] aux=new int[genes.length];
 		System.arraycopy(genes,0,aux,0,position);
@@ -63,7 +75,6 @@ public class IntegerChromosome extends Chromosome{
 		
 		for(int i=0;i<mask.length;i++){
 			if(!mask[i]){
-				//se que es un hueco, buscar el elemento en el padre contrario
 				for(int j=0;j<mask.length;j++){
 					boolean flag=false;
 					for(int k=0;k<mask.length && !flag;k++)
@@ -92,6 +103,11 @@ public class IntegerChromosome extends Chromosome{
 		return new Chromosome[]{a1,a2};
 	}
 
+	/**
+	 *	Swap two position of the genes. The positions are selected with probability <code>pm</code>
+	 *	@param pm Mutation probability.
+	 *	@return The new mutated chromosome.
+	 */
 	public Chromosome mutate(double pm) {
 		int ret[]=new int[genes.length];
 		System.arraycopy(genes,0,ret,0,ret.length);
@@ -110,25 +126,41 @@ public class IntegerChromosome extends Chromosome{
 		return getInstance(ret);
 	}
 
+	/**
+	 *	Create a new instance of a Chromosome with this int array.
+	 *	@param genes The genetic charge to copy.
+	 *	@return A new chromosome with the same genetic charge.
+	 */
 	protected Chromosome getInstance(int[] genes){
 		IntegerChromosome ret=new IntegerChromosome();
 		ret.genes=genes;
 		return ret;
 	}
-	
+
+	/**
+	 *	Clone this chromosome.
+	 *	@return A identical chromosome of this.
+	 */
 	public Chromosome getCopy() {
 		return new IntegerChromosome(this);
 	}
 
+	/**
+	 *	Creates a new chromosome with a length of <code>length</code>
+	 *	@param length The length of the new chromosome.
+	 *	@return A new instance of length <code>length</code>
+	 */
 	public Chromosome getInstance(int length) {
 		return new IntegerChromosome(length);
 	}
 	
+	/** @return The genetic charge of this chromosome. */
+	public int[] getGenes(){ return genes; }
+
 	public String toString(){
 		String ret="";
 		for(int i=0;i<genes.length;ret+=genes[i++]+" ");
 		return ret;
 	}
-	
-	public int[] getGenes(){ return genes; }
+
 }

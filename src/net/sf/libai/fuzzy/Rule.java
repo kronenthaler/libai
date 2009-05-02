@@ -17,9 +17,18 @@ import net.sf.libai.fuzzy.sets.*;
  * @author kronenthaler
  */
 public class Rule {
+	/** Condition tree for this rule. */
 	private Condition cond;
+
+	/** Set of actions to be triggered if the condition is 'fulfill' */
 	private ArrayList<FuzzySet> actions;
 
+	/**
+	 *	Constructor.
+	 *	Create a new rule with a condition tree and a list of fuzzy sets (actions).
+	 *	@param _cond The condition tree for this rule.
+	 *	@param acts The actions for this rule.
+	 */
 	public Rule(Condition _cond, FuzzySet... acts){
 		cond = _cond;
 		actions = new ArrayList<FuzzySet>();
@@ -33,7 +42,7 @@ public class Rule {
 	 * Returning a support set for each action in the rule.
 	 * This results are combined in the engine to the defuzzify process.
 	 *
-	 * @return An array of ArrayLists of doubles, containing each one the support calculated for the specific
+	 * @return An array of ArrayLists of pairs double-double, containing each one the support calculated for the specific
 	 *	set of the action.
 	 */
 	public ArrayList<Pair<Double,Double>>[] fire(){
@@ -52,6 +61,11 @@ public class Rule {
 		return ret;
 	}
 
+	/**
+	 *	Get the action for at index.
+	 *	@param index The index for the action.
+	 *	@return The fuzzy set associated to that action.
+	 */
 	public FuzzySet getAction(int index){
 		return actions.get(index);
 	}

@@ -18,9 +18,9 @@ import java.util.ArrayList;
  * @author kronenthaler
  */
 public class Trapezoid implements FuzzySet{
-	public Variable a,b,c,d;
-	public ArrayList<Double> support;
-	public ArrayList<Double> kernel;
+	private Variable a,b,c,d;
+	private ArrayList<Double> support;
+	private ArrayList<Double> kernel;
 	protected double DELTA = 0.1;
 
 	public Trapezoid(double _a,double _b,double _c,double _d){
