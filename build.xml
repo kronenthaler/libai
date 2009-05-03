@@ -77,4 +77,12 @@
 		<antcall target="-javadoc-build"/>
 		<move file="dist/javadoc" todir="docs" />
 	</target>
+
+	<target name="release" depends="jar">
+		<zip zipfile="release/libai-x.x.zip">
+			<fileset dir="release" includes="*.jar"/>
+			<fileset dir="docs/"/>
+			<fileset dir="dist/"/>
+		</zip>
+	</target>
 </project>
