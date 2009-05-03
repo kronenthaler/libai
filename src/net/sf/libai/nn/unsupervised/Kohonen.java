@@ -84,16 +84,17 @@ public class Kohonen extends NeuralNetwork{
 
 		Matrix temp=new Matrix(nperlayer[0],1);
 		Matrix winner=new Matrix(2,1);
+		
+		if(progress != null){
+			progress.setMaximum(epochs*2);
+			progress.setMinimum(0);
+			progress.setValue(0);
+		}
 
 		while(curr_epoch++ < epochs){
 			//System.out.println("epoch: "+curr_epoch);
 			//shuffle
-			for(int i=0;i<length;i++){
-				int j = rand.nextInt(length);
-				int k = sort[i];
-				sort[i] = sort[j];
-				sort[j] = k;
-			}
+			shuffle(sort);
 
 			for(int k=0;k<length;k++){
 				//Who is the winner
@@ -120,9 +121,12 @@ public class Kohonen extends NeuralNetwork{
 			//update alpha
 			if(alpha1 > 0.001)
 				alpha1=alpha*Math.exp(-(float)curr_epoch/(float)epochs);
+
+			if(progress != null) progress.setValue(curr_epoch);
 		}
 
 		expandMap(patterns, answers, offset, length);
+		if(progress != null) progress.setValue(epochs*2);
 	}
 
 	@Override
@@ -155,7 +159,7 @@ public class Kohonen extends NeuralNetwork{
 	 *	@param answers The array with the expected answers for the patterns.
 	 *	@param offset The initial position inside the array.
 	 *	@param length How many patterns must be taken from the offset.
-	 *	@return The mean cuadratic error.
+	 *	@return The average border distance.
 	 */
 	@Override
 	public double error(Matrix[] patterns, Matrix[] answers, int offset, int length) {

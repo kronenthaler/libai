@@ -48,6 +48,7 @@ public class Perceptron extends NeuralNetwork{
 	 */
 	@Override
 	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
+		int[] sort=new int[length]; // [0,length)
 		double error=1,prevError=error(patterns,answers,offset,length);
 		Matrix Y=new Matrix(outs, 1);
 		Matrix E=new Matrix(outs, 1);
@@ -55,22 +56,32 @@ public class Perceptron extends NeuralNetwork{
 
 		//initialize sort array
 		Matrix[] patternsT=new Matrix[length];
-		for(int i=0;i<length;i++)
+		for(int i=0;i<length;i++){
 			patternsT[i] = patterns[i + offset].transpose();
-		
+			sort[i] = i;
+		}
+
+		if(progress != null){
+			progress.setMaximum(0);
+			progress.setMinimum(-epochs);
+			progress.setValue(-epochs);
+		}
+
 		while((error=error(patterns,answers,offset,length)) > minerror && epochs-- > 0){
 			//if(error > prevError) break; //optional to avoid overtrainning problems
+			//shuffle patterns
+			shuffle(sort);
 
 			for(int i=0;i<length;i++){
 				//F(wx+b)
-				simulate(patterns[i + offset],Y);
+				simulate(patterns[sort[i]+offset],Y);
 
 				//e=t-y
-				answers[i].subtract(Y,E);	//error
+				answers[sort[i]+offset].subtract(Y,E);	//error
 
 				//alpha*e.p^t
 				E.multiply(alpha,E);
-				E.multiply(patternsT[i],aux);
+				E.multiply(patternsT[sort[i]],aux);
 
 				W.add(aux,W);//W+(alpha*e.p^t)
 				b.add(E,b);  //b+(alpha*e)
@@ -78,7 +89,9 @@ public class Perceptron extends NeuralNetwork{
 			
 			prevError=error;
 			if(plotter!=null) plotter.setError(epochs, error);
+			if(progress!=null) progress.setValue(-epochs);
 		}
+		if(progress!=null) progress.setValue(1);
 	}
 
 	@Override

@@ -58,39 +58,55 @@ public class LVQ extends Competitive{
 	 */
 	@Override
 	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
+		int[] sort = new int[length];
 		double error=0;
 		Matrix r = new Matrix(1,ins);
 		Matrix row = new Matrix(1, W.getColumns());
 
 		Matrix[] patternsT=new Matrix[length];
-		for(int i=0;i<length;i++)
+		for(int i=0;i<length;i++){
 			patternsT[i]=patterns[i+offset].transpose();
+			sort[i] = i;
+		}
+
+		if(progress != null){
+			progress.setMaximum(0);
+			progress.setMinimum(-epochs);
+			progress.setValue(-epochs);
+		}
 
 		while((error=error(patterns,answers,offset,length)) > minerror && epochs-- > 0){
+			//shuffle patterns
+			shuffle(sort);
 
 			for(int i=0;i<length;i++){
 				//calculate the distance of each pattern to each neuron (rows in W), keep the winner
 				int winnerOut = -1;
 				int winnerT = -1;
 
-				simulateNoChange(patterns[i + offset]);
+				simulateNoChange(patterns[sort[i]+offset]);
 
 				//find the row with the value 1 in the column winner of W2
 				for(int j=0;j<W2.getRows();j++){
 					if(W2.position(j,winner)==1) winnerOut=j;
-					if(answers[i].position(j,0)==1) winnerT=j;
+					if(answers[sort[i]+offset].position(j,0)==1) winnerT=j;
 				}
 
 				//Ww = Ww +/- alpha . (p - Ww); //w is the row of winner neuron
-				patternsT[i].copy(r);
+				patternsT[sort[i]].copy(r);
 				row.setRow(0,W.getRow(winner));
 				r.subtract(row,r);
 				r.multiply((winnerT == winnerOut)?alpha:-alpha,r); //if winner in T == winner int out + else -
 				row.add(r,r);
 
 				W.setRow(winner, r.getRow(0));
+
 			}
+			
+			if(plotter!=null) plotter.setError(epochs, error);
+			if(progress!=null) progress.setValue(-epochs);
 		}
+		if(progress!=null) progress.setValue(1);
 	}
 
 	@Override

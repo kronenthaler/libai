@@ -1,5 +1,7 @@
 package net.sf.libai.nn;
 
+import java.util.Random;
+import javax.swing.JProgressBar;
 import net.sf.libai.common.*;
 
 /**
@@ -9,8 +11,10 @@ import net.sf.libai.common.*;
  */
 public abstract class NeuralNetwork {
 	protected Plotter plotter;
+	protected JProgressBar progress;
 
 	public void setPlotter(Plotter plotter){ this.plotter = plotter; }
+	public void setProgressBar(JProgressBar pb) { progress = pb; }
 
 	/** Instance preallocated of the function signum */
 	public static Signum signum = new Signum();
@@ -171,4 +175,14 @@ public abstract class NeuralNetwork {
 	public static double gaussian(double u2, double sigma) {
 		return Math.exp((-u2) / (sigma * 2.0));
     }
+
+	public static void shuffle(int[] sort){
+		Random rand = new Random();
+		for(int i=0;i<sort.length;i++){
+			int j = rand.nextInt(sort.length);
+			int aux=sort[i];
+			sort[i]=sort[j];
+			sort[j]=aux;
+		}
+	}
 }

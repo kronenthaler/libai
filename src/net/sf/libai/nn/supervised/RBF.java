@@ -55,7 +55,14 @@ public class RBF extends Adaline{
 	 */
 	@Override
 	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
+		int[] sort = new int[length];
 		double error,prevError,current;
+
+		if(progress != null){
+			progress.setMaximum(0);
+			progress.setMinimum(-epochs*2);
+			progress.setValue(-epochs*2);
+		}
 
 		//apply k-means to the patterns
 		c = kmeans(nperlayer[1],patterns,offset,length);
@@ -89,25 +96,30 @@ public class RBF extends Adaline{
 			Yt[j]=new Matrix(1,nperlayer[1]);
 			simulateNoChange(patterns[j+offset],Y[j]);
 			Y[j].transpose(Yt[j]);
+			sort[j] = j;
 		}
 
 		Matrix aux=new Matrix(nperlayer[2], nperlayer[1]);
 		Matrix out=new Matrix(nperlayer[2], 1);
 		Matrix E=new Matrix(nperlayer[2], 1);
-		
+
+		if(progress!=null) progress.setValue(-epochs);
+
 		while((error=error(patterns,answers,offset,length)) > minerror && epochs-- > 0){
 			//if(error > prevError) break; //optional to avoid overtrainning problems
+			//shuffle patterns
+			shuffle(sort);
 
 			for(int i=0;i<length;i++){
 				//F(wx+b)
-				super.simulate(Y[i + offset],out); //force call to the right function
+				super.simulate(Y[sort[i] + offset],out); //force call to the right function
 
 				//e=t-y
-				answers[i].subtract(out,E);	//error
+				answers[sort[i]+offset].subtract(out,E);	//error
 
 				//alpha*e.p^t
 				E.multiply(alpha,E);
-				E.multiply(Yt[i],aux);
+				E.multiply(Yt[sort[i]],aux);
 
 				W.add(aux,W);//W+(alpha*e.p^t)
 				b.add(E,b);  //b+(alpha*e)
@@ -115,7 +127,9 @@ public class RBF extends Adaline{
 
 			prevError=error;
 			if(plotter !=null) plotter.setError(epochs, error);
+			if(progress!=null) progress.setValue(-epochs);
 		}
+		if(progress!=null) progress.setValue(1);
 	}
 
 	/**

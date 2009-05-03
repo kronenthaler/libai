@@ -110,23 +110,34 @@ public class MLP extends NeuralNetwork{
 	 */
 	@Override
 	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
+		int[] sort = new int[length];
 		double error=error(patterns,answers,offset,length),prevError=error;
-		int i,k,l;
-
 		Matrix temp3,
 				temp2=new Matrix(answers[0].getRows(),answers[0].getColumns()),
 				e=new Matrix(answers[0].getRows(),answers[0].getColumns());
-		
+
+		for(int i=0;i<length;i++){
+			sort[i] = i;
+		}
+
+		if(progress != null){
+			progress.setMaximum(0);
+			progress.setMinimum(-epochs);
+			progress.setValue(-epochs);
+		}
+
 		while(error > minerror && /*(error=error(patterns,answers,offset,length)) > minerror &&/**/ epochs-- > 0){ //<-- cuello de botella...
 			//if(error > prevError) break;
+			//shuffle patterns
+			shuffle(sort);
 			
 			error = 0;
-			for(i=0;i<length;i++){
+			for(int i=0;i<length;i++){
 				//Y[i]=Fi(<W[i],Y[i-1]>+b)
-				simulate(patterns[i+offset]);
+				simulate(patterns[sort[i]+offset]);
 
 				//e=-2(t-Y[n-1])
-				answers[i+offset].subtract(Y[layers-1],e);
+				answers[sort[i]+offset].subtract(Y[layers-1],e);
 				
 				//calcular el error
 				for(int m=0;m<nperlayer[layers-1];m++)
@@ -137,7 +148,7 @@ public class MLP extends NeuralNetwork{
 					d[layers-1].position(j,0,-2*alpha*func[layers-1].getDerivate().eval(u[layers-1].position(j,0))*e.position(j, 0));
 				
 				//d[i]=Fi'(<W[i],Y[i-1]>).W[i+1]^t.d[i+1]
-				for(k=layers-2;k>0;k--){
+				for(int k=layers-2;k>0;k--){
 					for(int j=0;j<u[k].getRows();j++){
 						double acum = 0;
 						for(int t=0; t<W[k+1].getRows(); t++)
@@ -147,7 +158,7 @@ public class MLP extends NeuralNetwork{
 				}
 
 				//actualizar pesos y umbrales
-				for(l=1;l<layers;l++){
+				for(int l=1;l<layers;l++){
 					Y[l-1].transpose(Yt[l-1]);
 					if(beta <= 0){// BP without momentum
 						d[l].multiply(Yt[l-1],M[l]);
@@ -186,7 +197,10 @@ public class MLP extends NeuralNetwork{
 			prevError=error;
 
 			if(plotter!=null) plotter.setError(epochs, error);
+			if(progress!=null) progress.setValue(-epochs);
 		}
+		
+		if(progress!=null) progress.setValue(1);
 		//System.out.println("last epoch: "+epochs);
 		temp2 = null;
 	}
