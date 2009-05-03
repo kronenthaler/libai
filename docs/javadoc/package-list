@@ -1,0 +1,11 @@
+
+demos.fuzzy
+demos.nn
+net.sf.libai.common
+net.sf.libai.fuzzy
+net.sf.libai.fuzzy.sets
+net.sf.libai.genetics
+net.sf.libai.genetics.chromosomes
+net.sf.libai.nn
+net.sf.libai.nn.supervised
+net.sf.libai.nn.unsupervised

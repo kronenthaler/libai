@@ -72,4 +72,9 @@
     nbproject/build-impl.xml file. 
 
     -->
+
+	<target name="-post-jar">
+		<antcall target="-javadoc-build"/>
+		<move file="dist/javadoc" todir="docs" />
+	</target>
 </project>

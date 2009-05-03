@@ -20,8 +20,8 @@ public class Perceptron extends NeuralNetwork{
 
 	/**
 	 *	Constructor.
-	 *	@param ins Number of inputs for the network = number of elements in the patterns.
-	 *	@param outs Number of outputs for the network.
+	 *	@param in Number of inputs for the network = number of elements in the patterns.
+	 *	@param out Number of outputs for the network.
 	 */
     public Perceptron(int in,int out){
 		ins=in;

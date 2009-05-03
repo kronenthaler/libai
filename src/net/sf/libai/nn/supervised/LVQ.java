@@ -22,7 +22,7 @@ public class LVQ extends Competitive{
 	/**
 	 *	Constructor. Number of inputs, number of subclasses and number of outputs.
 	 *	@param in Number of input to the network.
-	 *	@param subclasses	Number of subclases for output class. Greater subdivision provides better clasification.
+	 *	@param subclass	Number of subclases for output class. Greater subdivision provides better clasification.
 	 *	@param out Number of outputs for the network
 	 */
 	public LVQ(int in, int subclass, int out){
