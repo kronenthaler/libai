@@ -55,7 +55,6 @@ public class RBF extends Adaline{
 	 */
 	@Override
 	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
-		int[] sort = new int[length];
 		double error,prevError,current;
 
 		if(progress != null){
@@ -89,47 +88,21 @@ public class RBF extends Adaline{
 		}
 
 		//precalculate the ouputs for each pattern in the hidden layer
-		Matrix Y[]=new Matrix[length];
-		Matrix Yt[]=new Matrix[length];
+		Matrix Y[]=new Matrix[patterns.length];
 		for(int j=0;j<length;j++){
-			Y[j]=new Matrix(nperlayer[1],1);
-			Yt[j]=new Matrix(1,nperlayer[1]);
-			simulateNoChange(patterns[j+offset],Y[j]);
-			Y[j].transpose(Yt[j]);
-			sort[j] = j;
+			Y[j+offset]=new Matrix(nperlayer[1],1);
+			simulateNoChange(patterns[j+offset],Y[j+offset]);
 		}
 
-		Matrix aux=new Matrix(nperlayer[2], nperlayer[1]);
-		Matrix out=new Matrix(nperlayer[2], 1);
-		Matrix E=new Matrix(nperlayer[2], 1);
-
-		if(progress!=null) progress.setValue(-epochs);
-
-		while((error=error(patterns,answers,offset,length)) > minerror && epochs-- > 0){
-			//if(error > prevError) break; //optional to avoid overtrainning problems
-			//shuffle patterns
-			shuffle(sort);
-
-			for(int i=0;i<length;i++){
-				//F(wx+b)
-				super.simulate(Y[sort[i] + offset],out); //force call to the right function
-
-				//e=t-y
-				answers[sort[i]+offset].subtract(out,E);	//error
-
-				//alpha*e.p^t
-				E.multiply(alpha,E);
-				E.multiply(Yt[sort[i]],aux);
-
-				W.add(aux,W);//W+(alpha*e.p^t)
-				b.add(E,b);  //b+(alpha*e)
-			}
-
-			prevError=error;
-			if(plotter !=null) plotter.setError(epochs, error);
-			if(progress!=null) progress.setValue(-epochs);
-		}
-		if(progress!=null) progress.setValue(1);
+		//Train the adaline network, but keep the weights and biases in this instance.
+		Adaline temp = new Adaline();
+		temp.ins = nperlayer[1];
+		temp.outs = nperlayer[2];
+		temp.W = W;
+		temp.b = b;
+		temp.setPlotter(plotter);
+		temp.setProgressBar(progress);
+		temp.train(Y, answers, alpha, epochs, offset, length, minerror);
 	}
 
 	/**

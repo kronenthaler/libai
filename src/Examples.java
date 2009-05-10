@@ -40,18 +40,19 @@ public class Examples extends javax.swing.JFrame {
 
         jTabbedPane2 = new javax.swing.JTabbedPane();
         jTabbedPane1 = new javax.swing.JTabbedPane();
-        perceptronPanel1 = new PerceptronPanel();
-        mPLPanel1 = new MPLPanel();
-        rBFPanel1 = new RBFPanel();
-        lVQPanel1 = new LVQPanel();
-        kohonenPanel1 = new KohonenPanel();
-        competitivePanel1 = new CompetitivePanel();
+        perceptronPanel1 = new demos.nn.PerceptronPanel();
+        mPLPanel1 = new demos.nn.MPLPanel();
+        rBFPanel1 = new demos.nn.RBFPanel();
+        lVQPanel1 = new demos.nn.LVQPanel();
+        kohonenPanel1 = new demos.nn.KohonenPanel();
+        competitivePanel1 = new demos.nn.CompetitivePanel();
         fuzzyPanel1 = new demos.fuzzy.FuzzyPanel();
+        jTabbedPane3 = new javax.swing.JTabbedPane();
+        binaryPanel1 = new demos.genetic.BinaryPanel();
+        permutation1 = new demos.genetic.Permutation();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Examples libai");
-
-        jTabbedPane2.setTabPlacement(javax.swing.JTabbedPane.BOTTOM);
 
         jTabbedPane1.addTab("Adaline", perceptronPanel1);
         jTabbedPane1.addTab("MLP", mPLPanel1);
@@ -62,6 +63,11 @@ public class Examples extends javax.swing.JFrame {
 
         jTabbedPane2.addTab("Neural Networks", jTabbedPane1);
         jTabbedPane2.addTab("Fuzzy", fuzzyPanel1);
+
+        jTabbedPane3.addTab("Binary", binaryPanel1);
+        jTabbedPane3.addTab("Permutation", permutation1);
+
+        jTabbedPane2.addTab("Genetic", jTabbedPane3);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -89,15 +95,18 @@ public class Examples extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private CompetitivePanel competitivePanel1;
+    private demos.genetic.BinaryPanel binaryPanel1;
+    private demos.nn.CompetitivePanel competitivePanel1;
     private demos.fuzzy.FuzzyPanel fuzzyPanel1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTabbedPane jTabbedPane2;
-    private KohonenPanel kohonenPanel1;
-    private LVQPanel lVQPanel1;
-    private MPLPanel mPLPanel1;
-    private PerceptronPanel perceptronPanel1;
-    private RBFPanel rBFPanel1;
+    private javax.swing.JTabbedPane jTabbedPane3;
+    private demos.nn.KohonenPanel kohonenPanel1;
+    private demos.nn.LVQPanel lVQPanel1;
+    private demos.nn.MPLPanel mPLPanel1;
+    private demos.nn.PerceptronPanel perceptronPanel1;
+    private demos.genetic.Permutation permutation1;
+    private demos.nn.RBFPanel rBFPanel1;
     // End of variables declaration//GEN-END:variables
 
 }

@@ -1,5 +1,6 @@
 
 demos.fuzzy
+demos.genetic
 demos.nn
 net.sf.libai.common
 net.sf.libai.fuzzy

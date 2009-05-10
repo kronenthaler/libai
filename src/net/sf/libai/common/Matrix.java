@@ -292,6 +292,20 @@ public final class Matrix {
 		matrix[(i*cols)+j]=v;
 	}
 
+	/***/
+	public void subtractAndCopy(Matrix b, Matrix resultSubstract, Matrix resultCopy){
+		for(int i=0;i<matrix.length;i++){
+			resultSubstract.matrix[i] = matrix[i]-b.matrix[i];
+			resultCopy.matrix[i] = matrix[i];
+		}
+	}
+
+	public void multiplyAndAdd(double a, Matrix b, Matrix result){
+		for(int i=0;i<matrix.length;i++){
+			result.matrix[i] = matrix[i]*a + b.matrix[i];
+		}
+	}
+
 	/**
 	 *	Print this matrix in the OpenOffice formula format.
 	 *	Useful for copy & paste in OO documents.

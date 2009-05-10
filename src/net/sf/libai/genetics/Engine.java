@@ -1,5 +1,6 @@
 package net.sf.libai.genetics;
 
+import javax.swing.JProgressBar;
 import net.sf.libai.genetics.chromosomes.Chromosome;
 import java.util.Random;
 
@@ -41,6 +42,8 @@ public class Engine{
 	
 	/** The mutation probablilty */
 	private double pm=.01;
+
+	private JProgressBar progress;
 
 	/**
 	 *	Constructor. Initialize a population of <code>individuals</code> of type <code>chromotype</code>. Each
@@ -156,11 +159,17 @@ public class Engine{
 	 *	@return The best chromosome for all these epochs.
 	 */
 	public Chromosome evolve(int ages){
+		if(progress!=null){
+			progress.setMaximum(ages-1);
+			progress.setMinimum(0);
+			progress.setValue(0);
+		}
+
 		double maximum=0;
 		for(int iter=0;iter<ages;iter++){
 			Chromosome current=null;
 			maximum=0;
-			
+
 			//eval fitness
 			for(int i=0;i<population.length;i++){
 				current=population[i];
@@ -174,8 +183,14 @@ public class Engine{
 			roulette(maximum);
 			cross();
 			mutate(); //mutate and swap
+			
+			if(progress!=null) progress.setValue(iter);
 		}
 		
 		return best; //the best individual
+	}
+
+	public void setProgressBar(JProgressBar _progress){
+		progress = _progress;
 	}
 }

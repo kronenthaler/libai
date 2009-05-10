@@ -31,6 +31,7 @@ public class MPLPanel extends javax.swing.JPanel {
         jButton1 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextPane1 = new javax.swing.JTextPane();
+        algorithmType = new javax.swing.JComboBox();
 
         jProgressBar1.setString("training");
         jProgressBar1.setStringPainted(true);
@@ -45,28 +46,31 @@ public class MPLPanel extends javax.swing.JPanel {
         jTextPane1.setText("Train an MLP network to learn the equation: sin(x) + cos(x) for x in [1, 41) using an spacing of 0.1 for training and 0.33 for test.\nThe network has 3 layers of 1, 4 and 1 neurons and functions, identity, sigmoid and identity respectevely\n\n");
         jScrollPane1.setViewportView(jTextPane1);
 
+        algorithmType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Standard Backpropagation", "Momentum Backpropagation", "Resilent Backpropagation" }));
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 400, Short.MAX_VALUE)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+            .add(layout.createSequentialGroup()
                 .addContainerGap()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
-                    .add(layout.createSequentialGroup()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                         .add(jProgressBar1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(jButton1)))
+                        .add(jButton1))
+                    .add(algorithmType, 0, 376, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 300, Short.MAX_VALUE)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(algorithmType, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(11, 11, 11)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jProgressBar1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(jButton1))
@@ -106,11 +110,23 @@ public class MPLPanel extends javax.swing.JPanel {
 
 				int nperlayer[]={m,4,l};
 				MLP net = new MLP(nperlayer,
-									new Function[]{NeuralNetwork.identity,NeuralNetwork.sigmoid,NeuralNetwork.identity},
-									-0.4);
-				net.setProgressBar(jProgressBar1);
-				net.train(p, t, 0.2, 50000, 0, n);
+									new Function[]{NeuralNetwork.identity,NeuralNetwork.sigmoid,NeuralNetwork.identity});
 
+				if(algorithmType.getSelectedIndex() == 0){
+					net.setTrainingType(MLP.STANDARD_BACKPROPAGATION, null);
+				}else if(algorithmType.getSelectedIndex() == 1){
+					net.setTrainingType(MLP.MOMEMTUM_BACKPROPAGATION, new double[]{0.4});
+				}else{
+					net.setTrainingType(MLP.RESILENT_BACKPROPAGATION, null);
+				}
+				
+				net.setProgressBar(jProgressBar1);
+				long start = System.currentTimeMillis();
+				net.train(p, t, 0.2, 50000, 0, n);
+				long end = System.currentTimeMillis() - start;
+				
+				jTextPane1.setText(jTextPane1.getText()+algorithmType.getSelectedItem()+"\n");
+				jTextPane1.setText(jTextPane1.getText()+"Time taked: "+(end/1000)+" sec.\n");
 				jTextPane1.setText(jTextPane1.getText()+"Error for training set: "+net.error(p, t,0,n));
 				jTextPane1.setText(jTextPane1.getText()+"\nError for test set: "+net.error(p, t, n,test));
 
@@ -124,6 +140,7 @@ public class MPLPanel extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox algorithmType;
     private javax.swing.JButton jButton1;
     private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JScrollPane jScrollPane1;

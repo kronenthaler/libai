@@ -16,15 +16,18 @@ import java.util.BitSet;
 public class BinaryChromosome extends Chromosome{
 	/** The genetic charge */
 	protected BitSet genes;
+	protected int length;
 	
 	public BinaryChromosome(){}
 	
 	protected BinaryChromosome(int length){
 		genes=new BitSet(length);
-		
-		String str=Integer.toBinaryString(Math.abs(Engine.r.nextInt((int)Math.pow(2,length))));
-		for(int i=0;i<str.length();i++)
-			if(str.charAt(i)=='1') genes.set(i);
+		this.length = length;
+
+		for(int i=0;i<length;i++){
+			if(Engine.r.nextBoolean())
+				genes.set(i);
+		}
 	}
 
 	/**
@@ -32,7 +35,8 @@ public class BinaryChromosome extends Chromosome{
 	 * @param c The chromosome to copy.
 	 */
 	protected BinaryChromosome(BinaryChromosome c){
-		genes=c.genes.get(0,c.genes.size());
+		genes=c.genes.get(0,c.length);
+		length = c.length;
 	}
 	
 	/**
@@ -64,8 +68,8 @@ public class BinaryChromosome extends Chromosome{
 	 *	@return The new mutated chromosome.
 	 */
 	public Chromosome mutate(double pm){
-		BitSet ret=genes.get(0,genes.size());
-		for(int i=0,n=genes.size();i<n;i++){
+		BitSet ret=genes.get(0,length);
+		for(int i=0,n=length;i<n;i++){
 			if(Engine.r.nextDouble()<pm)
 				ret.flip(Engine.r.nextInt(n));
 		}
@@ -80,6 +84,7 @@ public class BinaryChromosome extends Chromosome{
 	protected Chromosome getInstance(BitSet bs){
 		BinaryChromosome ret=new BinaryChromosome();
 		ret.genes=bs;
+		ret.length = length;
 		return ret;
 	}
 
@@ -88,13 +93,22 @@ public class BinaryChromosome extends Chromosome{
 	 *	If the chromosome is too large this value can be overflowed.
 	 *	@return The integral representation of the chromosome.
 	 */
-	public long convert(){
+	public long decode(){
 		int index=-1;
 		long acum=0;
 		while((index=genes.nextSetBit(index+1))!=-1){
 			acum+=Math.pow(2,index);
 		}
 		return acum;
+	}
+
+	/**
+	 *	Convert this chromosome in a double value using the minValue and maxValue as reference.
+	 *	If the chromosome is too large this value can be overflowed.
+	 *	@return The double representation of the chromosome.
+	 */
+	public double decode(double minValue, double maxValue){
+		return minValue + (decode()*((maxValue-minValue)/(Math.pow(2, length)-1)));
 	}
 
 	/**
@@ -112,5 +126,14 @@ public class BinaryChromosome extends Chromosome{
 	 */
 	public Chromosome getInstance(int length){
 		return new BinaryChromosome(length);
+	}
+
+	@Override
+	public String toString(){
+		StringBuffer buf = new StringBuffer();
+		for(int i=0;i<length;i++){
+			buf.append(genes.get(i)?'1':'0');
+		}
+		return buf.toString();
 	}
 }
