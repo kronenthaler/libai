@@ -79,10 +79,16 @@
 	</target>
 
 	<target name="release" depends="jar">
+		<mkdir dir="temp"/>
+		<copydir src="src/" dest="temp/src" />
+		<copydir src="lib/" dest="temp/lib" />
 		<zip zipfile="release/libai-x.x.zip">
 			<fileset dir="release" includes="*.jar"/>
 			<fileset dir="docs/"/>
 			<fileset dir="dist/"/>
+			<fileset dir="temp/"/>
+			<!--fileset file="*.txt" /-->
 		</zip>
+		<delete dir="temp"/>
 	</target>
 </project>

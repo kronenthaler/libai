@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+    <head>
+        <title>Test page for launching the application via JNLP</title>
+    </head>
+    <body>
+<pre>
+libai is a collection of differents artificial intelligence algorithms.
+The main algorithms in this library are:
+
+Fuzzy: Uses fuzzy logic to reproduce inference and reasoning over a set of variables.
+Genetic Algorithms: Emulate the reproduction and evolutionary trends of the animals to survive, using th principle of "survival of the fittest" to optimization problems, like find roots of functions, minimize the volume of the oriented bounding box, or finf the permutation tha satisfy any condition.
+Neural Networks: Emulate the funcionality of the brain to reproduce some aspect, memorization, classification or prediction.
+
+To run some simple examples:
+1) edit the file launch.jnlp
+2) change the text ${your path to the launch.jnlp file} for the absolute path to the file.
+	Note for windows users: replace the \ character for / character.
+3) finally click on the "launch the demo application" link.
+4) a dialog prompt you to open or save the file, select open with the javaws command (if is not selected by default).
+
+To use in a program, just include the libai.jar file in your classpath.
+</pre>
+		<a href="${JNLP.FILE}">Launch the demo application</a>
+        <!-- Or use the following script element to launch with the Deployment Toolkit -->
+        <!-- Open the deployJava.js script to view its documentation -->
+        <!--
+        <script src="http://java.com/js/deployJava.js"></script>
+        <script>
+            var url="http://[fill in your URL]/${JNLP.FILE}"
+            deployJava.createWebStartLaunchButton(url, "1.6")
+        </script>
+        -->
+
+    </body>
+</html>
