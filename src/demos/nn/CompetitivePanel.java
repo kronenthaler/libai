@@ -43,7 +43,7 @@ public class CompetitivePanel extends javax.swing.JPanel {
             }
         });
 
-        jTextPane1.setText("Train a Competitive network to learn the points: (-1,6)-(1,6) class 1, (6,2)-(6,-2) class 2 and (-3,-5)-(-5,-3) class 3. Notice that the first 2 patterns must have the same class, regardless the expected answer, the same apply to the next two and for the last two.");
+        jTextPane1.setText("Train a Competitive network to learn the points: (-1,6)-(1,6) as class 1, (6,2)-(6,-2) as class 2 and (-3,-5)-(-5,-3) as class 3. Notice that the first 2 patterns must have the same class, regardless the expected answer, the same apply to the next two and for the last two.");
         jScrollPane1.setViewportView(jTextPane1);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);

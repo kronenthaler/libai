@@ -199,6 +199,22 @@ public final class Matrix {
 	}
 
 	/**
+	 *	Calculate the dot product between this matrix and another.
+	 *	This method can safely calculate the dot product between row-column, row-row, column-column matrices.
+	 *	@param a The matrix to multiply
+	 *	@return the scalar of the dot product.
+	 */
+	public double dotProduct(Matrix a){
+		double acum = 0;
+
+		for(int i=0;i<cols*rows;i++){
+			acum += matrix[i]*a.matrix[i];
+		}
+
+		return acum;
+	}
+
+	/**
 	 *	Transpose this matrix and left the result on a.
 	 *	The matrix a must be created and has the right dimensions.
 	 *	NOTE: Assertions of the dimensions are made with assert statement. You must

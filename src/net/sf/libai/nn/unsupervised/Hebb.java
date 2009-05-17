@@ -17,7 +17,7 @@ import net.sf.libai.nn.NeuralNetwork;
 public class Hebb extends NeuralNetwork{
 	protected double phi;
 	protected Matrix W;
-
+	
 	public Hebb(){}
 
 	/**
@@ -73,7 +73,7 @@ public class Hebb extends NeuralNetwork{
 			progress.setMinimum(-epochs);
 			progress.setValue(-epochs);
 		}
-
+		
 		while(epochs-- > 0){
 			//shuffle patterns
 			shuffle(sort);
@@ -83,21 +83,20 @@ public class Hebb extends NeuralNetwork{
 				simulate(patterns[sort[i] + offset], Y);
 				
 				//W=(1-phi)*W + alpha*Y*pt;
-				W.multiply(phi,W);
-				Y.multiply(patternsT[sort[i]],temp);
-				temp.multiply(alpha,temp);
-				W.add(temp,W);
+				//W.multiply(phi,W);
+				//Y.multiply(patternsT[sort[i]],temp);
+				//temp.multiply(alpha,temp);
+				//W.add(temp,W);
 
 				//alternative rule: no just have decay term, also inhibit the connections
 				//Wij=Wij+(phi*yi*(alpha/phi*xi - Wij))
 				//require 2 cicles to update properly the weights
-				/*for(int k=0;k<W.rows;k++){
-					for(int j=0;j<W.cols;j++){
-						W.position(k,j)=W.position(k,j) + phi*Y.position(k,0)*(((alpha/phi)*p[patron[i]].position(k,0))-W.position(k,j));
+				for(int k=0;k<W.getRows();k++){
+					for(int j=0;j<W.getColumns();j++){
+						W.position(k,j,W.position(k,j) + phi*Y.position(k,0)*(((alpha/phi)*patterns[sort[i]+offset].position(k,0))-W.position(k,j)));
 					}
-				}*/
+				}
 			}
-
 			if(progress!=null) progress.setValue(-epochs);
 		}
 		if(progress!=null) progress.setValue(1);

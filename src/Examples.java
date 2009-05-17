@@ -39,6 +39,10 @@ public class Examples extends javax.swing.JFrame {
     private void initComponents() {
 
         jTabbedPane2 = new javax.swing.JTabbedPane();
+        fuzzyPanel1 = new demos.fuzzy.FuzzyPanel();
+        jTabbedPane3 = new javax.swing.JTabbedPane();
+        binaryPanel1 = new demos.genetic.BinaryPanel();
+        permutation1 = new demos.genetic.Permutation();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         perceptronPanel1 = new demos.nn.PerceptronPanel();
         mPLPanel1 = new demos.nn.MPLPanel();
@@ -46,22 +50,11 @@ public class Examples extends javax.swing.JFrame {
         lVQPanel1 = new demos.nn.LVQPanel();
         kohonenPanel1 = new demos.nn.KohonenPanel();
         competitivePanel1 = new demos.nn.CompetitivePanel();
-        fuzzyPanel1 = new demos.fuzzy.FuzzyPanel();
-        jTabbedPane3 = new javax.swing.JTabbedPane();
-        binaryPanel1 = new demos.genetic.BinaryPanel();
-        permutation1 = new demos.genetic.Permutation();
+        hebbPanel1 = new demos.nn.HopfieldPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Examples libai");
 
-        jTabbedPane1.addTab("Adaline", perceptronPanel1);
-        jTabbedPane1.addTab("MLP", mPLPanel1);
-        jTabbedPane1.addTab("RBF", rBFPanel1);
-        jTabbedPane1.addTab("LVQ", lVQPanel1);
-        jTabbedPane1.addTab("Kohonen", kohonenPanel1);
-        jTabbedPane1.addTab("Competitive", competitivePanel1);
-
-        jTabbedPane2.addTab("Neural Networks", jTabbedPane1);
         jTabbedPane2.addTab("Fuzzy", fuzzyPanel1);
 
         jTabbedPane3.addTab("Binary", binaryPanel1);
@@ -69,11 +62,23 @@ public class Examples extends javax.swing.JFrame {
 
         jTabbedPane2.addTab("Genetic", jTabbedPane3);
 
+        jTabbedPane1.addTab("Adaline", perceptronPanel1);
+        jTabbedPane1.addTab("MLP", mPLPanel1);
+        jTabbedPane1.addTab("RBF", rBFPanel1);
+        jTabbedPane1.addTab("LVQ", lVQPanel1);
+        jTabbedPane1.addTab("Kohonen", kohonenPanel1);
+        jTabbedPane1.addTab("Competitive", competitivePanel1);
+        jTabbedPane1.addTab("Hopfield", hebbPanel1);
+
+        jTabbedPane2.addTab("Neural Networks", jTabbedPane1);
+
+        jTabbedPane2.setSelectedComponent(jTabbedPane1);
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jTabbedPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 434, Short.MAX_VALUE)
+            .add(jTabbedPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 639, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -98,6 +103,7 @@ public class Examples extends javax.swing.JFrame {
     private demos.genetic.BinaryPanel binaryPanel1;
     private demos.nn.CompetitivePanel competitivePanel1;
     private demos.fuzzy.FuzzyPanel fuzzyPanel1;
+    private demos.nn.HopfieldPanel hebbPanel1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTabbedPane jTabbedPane2;
     private javax.swing.JTabbedPane jTabbedPane3;

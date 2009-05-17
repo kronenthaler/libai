@@ -7,7 +7,7 @@ package net.sf.libai.common;
  */
 public class Signum implements Function{
 	public double eval(double x) {
-		return x<0 ? 0 : 1;
+		return x > 0 ? 1 : 0;
 	}
 
 	public Function getDerivate() {
