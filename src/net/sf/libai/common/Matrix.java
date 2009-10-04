@@ -65,6 +65,18 @@ public final class Matrix {
 	}
 
 	/**
+	 *	Create a new Matrix filled with low random numbers.
+	 *	@param r number of rows
+	 *	@param c number of cols
+	 *	@return a new matrix filled with low random numbers.s
+	 */
+	public static Matrix random(int r,int c){
+		Matrix ret = new Matrix(r,c);
+		ret.fill();
+		return ret;
+	}
+
+	/**
 	 *	Adds two matrix. This + a, and left the result on b.
 	 *	The matrix b must be created and has the same dimension of this and a.
 	 *	NOTE: Assertions of the dimensions are made with assert statement. You must
@@ -308,14 +320,25 @@ public final class Matrix {
 		matrix[(i*cols)+j]=v;
 	}
 
-	/***/
+	/**
+	 *	Substract the value of this with the value of b, and let the result on resultSubstract
+	 *	Also, copy the original value of this into resultCopy.
+	 *	@param b Matrix to substract
+	 *	@param resultSubstract Matrix to hold the result of the substraction
+	 *	@param resultCopy Matrix to hold the copy of this.
+	 */
 	public void subtractAndCopy(Matrix b, Matrix resultSubstract, Matrix resultCopy){
 		for(int i=0;i<matrix.length;i++){
 			resultSubstract.matrix[i] = matrix[i]-b.matrix[i];
 			resultCopy.matrix[i] = matrix[i];
 		}
 	}
-
+	/**
+	 *	Return in result the value of (this*a + b) for each This(i,j)
+	 *	@param a constant to multiply
+	 *	@param b matrix to add
+	 *	@param result	Matrix to hold the result of the operation.
+	 */
 	public void multiplyAndAdd(double a, Matrix b, Matrix result){
 		for(int i=0;i<matrix.length;i++){
 			result.matrix[i] = matrix[i]*a + b.matrix[i];
@@ -323,7 +346,74 @@ public final class Matrix {
 	}
 
 	/**
-	 *	Print this matrix in the OpenOffice formula format.
+	 *	Increments the value of one position by v.
+	 *	@param i index of the row
+	 *	@param j index of the column
+	 *	@param v value to increment.
+	 */
+	public final void increment(int i,int j, double v){
+		matrix[(i*cols)+j] += v;
+	}
+	
+	public void swap(int i,int j){
+		double[] a = getRow(i);
+		double[] b = getRow(j);
+		setRow(i,b);
+		setRow(j,a);
+	}
+
+	/*//TODO needs translation to this matrix class.
+	public Matrix solve(Matrix rhs) {
+        if (rows != cols || rhs.rows != cols || rhs.cols != 1)
+            throw new RuntimeException("Illegal matrix dimensions.");
+
+        // create copies of the data
+        Matrix A = new Matrix(this);
+        Matrix b = new Matrix(rhs);
+
+        // Gaussian elimination with partial pivoting
+        for (int i = 0; i < cols; i++) {
+
+            // find pivot row and swap
+            int max = i;
+            for (int j = i + 1; j < cols; j++)
+                if (Math.abs(A.data[j][i]) > Math.abs(A.data[max][i]))
+                    max = j;
+
+            A.swap(i, max);
+            b.swap(i, max);
+
+            // singular
+            if (A.data[i][i] == 0.0) throw new RuntimeException("Matrix is singular.");
+
+            // pivot within b
+            for (int j = i + 1; j < cols; j++)
+                b.data[j][0] -= b.data[i][0] * A.data[j][i] / A.data[i][i];
+
+            // pivot within A
+            for (int j = i + 1; j < cols; j++) {
+                double m = A.data[j][i] / A.data[i][i];
+                for (int k = i+1; k < cols; k++) {
+                    A.data[j][k] -= A.data[i][k] * m;
+                }
+                A.data[j][i] = 0.0;
+            }
+        }
+
+        // back substitution
+        Matrix x = new Matrix(cols, 1);
+        for (int j = cols - 1; j >= 0; j--) {
+            double t = 0.0;
+            for (int k = j + 1; k < cols; k++)
+                t += A.data[j][k] * x.data[k][0];
+            x.data[j][0] = (b.data[j][0] - t) / A.data[j][j];
+        }
+        return x;
+    }
+	*/
+
+	/**
+	 *	Print this matrix in the OpenOffice's formula format.
 	 *	Useful for copy & paste in OO documents.
 	 *	@param out Stream to write on.
 	 */

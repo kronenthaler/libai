@@ -51,6 +51,10 @@ public class Examples extends javax.swing.JFrame {
         kohonenPanel1 = new demos.nn.KohonenPanel();
         competitivePanel1 = new demos.nn.CompetitivePanel();
         hebbPanel1 = new demos.nn.HopfieldPanel();
+        treesPanel1 = new demos.trees.TreesPanel();
+        jTabbedPane4 = new javax.swing.JTabbedPane();
+        bFSPanel1 = new demos.search.BFSPanel();
+        aStarPanel1 = new demos.search.AStarPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Examples libai");
@@ -72,13 +76,29 @@ public class Examples extends javax.swing.JFrame {
 
         jTabbedPane2.addTab("Neural Networks", jTabbedPane1);
 
-        jTabbedPane2.setSelectedComponent(jTabbedPane1);
+        org.jdesktop.layout.GroupLayout treesPanel1Layout = new org.jdesktop.layout.GroupLayout(treesPanel1);
+        treesPanel1.setLayout(treesPanel1Layout);
+        treesPanel1Layout.setHorizontalGroup(
+            treesPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 634, Short.MAX_VALUE)
+        );
+        treesPanel1Layout.setVerticalGroup(
+            treesPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(0, 491, Short.MAX_VALUE)
+        );
+
+        jTabbedPane2.addTab("Decision Trees", treesPanel1);
+
+        jTabbedPane4.addTab("BFS", bFSPanel1);
+        jTabbedPane4.addTab("A*", aStarPanel1);
+
+        jTabbedPane2.addTab("Search", jTabbedPane4);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jTabbedPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 639, Short.MAX_VALUE)
+            .add(jTabbedPane2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 639, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -100,6 +120,8 @@ public class Examples extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private demos.search.AStarPanel aStarPanel1;
+    private demos.search.BFSPanel bFSPanel1;
     private demos.genetic.BinaryPanel binaryPanel1;
     private demos.nn.CompetitivePanel competitivePanel1;
     private demos.fuzzy.FuzzyPanel fuzzyPanel1;
@@ -107,12 +129,14 @@ public class Examples extends javax.swing.JFrame {
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTabbedPane jTabbedPane2;
     private javax.swing.JTabbedPane jTabbedPane3;
+    private javax.swing.JTabbedPane jTabbedPane4;
     private demos.nn.KohonenPanel kohonenPanel1;
     private demos.nn.LVQPanel lVQPanel1;
     private demos.nn.MPLPanel mPLPanel1;
     private demos.nn.PerceptronPanel perceptronPanel1;
     private demos.genetic.Permutation permutation1;
     private demos.nn.RBFPanel rBFPanel1;
+    private demos.trees.TreesPanel treesPanel1;
     // End of variables declaration//GEN-END:variables
 
 }

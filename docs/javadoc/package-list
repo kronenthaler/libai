@@ -2,6 +2,8 @@
 demos.fuzzy
 demos.genetic
 demos.nn
+demos.search
+demos.trees
 net.sf.libai.common
 net.sf.libai.fuzzy
 net.sf.libai.fuzzy.sets
@@ -10,3 +12,5 @@ net.sf.libai.genetics.chromosomes
 net.sf.libai.nn
 net.sf.libai.nn.supervised
 net.sf.libai.nn.unsupervised
+net.sf.libai.search
+net.sf.libai.trees
