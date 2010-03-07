@@ -113,11 +113,11 @@ public class MPLPanel extends javax.swing.JPanel {
 									new Function[]{NeuralNetwork.identity,NeuralNetwork.sigmoid,NeuralNetwork.identity});
 
 				if(algorithmType.getSelectedIndex() == 0){
-					net.setTrainingType(MLP.STANDARD_BACKPROPAGATION, null);
+					net.setTrainingType(MLP.STANDARD_BACKPROPAGATION);
 				}else if(algorithmType.getSelectedIndex() == 1){
-					net.setTrainingType(MLP.MOMEMTUM_BACKPROPAGATION, new double[]{0.4});
+					net.setTrainingType(MLP.MOMEMTUM_BACKPROPAGATION, 0.4);
 				}else{
-					net.setTrainingType(MLP.RESILENT_BACKPROPAGATION, null);
+					net.setTrainingType(MLP.RESILENT_BACKPROPAGATION);
 				}
 				
 				net.setProgressBar(jProgressBar1);

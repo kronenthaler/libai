@@ -54,6 +54,7 @@ public class Examples extends javax.swing.JFrame {
         treesPanel1 = new demos.trees.TreesPanel();
         jTabbedPane4 = new javax.swing.JTabbedPane();
         bFSPanel1 = new demos.search.BFSPanel();
+        dFSPanel1 = new demos.search.DFSPanel();
         aStarPanel1 = new demos.search.AStarPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -90,6 +91,7 @@ public class Examples extends javax.swing.JFrame {
         jTabbedPane2.addTab("Decision Trees", treesPanel1);
 
         jTabbedPane4.addTab("BFS", bFSPanel1);
+        jTabbedPane4.addTab("DFS", dFSPanel1);
         jTabbedPane4.addTab("A*", aStarPanel1);
 
         jTabbedPane2.addTab("Search", jTabbedPane4);
@@ -124,6 +126,7 @@ public class Examples extends javax.swing.JFrame {
     private demos.search.BFSPanel bFSPanel1;
     private demos.genetic.BinaryPanel binaryPanel1;
     private demos.nn.CompetitivePanel competitivePanel1;
+    private demos.search.DFSPanel dFSPanel1;
     private demos.fuzzy.FuzzyPanel fuzzyPanel1;
     private demos.nn.HopfieldPanel hebbPanel1;
     private javax.swing.JTabbedPane jTabbedPane1;

@@ -11,13 +11,13 @@ public class Test {
     /**
      * @param args the command line arguments
      */
+	static State target = new Node("12345678.",null,'\0',0);
     public static void main(String[] args) {
         State init = new Node(".87645321",null,'\0',0);
-		State target = new Node("12345678.",null,'\0',0);
 		System.out.println(init.getHeuristicCost());
-		long begin = System.currentTimeMillis();
+		/*long begin = System.currentTimeMillis();
 		AStar a = new AStar();
-		Node ans = (Node)a.search(init, target);
+		Node ans = (Node)a.search(init);
 		if(ans != null){
 			ans.printSolution();
 			System.out.println("\nCost: "+ans.getCost());
@@ -29,7 +29,7 @@ public class Test {
 
 		begin = System.currentTimeMillis();
 		BFS bfs = new BFS();
-		ans = (Node)bfs.search(init, target);
+		ans = (Node)bfs.search(init);
 		if(ans != null){
 			ans.printSolution();
 			System.out.println("\nCost: "+ans.getCost());
@@ -38,7 +38,7 @@ public class Test {
 		end = System.currentTimeMillis();
 		System.out.println("time: "+(end-begin));
 		//*/
-    }
+	}
 
 	static class Node extends State{
 		String table = "";
@@ -128,6 +128,11 @@ public class Test {
 		@Override
 		public int hashCode() {
 			return table.hashCode();
+		}
+
+		@Override
+		public boolean isSolution(){
+			return table.equals(((Node)target).table);
 		}
 	}
 }

@@ -6,8 +6,8 @@ import java.util.*;
  *
  * @author kronenthaler
  */
-public class DFS {
-	public State search(State init, State target){
+public class DFS implements Search{
+	public State search(State init){
 		HashMap<State, Boolean> visited=new HashMap<State,Boolean>();
 		Stack<State> q = new Stack<State>();
 		q.add(init);
@@ -16,7 +16,7 @@ public class DFS {
 		while(!q.isEmpty()){
 			State current = q.pop();
 
-			if(current.equals(target)){
+			if(current.isSolution()){
 				return current;
 			}
 

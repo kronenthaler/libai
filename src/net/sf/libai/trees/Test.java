@@ -32,60 +32,26 @@ public class Test {
 						}
 					//}
 				}
-				//if(attrs[4].value.compareTo("Iris-virginica")==0) iv.addRecord(new RecordData(attrs));
-				//if(attrs[4].value.compareTo("Iris-versicolor")==0) ive.addRecord(new RecordData(attrs));
-				//if(attrs[4].value.compareTo("Iris-setosa")==0) is.addRecord(new RecordData(attrs));
-				if(attrs[10].value.compareTo("g")==0) ig.addRecord(new RecordData(attrs));
-				if(attrs[10].value.compareTo("h")==0) ih.addRecord(new RecordData(attrs));
+				ds.addRecord(new RecordData(attrs));
 			}
 			in.close();
 
-			//iv.randomize();
-			//ive.randomize();
-			//is.randomize();
-			//ig.randomize();
-			//ih.randomize();
-			//picar el data set en un conjunto de 70/30 para train y test.
+			DataSet ret[] = ds.generateTrainningTestSets(0.3);
+			System.out.println(ret[0].getRecordCount()+" "+ret[1].getRecordCount());
 
-			int i=0;
-			/*for(;i<iv.getRecordCount()*0.7;i++)
-				ds.addRecord(iv.getRecord(i));
-			for(;i<iv.getRecordCount();i++)
-				test.addRecord(iv.getRecord(i));
-
-			for(i=0;i<ive.getRecordCount()*0.7;i++)
-				ds.addRecord(ive.getRecord(i));
-			for(;i<ive.getRecordCount();i++)
-				test.addRecord(ive.getRecord(i));
-
-			for(i=0;i<is.getRecordCount()*0.7;i++)
-				ds.addRecord(is.getRecord(i));
-			for(;i<is.getRecordCount();i++)
-				test.addRecord(is.getRecord(i));*/
-
-			for(i=0;i<ig.getRecordCount()*0.2;i++)
-				ds.addRecord(ig.getRecord(i));
-			for(;i<ig.getRecordCount();i++)
-				test.addRecord(ig.getRecord(i));
-
-			for(i=0;i<ih.getRecordCount()*0.2;i++)
-				ds.addRecord(ih.getRecord(i));
-			for(;i<ih.getRecordCount();i++)
-				test.addRecord(ih.getRecord(i));
-
-			DecisionTree tree = C4_5.getInstance(ds);
+			DecisionTree tree = C4_5.getInstance(ret[0]);
 			tree.print();
 			tree.save(new File("magic.c45"));
 			int error = 0;
 
-			for(i=0;i<test.getRecordCount();i++){
-				RecordData r = test.getRecord(i);
+			for(int i=0;i<ret[1].getRecordCount();i++){
+				RecordData r = ret[1].getRecord(i);
 				if((tree.predict(r).compareTo(r.attributes.get(ds.getOutputIndex()))!=0)){
 					System.out.println(r+"=> "+tree.predict(r)+" "+(tree.predict(r).compareTo(r.attributes.get(ds.getOutputIndex()))==0));
 					error++;
 				}
 			}
-			System.out.println("error: "+error/(double)test.getRecordCount());
+			System.out.println("error: "+error/(double)ret[1].getRecordCount());
 		}catch(Exception e){
 			e.printStackTrace();
 		}

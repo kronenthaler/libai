@@ -63,7 +63,7 @@ public class MLP extends NeuralNetwork{
 		func = funcs;
 		this.params = new double[]{beta};
 		
-		trainingType = beta != 0 ? MOMEMTUM_BACKPROPAGATION : STANDARD_BACKPROPAGATION;
+		trainingType = beta > 0 ? MOMEMTUM_BACKPROPAGATION : STANDARD_BACKPROPAGATION;
 		layers = nperlayer.length;
 
 		W = new Matrix[layers];//position zero reserved
@@ -84,7 +84,7 @@ public class MLP extends NeuralNetwork{
 	 *	@param _trainingType The training algorithm to use, STANDARD_BACKPROPAGATION, MOMENTUM_BACKPROPAGATION or RESILENT_BACKPROPAGATION.
 	 *	@param params The set of parameters for the algorithm selected.
 	 */
-	public void setTrainingType(int _trainingType, double[] params){
+	public void setTrainingType(int _trainingType, double... params){
 		trainingType = _trainingType;
 		if(trainingType == MOMEMTUM_BACKPROPAGATION){
 			if(params.length < 1) throw new IllegalArgumentException("Momemtum algorithm requires 1 parameter: beta");
@@ -486,6 +486,7 @@ public class MLP extends NeuralNetwork{
 	}
 
 	@Override
+	@SuppressWarnings("empty-statement")
 	public boolean save(String path){
 		try{
 			PrintStream out = new PrintStream(new FileOutputStream(path), true);

@@ -3,16 +3,13 @@ package net.sf.libai.trees;
 import java.util.*;
 import java.util.ArrayList;
 import net.sf.libai.common.*;
+
 /**
- *	TODO: mejorar la esuructura de datos
- *	- hacer que el algoritmo de entrenamiento use datasets en vez de arrays de records.
- *  - usar el arreglo que mantenga la frecuencia de los valores de los diferentes atributos.
- *  - crear una jerarquia de atributos: discrete<T>, continuous<T>
- *  - los calculos de entropia estan atados al dataset
- *  - los algoritmos de entrenamiento estan atados al decision tree, no al data set.
+ *	REVISAR LOS CALCULOS DE ESTA CLASE PARA LOS VALORES CONTINUOS.
+ *	QUINLAN UTILIZA SOLAMENTE LAS FRECUENCIAS DE LAS SALIDAS.
  *	@author kronenthaler
  */
-public class DataSet {
+public class DataSet implements Comparator<RecordData>{
 	private ArrayList<RecordData> records;
 	private HashMap<Comparable, Integer> freq[];
 	private int outputIndex;
@@ -35,16 +32,51 @@ public class DataSet {
 			addRecord(r);
 	}
 
+	public DataSet[] generateTrainningTestSets(double percentPerClass){
+		DataSet[] ret = new DataSet[2];
+		ret[0] = new DataSet(outputIndex); //train
+		ret[1] = new DataSet(outputIndex); //test
+
+		Collections.sort(records,this);
+		
+		int offset = 0;
+		Random r = new Random();
+		while(offset < records.size()){
+			Attribute e = records.get(offset).attributes.get(outputIndex);
+			int cant = freq[outputIndex].get(e.value);
+			int index[]=new int[cant];
+			int i;
+			for(i=0;i<cant;index[i]=offset+i++);
+			for(i=0;i<cant;i++)	Collections.swap(records, index[i], index[r.nextInt(cant)]);
+			for(i=offset;i<(int)offset+(cant*percentPerClass);i++) ret[0].addRecord(records.get(i));
+			for(;i<offset+cant;i++) ret[1].addRecord(records.get(i));
+
+			offset += cant;
+		}
+
+		return ret;
+	}
+
 	public void addRecord(RecordData d){
+		addRecord(d,-1);
+	}
+	
+	public void addRecord(RecordData d,int index){
 		if(freq == null) freq = new HashMap[d.attributes.size()];
 		
 		records.add(d);
-
-		for(int i=0;i<d.attributes.size();i++){
-			Comparable att = d.attributes.get(i).value;
-			if(freq[i]==null) freq[i]=new HashMap<Comparable,Integer>();
-			if(!freq[i].containsKey(att)) freq[i].put(att,0);
-			freq[i].put(att,freq[i].get(att)+1);
+		if(index == -1){
+			for(int i=0;i<d.attributes.size();i++){
+				Comparable att = d.attributes.get(i).value;
+				if(freq[i]==null) freq[i]=new HashMap<Comparable,Integer>();
+				if(!freq[i].containsKey(att)) freq[i].put(att,0);
+				freq[i].put(att,freq[i].get(att)+1);
+			}
+		}else{
+			Comparable att = d.attributes.get(index).value;
+			if(freq[index]==null) freq[index]=new HashMap<Comparable,Integer>();
+			if(!freq[index].containsKey(att)) freq[index].put(att,0);
+			freq[index].put(att,freq[index].get(att)+1);
 		}
 	}
 
@@ -89,13 +121,13 @@ public class DataSet {
 		return H(Y) - H(Y,X);
 	}
 
-	public Comparable[] IGstar(int y, int x){
+	public Comparable[] IGstar(int y, int x){ //esta es la funcion que esta produciendo el problema!!!!!
 		double hy = H(y);
 		double max = 0;
 		Comparable maxt = null;
 
 		//System.out.println("x:"+freq[x].size());
-		for(Comparable t : freq[x].keySet()){
+		for(Comparable t : freq[x].keySet()){ //quinlan solo itera sobre las posibles salidas.
 			double aux = Hd(y,x,t);
 			double temp = hy - aux;
 
@@ -113,8 +145,8 @@ public class DataSet {
 		DataSet less = new DataSet(outputIndex);
 		DataSet greater = new DataSet(outputIndex);
 		for(RecordData r : records){
-			if(r.attributes.get(x).value.compareTo(t) <= 0) less.addRecord(r);
-			else greater.addRecord(r);
+			if(r.attributes.get(x).value.compareTo(t) <= 0) less.addRecord(r,y);
+			else greater.addRecord(r,y);
 		}
 
 		double pless = less.records.size() / (double)records.size();
@@ -128,9 +160,9 @@ public class DataSet {
 	//H(X)
 	public double H(int x){
 		double acum=0;
-		int n = records.size();
+		int recs = records.size();
 		for(Comparable e:freq[x].keySet()){
-			double p = freq[x].get(e)/(double)n;
+			double p = freq[x].get(e)/(double)recs;
 			acum += p*(Math.log(p)/Math.log(2));
 		}
 
@@ -198,5 +230,9 @@ public class DataSet {
 		for(RecordData r:records)
 			ret.append(r).append('\n');
 		return ret.toString();
+	}
+
+	public int compare(RecordData o1, RecordData o2) {
+		return o1.attributes.get(outputIndex).compareTo(o2.attributes.get(outputIndex));
 	}
 }

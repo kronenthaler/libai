@@ -7,8 +7,8 @@ import java.util.*;
  *
  * @author kronenthaler
  */
-public class BFS {
-	public State search(State init, State target){
+public class BFS implements Search{
+	public State search(State init){
 		HashMap<State, Boolean> visited=new HashMap<State,Boolean>();
 		ArrayList<State> q = new ArrayList<State>();
 		q.add(init);
@@ -17,7 +17,7 @@ public class BFS {
 		while(!q.isEmpty()){
 			State current = q.remove(0);
 
-			if(current.equals(target)){
+			if(current.isSolution()){
 				return current;
 			}
 

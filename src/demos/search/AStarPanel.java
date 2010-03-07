@@ -97,8 +97,8 @@ public class AStarPanel extends javax.swing.JPanel {
 		}
 
 		State init = new Node(inputTxt.getText(),null,'\0',0);
-		State target = new Node("12345678.",null,'\0',0);
-		Node ans = (Node) bfs.search(init,target);
+		
+		Node ans = (Node) bfs.search(init);
 		if(ans!=null){
 			answerTxt.setText("");
 			ans.printSolution(answerTxt);
@@ -116,7 +116,7 @@ public class AStarPanel extends javax.swing.JPanel {
     private javax.swing.JTextArea jTextArea1;
     // End of variables declaration//GEN-END:variables
 
-
+	static Node target = new Node("12345678.",null,'\0',0);
 	static class Node extends State{
 		String table = "";
 		Node parent = null;
@@ -205,6 +205,11 @@ public class AStarPanel extends javax.swing.JPanel {
 		@Override
 		public int hashCode() {
 			return table.hashCode();
+		}
+
+		@Override
+		public boolean isSolution(){
+			return table.equals(target.table);
 		}
 	}
 }

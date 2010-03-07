@@ -3,12 +3,12 @@ package net.sf.libai.search;
 import java.util.*;
 
 /**
- *
+ *	JUST USEFUL FOR MINIMIZATION PROBLEMS!!
  * @author kronenthaler
  */
-public class AStar {
+public class AStar implements Search{
 
-	public State search(State init, State target){
+	public State search(State init){
 		PriorityQueue<State> opened = new PriorityQueue<State>();
 		HashMap<State, State> openedMirror = new HashMap<State, State>();
 		HashMap<State, State> closed = new HashMap<State, State>();
@@ -22,7 +22,7 @@ public class AStar {
 			openedMirror.remove(current);
 			closed.put(current, current);
 			
-			if(current.equals(target)){
+			if(current.isSolution()){
 				return current;
 			}
 

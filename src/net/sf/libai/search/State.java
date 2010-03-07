@@ -27,4 +27,7 @@ public abstract class State implements Comparable<State>{
 	public boolean equals(Object o){
 		return compareTo((State)o) == 0;
 	}
+
+	/** Determines if the current state is a solution or not */
+	public abstract boolean isSolution();
 }

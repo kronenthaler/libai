@@ -1,13 +1,6 @@
 
 /*
  * BFSPanel.java
-
-
-			@Override
-			public boolean verify(JComponent input) {
-				throw new UnsupportedOperationException("Not supported yet.");
-			}
-		}*
  * Created on Oct 3, 2009, 3:33:04 PM
  */
 
@@ -106,8 +99,7 @@ public class BFSPanel extends javax.swing.JPanel {
 		}
 		
 		State init = new Node(inputTxt.getText(),null,'\0');
-		State target = new Node("12345678.",null,'\0');
-		Node ans = (Node) bfs.search(init,target);
+		Node ans = (Node) bfs.search(init);
 		if(ans!=null){
 			answerTxt.setText("");
 			ans.printSolution(answerTxt);
@@ -124,7 +116,7 @@ public class BFSPanel extends javax.swing.JPanel {
     private javax.swing.JTextArea jTextArea1;
     // End of variables declaration//GEN-END:variables
 
-
+	static Node target = new Node("12345678.",null,'\0');
 	static class Node extends State{
 		String table = "";
 		Node parent = null;
@@ -194,6 +186,11 @@ public class BFSPanel extends javax.swing.JPanel {
 		@Override
 		public int hashCode() {
 			return table.hashCode();
+		}
+
+		@Override
+		public boolean isSolution(){
+			return table.equals(target.table);
 		}
 	}
 }
