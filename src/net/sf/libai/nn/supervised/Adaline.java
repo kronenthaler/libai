@@ -1,5 +1,6 @@
 package net.sf.libai.nn.supervised;
 
+import java.io.*;
 import net.sf.libai.common.Matrix;
 
 /**
@@ -47,5 +48,17 @@ public class Adaline extends Perceptron{
 	public void simulate(Matrix pattern, Matrix result) {
 		W.multiply(pattern,result);	//inner product
 		result.add(b,result);		//bias
+	}
+
+	public static Adaline open(String path) {
+		try{
+			ObjectInputStream in = new ObjectInputStream(new FileInputStream(path));
+			Adaline p = (Adaline)in.readObject();
+			in.close();
+			return p;
+		}catch(Exception e){
+			e.printStackTrace();
+			return null;
+		}
 	}
 }

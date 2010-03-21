@@ -1,10 +1,11 @@
 package net.sf.libai.common;
+import java.io.Serializable;
 
 /**
  *
  * @author kronenthaler
  */
-public interface Kernel {
+public interface Kernel extends Serializable{
 	/**
 	 *	Evaluates a kernel between the two Vectors .
 	 *	@param A The first pattern to calculate the kernel

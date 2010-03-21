@@ -9,7 +9,7 @@ import java.io.*;
  *	scalar product, transponse, and other useful operations for this API.
  *	@author kronenthaler
  */
-public final class Matrix {
+public final class Matrix implements Serializable{
 	/** Matrix's data, stored for row in a sequential array. */
 	private double matrix[];
 
@@ -70,10 +70,14 @@ public final class Matrix {
 	 *	@param c number of cols
 	 *	@return a new matrix filled with low random numbers.s
 	 */
-	public static Matrix random(int r,int c){
+	public static Matrix random(int r,int c,boolean signed){
 		Matrix ret = new Matrix(r,c);
-		ret.fill();
+		ret.fill(signed);
 		return ret;
+	}
+
+	public static Matrix random(int r,int c){
+		return random(r,c,true);
 	}
 
 	/**

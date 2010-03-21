@@ -443,70 +443,15 @@ public class MLP extends NeuralNetwork{
 			Y[layers-1].copy(result);
 	}
 	
-	@Override
-	public boolean open(String path){
+	public static MLP open(String path) {
 		try{
-			Scanner in = new Scanner(new FileInputStream(path));
-			layers = in.nextInt();
-
-			nperlayer=new int[layers];
-			for(int i=0;i<layers;i++)
-				nperlayer[i]=in.nextInt();
-
-			W=new Matrix[layers];//position zero reserved
-			b=new Matrix[layers];//position zero reserved
-			Y=new Matrix[layers];//position zero reserved for the input pattern
-			d=new Matrix[layers];//position zero reserved
-			u=new Matrix[layers];//position zero reserved
-			Wt=new Matrix[layers];
-			Yt=new Matrix[layers];
-			M=new Matrix[layers];
-
-			init(); //create the matrix
-
-			//fill W[i], b[i]
-			for(int l=1;l<layers;l++){
-				for(int i=0;i<W[l].getRows();i++){
-					for(int j=0;j<W[l].getColumns();j++){
-						W[l].position(i,j,in.nextDouble());
-					}
-				}
-
-				for(int i=0;i<b[l].getRows();i++){
-					for(int j=0;j<b[l].getColumns();j++){
-						b[l].position(i,j,in.nextDouble());
-					}
-				}
-			}
+			ObjectInputStream in = new ObjectInputStream(new FileInputStream(path));
+			MLP p = (MLP)in.readObject();
+			in.close();
+			return p;
 		}catch(Exception e){
 			e.printStackTrace();
-			return false;
+			return null;
 		}
-		return true;
 	}
-
-	@Override
-	@SuppressWarnings("empty-statement")
-	public boolean save(String path){
-		try{
-			PrintStream out = new PrintStream(new FileOutputStream(path), true);
-		
-			out.printf("%d\n",layers);
-
-			for(int i=0;i<layers;out.printf("%d ",nperlayer[i++]));
-			out.println();
-
-			for(int i=1;i<layers;i++){
-				out.println(W[i]);
-				out.println(b[i]);
-			}
-
-			out.close();
-		}catch(IOException e){
-			e.printStackTrace();
-			return false;
-		}
-		return true;
-	}
-
 }

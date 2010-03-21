@@ -147,41 +147,16 @@ public class Hebb extends NeuralNetwork{
 		return error/(double)(length*patterns[0].getRows());
 	}
 
-	@Override
-	public boolean save(String path) {
+	public static Hebb open(String path) {
 		try{
-			PrintStream out = new PrintStream(new FileOutputStream(path), true);
-			out.printf("%d\n",W.getRows());
-
-			out.println(W);//W.print(f);
-
-			out.close();
-		}catch(IOException e){
-			e.printStackTrace();
-			return false;
-		}
-		return true;
-	}
-
-	@Override
-	public boolean open(String path) {
-		try{
-			Scanner in = new Scanner(new FileInputStream(path));
-			int ins = in.nextInt();
-			
-			W=new Matrix(ins,ins);
-
-			for(int i=0;i<ins;i++)
-				for(int j=0;j<ins;j++)
-					W.position(i,j,in.nextDouble());
-
+			ObjectInputStream in = new ObjectInputStream(new FileInputStream(path));
+			Hebb p = (Hebb)in.readObject();
 			in.close();
+			return p;
 		}catch(Exception e){
 			e.printStackTrace();
-			return false;
+			return null;
 		}
-
-		return true;
 	}
 
 }

@@ -203,16 +203,6 @@ public class Kohonen extends NeuralNetwork{
 		return error;
 	}
 
-	@Override
-	public boolean save(String path) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	@Override
-	public boolean open(String path) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
 	private Matrix get(int i,int j){ return W[(i*nperlayer[2])+j]; }
 
 	private double neighbor(int i,int j,int ig,int jg){
@@ -271,6 +261,18 @@ public class Kohonen extends NeuralNetwork{
 					map[i][j]=c;
 				}
 			}
+		}
+	}
+
+	public static Kohonen open(String path) {
+		try{
+			ObjectInputStream in = new ObjectInputStream(new FileInputStream(path));
+			Kohonen p = (Kohonen)in.readObject();
+			in.close();
+			return p;
+		}catch(Exception e){
+			e.printStackTrace();
+			return null;
 		}
 	}
 }

@@ -1,4 +1,5 @@
 package net.sf.libai.common;
+import java.io.Serializable;
 
 /**
  * Interface for real fuctions F(x): R -> R.
@@ -6,7 +7,7 @@ package net.sf.libai.common;
  * object to handle this derivate.
  * @author kronenthaler
  */
-public interface Function {
+public interface Function extends Serializable{
 	/**
 	 * Function to evaluate.
 	 * @param x the input value

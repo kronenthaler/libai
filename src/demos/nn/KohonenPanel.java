@@ -15,7 +15,7 @@ public class KohonenPanel extends javax.swing.JPanel {
 	static double f(double x){
 		return Math.sin(x) + Math.cos(x);
 	}
-	int map[][];
+	int map[][],map2[][];
 	
     /** Creates new form MPLPPanel */
     public KohonenPanel() {
@@ -72,7 +72,7 @@ public class KohonenPanel extends javax.swing.JPanel {
         canvas.setLayout(canvasLayout);
         canvasLayout.setHorizontalGroup(
             canvasLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 530, Short.MAX_VALUE)
+            .add(0, 534, Short.MAX_VALUE)
         );
         canvasLayout.setVerticalGroup(
             canvasLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -86,7 +86,7 @@ public class KohonenPanel extends javax.swing.JPanel {
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 534, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 538, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, canvas, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(layout.createSequentialGroup()
                         .add(jProgressBar1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 456, Short.MAX_VALUE)
@@ -150,7 +150,7 @@ public class KohonenPanel extends javax.swing.JPanel {
 				final Kohonen net = new Kohonen(nperlayer, 10);
 				net.setProgressBar(jProgressBar1);
 				net.train(p, ex, 1, 20, 0, p.length - test);
-				
+
 				map = net.getMap();
 				canvas.repaint();
 

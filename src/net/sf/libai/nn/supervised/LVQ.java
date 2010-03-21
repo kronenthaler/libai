@@ -143,50 +143,15 @@ public class LVQ extends Competitive{
 		return (length-correct)/(double)length;
 	}
 
-	@Override
-	public boolean save(String path) {
+	public static LVQ open(String path) {
 		try{
-			PrintStream out = new PrintStream(new FileOutputStream(path), true);
-			out.printf("%d %d %d\n",ins, subclasses,outs);
-
-			out.println(W);//W.print(f);
-			out.println(W2);
-
-			out.close();
-		}catch(IOException e){
-			e.printStackTrace();
-			return false;
-		}
-		return true;
-	}
-
-	@Override
-	public boolean open(String path) {
-		try{
-			Scanner in = new Scanner(new FileInputStream(path));
-			ins = in.nextInt();
-			subclasses = in.nextInt();
-			outs = in.nextInt();
-
-			W = new Matrix(outs*subclasses,ins);
-			W2 = new Matrix(outs,outs*subclasses);
-
-			for(int i=0;i<outs*subclasses;i++)
-				for(int j=0;j<ins;j++){
-					W.position(i,j,in.nextDouble());
-				}
-
-			for(int i=0;i<outs;i++)
-				for(int j=0;j<outs*subclasses;j++){
-					W2.position(i,j,in.nextDouble());
-				}
-
+			ObjectInputStream in = new ObjectInputStream(new FileInputStream(path));
+			LVQ p = (LVQ)in.readObject();
 			in.close();
+			return p;
 		}catch(Exception e){
 			e.printStackTrace();
-			return false;
+			return null;
 		}
-
-		return true;
 	}
 }

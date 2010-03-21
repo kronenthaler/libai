@@ -28,7 +28,7 @@ public class Permutation extends javax.swing.JPanel implements Fitness{
         jProgressBar1 = new javax.swing.JProgressBar();
         jButton1 = new javax.swing.JButton();
 
-        jTextPane1.setText("Evolve a population of permutation chromosomes to approximate the function F(x) < F(x+1), ie, sort the positions in ascending order.\nThe evolving algorithm uses the roulette selection method and the elitism. The pm = 0.01 and the pc = 0.6, with a population of 200 individuals.\nThe best chromosome is showed and the fitness for that chromosome.\n");
+        jTextPane1.setText("Evolve a population of permutation chromosomes to approximate the function F(x) < F(x+1), ie, sort the positions in ascending order.\nThe evolving algorithm uses the roulette selection method and elitism. The pm = 0.01 and the pc = 0.6, with a population of 200 individuals.\nThe best chromosome is showed and the fitness for that chromosome.\n");
         jScrollPane1.setViewportView(jTextPane1);
 
         jProgressBar1.setString("evolving");
@@ -45,11 +45,10 @@ public class Permutation extends javax.swing.JPanel implements Fitness{
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 400, Short.MAX_VALUE)
             .add(layout.createSequentialGroup()
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
                     .add(layout.createSequentialGroup()
                         .add(jProgressBar1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 296, Short.MAX_VALUE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
@@ -58,7 +57,6 @@ public class Permutation extends javax.swing.JPanel implements Fitness{
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 300, Short.MAX_VALUE)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)

@@ -19,7 +19,7 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane1" alignment="1" pref="376" max="32767" attributes="0"/>
+                  <Component id="jScrollPane1" alignment="1" pref="380" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="jProgressBar1" pref="296" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -55,7 +55,7 @@
       <SubComponents>
         <Component class="javax.swing.JTextPane" name="jTextPane1">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Evolve a population of binary chromosomes to approximate the function x = e^-x. Having a precission of 1.e-5. &#xa;The evolving algorithm uses the roulette selection method and the elitism. The pm = 0.01 and the pc = 0.6, with a population of 200 individuals.&#xa;The best chromosome is showed in its binary form and the representing value.&#xa;"/>
+            <Property name="text" type="java.lang.String" value="Evolve a population of binary chromosomes to approximate the function x = e^-x. Having a precission of 1.e-5. &#xa;The evolving algorithm uses the roulette selection method and elitism. The pm = 0.01 and the pc = 0.6, with a population of 200 individuals.&#xa;The best chromosome is showed in its binary form and the representing value.&#xa;"/>
           </Properties>
         </Component>
       </SubComponents>

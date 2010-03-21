@@ -19,9 +19,9 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane1" alignment="0" pref="608" max="32767" attributes="0"/>
+                  <Component id="jScrollPane1" alignment="0" pref="617" max="32767" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="jProgressBar1" pref="530" max="32767" attributes="0"/>
+                      <Component id="jProgressBar1" pref="535" max="32767" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="jButton1" min="-2" max="-2" attributes="0"/>
                   </Group>

@@ -1,5 +1,6 @@
 package net.sf.libai.nn;
 
+import java.io.*;
 import java.util.Random;
 import javax.swing.JProgressBar;
 import net.sf.libai.common.*;
@@ -9,9 +10,9 @@ import net.sf.libai.common.*;
  *	Provides the methods to trains, simulate an calculate the error.
  *	@author kronenthaler
  */
-public abstract class NeuralNetwork {
-	protected Plotter plotter;
-	protected JProgressBar progress;
+public abstract class NeuralNetwork implements Serializable{
+	protected transient Plotter plotter;
+	protected transient JProgressBar progress;
 
 	public void setPlotter(Plotter plotter){ this.plotter = plotter; }
 	public void setProgressBar(JProgressBar pb) { progress = pb; }
@@ -64,14 +65,17 @@ public abstract class NeuralNetwork {
 	 *	@param path The path for the output file.
 	 *	@return <code>true</code> if the file can be created and written, <code>false</code> otherwise.
 	 */
-    public abstract boolean save(String path);
-
-	/**
-	 *	Open the neural network from the file in the <code>path</code>
-	 *	@param path The path for the input file.
-	 *	@return <code>true</code> if the file can be created and readed, <code>false</code> otherwise.
-	 */
-    public abstract boolean open(String path);
+    public boolean save(String path) {
+		try{
+			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(path));
+			out.writeObject(this);
+			out.close();
+		}catch(IOException e){
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
 
 	/**
 	 *	Alias of train(patterns, answers, alpha, epochs, 0, patterns.length, 1.e-5);

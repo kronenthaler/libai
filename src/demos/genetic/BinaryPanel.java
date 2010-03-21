@@ -28,7 +28,7 @@ public class BinaryPanel extends javax.swing.JPanel implements Fitness{
         jButton1 = new javax.swing.JButton();
         jProgressBar1 = new javax.swing.JProgressBar();
 
-        jTextPane1.setText("Evolve a population of binary chromosomes to approximate the function x = e^-x. Having a precission of 1.e-5. \nThe evolving algorithm uses the roulette selection method and the elitism. The pm = 0.01 and the pc = 0.6, with a population of 200 individuals.\nThe best chromosome is showed in its binary form and the representing value.\n");
+        jTextPane1.setText("Evolve a population of binary chromosomes to approximate the function x = e^-x. Having a precission of 1.e-5. \nThe evolving algorithm uses the roulette selection method and elitism. The pm = 0.01 and the pc = 0.6, with a population of 200 individuals.\nThe best chromosome is showed in its binary form and the representing value.\n");
         jScrollPane1.setViewportView(jTextPane1);
 
         jButton1.setText("Evolve");
@@ -48,7 +48,7 @@ public class BinaryPanel extends javax.swing.JPanel implements Fitness{
             .add(layout.createSequentialGroup()
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
                     .add(layout.createSequentialGroup()
                         .add(jProgressBar1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 296, Short.MAX_VALUE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)

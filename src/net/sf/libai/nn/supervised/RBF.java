@@ -19,8 +19,8 @@ import net.sf.libai.nn.NeuralNetwork;
  */
 public class RBF extends Adaline{
 	private Matrix c[];
-	int nperlayer[];//{#inputs,#Neurons,#outputs}
-	double[] sigma;
+	protected int nperlayer[];//{#inputs,#Neurons,#outputs}
+	protected double[] sigma;
 
 	public RBF(){}
 
@@ -204,72 +204,16 @@ public class RBF extends Adaline{
 		}
 	}
 
-	@Override
-	public boolean save(String path){
+	public static RBF open(String path) {
 		try{
-			PrintStream out = new PrintStream(new FileOutputStream(path), true);
-			for(int i=0;i<3;out.printf("%d ",nperlayer[i++]));
-			out.println();
-
-			for(int i=0;i<nperlayer[1];i++) //centers
-				out.println(c[i]);
-
-			for(int i=0;i<nperlayer[1];i++) //centers
-				out.println(sigma[i]);
-
-			out.println(W);
-			out.println(b);
-
-			out.close();
-		}catch(IOException e){
-			e.printStackTrace();
-			return false;
-		}
-		return true;
-	}
-
-	@Override
-	public boolean open(String path){
-		try{
-			Scanner in = new Scanner(new FileInputStream(path));
-
-			nperlayer=new int[3];
-			
-			nperlayer[0] = in.nextInt();
-			nperlayer[1] = in.nextInt();
-			nperlayer[2] = in.nextInt();
-
-
-			W=new Matrix(nperlayer[2],nperlayer[1]);
-			b=new Matrix(nperlayer[2],1);
-			c=new Matrix[nperlayer[1]];
-			sigma=new double[nperlayer[1]];
-
-			for(int i=0;i<nperlayer[1];i++){
-				c[i]=new Matrix(nperlayer[0],1);
-				for(int j=0;j<nperlayer[0];j++){
-					c[i].position(j,0,in.nextDouble());
-				}
-			}
-
-			for(int i=0;i<nperlayer[1];i++)
-				sigma[i]=in.nextDouble();
-
-			for(int i=0;i<nperlayer[2];i++)
-				for(int j=0;j<nperlayer[1];j++){
-					W.position(i,j,in.nextDouble());
-				}
-
-			for(int i=0;i<nperlayer[2];i++){
-				b.position(i,0,in.nextDouble());
-			}
-
+			ObjectInputStream in = new ObjectInputStream(new FileInputStream(path));
+			RBF p = (RBF)in.readObject();
 			in.close();
+			return p;
 		}catch(Exception e){
 			e.printStackTrace();
-			return false;
+			return null;
 		}
-		return true;
 	}
 
 }

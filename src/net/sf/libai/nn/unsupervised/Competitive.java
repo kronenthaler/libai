@@ -165,41 +165,15 @@ public class Competitive extends NeuralNetwork{
 		return acum/(double)length;
 	}
 
-	@Override
-	public boolean save(String path) {
+	public static Competitive open(String path) {
 		try{
-			PrintStream out = new PrintStream(new FileOutputStream(path), true);
-			out.printf("%d %d\n",ins,outs);
-
-			out.println(W);//W.print(f);
-
-			out.close();
-		}catch(IOException e){
-			e.printStackTrace();
-			return false;
-		}
-		return true;
-	}
-
-	@Override
-	public boolean open(String path) {
-		try{
-			Scanner in = new Scanner(new FileInputStream(path));
-			ins = in.nextInt();
-			outs = in.nextInt();
-
-			W=new Matrix(outs,ins);
-
-			for(int i=0;i<outs;i++)
-				for(int j=0;j<ins;j++)
-					W.position(i,j,in.nextDouble());
-
+			ObjectInputStream in = new ObjectInputStream(new FileInputStream(path));
+			Competitive p = (Competitive)in.readObject();
 			in.close();
+			return p;
 		}catch(Exception e){
 			e.printStackTrace();
-			return false;
+			return null;
 		}
-
-		return true;
 	}
 }

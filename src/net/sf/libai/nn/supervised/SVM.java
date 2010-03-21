@@ -57,7 +57,6 @@ public class SVM extends NeuralNetwork{
 			progress.setValue(-epochs);
 		}
 
-		int d = patterns[offset].getRows();
 		this.minerror = minerror;
 		
 		densePoints = new Matrix[length];
@@ -86,8 +85,6 @@ public class SVM extends NeuralNetwork{
 		int numChanged = 0;
 		boolean examineAll = true;
 		while (epochs-- > 0 && (numChanged > 0 || examineAll)) {
-			System.out.println(epochs);
-
 			numChanged = 0;
 			if (examineAll) {
 				for (int k = 0; k < length; k++) {
@@ -159,77 +156,16 @@ public class SVM extends NeuralNetwork{
 		result.position(0,0,NeuralNetwork.ssignum.eval(learnedFunc(pattern)));
 	}
 
-	@Override
-	public boolean save(String path) {
-		//guardar los multiplicadores, el b y los support vectors.
+	public static SVM open(String path) {
 		try{
-			PrintStream os = new PrintStream(new FileOutputStream(path));
-
-			os.println(densePoints[0].getRows());
-			os.println(b);
-			
-			int n_support_vectors = 0;
-			for (int i = 0; i < nSupportVectors; i++) {
-				if (alph[i] > 0) {
-					n_support_vectors++;
-				}
-			}
-			os.println(n_support_vectors);
-
-			for (int i = 0; i < nSupportVectors; i++) {
-				if (alph[i] > 0) {
-					os.println(alph[i]);
-				}
-			}
-
-			for (int i = 0; i < nSupportVectors; i++) {
-				if (alph[i] > 0) {
-					for (int j = 0; j < densePoints[0].getRows(); j++) {
-						os.print(densePoints[i].position(j,0));
-						os.print(" ");
-					}
-					os.println(target[i]);
-				}
-			}
+			ObjectInputStream in = new ObjectInputStream(new FileInputStream(path));
+			SVM p = (SVM)in.readObject();
+			in.close();
+			return p;
 		}catch(Exception e){
 			e.printStackTrace();
-			return false;
+			return null;
 		}
-
-		return true;
-	}
-
-	@Override
-	public boolean open(String path) {
-		try {
-			Scanner in = new Scanner(new FileInputStream(path));
-
-			int d = in.nextInt();
-			b = in.nextDouble(); //os.println(b);
-			
-			nSupportVectors = in.nextInt(); //os.println(n_support_vectors);
-			alph = new double[nSupportVectors];
-
-			for (int i = 0; i < nSupportVectors; i++) {
-				alph[i]=in.nextDouble();//os.println(alph.get(i));
-			}
-
-			densePoints = new Matrix[nSupportVectors];
-			target = new int[nSupportVectors];
-			for (int i = 0; i < nSupportVectors; i++) {
-				Matrix m = new Matrix(d,1);
-				for (int j = 0; j < d; j++){
-					m.position(j,0, in.nextDouble());
-				}
-				densePoints[i]=m;
-				
-				target[i] = in.nextInt();//os.println(target[i]);
-			}
-		}catch(Exception e){
-			e.printStackTrace();
-			return false;
-		}
-		return true;
 	}
 
 	@Override
@@ -459,9 +395,9 @@ public class SVM extends NeuralNetwork{
 			ArrayList<Matrix> answers = new ArrayList<Matrix>();
 			Random r = new Random(0);
 			
-			BufferedReader in = new BufferedReader(new FileReader("iris2.data"));
+			//BufferedReader in = new BufferedReader(new FileReader("iris2.data"));
 			//BufferedReader in = new BufferedReader(new FileReader("magic2.data"));
-			//BufferedReader in = new BufferedReader(new FileReader("/home/kronenthaler/temp/SVM/tic-tac-toe"));
+			BufferedReader in = new BufferedReader(new FileReader("/home/kronenthaler/temp/SVM/tic-tac-toe"));
 			while(true){
 				String line = in.readLine();
 				if(line == null) break;
@@ -480,8 +416,8 @@ public class SVM extends NeuralNetwork{
 		
 			System.out.println(patterns.size());
 
-			//Kernel kernel = new SigmoidalKernel(0.75,5);
-			Kernel kernel = new LinearKernel();
+			Kernel kernel = new SigmoidalKernel(0.75,5);
+			//Kernel kernel = new LinearKernel();
 			SVM svm = new SVM(kernel);
 			Matrix []p = patterns.toArray(new Matrix[0]);
 			Matrix []t = answers.toArray(new Matrix[0]);
@@ -490,13 +426,12 @@ public class SVM extends NeuralNetwork{
 			System.out.println("error: "+svm.error(p, t));
 
 			if(svm.save("testtt.svm")){
-				SVM svm1 = new SVM(kernel);
-				svm1.open("testtt.svm");
+				SVM svm1 = SVM.open("testtt.svm");
 				System.out.println("error after reopen: "+svm1.error(p, t)+" "+svm.error(p,t));
 			}
 
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-	}*/
+	}//*/
 }
