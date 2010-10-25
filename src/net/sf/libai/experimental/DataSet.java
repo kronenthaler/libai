@@ -3,19 +3,31 @@ package net.sf.libai.experimental;
 import java.util.*;
 
 /**
- *
+ * TODO:
+ * - methods to read from .names/.data files
+ * - methods to export in format .names/.data
+ * - methods to read from databases tables?
+ * - optimizations in the sorting to avoid multiple sorting
+ * - methods to split the dataset, keeping the balance between the classes.
+ * - create attributes, without need of the name.
  * @author kronenthaler
  */
 public class DataSet {
 	private Vector<DataRecord> data;
 	private int output;
 	private int attributeCount;
+	private HashSet<Attribute> classes;
 
 	public DataSet(int o,DataRecord... data_){
 		data = new Vector<DataRecord>();
-		for(DataRecord d : data_)
+		classes = new HashSet<Attribute>();
+		for(DataRecord d : data_){
 			data.add(d);
+			classes.add(d.getAttribute(o));
+		}
+	
 		output = o;
+		
 		if(data_.length > 0)
 			attributeCount = data.get(0).getAttributeCount();
 	}
@@ -32,18 +44,23 @@ public class DataSet {
 
 		output = src.output;
 		attributeCount = src.attributeCount;
+		classes = src.classes;
 	}
 
 	public void addRecord(DataRecord r){
 		data.add(r);
 		attributeCount = r.getAttributeCount();
+		classes.add(r.getAttribute(output));
 	}
 
 	public void sortOver(final int a){
 		Collections.sort(data, new Comparator<DataRecord>(){
 			@Override
 			public int compare(DataRecord o1, DataRecord o2) {
-				return o1.getAttribute(a).compareTo(o2.getAttribute(a));
+				int ret = o1.getAttribute(a).compareTo(o2.getAttribute(a));
+				if(ret == 0)
+					return o1.getAttribute(output).compareTo(o2.getAttribute(output));
+				return ret;
 			}
 		});
 	}
@@ -112,15 +129,16 @@ public class DataSet {
 		//	 puede inicializar el nuevo dataset con esas frecuencias.
 		HashMap<String, Integer> totalFreq = new HashMap<String, Integer>();
 		HashMap<Double, HashMap<String, Integer>> freqAcum = new HashMap<Double, HashMap<String, Integer>>();
-		HashSet<String> keys = new HashSet<String>();
-
-		for(int i=lo;i<hi;i++){
+		
+		/*for(int i=lo;i<hi;i++){
 			if(!(data.get(i).getAttribute(output) instanceof DiscreteAttribute))
 				throw new IllegalArgumentException("The output attribute must be discrete");
 
 			String v = ((DiscreteAttribute)data.get(i).getAttribute(output)).getValue();
-			keys.add(v);
 			totalFreq.put(v,0);
+		}*/
+		for(Attribute att:classes){
+			totalFreq.put(((DiscreteAttribute)att).getValue(),0);
 		}
 		
 		for(int i=lo;i<hi;i++){
@@ -135,12 +153,12 @@ public class DataSet {
 			double va = ((ContinuousAttribute)data.get(i).getAttribute(a)).getValue();
 			if(freqAcum.get(va)==null){
 				freqAcum.put(va, new HashMap<String,Integer>());
-				for(String e : keys){
+				for(Attribute e : classes){
 					if(i-1 < 0)
-						freqAcum.get(va).put(e, 0);
+						freqAcum.get(va).put(((DiscreteAttribute)e).getValue(), 0);
 					else{
 						double pva = ((ContinuousAttribute)data.get(i-1).getAttribute(a)).getValue();
-						freqAcum.get(va).put(e,freqAcum.get(pva).get(e));
+						freqAcum.get(va).put(((DiscreteAttribute)e).getValue(),freqAcum.get(pva).get(((DiscreteAttribute)e).getValue()));
 					}
 				}
 			}
@@ -228,6 +246,7 @@ public class DataSet {
 	public int getAttributeCount(){ return attributeCount; }
 	public int getItemsCount(){ return data.size(); }
 	public DataRecord get(int index){ return data.get(index); }
+	public Set<Attribute> getClasses(){ return Collections.unmodifiableSet(classes); }
 
 	public boolean allTheSameOutput(){
 		for(int i=0;i<data.size();i++){

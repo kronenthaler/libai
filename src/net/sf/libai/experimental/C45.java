@@ -1,105 +1,80 @@
 package net.sf.libai.experimental;
 
+import java.io.*;
 import java.util.*;
+import org.w3c.dom.*;
+import javax.xml.parsers.*;
 import net.sf.libai.common.Pair;
 
 /**
- * TODO: falta implementar el pruning, missing values.
- * Tomar lo que estaba implementado como la forma de los atributos y los save/load de los arboles
- * e incorporarlos aqui.
- * Prune: Hay que evaluar un training set y ver cuantos elementos caen en cada hoja.
- * Calcular unos errores (necesitan una tabla para la distribucion normal)
- * Ver si el valor combinado de los hijos es peor que el error estimado del padre
- * Si los hijos son peores se cambian todos los hijos por una simple hoja (la que mejor error tenga?)
- * Se sigue resolviendo la recursion hasta llegar a la raiz.
+ * TODO: missing values.
  * @author kronenthaler
  */
 public class C45 implements Comparable<C45>{
-	private double confidence;
-	private double z ;
-
+	public static final int NO_PRUNE = 0;
+	public static final int QUINLANS_PRUNE = 1;
+	public static final int LAPLACE_PRUNE = 2;
+	
 	protected Attribute output;
-	protected Attribute mostCommonLeaf;
 	protected Pair<Attribute, C45> childs[];
-	protected int good=0,bad=0; //cuenta los aciertos y fallos durante el proceso de pruning
+	protected int outputIndex;
 	protected double error;
+	protected double backedUpError;
 
+	//prune variables
+	protected Attribute mostCommonLeaf;
+
+	//Laplace's error pruning
+	protected int mostCommonLeafFreq = Integer.MIN_VALUE;
+	protected int samplesCount; //how many samples pass for this node in the pruning process.
+	protected HashMap<Attribute, Integer> samplesFreq = new HashMap<Attribute,Integer>(); //used to the pruning process.
+
+	//Quinlan's prunning using confidence
+	protected double confidence = 0.25;
+	protected double z;
+	protected int good,bad;
+
+	//constructors
 	protected C45(){
-		setConfidence(0.25);
+		setConfidence(confidence);
 	}
 
 	protected C45(Attribute root){
+		this();
 		output = root;
 	}
 
 	protected C45(Pair<Attribute,C45>[] c){
+		this();
 		childs = c;
 	}
 
 	protected C45(ArrayList<Pair<Attribute,C45>> c){
+		this();
 		childs = new Pair[c.size()];
 		for(int i=0,n=childs.length;i<n;i++)
 			childs[i] = c.get(i);
 	}
 
-	public boolean isLeaf(){
-		return (childs ==null || childs.length==0) && output!=null;
-	}
+	//Factories
+	public static C45 getInstance(File path){
+		try{
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			Document doc = db.parse(new FileInputStream(path));
+			NodeList root = doc.getElementsByTagName("C45").item(0).getChildNodes();
 
-	public void print(){
-		print("");
-	}
-
-	private void print(String indent){
-		if(isLeaf()){
-			System.out.println(indent+"["+output+" {"+good+":"+bad+"}]");
-		}else{
-			for(Pair<Attribute,C45> p : childs){
-				if(p.first.isCategorical())
-					System.out.println(indent+"["+p.first.name+" = "+((DiscreteAttribute)p.first).getValue()+" {"+good+":"+bad+"}]");
-				else
-					System.out.println(indent+"["+p.first.name+(childs[0]==p?" < ":" >= ")+((ContinuousAttribute)p.first).getValue()+" {"+good+":"+bad+"}]");
-				p.second.print(indent+"\t");
-			}
-		}
-	}
-
-	@Override
-	public int compareTo(C45 o) {
-		return 1;
-	}
-
-	public Attribute eval(DataRecord dr){
-		return eval(dr, false, null);
-	}
-	public Attribute eval(DataRecord dr,boolean keeptrack, Attribute expected){
-		if(isLeaf()){
-			if(keeptrack){
-				if(output.compareTo(expected)==0)
-					good++;
-				else
-					bad++;
-			}
-			
-			return output;
-		}
-		if(childs[0].first.isCategorical()){
-			for(Pair<Attribute,C45> p : childs){
-				if(dr.contains(p.first))
-					return p.second.eval(dr,keeptrack,expected);
-			}
-		}else{
-			for(int i=0;i<dr.getAttributeCount();i++){
-				if(dr.getAttribute(i).getName().equals(childs[0].first.name)){
-					if(dr.getAttribute(i).compareTo(childs[0].first) < 0)
-						return childs[0].second.eval(dr,keeptrack,expected);
-					else
-						return childs[1].second.eval(dr,keeptrack,expected);
+			for(int i=0;i<root.getLength();i++){
+				Node current = root.item(i);
+				if(current.getNodeName().equals("node") || current.getNodeName().equals("leaf")){
+					return new C45().load(current);
 				}
 			}
+			return null;
+		}catch(Exception e){
+			e.printStackTrace();
+			return null;
 		}
-
-		return null; //no prediction
 	}
 
 	/**
@@ -112,8 +87,8 @@ public class C45 implements Comparable<C45>{
 	/**
 	 *	Return a pruned tree from the given dataset using the standard confidence of 25%
 	 */
-	public static C45 getInstancePrune(DataSet ds){
-		return new C45().train(ds).prune(ds);
+	public static C45 getInstancePrune(DataSet ds, int type){
+		return new C45().train(ds).prune(ds, type);
 	}
 
 	/**
@@ -121,46 +96,62 @@ public class C45 implements Comparable<C45>{
 	 */
 	public static C45 getInstancePrune(DataSet ds, double confidence){
 		C45 ret = new C45();
+		ret = ret.train(ds);
 		ret.setConfidence(confidence);
-		return ret.train(ds).prune(ds);
+		return ret.prune(ds, QUINLANS_PRUNE);
 	}
 
-	public void setConfidence(double c){
-		confidence = c;
+	//Tree related
+	public boolean isLeaf(){
+		return (childs ==null || childs.length==0) && output!=null;
+	}
 
-		double a=0;
-		double b=99;
-		double upperLimit = doLeft(b);
+	public Attribute eval(DataRecord dr){
+		return eval(dr, false, null, null);
+	}
 
-		for(int index = 0;a<=3;a+=0.01,index++){
-			double sum=upperLimit-doLeft(a);
-			sum = 1.0-sum;
-			if(sum >= c){
-				z = a;
-				break;
+	public Attribute eval(DataRecord dr, boolean keeptrack, Attribute expected, DataSet ds){
+		if(keeptrack){
+			//laplace pruning
+			if(samplesFreq.get(expected) == null){
+				for(Attribute att : ds.getClasses())
+					samplesFreq.put(att, 0);
+			}
+			samplesFreq.put(expected, samplesFreq.get(expected)+1);
+
+			if(mostCommonLeafFreq < samplesFreq.get(expected)){
+				mostCommonLeafFreq = samplesFreq.get(expected);
+				mostCommonLeaf = expected;
+			}
+			samplesCount++;
+		}
+
+		if(isLeaf()){
+			if(keeptrack){
+				//quinlan pruning
+				if(output.compareTo(expected)==0)good++;
+				else bad++;
+			}
+			return output;
+		}else{
+			if(childs[0].first.isCategorical()){
+				for(Pair<Attribute,C45> p : childs){
+					if(dr.contains(p.first))
+						return p.second.eval(dr,keeptrack,expected,ds);
+				}
+			}else{
+				for(int i=0;i<dr.getAttributeCount();i++){
+					if(dr.getAttribute(i).getName().equals(childs[0].first.name)){
+						if(dr.getAttribute(i).compareTo(childs[0].first) <= 0)
+							return childs[0].second.eval(dr,keeptrack,expected,ds);
+						else
+							return childs[1].second.eval(dr,keeptrack,expected,ds);
+					}
+				}
 			}
 		}
-	}
 
-	private double doLeft(double z){
-		if(z < -6.5) return 0;
-		if(z > 6.5) return 1;
-
-		long factK=1;
-		double sum=0;
-		double term=1;
-		int k=0;
-		while(Math.abs(term)>Math.exp(-23)) {
-			term=0.3989422804*Math.pow(-1,k) * Math.pow(z,k) / (2*k+1) / Math.pow(2,k) * Math.pow(z,k+1) / factK;
-			sum+=term;
-			k++;
-			factK*=k;
-
-		}
-		sum+=1/2;
-		if(sum < 0.0000000001) sum=0;
-
-		return sum;
+		return null; //no prediction
 	}
 
 	public C45 train(DataSet ds){
@@ -195,12 +186,6 @@ public class C45 implements Comparable<C45>{
 		for(int i=0;i<attributeCount;i++){
 			if(!visited.contains(i)){
 				double g[] = ds.gain(0,itemsCount,i); //get the maximun gain ratio.
-
-//				System.err.println(deep+"--");
-//				for(double d : g)
-//					System.err.println(deep+d);
-//				System.err.println(deep+"--");
-
 				if(g[1] > max){
 					max = g[1];
 					index = i; //split attribute
@@ -241,70 +226,217 @@ public class C45 implements Comparable<C45>{
 		return new C45(childs);
 	}
 
-	public C45 prune(DataSet ds){
-		System.out.println("confidence: "+confidence+" z:"+z);
-		//first of all, evaluate all the data set over the tree, and keep track of the results.
-		for(int i=0,n=ds.getItemsCount();i<n;i++){
-			eval(ds.get(i),true, ds.get(i).getAttribute(ds.getOutputIndex()));
+	public double error(DataSet ds){
+		int errorCount = 0;
+		for(int i=0;i<ds.getItemsCount();i++){
+			DataRecord r = ds.get(i);
+			if((eval(r).compareTo(r.getAttribute(ds.getOutputIndex()))!=0)){
+				errorCount++;
+			}
 		}
+		return errorCount/(double)ds.getItemsCount();
+	}
 
-		//print();
+	//TODO: probar el metodo de pruning de: http://www.cse.unsw.edu.au/~billw/cs9414/notes/ml/06prop/id3/id3.html
+	//se ve sencillo y tiene el ejemplo completo!!!!
+	public C45 prune(DataSet ds, int type){
+		//first of all, evaluate all the data set over the tree, and keep track of the results.
+		outputIndex = ds.getOutputIndex();
+		for(int i=0,n=ds.getItemsCount();i<n;i++)
+			eval(ds.get(i), true, ds.get(i).getAttribute(outputIndex), ds);
 
-		prune();
+		prune(type);
 
 		return this;
 	}
 
-	//TODO: revisar el prune contra un ejemplo concreto
-	//por alguna razon aparentemente no esta bien el calculo de los good/bad y nunca da un valor menor
-	//que el error combinado.
-	private Attribute prune(){
+	private void prune(int prunningType){
 		if(isLeaf()){
-			error = error(1.0/(double)(bad+good), good/(double)(bad+good));
-			return output;
+			if(prunningType == QUINLANS_PRUNE)
+				error = confidenceError(1.0/(double)(bad+good), good/(double)(bad+good));
+			else if(prunningType == LAPLACE_PRUNE)
+				error=laplaceError(samplesCount, mostCommonLeafFreq, samplesFreq.size());
 		}else{
-			double errorCombined = 0;
-			HashMap<Attribute, Integer> freq = new HashMap<Attribute, Integer>();
-
-			for(Pair<Attribute,C45> p : childs){
-				Attribute leaf = p.second.prune();
-				if(freq.get(leaf) == null) freq.put(leaf,0);
-				freq.put(leaf,freq.get(leaf)+1);
-
-				good += p.second.good;
-				bad += p.second.bad;
-
-				errorCombined += p.second.error * p.second.good;
+			backedUpError = 0;
+			for(Pair<Attribute,C45> c : childs){
+				c.second.prune(prunningType);
+				if(prunningType == QUINLANS_PRUNE){
+					good += c.second.good;
+					bad += c.second.bad;
+					backedUpError += c.second.error * (c.second.good+c.second.bad);
+				}else if(prunningType == LAPLACE_PRUNE){
+					backedUpError += c.second.error * c.second.samplesCount;
+				}
 			}
 			
-			int max = Integer.MIN_VALUE;
-			for(Attribute att : freq.keySet()){
-				if(max < freq.get(att)){
-					max = freq.get(att);
-					mostCommonLeaf = att;
-				}
+			if(prunningType == QUINLANS_PRUNE){
+				error = confidenceError(1.0/(double)(bad+good), good/(double)(bad+good));
+				backedUpError /= (double)(good+bad);
+			}else if(prunningType == LAPLACE_PRUNE){
+				error=laplaceError(samplesCount, mostCommonLeafFreq, samplesFreq.size());
+				backedUpError /= (double)samplesCount;
+			}
+			
+			if(error < backedUpError){
+				childs = null;
+				output = mostCommonLeaf;
 			}
 
-			errorCombined *= 1.0/(double)(good+bad); //error combinado. calcular el error neto y ver si es peor.
-			error = error(1.0/(double)(bad+good), good/(double)(bad+good));
-
-			if(error < errorCombined){
-				if(mostCommonLeaf != null){
-					error = errorCombined;
-					//prune this branch
-					childs = null;
-					output = mostCommonLeaf;
-					System.out.println("prune");
-				}
-			}
-
-			return mostCommonLeaf;
+			error = Math.min(error, backedUpError);
 		}
 	}
 
-	private double error(double invN, double f){
+	private double laplaceError(int N, int n, int k){
+		return (double)(N - n + k - 1) / (double)(N+k);
+	}
+	
+	// QUINLAN'S prunning functions
+	public void setConfidence(double c){
+		confidence = c;
+
+		double a=0;
+		double b=99;
+		double upperLimit = doLeft(b);
+
+		for(int index = 0;a<=3;a+=0.01,index++){
+			double sum=upperLimit-doLeft(a);
+			sum = 1.0-sum;
+			if(sum >= c){
+				z = a;
+				break;
+			}
+		}
+		setZ(z);
+	}
+
+	private double doLeft(double z){
+		if(z < -6.5) return 0;
+		if(z > 6.5) return 1;
+
+		long factK=1;
+		double sum=0;
+		double term=1;
+		int k=0;
+		while(Math.abs(term)>Math.exp(-23)) {
+			term=0.3989422804*Math.pow(-1,k) * Math.pow(z,k) / (2*k+1) / Math.pow(2,k) * Math.pow(z,k+1) / factK;
+			sum+=term;
+			k++;
+			factK*=k;
+
+		}
+		sum+=1/2;
+		if(sum < 0.0000000001) sum=0;
+
+		return sum;
+	}
+
+	private void setZ(double z){
+		this.z = z;
+		if(!isLeaf()){
+			if(childs != null)
+				for(Pair<Attribute, C45> c : childs){
+					c.second.z = z;
+					c.second.setZ(z);
+				}
+		}
+	}
+
+	private double confidenceError(double invN, double f){
 		double z2 = z*z;
 		double e = (f + (z2*invN*0.5) + z * Math.sqrt((f*invN) - (f*f*invN) + (z2*invN*invN*0.25))) / (1 + (z2*invN));
 		return e;
 	}
+	//end quinlan's
+
+	//IO functions
+	/**
+	 * Load a new C45 tree from the XML node root.
+	 */
+	protected C45 load(Node root){
+		if(root.getNodeName().equals("node")){
+			Pair<Attribute,C45> childs[] = new Pair[Integer.parseInt(root.getAttributes().getNamedItem("splits").getTextContent())];
+			NodeList aux = root.getChildNodes();
+			int currentChild=0;
+			for(int i=0,n=aux.getLength();i<n;i++){
+				Node current = aux.item(i);
+				if(current.getNodeName().equals("split")){
+					Attribute att = Attribute.load(current);
+					for(;i<n;i++)
+						if((current=aux.item(i)).getNodeName().equals("leaf") ||
+						    current.getNodeName().equals("node")) break;
+					childs[currentChild++] = new Pair<Attribute,C45>(att,load(current));
+				}
+			}
+			return new C45(childs);
+		}else if(root.getNodeName().equals("leaf")){
+			return new C45(Attribute.load(root));
+		}
+		
+		return null;
+	}
+
+	public boolean save(File path){
+		try{
+			PrintStream out = new PrintStream(new FileOutputStream(path));
+			out.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+			out.println("<"+getClass().getSimpleName()+">");
+			save(out,"\t");
+			out.println("</"+getClass().getSimpleName()+">");
+			out.close();
+			//safe format into a XML file.
+			return true;
+		}catch(Exception e){
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	private void save(PrintStream out,String indent) throws IOException{
+		if(isLeaf()){
+			out.println(indent+"<leaf type=\""+output.getClass().getName()+"\" name=\""+output.name+"\"><![CDATA["+output.getValue()+"]]></leaf>");
+		}else{
+			out.println(indent+"<node splits=\""+childs.length+"\">");
+			for(Pair<Attribute,C45> p : childs){
+				out.println(indent+"\t<split type=\""+p.first.getClass().getName()+"\" name=\""+p.first.name+"\"><![CDATA["+p.first.getValue()+"]]></split>");
+				p.second.save(out,indent+"\t");
+			}
+			out.println(indent+"</node>");
+		}
+	}
+
+	/**
+	 * Print the tree over the standard output.
+	 * Alias for <code>print("")</code>
+	 */
+	public void print(){
+		print("");
+	}
+
+	/**
+	 * Print the tree over the standard output using an initial indent string.
+	 * With each new level, an \t is appended to the indent string.
+	 * @params indent Initial string for indentation.
+	 */
+	private void print(String indent){
+		if(isLeaf()){
+			System.out.println(indent+"["+output+" "+samplesFreq+" e: "+error+"]");
+		}else{
+			for(Pair<Attribute,C45> p : childs){
+				if(p.first.isCategorical())
+					System.out.println(indent+"["+p.first.name+" = "+((DiscreteAttribute)p.first).getValue()+" "+samplesFreq+" e: "+error+" be: "+backedUpError+"]");
+				else
+					System.out.println(indent+"["+p.first.name+(childs[0]==p?" <= ":" > ")+((ContinuousAttribute)p.first).getValue()+" "+samplesFreq+" be: "+backedUpError+"]");
+				p.second.print(indent+"\t");
+			}
+		}
+	}
+	//end IO functions
+
+	/**
+	 * Dummy function, just needed to be able of use the Pair structure.
+	 * @param o the other object
+	 * @return always 0.
+	 */
+	@Override
+	public int compareTo(C45 o) { return 0; }
 }

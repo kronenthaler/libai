@@ -12,6 +12,7 @@ public class DiscreteAttribute extends Attribute{
 		value = v;
 	}
 	
+	@Override
 	public String getValue(){
 		return value;
 	}
@@ -21,6 +22,7 @@ public class DiscreteAttribute extends Attribute{
 		return value.compareTo(((DiscreteAttribute)o).value);
 	}
 
+	@Override
 	public String toString(){
 		return value;
 	}

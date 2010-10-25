@@ -20,8 +20,10 @@ public class ContinuousAttribute extends Attribute{
 		//return value - ((ContinuousAttribute) o).value;
 	}
 
-	public double getValue(){ return value; }
+	@Override
+	public Double getValue(){ return value; }
 
+	@Override
 	public String toString(){
 		return ""+value;
 	}

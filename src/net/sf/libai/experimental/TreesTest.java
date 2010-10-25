@@ -14,44 +14,11 @@ public class TreesTest {
 	int output;
 	
 	public static void main(String[] args) {
-        new TreesTest().doit();
+        new TreesTest().doitMagic();
     }
 
-	public void doit(){
-		/*data = new String[][]{{"sunny",		"hot",	"high",		"false",	"no"},
-							  {"sunny",		"hot",	"high",		"true",		"no"},
-							  {"overcast",	"hot",	"high",		"false",	"yes"},
-							  {"rainy",		"mild",	"high",		"false",	"yes"},
-							  {"rainy",		"cool",	"normal",	"false",	"yes"},
-							  {"rainy",		"cool",	"normal",	"true",		"no"},
-							  {"overcast",	"cool",	"normal",	"true",		"yes"},
-							  {"sunny",		"mild",	"high",		"false",	"no"},
-							  {"sunny",		"cool",	"normal",	"false",	"yes"},
-							  {"rainy",		"mild",	"normal",	"false",	"yes"},
-							  {"sunny",		"mild",	"normal",	"true",		"yes"},
-							  {"overcast",	"mild",	"high",		"true",		"yes"},
-							  {"overcast",	"hot",	"normal",	"false",	"yes"},
-							  {"rainy",		"mild",	"high",		"true",		"no"},
-		};*/
-
-		/*DataSet ds = new DataSet(4,
-								  new DataRecord(new DiscreteAttribute("outlook","sunny"), new DiscreteAttribute("temp","hot"), new DiscreteAttribute("humidity","high"), new DiscreteAttribute("wind","false"), new DiscreteAttribute("play","no")),
-								  new DataRecord(new DiscreteAttribute("outlook","sunny"), new DiscreteAttribute("temp","hot"), new DiscreteAttribute("humidity","high"), new DiscreteAttribute("wind","true"), new DiscreteAttribute("play","no")),
-								  new DataRecord(new DiscreteAttribute("outlook","overcast"), new DiscreteAttribute("temp","hot"), new DiscreteAttribute("humidity","high"), new DiscreteAttribute("wind","false"), new DiscreteAttribute("play","yes")),
-								  new DataRecord(new DiscreteAttribute("outlook","rainy"), new DiscreteAttribute("temp","mild"), new DiscreteAttribute("humidity","high"), new DiscreteAttribute("wind","false"), new DiscreteAttribute("play","yes")),
-								  new DataRecord(new DiscreteAttribute("outlook","rainy"), new DiscreteAttribute("temp","cool"), new DiscreteAttribute("humidity","normal"), new DiscreteAttribute("wind","false"), new DiscreteAttribute("play","yes")),
-								  new DataRecord(new DiscreteAttribute("outlook","rainy"), new DiscreteAttribute("temp","cool"), new DiscreteAttribute("humidity","normal"), new DiscreteAttribute("wind","true"), new DiscreteAttribute("play","no")),
-								  new DataRecord(new DiscreteAttribute("outlook","overcast"), new DiscreteAttribute("temp","cool"), new DiscreteAttribute("humidity","normal"), new DiscreteAttribute("wind","true"), new DiscreteAttribute("play","yes")),
-								  new DataRecord(new DiscreteAttribute("outlook","sunny"), new DiscreteAttribute("temp","mild"), new DiscreteAttribute("humidity","high"), new DiscreteAttribute("wind","false"), new DiscreteAttribute("play","no")),
-								  new DataRecord(new DiscreteAttribute("outlook","sunny"), new DiscreteAttribute("temp","cool"), new DiscreteAttribute("humidity","normal"), new DiscreteAttribute("wind","false"), new DiscreteAttribute("play","yes")),
-								  new DataRecord(new DiscreteAttribute("outlook","rainy"), new DiscreteAttribute("temp","mild"), new DiscreteAttribute("humidity","normal"), new DiscreteAttribute("wind","false"), new DiscreteAttribute("play","yes")),
-								  new DataRecord(new DiscreteAttribute("outlook","sunny"), new DiscreteAttribute("temp","mild"), new DiscreteAttribute("humidity","normal"), new DiscreteAttribute("wind","true"), new DiscreteAttribute("play","yes")),
-								  new DataRecord(new DiscreteAttribute("outlook","overcast"), new DiscreteAttribute("temp","mild"), new DiscreteAttribute("humidity","high"), new DiscreteAttribute("wind","true"), new DiscreteAttribute("play","yes")),
-								  new DataRecord(new DiscreteAttribute("outlook","overcast"), new DiscreteAttribute("temp","hot"), new DiscreteAttribute("humidity","normal"), new DiscreteAttribute("wind","false"), new DiscreteAttribute("play","yes")),
-								  new DataRecord(new DiscreteAttribute("outlook","rainy"), new DiscreteAttribute("temp","mild"), new DiscreteAttribute("humidity","high"), new DiscreteAttribute("wind","true"), new DiscreteAttribute("play","no")));
-		//*/
-
-		/*DataSet ds = new DataSet(0,
+	public void doitC45(){
+		DataSet ds = new DataSet(0,
 								new DataRecord(new DiscreteAttribute("outcome","no"), new ContinuousAttribute("val",65)),
 								new DataRecord(new DiscreteAttribute("outcome","yes"), new ContinuousAttribute("val",64)),
 								new DataRecord(new DiscreteAttribute("outcome","yes"), new ContinuousAttribute("val",68)),
@@ -67,20 +34,12 @@ public class TreesTest {
 								new DataRecord(new DiscreteAttribute("outcome","yes"), new ContinuousAttribute("val",83)),
 								new DataRecord(new DiscreteAttribute("outcome","no"), new ContinuousAttribute("val",85))
 				);
-		//*/
+		C45 tree = C45.getInstance(ds);
+		tree.print();
+		System.out.println("error: "+tree.error(ds));
+	}
 
-		/*ID3 id3 = new ID3();
-		Tree t = id3.train(ds);
-		t.print();
-		ds.sortOver(0);
-		int i=0;
-		for(;i<ds.getItemsCount();i++){
-			System.err.println(t.eval(ds.get(i))+" == "+ds.get(i).getAttribute(0));
-			if(t.eval(ds.get(i)).compareTo(ds.get(i).getAttribute(0))!=0)
-				System.out.println(ds.get(i));
-		}*/
-		
-
+	public void doitMagic(){
 		try{
 			DataSet ds = new DataSet(10);
 			BufferedReader in = new BufferedReader(new FileReader("magic.data"));
@@ -106,29 +65,87 @@ public class TreesTest {
 
 			C45 tree = C45.getInstance(ds);
 			//tree.print();
-			int error = 0;
-			for(int i=0;i<ds.getItemsCount();i++){
-				DataRecord r = ds.get(i);
-				if((tree.eval(r).compareTo(r.getAttribute(ds.getOutputIndex()))!=0)){
-					System.out.println(r+"=> "+tree.eval(r)+" "+(tree.eval(r).compareTo(r.getAttribute(ds.getOutputIndex()))==0));
-					error++;
-				}
-			}
-			System.out.println("error: "+error/(double)ds.getItemsCount());
+			System.out.println("error before prune: "+tree.error(ds));
+			tree.prune(ds, C45.QUINLANS_PRUNE);
+			System.out.println("error after prune: "+tree.error(ds));
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
 
+	public void doitPrune(){
+		DataSet ds = new DataSet(4,
+			new DataRecord(new DiscreteAttribute("a","t"),new DiscreteAttribute("b","f"),new DiscreteAttribute("c","x"),new DiscreteAttribute("d","x"),new DiscreteAttribute("out","c1")),
+			new DataRecord(new DiscreteAttribute("a","t"),new DiscreteAttribute("b","t"),new DiscreteAttribute("c","x"),new DiscreteAttribute("d","x"),new DiscreteAttribute("out","c1")),
+			new DataRecord(new DiscreteAttribute("a","t"),new DiscreteAttribute("b","t"),new DiscreteAttribute("c","x"),new DiscreteAttribute("d","x"),new DiscreteAttribute("out","c1")),
+			new DataRecord(new DiscreteAttribute("a","t"),new DiscreteAttribute("b","t"),new DiscreteAttribute("c","x"),new DiscreteAttribute("d","x"),new DiscreteAttribute("out","c1")),
+			new DataRecord(new DiscreteAttribute("a","f"),new DiscreteAttribute("b","x"),new DiscreteAttribute("c","f"),new DiscreteAttribute("d","x"),new DiscreteAttribute("out","c1")),
+			new DataRecord(new DiscreteAttribute("a","f"),new DiscreteAttribute("b","x"),new DiscreteAttribute("c","t"),new DiscreteAttribute("d","t"),new DiscreteAttribute("out","c1")),
+			new DataRecord(new DiscreteAttribute("a","t"),new DiscreteAttribute("b","t"),new DiscreteAttribute("c","x"),new DiscreteAttribute("d","x"),new DiscreteAttribute("out","c2")),
+			new DataRecord(new DiscreteAttribute("a","t"),new DiscreteAttribute("b","t"),new DiscreteAttribute("c","x"),new DiscreteAttribute("d","x"),new DiscreteAttribute("out","c2")),
+			new DataRecord(new DiscreteAttribute("a","f"),new DiscreteAttribute("b","x"),new DiscreteAttribute("c","t"),new DiscreteAttribute("d","t"),new DiscreteAttribute("out","c2")),
+			new DataRecord(new DiscreteAttribute("a","f"),new DiscreteAttribute("b","x"),new DiscreteAttribute("c","t"),new DiscreteAttribute("d","f"),new DiscreteAttribute("out","c2")));
+		
+		C45 tree = C45.getInstance(new File("prunetest2.c45"));
+		tree.prune(ds,C45.NO_PRUNE);
+		System.out.println("after --");
+		tree.print();
+		System.out.println("error: "+tree.error(ds));
+	}
+
+	public void doit(){
+		/*DataSet ds = new DataSet(4,
+								  new DataRecord(new DiscreteAttribute("outlook","sunny"), new DiscreteAttribute("temp","hot"), new DiscreteAttribute("humidity","high"), new DiscreteAttribute("wind","false"), new DiscreteAttribute("play","no")),
+								  new DataRecord(new DiscreteAttribute("outlook","sunny"), new DiscreteAttribute("temp","hot"), new DiscreteAttribute("humidity","high"), new DiscreteAttribute("wind","true"), new DiscreteAttribute("play","no")),
+								  new DataRecord(new DiscreteAttribute("outlook","overcast"), new DiscreteAttribute("temp","hot"), new DiscreteAttribute("humidity","high"), new DiscreteAttribute("wind","false"), new DiscreteAttribute("play","yes")),
+								  new DataRecord(new DiscreteAttribute("outlook","rainy"), new DiscreteAttribute("temp","mild"), new DiscreteAttribute("humidity","high"), new DiscreteAttribute("wind","false"), new DiscreteAttribute("play","yes")),
+								  new DataRecord(new DiscreteAttribute("outlook","rainy"), new DiscreteAttribute("temp","cool"), new DiscreteAttribute("humidity","normal"), new DiscreteAttribute("wind","false"), new DiscreteAttribute("play","yes")),
+								  new DataRecord(new DiscreteAttribute("outlook","rainy"), new DiscreteAttribute("temp","cool"), new DiscreteAttribute("humidity","normal"), new DiscreteAttribute("wind","true"), new DiscreteAttribute("play","no")),
+								  new DataRecord(new DiscreteAttribute("outlook","overcast"), new DiscreteAttribute("temp","cool"), new DiscreteAttribute("humidity","normal"), new DiscreteAttribute("wind","true"), new DiscreteAttribute("play","yes")),
+								  new DataRecord(new DiscreteAttribute("outlook","sunny"), new DiscreteAttribute("temp","mild"), new DiscreteAttribute("humidity","high"), new DiscreteAttribute("wind","false"), new DiscreteAttribute("play","no")),
+								  new DataRecord(new DiscreteAttribute("outlook","sunny"), new DiscreteAttribute("temp","cool"), new DiscreteAttribute("humidity","normal"), new DiscreteAttribute("wind","false"), new DiscreteAttribute("play","yes")),
+								  new DataRecord(new DiscreteAttribute("outlook","rainy"), new DiscreteAttribute("temp","mild"), new DiscreteAttribute("humidity","normal"), new DiscreteAttribute("wind","false"), new DiscreteAttribute("play","yes")),
+								  new DataRecord(new DiscreteAttribute("outlook","sunny"), new DiscreteAttribute("temp","mild"), new DiscreteAttribute("humidity","normal"), new DiscreteAttribute("wind","true"), new DiscreteAttribute("play","yes")),
+								  new DataRecord(new DiscreteAttribute("outlook","overcast"), new DiscreteAttribute("temp","mild"), new DiscreteAttribute("humidity","high"), new DiscreteAttribute("wind","true"), new DiscreteAttribute("play","yes")),
+								  new DataRecord(new DiscreteAttribute("outlook","overcast"), new DiscreteAttribute("temp","hot"), new DiscreteAttribute("humidity","normal"), new DiscreteAttribute("wind","false"), new DiscreteAttribute("play","yes")),
+								  new DataRecord(new DiscreteAttribute("outlook","rainy"), new DiscreteAttribute("temp","mild"), new DiscreteAttribute("humidity","high"), new DiscreteAttribute("wind","true"), new DiscreteAttribute("play","no")));
+		//*/
+		try{
 			//tree = C45.getInstancePrune(ds);
+			DataSet ds = new DataSet(0,
+					new DataRecord(new DiscreteAttribute("outcome","good"),new ContinuousAttribute("wage_increase_first_year",3.0),new ContinuousAttribute("working_hours_per_week",38),new ContinuousAttribute("statuatory_holidays",11),new DiscreteAttribute("health_plan_contribution","*")),
+					new DataRecord(new DiscreteAttribute("outcome","good"),new ContinuousAttribute("wage_increase_first_year",4.0),new ContinuousAttribute("working_hours_per_week",35),new ContinuousAttribute("statuatory_holidays",15),new DiscreteAttribute("health_plan_contribution","*")),
+					new DataRecord(new DiscreteAttribute("outcome","good"),new ContinuousAttribute("wage_increase_first_year",4.5),new ContinuousAttribute("working_hours_per_week",35),new ContinuousAttribute("statuatory_holidays",11),new DiscreteAttribute("health_plan_contribution","full")),
+					new DataRecord(new DiscreteAttribute("outcome","good"),new ContinuousAttribute("wage_increase_first_year",7.0),new ContinuousAttribute("working_hours_per_week",36),new ContinuousAttribute("statuatory_holidays",11),new DiscreteAttribute("health_plan_contribution","*")),
+					new DataRecord(new DiscreteAttribute("outcome","good"),new ContinuousAttribute("wage_increase_first_year",4.3),new ContinuousAttribute("working_hours_per_week",38),new ContinuousAttribute("statuatory_holidays",12),new DiscreteAttribute("health_plan_contribution","full")),
+					new DataRecord(new DiscreteAttribute("outcome","good"),new ContinuousAttribute("wage_increase_first_year",4.0),new ContinuousAttribute("working_hours_per_week",36),new ContinuousAttribute("statuatory_holidays",12),new DiscreteAttribute("health_plan_contribution","half")),
+					new DataRecord(new DiscreteAttribute("outcome","good"),new ContinuousAttribute("wage_increase_first_year",4.5),new ContinuousAttribute("working_hours_per_week",36),new ContinuousAttribute("statuatory_holidays",10),new DiscreteAttribute("health_plan_contribution","half")),
+					new DataRecord(new DiscreteAttribute("outcome","good"),new ContinuousAttribute("wage_increase_first_year",2.8),new ContinuousAttribute("working_hours_per_week",35),new ContinuousAttribute("statuatory_holidays",12),new DiscreteAttribute("health_plan_contribution","*")),
+					new DataRecord(new DiscreteAttribute("outcome","good"),new ContinuousAttribute("wage_increase_first_year",5.0),new ContinuousAttribute("working_hours_per_week",40),new ContinuousAttribute("statuatory_holidays",11),new DiscreteAttribute("health_plan_contribution","*")),
+					new DataRecord(new DiscreteAttribute("outcome","good"),new ContinuousAttribute("wage_increase_first_year",6.9),new ContinuousAttribute("working_hours_per_week",40),new ContinuousAttribute("statuatory_holidays",12),new DiscreteAttribute("health_plan_contribution","*")),
+					new DataRecord(new DiscreteAttribute("outcome","good"),new ContinuousAttribute("wage_increase_first_year",6.4),new ContinuousAttribute("working_hours_per_week",38),new ContinuousAttribute("statuatory_holidays",15),new DiscreteAttribute("health_plan_contribution","*")),
+					new DataRecord(new DiscreteAttribute("outcome","good"),new ContinuousAttribute("wage_increase_first_year",2.0),new ContinuousAttribute("working_hours_per_week",35),new ContinuousAttribute("statuatory_holidays",12),new DiscreteAttribute("health_plan_contribution","*")),
+					new DataRecord(new DiscreteAttribute("outcome","good"),new ContinuousAttribute("wage_increase_first_year",6.0),new ContinuousAttribute("working_hours_per_week",38),new ContinuousAttribute("statuatory_holidays",9),new DiscreteAttribute("health_plan_contribution","*")),
+					new DataRecord(new DiscreteAttribute("outcome","good"),new ContinuousAttribute("wage_increase_first_year",6.0),new ContinuousAttribute("working_hours_per_week",35),new ContinuousAttribute("statuatory_holidays",9),new DiscreteAttribute("health_plan_contribution","full")),
+					new DataRecord(new DiscreteAttribute("outcome","good"),new ContinuousAttribute("wage_increase_first_year",4.5),new ContinuousAttribute("working_hours_per_week",40),new ContinuousAttribute("statuatory_holidays",10),new DiscreteAttribute("health_plan_contribution","full")),
+					new DataRecord(new DiscreteAttribute("outcome","good"),new ContinuousAttribute("wage_increase_first_year",5.0),new ContinuousAttribute("working_hours_per_week",40),new ContinuousAttribute("statuatory_holidays",12),new DiscreteAttribute("health_plan_contribution","half")),
+					new DataRecord(new DiscreteAttribute("outcome","bad"),new ContinuousAttribute("wage_increase_first_year",2.0),new ContinuousAttribute("working_hours_per_week",38),new ContinuousAttribute("statuatory_holidays",12),new DiscreteAttribute("health_plan_contribution","full")),
+					new DataRecord(new DiscreteAttribute("outcome","bad"),new ContinuousAttribute("wage_increase_first_year",4.0),new ContinuousAttribute("working_hours_per_week",36),new ContinuousAttribute("statuatory_holidays",11),new DiscreteAttribute("health_plan_contribution","none")),
+					new DataRecord(new DiscreteAttribute("outcome","bad"),new ContinuousAttribute("wage_increase_first_year",3.0),new ContinuousAttribute("working_hours_per_week",40),new ContinuousAttribute("statuatory_holidays",10),new DiscreteAttribute("health_plan_contribution","full")),
+					new DataRecord(new DiscreteAttribute("outcome","bad"),new ContinuousAttribute("wage_increase_first_year",4.0),new ContinuousAttribute("working_hours_per_week",40),new ContinuousAttribute("statuatory_holidays",10),new DiscreteAttribute("health_plan_contribution","none")),
+					new DataRecord(new DiscreteAttribute("outcome","bad"),new ContinuousAttribute("wage_increase_first_year",2.8),new ContinuousAttribute("working_hours_per_week",38),new ContinuousAttribute("statuatory_holidays",9),new DiscreteAttribute("health_plan_contribution","none")),
+					new DataRecord(new DiscreteAttribute("outcome","bad"),new ContinuousAttribute("wage_increase_first_year",2.0),new ContinuousAttribute("working_hours_per_week",35),new ContinuousAttribute("statuatory_holidays",10),new DiscreteAttribute("health_plan_contribution","full")),
+					new DataRecord(new DiscreteAttribute("outcome","bad"),new ContinuousAttribute("wage_increase_first_year",4.5),new ContinuousAttribute("working_hours_per_week",40),new ContinuousAttribute("statuatory_holidays",10),new DiscreteAttribute("health_plan_contribution","half"))
+								   );
+			C45 tree = C45.getInstance(new File("prunetest.c45"));
+			//*/
+
+			//C45 tree = C45.getInstance(ds);
 			tree.setConfidence(0.25);
-			tree.prune(ds);
-			//tree.print();
-			error = 0;
-			for(int i=0;i<ds.getItemsCount();i++){
-				DataRecord r = ds.get(i);
-				if((tree.eval(r).compareTo(r.getAttribute(ds.getOutputIndex()))!=0)){
-					System.out.println(r+"=> "+tree.eval(r)+" "+(tree.eval(r).compareTo(r.getAttribute(ds.getOutputIndex()))==0));
-					error++;
-				}
-			}
-			System.out.println("error: "+error/(double)ds.getItemsCount());
+			tree.prune(ds,C45.QUINLANS_PRUNE);
+			System.out.println("after --- ");
+			tree.print();
+			System.out.println("error: "+tree.error(ds));
 		}catch(Exception e){
 			e.printStackTrace();
 		}

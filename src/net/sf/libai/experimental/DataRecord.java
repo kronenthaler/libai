@@ -8,7 +8,7 @@ import java.util.*;
  */
 public class DataRecord {
 	private Vector<Attribute> attributes;
-
+	
 	public DataRecord(Attribute... atts){
 		attributes = new Vector<Attribute>();
 		for(Attribute a: atts)
@@ -24,7 +24,15 @@ public class DataRecord {
 	}
 
 	public boolean contains(Attribute a){
-		return attributes.contains(a);
+		for(Attribute att : attributes){
+			if(att.getClass() == a.getClass()){
+				if(att.getName().equals(a.getName())){
+					if(att.compareTo(a) == 0)
+						return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	public String toString(){

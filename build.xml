@@ -79,8 +79,8 @@
 
 	<target name="release" depends="jar">
 		<mkdir dir="temp"/>
-		<copydir src="src/" dest="temp/src" />
-		<copydir src="lib/" dest="temp/lib" />
+		<copy src="src/" dest="temp/src" />
+		<copy src="lib/" dest="temp/lib" />
 		<zip zipfile="release/libai-x.x.zip">
 			<fileset dir="release" includes="*.jar"/>
 			<fileset dir="docs/"/>
