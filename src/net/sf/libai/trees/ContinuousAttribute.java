@@ -1,4 +1,4 @@
-package net.sf.libai.experimental;
+package net.sf.libai.trees;
 
 /**
  *
@@ -6,6 +6,10 @@ package net.sf.libai.experimental;
  */
 public class ContinuousAttribute extends Attribute{
 	private double value;
+
+	public ContinuousAttribute(double v){
+		value = v;
+	}
 
 	public ContinuousAttribute(String name, double v){
 		this.name = name;
@@ -17,7 +21,6 @@ public class ContinuousAttribute extends Attribute{
 		if(value > ((ContinuousAttribute) o).value) return 1;
 		if(value < ((ContinuousAttribute) o).value) return -1;
 		return 0;
-		//return value - ((ContinuousAttribute) o).value;
 	}
 
 	@Override

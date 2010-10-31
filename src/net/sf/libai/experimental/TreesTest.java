@@ -1,6 +1,12 @@
 package net.sf.libai.experimental;
 
 
+import net.sf.libai.trees.C45;
+import net.sf.libai.trees.DiscreteAttribute;
+import net.sf.libai.trees.DataSet;
+import net.sf.libai.trees.Attribute;
+import net.sf.libai.trees.ContinuousAttribute;
+import net.sf.libai.trees.DataRecord;
 import java.io.*;
 import java.util.*;
 import java.math.*;
@@ -14,7 +20,7 @@ public class TreesTest {
 	int output;
 	
 	public static void main(String[] args) {
-        new TreesTest().doitMagic();
+        new TreesTest().doitC45();
     }
 
 	public void doitC45(){
@@ -34,9 +40,12 @@ public class TreesTest {
 								new DataRecord(new DiscreteAttribute("outcome","yes"), new ContinuousAttribute("val",83)),
 								new DataRecord(new DiscreteAttribute("outcome","no"), new ContinuousAttribute("val",85))
 				);
-		C45 tree = C45.getInstance(ds);
+		DataSet sets[]=ds.splitKeepingRelation(1);
+		sets[0].print("");
+		sets[1].print("");
+		/*C45 tree = C45.getInstance(ds);
 		tree.print();
-		System.out.println("error: "+tree.error(ds));
+		System.out.println("error: "+tree.error(ds));*/
 	}
 
 	public void doitMagic(){
@@ -74,20 +83,20 @@ public class TreesTest {
 	}
 
 	public void doitPrune(){
-		DataSet ds = new DataSet(4,
-			new DataRecord(new DiscreteAttribute("a","t"),new DiscreteAttribute("b","f"),new DiscreteAttribute("c","x"),new DiscreteAttribute("d","x"),new DiscreteAttribute("out","c1")),
-			new DataRecord(new DiscreteAttribute("a","t"),new DiscreteAttribute("b","t"),new DiscreteAttribute("c","x"),new DiscreteAttribute("d","x"),new DiscreteAttribute("out","c1")),
-			new DataRecord(new DiscreteAttribute("a","t"),new DiscreteAttribute("b","t"),new DiscreteAttribute("c","x"),new DiscreteAttribute("d","x"),new DiscreteAttribute("out","c1")),
-			new DataRecord(new DiscreteAttribute("a","t"),new DiscreteAttribute("b","t"),new DiscreteAttribute("c","x"),new DiscreteAttribute("d","x"),new DiscreteAttribute("out","c1")),
-			new DataRecord(new DiscreteAttribute("a","f"),new DiscreteAttribute("b","x"),new DiscreteAttribute("c","f"),new DiscreteAttribute("d","x"),new DiscreteAttribute("out","c1")),
-			new DataRecord(new DiscreteAttribute("a","f"),new DiscreteAttribute("b","x"),new DiscreteAttribute("c","t"),new DiscreteAttribute("d","t"),new DiscreteAttribute("out","c1")),
-			new DataRecord(new DiscreteAttribute("a","t"),new DiscreteAttribute("b","t"),new DiscreteAttribute("c","x"),new DiscreteAttribute("d","x"),new DiscreteAttribute("out","c2")),
-			new DataRecord(new DiscreteAttribute("a","t"),new DiscreteAttribute("b","t"),new DiscreteAttribute("c","x"),new DiscreteAttribute("d","x"),new DiscreteAttribute("out","c2")),
-			new DataRecord(new DiscreteAttribute("a","f"),new DiscreteAttribute("b","x"),new DiscreteAttribute("c","t"),new DiscreteAttribute("d","t"),new DiscreteAttribute("out","c2")),
-			new DataRecord(new DiscreteAttribute("a","f"),new DiscreteAttribute("b","x"),new DiscreteAttribute("c","t"),new DiscreteAttribute("d","f"),new DiscreteAttribute("out","c2")));
+		DataSet ds = new DataSet(4,new String[]{"a","b","c","d","out"},
+			new DataRecord(new DiscreteAttribute("t"),new DiscreteAttribute("f"),new DiscreteAttribute("x"),new DiscreteAttribute("x"),new DiscreteAttribute("c1")),
+			new DataRecord(new DiscreteAttribute("t"),new DiscreteAttribute("t"),new DiscreteAttribute("x"),new DiscreteAttribute("x"),new DiscreteAttribute("c1")),
+			new DataRecord(new DiscreteAttribute("t"),new DiscreteAttribute("t"),new DiscreteAttribute("x"),new DiscreteAttribute("x"),new DiscreteAttribute("c1")),
+			new DataRecord(new DiscreteAttribute("t"),new DiscreteAttribute("t"),new DiscreteAttribute("x"),new DiscreteAttribute("x"),new DiscreteAttribute("c1")),
+			new DataRecord(new DiscreteAttribute("f"),new DiscreteAttribute("x"),new DiscreteAttribute("f"),new DiscreteAttribute("x"),new DiscreteAttribute("c1")),
+			new DataRecord(new DiscreteAttribute("f"),new DiscreteAttribute("x"),new DiscreteAttribute("t"),new DiscreteAttribute("t"),new DiscreteAttribute("c1")),
+			new DataRecord(new DiscreteAttribute("t"),new DiscreteAttribute("t"),new DiscreteAttribute("x"),new DiscreteAttribute("x"),new DiscreteAttribute("c2")),
+			new DataRecord(new DiscreteAttribute("t"),new DiscreteAttribute("t"),new DiscreteAttribute("x"),new DiscreteAttribute("x"),new DiscreteAttribute("c2")),
+			new DataRecord(new DiscreteAttribute("f"),new DiscreteAttribute("x"),new DiscreteAttribute("t"),new DiscreteAttribute("t"),new DiscreteAttribute("c2")),
+			new DataRecord(new DiscreteAttribute("f"),new DiscreteAttribute("x"),new DiscreteAttribute("t"),new DiscreteAttribute("f"),new DiscreteAttribute("c2")));
 		
-		C45 tree = C45.getInstance(new File("prunetest2.c45"));
-		tree.prune(ds,C45.NO_PRUNE);
+		C45 tree = C45.getInstance(ds);
+		tree.prune(ds,C45.LAPLACE_PRUNE);
 		System.out.println("after --");
 		tree.print();
 		System.out.println("error: "+tree.error(ds));

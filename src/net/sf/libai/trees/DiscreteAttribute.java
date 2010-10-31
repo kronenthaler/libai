@@ -1,4 +1,4 @@
-package net.sf.libai.experimental;
+package net.sf.libai.trees;
 
 /**
  *
@@ -6,6 +6,10 @@ package net.sf.libai.experimental;
  */
 public class DiscreteAttribute extends Attribute{
 	private String value;
+
+	public DiscreteAttribute(String v){
+		value = v;
+	}
 
 	public DiscreteAttribute(String name, String v){
 		this.name = name;

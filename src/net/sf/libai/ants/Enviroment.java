@@ -95,7 +95,7 @@ public class Enviroment {
     }
     /**
      * Sets the number of ants of this Enviroment
-     * @param number of ants
+     * @param numberOfAnts
      */
     public void setNumberOfAnts(int numberOfAnts){
         this.numberOfAnts = numberOfAnts;

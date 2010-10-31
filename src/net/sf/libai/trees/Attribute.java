@@ -1,48 +1,48 @@
 package net.sf.libai.trees;
 
-import java.io.Serializable;
 import org.w3c.dom.*;
 
 /**
  *
  * @author kronenthaler
  */
-public class Attribute<T extends Comparable> implements Comparable<Attribute>,Serializable{
-	String name;
-	T value;
+public abstract class Attribute implements Comparable<Attribute>{
+	protected String name;
 
-	public Attribute(String _name, T _value){
-		name = _name;
-		value = _value;
+	public String getName(){
+		return name; 
 	}
 
-	public int compareTo(Attribute o) {
-		if(!name.equals(o.name)) return name.compareTo(o.name);
-		return value.compareTo(o.value);
+	public void setName(String n){
+		name = n;
+	}
+
+	public Object getValue(){
+		return "";
+	}
+
+	public int hashCode(){
+		return getValue().hashCode();
 	}
 
 	@Override
 	public boolean equals(Object o){
-		return compareTo((Attribute)o) == 0;
+		return o instanceof Attribute && this.compareTo(((Attribute)o)) == 0;
 	}
 
 	public boolean isCategorical(){
-		return value instanceof String;
+		return this instanceof DiscreteAttribute;
 	}
 
 	public static Attribute load(Node root){
 		Attribute att = null;
 		String type = root.getAttributes().getNamedItem("type").getTextContent();
-		if(type.equals("java.lang.String"))
-			att = new Attribute(root.getAttributes().getNamedItem("name").getTextContent(), root.getTextContent());
-		else if(type.equals("java.lang.Integer"))
-			att = new Attribute(root.getAttributes().getNamedItem("name").getTextContent(), Integer.parseInt(root.getTextContent()));
-		else if(type.equals("java.lang.Double"))
-			att = new Attribute(root.getAttributes().getNamedItem("name").getTextContent(), Double.parseDouble(root.getTextContent()));
-		return att;
-	}
 
-	public String toString(){
-		return name+"->"+value;
+		if(type.equals(DiscreteAttribute.class.getName()))
+			att = new DiscreteAttribute(root.getAttributes().getNamedItem("name").getTextContent(), root.getTextContent());
+		else if(type.equals(ContinuousAttribute.class.getName()))
+			att = new ContinuousAttribute(root.getAttributes().getNamedItem("name").getTextContent(), Double.parseDouble(root.getTextContent()));
+
+		return att;
 	}
 }

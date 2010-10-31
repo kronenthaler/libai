@@ -1,4 +1,4 @@
-package net.sf.libai.experimental;
+package net.sf.libai.trees;
 
 import java.io.*;
 import java.util.*;
@@ -110,7 +110,7 @@ public class C45 implements Comparable<C45>{
 		return eval(dr, false, null, null);
 	}
 
-	public Attribute eval(DataRecord dr, boolean keeptrack, Attribute expected, DataSet ds){
+	private Attribute eval(DataRecord dr, boolean keeptrack, Attribute expected, DataSet ds){
 		if(keeptrack){
 			//laplace pruning
 			if(samplesFreq.get(expected) == null){
@@ -433,7 +433,7 @@ public class C45 implements Comparable<C45>{
 	//end IO functions
 
 	/**
-	 * Dummy function, just needed to be able of use the Pair structure.
+	 * Dummy function, just needed to be able to use the Pair structure.
 	 * @param o the other object
 	 * @return always 0.
 	 */

@@ -1,4 +1,4 @@
-package net.sf.libai.experimental;
+package net.sf.libai.trees;
 
 import java.util.*;
 
@@ -8,7 +8,17 @@ import java.util.*;
  */
 public class DataRecord {
 	private Vector<Attribute> attributes;
-	
+
+	public DataRecord(String[] names, Attribute... atts){
+		this(atts);
+
+		if(names.length != atts.length)
+			throw new IllegalArgumentException("The number of names must match with the number of attributes");
+
+		for(int i=0;i<names.length;i++)
+			attributes.get(i).setName(names[i]);
+	}
+
 	public DataRecord(Attribute... atts){
 		attributes = new Vector<Attribute>();
 		for(Attribute a: atts)
@@ -35,6 +45,7 @@ public class DataRecord {
 		return false;
 	}
 
+	@Override
 	public String toString(){
 		return attributes.toString();
 	}
