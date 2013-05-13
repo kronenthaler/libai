@@ -120,7 +120,7 @@ public class Condition {
 	 *	activation of this rule.
 	 *	@return The tau value of the membershio for this rule.
 	 */
-	public double eval(){ //retorna el TAU de esta regla
+	public double eval(){ //return the TAU value of this rule
 		if(left != null && right!=null){
 			if(operator==AND)
 				return Math.min(left.eval(), right.eval());
