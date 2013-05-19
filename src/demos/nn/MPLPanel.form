@@ -72,7 +72,7 @@
       <SubComponents>
         <Component class="javax.swing.JTextPane" name="jTextPane1">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Train an MLP network to learn the equation: sin(x) + cos(x) for x in [1, 41) using an spacing of 0.1 for training and 0.33 for test.&#xa;The network has 3 layers of 1, 4 and 1 neurons and functions, identity, sigmoid and identity respectevely&#xa;&#xa;"/>
+            <Property name="text" type="java.lang.String" value="Train a MLP network to learn the equation: sin(x) + cos(x) for x in [1, 41) using a spacing of 0.1 for training and 0.33 for test. The network has 3 layers of 1, 4 and 1 neurons and functions, identity, sigmoid and identity respectively  "/>
           </Properties>
         </Component>
       </SubComponents>

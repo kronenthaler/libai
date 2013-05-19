@@ -66,7 +66,8 @@ public abstract class NeuralNetwork implements Serializable {
 	 * <code>path</code>
 	 *
 	 * @param path	The path for the output file.
-	 * @return <code>true</code> if the file can be created and 	 * written, <code>false</code> otherwise.
+	 * @return <code>true</code> if the file can be created and written, 
+	 * <code>false</code> otherwise.
 	 */
 	public boolean save(String path) {
 		try {

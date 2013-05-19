@@ -16,7 +16,6 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <EmptySpace min="0" pref="400" max="32767" attributes="0"/>
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
@@ -33,7 +32,6 @@
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <EmptySpace min="0" pref="300" max="32767" attributes="0"/>
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jScrollPane1" pref="245" max="32767" attributes="0"/>
@@ -57,7 +55,7 @@
       <SubComponents>
         <Component class="javax.swing.JTextPane" name="jTextPane1">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Train an SVM network to learn the the classes upper and lower 2x+3 (as +1 and -1 respectevely). The kernel used is a Linear kernel."/>
+            <Property name="text" type="java.lang.String" value="Train a SVM network to learn the the classes upper and lower 2x+3 (as +1 and -1 respectively). The kernel used is a Linear kernel."/>
           </Properties>
         </Component>
       </SubComponents>

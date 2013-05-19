@@ -34,7 +34,7 @@ public class SVMPanel extends javax.swing.JPanel {
         jProgressBar1 = new javax.swing.JProgressBar();
         jButton1 = new javax.swing.JButton();
 
-        jTextPane1.setText("Train an SVM network to learn the the classes upper and lower 2x+3 (as +1 and -1 respectevely). The kernel used is a Linear kernel.");
+        jTextPane1.setText("Train a SVM network to learn the the classes upper and lower 2x+3 (as +1 and -1 respectively). The kernel used is a Linear kernel.");
         jScrollPane1.setViewportView(jTextPane1);
 
         jProgressBar1.setString("training");
@@ -51,7 +51,6 @@ public class SVMPanel extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -64,7 +63,6 @@ public class SVMPanel extends javax.swing.JPanel {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE)

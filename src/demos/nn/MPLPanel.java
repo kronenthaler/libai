@@ -48,7 +48,7 @@ public class MPLPanel extends javax.swing.JPanel {
             }
         });
 
-        jTextPane1.setText("Train an MLP network to learn the equation: sin(x) + cos(x) for x in [1, 41) using an spacing of 0.1 for training and 0.33 for test.\nThe network has 3 layers of 1, 4 and 1 neurons and functions, identity, sigmoid and identity respectevely\n\n");
+        jTextPane1.setText("Train a MLP network to learn the equation: sin(x) + cos(x) for x in [1, 41) using a spacing of 0.1 for training and 0.33 for test. The network has 3 layers of 1, 4 and 1 neurons and functions, identity, sigmoid and identity respectively  ");
         jScrollPane1.setViewportView(jTextPane1);
 
         algorithmType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Standard Backpropagation", "Momentum Backpropagation", "Resilent Backpropagation" }));
@@ -60,12 +60,12 @@ public class MPLPanel extends javax.swing.JPanel {
             .add(layout.createSequentialGroup()
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
+                    .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                         .add(jProgressBar1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                         .add(jButton1))
-                    .add(algorithmType, 0, 376, Short.MAX_VALUE))
+                    .add(algorithmType, 0, 380, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(

@@ -41,7 +41,7 @@ public class PerceptronPanel extends javax.swing.JPanel {
             }
         });
 
-        jTextPane1.setText("Train an Adaline network to learn the equation: 2x+3 for x in [1, 41) using an spacing of 1 for training and 1.33 for test.\n\n");
+        jTextPane1.setText("Train an Adaline network to learn the equation: 2x+3 for x in [1, 41) using a spacing of 1 for training and 1.33 for test.  ");
         jScrollPane1.setViewportView(jTextPane1);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
@@ -51,7 +51,7 @@ public class PerceptronPanel extends javax.swing.JPanel {
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 415, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 419, Short.MAX_VALUE)
                     .add(layout.createSequentialGroup()
                         .add(jProgressBar1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 337, Short.MAX_VALUE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)

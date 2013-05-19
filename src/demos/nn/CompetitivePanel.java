@@ -44,7 +44,7 @@ public class CompetitivePanel extends javax.swing.JPanel {
             }
         });
 
-        jTextPane1.setText("Train a Competitive network to learn the points: (-1,6)-(1,6) as class 1, (6,2)-(6,-2) as class 2 and (-3,-5)-(-5,-3) as class 3. Notice that the first 2 patterns must have the same class, regardless the expected answer, the same apply to the next two and for the last two.");
+        jTextPane1.setText("Train a Competitive network to learn the points: (-1,6), (1,6) as class 1, (6,2), (6,-2) as class 2 and (-3,-5), (-5,-3) as class 3. Notice that the first 2 patterns must have the same class, regardless the expected answer, the same apply to the next two and for the last two.");
         jScrollPane1.setViewportView(jTextPane1);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
@@ -54,7 +54,7 @@ public class CompetitivePanel extends javax.swing.JPanel {
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
                     .add(layout.createSequentialGroup()
                         .add(jProgressBar1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
