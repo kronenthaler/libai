@@ -1,4 +1,6 @@
-package libai.common;
+package libai.common.kernels;
+
+import libai.common.Matrix;
 
 /**
  * Implements a Gaussian kernel.
