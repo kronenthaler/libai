@@ -1,6 +1,7 @@
-package libai.common;
+package libai.common.kernels;
 
 import java.io.Serializable;
+import libai.common.Matrix;
 
 /**
  *

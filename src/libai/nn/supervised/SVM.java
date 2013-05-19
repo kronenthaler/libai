@@ -1,9 +1,9 @@
 package libai.nn.supervised;
 
-import libai.common.GaussianKernel;
+import libai.common.kernels.GaussianKernel;
 import libai.common.Matrix;
-import libai.common.Kernel;
-import libai.common.SymmetricSign;
+import libai.common.kernels.Kernel;
+import libai.common.functions.SymmetricSign;
 import java.io.*;
 import java.util.*;
 

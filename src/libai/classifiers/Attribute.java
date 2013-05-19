@@ -1,4 +1,4 @@
-package libai.trees;
+package libai.classifiers;
 
 import org.w3c.dom.*;
 

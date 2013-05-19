@@ -2,7 +2,7 @@ package libai.nn.supervised;
 
 import libai.nn.NeuralNetwork;
 import libai.common.Matrix;
-import libai.common.Sign;
+import libai.common.functions.Sign;
 import java.io.*;
 import java.util.*;
 

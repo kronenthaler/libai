@@ -1,9 +1,9 @@
-package libai.common;
+package libai.common.functions;
 
 import java.io.Serializable;
 
 /**
- * Interface for real fuctions F(x): R -> R. If the function has a derivate, the
+ * Interface for real functions F(x): R -> R. If the function has a derivate, the
  * method getDerivate() MUST be implemented and return a new object to handle
  * this derivate.
  *

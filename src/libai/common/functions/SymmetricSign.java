@@ -1,4 +1,4 @@
-package libai.common;
+package libai.common.functions;
 
 /**
  * Symmetric Signum function F(x) = -1 if x &lt; 0 or 1 if x &gt;= 1 This

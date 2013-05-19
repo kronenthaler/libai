@@ -2,7 +2,7 @@ package demos.nn;
 
 import libai.nn.supervised.SVM;
 import libai.nn.NeuralNetwork;
-import libai.common.LinearKernel;
+import libai.common.kernels.LinearKernel;
 import libai.common.Matrix;
 import demos.common.SimpleProgressDisplay;
 import java.util.*;

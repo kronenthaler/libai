@@ -1,4 +1,4 @@
-package libai.trees;
+package libai.classifiers;
 
 import java.util.*;
 
@@ -23,6 +23,7 @@ public class DataSet {
 	private int output;
 	private int attributeCount;
 	private HashSet<Attribute> classes;
+	private HashMap<Attribute,Integer> classFrequency;
 
 	/**
 	 * Constructor. This constructor allows to create the DataRecords from
@@ -51,9 +52,14 @@ public class DataSet {
 	public DataSet(int o, DataRecord... data_) {
 		data = new Vector<DataRecord>();
 		classes = new HashSet<Attribute>();
+		classFrequency = new HashMap<Attribute, Integer>();
 		for (DataRecord d : data_) {
 			data.add(d);
-			classes.add(d.getAttribute(o));
+			Attribute outputClass = d.getAttribute(o);
+			classes.add(outputClass);
+			if(classFrequency.get(outputClass)==null)
+				classFrequency.put(outputClass, 0);
+			classFrequency.put(outputClass, classFrequency.get(outputClass)+1);
 		}
 
 		output = o;
@@ -110,7 +116,7 @@ public class DataSet {
 
 	/**
 	 * Sort this DataSet over a particular attribute
-	 * <code>a</code>. As the attributes are comparables, the final sorting is
+	 * <code>a</code>. As the attributes are comparable, the final sorting is
 	 * decided by that function.
 	 *
 	 * @param a column to order by
@@ -222,9 +228,9 @@ public class DataSet {
 
 	/**
 	 * Calculate the average information gain among the DataRecord's
-	 * <code>[lo,hi)</code> over a continuos attribute
+	 * <code>[lo,hi)</code> over a continuous attribute
 	 * <code>a</code>. Return an array with four positions: {maximum information
-	 * gain possible, maximun split information gain, best value for the split,
+	 * gain possible, maximum split information gain, best value for the split,
 	 * index of the best value}. Over continuous attributes, the information
 	 * gain is used in a binary way, lower than the best split and greater than
 	 * the best split. To calculate the best split possible is necessary test
@@ -343,7 +349,7 @@ public class DataSet {
 	 * <code>[lo,hi)</code> over the attribute
 	 * <code>a</code>. Returns an array with 4 or 6 positions
 	 * (2+length(infoAvgDiscrete|infoAvgContinuous)): {absolute gain, gain
-	 * ratio, values of infoAvgDiscrete|Continuos}
+	 * ratio, values of infoAvgDiscrete|Continuous}
 	 *
 	 * @param lo	Lower bound (inclusive)
 	 * @param hi	Upper bound (exclusive)
@@ -374,6 +380,11 @@ public class DataSet {
 	public int getAttributeCount() {
 		return attributeCount;
 	}
+	
+	public int getOutputFrequency(Attribute clazz){
+		Integer ret = classFrequency.get(clazz);
+		return ret!=null ? ret : 0;
+	}
 
 	/**
 	 * @return the number of DataRecord's in this DataSet.
@@ -391,7 +402,7 @@ public class DataSet {
 	}
 
 	/**
-	 * @return A set with all the differents output classes in this DataSet.
+	 * @return A set with all the different output classes in this DataSet.
 	 */
 	public Set<Attribute> getClasses() {
 		return Collections.unmodifiableSet(classes);
@@ -421,8 +432,8 @@ public class DataSet {
 
 		for (int i = 0; i < data.size(); i++) {
 			for (int j = 0; j < attributeCount; j++) {
-				if (j != output
-						&& !data.get(i).getAttribute(j).equals(data.get(0).getAttribute(j)))
+				if (j != output && 
+					!data.get(i).getAttribute(j).equals(data.get(0).getAttribute(j)))
 					return null;
 			}
 

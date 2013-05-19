@@ -1,4 +1,4 @@
-package libai.common;
+package libai.common.functions;
 
 /**
  * Identity function f(x) = x; The first derivate of I(x), I'(x) = 1.

@@ -1,5 +1,6 @@
 package libai.common;
 
+import libai.common.functions.Function;
 import java.util.*;
 import java.io.*;
 
@@ -469,11 +470,12 @@ public final class Matrix implements Serializable {
 	/**
 	 * Check if two matrix are equals position to position with a precision of
 	 * 1e-7. If the dimensions mismatch they aren't equals. If one position
-	 * differs by more than 1e-7 then are differents.
+	 * differs by more than 1e-7 then are different.
 	 *
 	 * @param b1 The matrix to compare
 	 * @return <code>true</code> if are equals, <code>false</code> otherwise.
 	 */
+	@Override
 	public boolean equals(Object b1) {
 		Matrix b = (Matrix) b1;
 		if (rows != b.rows || cols != b.cols)
@@ -493,7 +495,7 @@ public final class Matrix implements Serializable {
 	 */
 	@Override
 	public String toString() {
-		StringBuffer str = new StringBuffer();
+		StringBuilder str = new StringBuilder();
 
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++)

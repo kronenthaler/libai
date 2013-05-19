@@ -1,11 +1,7 @@
 package libai.experimental;
 
-import libai.trees.C45;
-import libai.trees.DiscreteAttribute;
-import libai.trees.DataSet;
-import libai.trees.Attribute;
-import libai.trees.ContinuousAttribute;
-import libai.trees.DataRecord;
+import libai.classifiers.trees.*;
+import libai.classifiers.*;
 import java.io.*;
 import java.util.*;
 import java.math.*;

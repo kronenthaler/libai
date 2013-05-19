@@ -1,5 +1,6 @@
-package libai.trees;
+package libai.classifiers.trees;
 
+import libai.classifiers.*;
 import java.io.*;
 import java.util.*;
 import org.w3c.dom.*;
@@ -75,7 +76,7 @@ public class C45 implements Comparable<C45> {
 	}
 
 	/**
-	 * Return an unprune tree from the given dataset.
+	 * Return an unpruned tree from the given dataset.
 	 */
 	public static C45 getInstance(DataSet ds) {
 		return new C45().train(ds);
@@ -142,7 +143,7 @@ public class C45 implements Comparable<C45> {
 				}
 			} else {
 				for (int i = 0; i < dr.getAttributeCount(); i++) {
-					if (dr.getAttribute(i).getName().equals(childs[0].first.name)) {
+					if (dr.getAttribute(i).getName().equals(childs[0].first.getName())) {
 						if (dr.getAttribute(i).compareTo(childs[0].first) <= 0)
 							return childs[0].second.eval(dr, keeptrack, expected, ds);
 						else
@@ -239,8 +240,6 @@ public class C45 implements Comparable<C45> {
 		return errorCount / (double) ds.getItemsCount();
 	}
 
-	//TODO: probar el metodo de pruning de: http://www.cse.unsw.edu.au/~billw/cs9414/notes/ml/06prop/id3/id3.html
-	//se ve sencillo y tiene el ejemplo completo!!!!
 	public C45 prune(DataSet ds, int type) {
 		//first of all, evaluate all the data set over the tree, and keep track of the results.
 		outputIndex = ds.getOutputIndex();
@@ -329,7 +328,7 @@ public class C45 implements Comparable<C45> {
 
 		}
 		sum += 1 / 2;
-		if (sum < 0.0000000001)
+		if (sum < 1e-9)
 			sum = 0;
 
 		return sum;
@@ -399,11 +398,11 @@ public class C45 implements Comparable<C45> {
 
 	private void save(PrintStream out, String indent) throws IOException {
 		if (isLeaf()) {
-			out.println(indent + "<leaf type=\"" + output.getClass().getName() + "\" name=\"" + output.name + "\"><![CDATA[" + output.getValue() + "]]></leaf>");
+			out.println(indent + "<leaf type=\"" + output.getClass().getName() + "\" name=\"" + output.getName() + "\"><![CDATA[" + output.getValue() + "]]></leaf>");
 		} else {
 			out.println(indent + "<node splits=\"" + childs.length + "\">");
 			for (Pair<Attribute, C45> p : childs) {
-				out.println(indent + "\t<split type=\"" + p.first.getClass().getName() + "\" name=\"" + p.first.name + "\"><![CDATA[" + p.first.getValue() + "]]></split>");
+				out.println(indent + "\t<split type=\"" + p.first.getClass().getName() + "\" name=\"" + p.first.getName() + "\"><![CDATA[" + p.first.getValue() + "]]></split>");
 				p.second.save(out, indent + "\t");
 			}
 			out.println(indent + "</node>");
@@ -430,9 +429,9 @@ public class C45 implements Comparable<C45> {
 		} else {
 			for (Pair<Attribute, C45> p : childs) {
 				if (p.first.isCategorical())
-					System.out.println(indent + "[" + p.first.name + " = " + ((DiscreteAttribute) p.first).getValue() + " " + samplesFreq + " e: " + error + " be: " + backedUpError + "]");
+					System.out.println(indent + "[" + p.first.getName() + " = " + ((DiscreteAttribute) p.first).getValue() + " " + samplesFreq + " e: " + error + " be: " + backedUpError + "]");
 				else
-					System.out.println(indent + "[" + p.first.name + (childs[0] == p ? " <= " : " > ") + ((ContinuousAttribute) p.first).getValue() + " " + samplesFreq + " be: " + backedUpError + "]");
+					System.out.println(indent + "[" + p.first.getName() + (childs[0] == p ? " <= " : " > ") + ((ContinuousAttribute) p.first).getValue() + " " + samplesFreq + " be: " + backedUpError + "]");
 				p.second.print(indent + "\t");
 			}
 		}

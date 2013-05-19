@@ -1,4 +1,4 @@
-package libai.common;
+package libai.common.functions;
 
 /**
  * Hyperbolic Tangent. F(x) = tanh(x). The first derivate of tanh(x) =

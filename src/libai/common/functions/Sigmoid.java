@@ -1,4 +1,4 @@
-package libai.common;
+package libai.common.functions;
 
 /**
  * Sigmoid function: f(x) = 1/(1+e^-x) The first derivate of the sigmoid

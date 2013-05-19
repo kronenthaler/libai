@@ -1,7 +1,7 @@
 package libai.nn.supervised;
 
 import libai.common.Matrix;
-import libai.common.Function;
+import libai.common.functions.Function;
 import java.io.*;
 import java.util.*;
 

@@ -1,10 +1,10 @@
 package demos.nn;
 
 import libai.nn.supervised.MLP;
-import libai.common.Sigmoid;
+import libai.common.functions.Sigmoid;
 import libai.common.Matrix;
-import libai.common.Function;
-import libai.common.Identity;
+import libai.common.functions.Function;
+import libai.common.functions.Identity;
 import demos.common.SimpleProgressDisplay;
 
 /**

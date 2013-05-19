@@ -137,13 +137,14 @@ public class BinaryChromosome extends Chromosome {
 	 * @param length The length of the new chromosome.
 	 * @return A new instance of length <code>length</code>
 	 */
+	@Override
 	public Chromosome getInstance(int length) {
 		return new BinaryChromosome(length);
 	}
 
 	@Override
 	public String toString() {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		for (int i = 0; i < length; i++) {
 			buf.append(genes.get(i) ? '1' : '0');
 		}

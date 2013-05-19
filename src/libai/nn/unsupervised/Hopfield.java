@@ -5,7 +5,7 @@ import java.io.*;
 import java.util.*;
 
 import libai.common.Matrix;
-import libai.common.SymmetricSign;
+import libai.common.functions.SymmetricSign;
 
 /**
  * Hopfield's networks are the most important and most applicable recurrent

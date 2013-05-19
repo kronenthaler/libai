@@ -1,4 +1,4 @@
-package libai.common;
+package libai.common.functions;
 
 /**
  * Signum function F(x) = 0 if x &lt; 0 or 1 if x &gt;= 1 This function is not
