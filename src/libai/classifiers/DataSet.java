@@ -23,8 +23,7 @@ public class DataSet {
 	private int output;
 	private int attributeCount;
 	private HashSet<Attribute> classes;
-	private HashMap<Attribute,Integer> classFrequency;
-
+	
 	/**
 	 * Constructor. This constructor allows to create the DataRecords from
 	 * unnamed attributes and setting the name positionally after the creation
@@ -52,14 +51,10 @@ public class DataSet {
 	public DataSet(int o, DataRecord... data_) {
 		data = new Vector<DataRecord>();
 		classes = new HashSet<Attribute>();
-		classFrequency = new HashMap<Attribute, Integer>();
 		for (DataRecord d : data_) {
 			data.add(d);
 			Attribute outputClass = d.getAttribute(o);
 			classes.add(outputClass);
-			if(classFrequency.get(outputClass)==null)
-				classFrequency.put(outputClass, 0);
-			classFrequency.put(outputClass, classFrequency.get(outputClass)+1);
 		}
 
 		output = o;
@@ -381,11 +376,6 @@ public class DataSet {
 		return attributeCount;
 	}
 	
-	public int getOutputFrequency(Attribute clazz){
-		Integer ret = classFrequency.get(clazz);
-		return ret!=null ? ret : 0;
-	}
-
 	/**
 	 * @return the number of DataRecord's in this DataSet.
 	 */
