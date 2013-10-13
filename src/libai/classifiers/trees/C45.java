@@ -201,32 +201,31 @@ public class C45 implements Comparable<C45> {
 		}
 
 		ds.sortOver(index);
-		ArrayList<Pair<Attribute, C45>> childs = new ArrayList<Pair<Attribute, C45>>();
+		ArrayList<Pair<Attribute, C45>> children = new ArrayList<Pair<Attribute, C45>>();
 		if (ds.get(0).getAttribute(index) instanceof DiscreteAttribute) {
 			visited.add(index); //mark as ready, avoid revisiting a nominal attribute.
 
 			for (int i = 0, hi = itemsCount; i < hi;) {
-				int j = 0;
 				int nlo = i;
-				for (j = i; j < hi - 1; j++, i++)
+				for (int j = i; j < hi - 1; j++, i++)
 					if (!ds.get(j).getAttribute(index).equals(ds.get(j + 1).getAttribute(index)))
 						break;
 				i++;
 
-				childs.add(new Pair<Attribute, C45>(ds.get(nlo).getAttribute(index),
+				children.add(new Pair<Attribute, C45>(ds.get(nlo).getAttribute(index),
 						train(new DataSet(ds, nlo, i), visited, deep + "\t")));
 			}
 		} else {
 			DataSet l = new DataSet(ds, 0, indexOfValue);
 			DataSet r = new DataSet(ds, indexOfValue, itemsCount);
 			C45 left = train(l, visited, deep + "\t");
-			childs.add(new Pair<Attribute, C45>(new ContinuousAttribute(ds.get(0).getAttribute(index).getName(), splitValue), left));
+			children.add(new Pair<Attribute, C45>(new ContinuousAttribute(ds.get(0).getAttribute(index).getName(), splitValue), left));
 
 			C45 right = train(r, visited, deep + "\t");
-			childs.add(new Pair<Attribute, C45>(new ContinuousAttribute(ds.get(0).getAttribute(index).getName(), splitValue), right));
+			children.add(new Pair<Attribute, C45>(new ContinuousAttribute(ds.get(0).getAttribute(index).getName(), splitValue), right));
 		}
 
-		return new C45(childs);
+		return new C45(children);
 	}
 
 	public double error(DataSet ds) {
