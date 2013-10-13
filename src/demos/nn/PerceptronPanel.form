@@ -69,7 +69,7 @@
       <SubComponents>
         <Component class="javax.swing.JTextPane" name="jTextPane1">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Train an Adaline network to learn the equation: 2x+3 for x in [1, 41) using an spacing of 1 for training and 1.33 for test.&#xa;&#xa;"/>
+            <Property name="text" type="java.lang.String" value="Train an Adaline network to learn the equation: 2x+3 for x in [1, 41) using a spacing of 1 for training and 1.33 for test.  "/>
           </Properties>
         </Component>
       </SubComponents>
