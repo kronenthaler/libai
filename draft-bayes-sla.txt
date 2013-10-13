@@ -1,0 +1,143 @@
+Formulas:
+	I(A,B) = SUM{a,b} P(a,b) log(P(a,b)/P(a)P(b))
+	I(A,B|C) = SUM{a,b,c} P(a,b|c) log(P(a,b|c)/P(a|c)P(b|c)) 
+	Nota: que es a y b?
+	
+Adjacency Path: 
+	Para 2 nodos X,Y, una A.P. P=<a1,...,ak> a1=X & ak=Y, omitiendo la direccion
+
+Collider:
+	v es un collider de X & Y en el path <a1,...,aj=(X,v), ak=(Y,v), ...> Si, X & Y estan conectados hacia v.
+
+Open adjacency path:
+	Dado C en N-{X,Y}: 
+	- cada collider en P esta en C o tiene un descendiente en C.
+	- Ningun otro nodo en P esta en C.
+
+D-separated:
+	X & Y son d-separated dado C IIF: no existe un open adjacency path entre X-Y
+	
+Cut set:
+	Conjunto C que d-separate X & Y
+
+Graph SLA(DataSet D, float epsilon=0.01){
+	ArrayList<Vertex> V = new ArrayList<Vertex>(D.getAttributes());
+	ArrayList<Edge> E = new ArrayList<Edge>();
+	
+	//1: list of all pairs where there is information flow between them.
+	ArrayList<Edge> L = new ArrayList<Edge>();
+	for(Vertex x : V)
+		for(Vertex y : V)
+			if(x!=y && I(x,y) > epsilon)
+				L.add(new Edge(x,y));
+	
+	//2: Thickering
+	for(Edge e : L){
+		if(edgeNeeded(V, E, e, D, epsilon))
+			E.add(new Edge(e));
+	}
+	
+	//3: Thinning
+	for(Edge e : E){
+		if(isPath(e.x, e.y, e)){
+			ArrayList<Edge> E1 = new ArrayList<Edge>(E);
+			E1.remove(e);
+			if(!edgeNeeded(V, E1, e, D, epsilon))
+				E = E1;
+		}
+	}
+	
+	//4: orient edges
+	return orientEdges(V, E, D);
+}
+
+boolean edgeNeeded(ArrayList<Vertex> V, ArrayList<Edge> E, Edge e, DataSet D, float epsilon){
+	//1. Get neightbors 
+	Sx = Get neightbors of X on adyacency paths X-Y
+	Sy = Get neightbors of Y on adyacency paths X-Y
+	
+	//2. Get neightbors of the S* elements.
+	Sx1 = all neightbors on Sx that are on the adyacency paths of X-Y but not on Sx
+	Sy1 = all neightbors on Sx that are on the adyacency paths of X-Y but not on Sy
+	
+	//3. Small cut set
+	C = |Sx + Sx1| < |Sy + Sy1| ? (Sx + Sx1) : (Sy + Sy1);
+	
+	//4. Information flow
+	float s = I(e.x, e.y, C);
+	
+	//5. check
+	if(s < epsilon){
+		CutSet = CutSet + {e.x, e.y, C};
+		return false;
+	}
+	
+	//6. extend cutset
+	while(C.size() > 1){
+		int m = 0;
+		float sm = Float.MAX_VALUE;
+		for(int i=0;i<C.size();i++){
+			Vertex Ci = C.remove(i);
+			si = I(e.x, e.y, C);
+			C.add(Ci);
+			
+			if(si < sm){
+				m = i;
+				sm = si;
+			}
+		}
+		
+		if(sm < epsilon){
+			CutSet = CutSet + {e.x, e.y, C[m]}; // C[m] C without the m-th element.
+			return false;
+		}else if(sm > s){
+			break;
+		}else{
+			s = sm;
+			C.remove(m);
+		}
+	}
+	
+	return true;
+}
+
+Graph orientEdges(ArrayList<Vertex> V, ArrayList<Edge> E){
+	//1.
+	for(Vertex X : V){
+		for(Vertex Y : V){
+			if(X==Y) continue;
+			for(Vertex Z : V){
+				if(X==Z || Z==Y) continue;
+				if(E.contains(X,Y) && E.contains(Y,Z) && !E.contains(X,Z)){
+					//Note1: what is C?
+					if((CutSet.contains(X) && CutSet.contains(Z) && CutSet.contains(C) && !C.contains(Y)) || 
+					   (!CutSet.contains(X) && !CutSet.contains(Z) && !CutSet.contains(C)){
+						E.get(X,Y).orientation = 1; //->
+						E.get(Z,Y).orientation = 1; //->
+					}
+				} 
+			}
+		}
+	}
+	
+	//2.
+	for(Vertex X : V){
+		for(Vertex Y : V){
+			if(X==Y) continue;
+			for(Vertex Z : V){
+				if(X==Z || Z==Y) continue;
+				if(E.contains(X,Y,1) && E.contains(Y,Z) && !E.contains(X,Z) && E.get(Y,Z).orientation == 0){
+					E.get(Y,Z).orientation = 1;
+				}
+			}
+		}
+	}
+	
+	//3.
+	for(Edge e : E){
+		if(e.orientation == 0){
+			if(directedPath(E, e.x, e.y))
+				E.get(X,Y).orientation = 1; //->
+		}
+	}
+}
