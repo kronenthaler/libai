@@ -143,8 +143,8 @@ public class C45 implements Comparable<C45> {
 				}
 			} else {
 				for (int i = 0; i < dr.getAttributeCount(); i++) {
-					if (dr.getAttribute(i).getName().equals(childs[0].first.getName())) {
-						if (dr.getAttribute(i).compareTo(childs[0].first) <= 0)
+					if (dr.get(i).getName().equals(childs[0].first.getName())) {
+						if (dr.get(i).compareTo(childs[0].first) <= 0)
 							return childs[0].second.eval(dr, keeptrack, expected, ds);
 						else
 							return childs[1].second.eval(dr, keeptrack, expected, ds);
@@ -173,7 +173,7 @@ public class C45 implements Comparable<C45> {
 
 		//base case: all the output are the same.
 		if (ds.allTheSameOutput())
-			return new C45(ds.get(0).getAttribute(output));
+			return new C45(ds.get(0).get(output));
 
 		//base case: all the attributes are the same.
 		Attribute att = ds.allTheSame();
@@ -202,27 +202,27 @@ public class C45 implements Comparable<C45> {
 
 		ds.sortOver(index);
 		ArrayList<Pair<Attribute, C45>> children = new ArrayList<Pair<Attribute, C45>>();
-		if (ds.get(0).getAttribute(index) instanceof DiscreteAttribute) {
+		if (ds.get(0).get(index) instanceof DiscreteAttribute) {
 			visited.add(index); //mark as ready, avoid revisiting a nominal attribute.
 
 			for (int i = 0, hi = itemsCount; i < hi;) {
 				int nlo = i;
 				for (int j = i; j < hi - 1; j++, i++)
-					if (!ds.get(j).getAttribute(index).equals(ds.get(j + 1).getAttribute(index)))
+					if (!ds.get(j).get(index).equals(ds.get(j + 1).get(index)))
 						break;
 				i++;
 
-				children.add(new Pair<Attribute, C45>(ds.get(nlo).getAttribute(index),
+				children.add(new Pair<Attribute, C45>(ds.get(nlo).get(index),
 						train(new DataSet(ds, nlo, i), visited, deep + "\t")));
 			}
 		} else {
 			DataSet l = new DataSet(ds, 0, indexOfValue);
 			DataSet r = new DataSet(ds, indexOfValue, itemsCount);
 			C45 left = train(l, visited, deep + "\t");
-			children.add(new Pair<Attribute, C45>(new ContinuousAttribute(ds.get(0).getAttribute(index).getName(), splitValue), left));
+			children.add(new Pair<Attribute, C45>(new ContinuousAttribute(ds.get(0).get(index).getName(), splitValue), left));
 
 			C45 right = train(r, visited, deep + "\t");
-			children.add(new Pair<Attribute, C45>(new ContinuousAttribute(ds.get(0).getAttribute(index).getName(), splitValue), right));
+			children.add(new Pair<Attribute, C45>(new ContinuousAttribute(ds.get(0).get(index).getName(), splitValue), right));
 		}
 
 		return new C45(children);
@@ -232,7 +232,7 @@ public class C45 implements Comparable<C45> {
 		int errorCount = 0;
 		for (int i = 0; i < ds.getItemsCount(); i++) {
 			DataRecord r = ds.get(i);
-			if ((eval(r).compareTo(r.getAttribute(ds.getOutputIndex())) != 0)) {
+			if ((eval(r).compareTo(r.get(ds.getOutputIndex())) != 0)) {
 				errorCount++;
 			}
 		}
@@ -243,7 +243,7 @@ public class C45 implements Comparable<C45> {
 		//first of all, evaluate all the data set over the tree, and keep track of the results.
 		outputIndex = ds.getOutputIndex();
 		for (int i = 0, n = ds.getItemsCount(); i < n; i++)
-			eval(ds.get(i), true, ds.get(i).getAttribute(outputIndex), ds);
+			eval(ds.get(i), true, ds.get(i).get(outputIndex), ds);
 
 		prune(type);
 

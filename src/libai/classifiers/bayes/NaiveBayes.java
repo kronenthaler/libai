@@ -1,12 +1,18 @@
 package libai.classifiers.bayes;
 
 import java.io.*;
-import libai.classifiers.*;
+import libai.classifiers.Attribute;
+import libai.classifiers.DiscreteAttribute;
+import libai.classifiers.ContinuousAttribute;
+import libai.classifiers.DataRecord;
+
+import libai.classifiers.refactor.DataSet;
+import libai.classifiers.refactor.MetaData;
+
 import libai.common.*;
 import java.util.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import libai.classifiers.trees.C45;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -16,15 +22,15 @@ import org.w3c.dom.NodeList;
  * @author kronenthaler
  */
 public class NaiveBayes {
-	protected int outputIndex;
-	protected int totalCount;
-	protected int attributeCount;
-	protected HashMap<Attribute, Object[]> params;
-
+    protected int outputIndex;
+    protected int totalCount;
+    protected MetaData metadata;
+    protected HashMap<Attribute, Object[]> params;
+    
 	public NaiveBayes train(DataSet ds) {
 		outputIndex = ds.getOutputIndex();
 		totalCount = ds.getItemsCount();
-		attributeCount = ds.getAttributeCount();
+        metadata = ds.getMetaData();
 		
 		params = new HashMap<Attribute, Object[]>();
 		initialize(ds);
@@ -34,12 +40,13 @@ public class NaiveBayes {
 	}
 
 	private void initialize(DataSet ds) {
-		for (Attribute c : ds.getClasses()) {
+        int attributeCount =  metadata.getAttributeCount();
+        for (Attribute c : ds.getClasses()) {
 			params.put(c, new Object[attributeCount]);
-			for (int j = 0; j < ds.getAttributeCount(); j++) {
-				if (j == ds.getOutputIndex()) {
+			for (int j = 0; j < attributeCount; j++) {
+				if (j == outputIndex) {
 					params.get(c)[j] = (Integer) 0;
-				} else if (ds.get(0).getAttribute(j).isCategorical()) {
+				} else if (metadata.isCategorical(j)) {
 					params.get(c)[j] = new HashMap<String, Integer>(); //value, count
 				} else {
 					params.get(c)[j] = new Pair<Double, Double>(0.0, 0.0);//mean, sd
@@ -49,33 +56,39 @@ public class NaiveBayes {
 	}
 
 	private void precalculate(DataSet ds) {
-		ds.sortOver(outputIndex);
-		for (int i = 0; i < ds.getItemsCount(); i++) {
-			for (int j = 0; j < ds.getAttributeCount(); j++) {
-				DataRecord r = ds.get(i);
-				int outIndex = ds.getOutputIndex();
-				Object value = r.getAttribute(j).getValue();
-
-				if (j == outIndex) {
-					int current = (Integer) params.get(r.getAttribute(outIndex))[outIndex];
-					params.get(r.getAttribute(outIndex))[outIndex] = current + 1;
-				} else if (ds.get(0).getAttribute(j).isCategorical()) {
-					HashMap<String, Integer> freq = (HashMap<String, Integer>) params.get(r.getAttribute(outIndex))[j];
+        for(DataRecord record : ds){
+            Attribute outputAttr = record.get(outputIndex);
+            int j = 0;
+            for(Attribute attr : record){
+		    	Object value = attr.getValue();
+				if (j == outputIndex) { 
+                    //count simple frequencies of the output class
+					int current = (Integer) params.get(outputAttr)[j];
+					params.get(outputAttr)[j] = current + 1;
+				} else if (attr.isCategorical()) {
+                    // count frequencies of each different values in this attribute
+					HashMap<String, Integer> freq = (HashMap<String, Integer>) params.get(outputAttr)[j];
 					if (freq.get((String) value) == null)
 						freq.put((String) value, 0);
 					freq.put((String) value, freq.get((String) value) + 1);
 				} else {
-					Pair<Double, Double> acum = (Pair<Double, Double>) params.get(r.getAttribute(outIndex))[j];
+                    // precalculate the mean and standard deviation, acumulate part.
+					Pair<Double, Double> acum = (Pair<Double, Double>) params.get(outputAttr)[j];
 					//acum for mean and SD
 					acum.first = acum.first + (Double) value;
 					acum.second = acum.second + Math.pow((Double) value, 2);
 				}
+                j++;
 			}
 		}
-
-		for (Attribute key : params.keySet()) {
-			Object[] data = params.get(key);
+        
+        // just for the continuous attributes, finish the calculation of the 
+        // gausian parameters.
+        // for each class values
+		for (Object[] data : params.values()) {
+			// for each look up table
 			for (Object o : data) {
+                // look for the continuos attributes, that are not the output
 				if (o instanceof Pair) {
 					Pair<Double, Double> acum = (Pair<Double, Double>) o;
 					double sd = acum.second;
@@ -115,8 +128,8 @@ public class NaiveBayes {
 	private double P(DataRecord x, Attribute h) {
 		double p = 1;
 		//look for all records in ds with class h.
-		for (int k = 0, n = x.getAttributeCount(); k < n; k++) {
-			Attribute attr = x.getAttribute(k);
+        for (int k = 0, n = x.getAttributeCount(); k < n; k++) {
+			Attribute attr = x.get(k);
 			if (attr.isCategorical()) {
 				p *= (count((DiscreteAttribute) attr, k, h) + 1) / (double) (((Integer) params.get(h)[outputIndex]) + 1);
 			} else {
@@ -173,7 +186,7 @@ public class NaiveBayes {
 			out.println("<" + getClass().getSimpleName() + " "
 					+ "outputIndex=\""+outputIndex+"\" "
 					+ "totalCount=\""+totalCount+"\" "
-					+ "attributes=\""+attributeCount+"\">");
+					+ "attributes=\""+metadata.getAttributeCount()+"\">");
 			save(out, "\t");
 			out.println("</" + getClass().getSimpleName() + ">");
 			out.close();
@@ -189,9 +202,8 @@ public class NaiveBayes {
 		for (Attribute c : params.keySet()) {
 			out.println(indent + "<class>");
 			out.println(indent + "\t<params type=\"" + c.getClass().getName() + "\" name=\"" + c.getName() + "\" ><![CDATA["+c.getValue()+"]]></params>");
-			Object[] data = params.get(c);
 			int i = 0;
-			for (Object o : data) {
+			for (Object o : params.get(c)) {
 				out.println(indent + "\t<attribute index=\"" + i + "\">");
 				if (o instanceof Integer) { //class count
 					out.println(indent + "\t\t<count>" + o + "</count>");
@@ -214,8 +226,8 @@ public class NaiveBayes {
 	private NaiveBayes load(Node root) {
 		outputIndex = Integer.parseInt(root.getAttributes().getNamedItem("outputIndex").getTextContent());
 		totalCount = Integer.parseInt(root.getAttributes().getNamedItem("totalCount").getTextContent());
-		attributeCount = Integer.parseInt(root.getAttributes().getNamedItem("attributes").getTextContent());
 		params = new HashMap<Attribute, Object[]>();
+        int attributeCount = Integer.parseInt(root.getAttributes().getNamedItem("attributes").getTextContent());
 		
 		NodeList children = root.getChildNodes();
 		for(int i=0;i<children.getLength();i++){

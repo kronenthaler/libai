@@ -6,7 +6,7 @@ import java.util.*;
  *
  * @author kronenthaler
  */
-public class DataRecord {
+public class DataRecord implements Iterable<Attribute> {
 	private Vector<Attribute> attributes;
 
 	public DataRecord(String[] names, Attribute... atts) {
@@ -29,7 +29,7 @@ public class DataRecord {
 		return attributes.size();
 	}
 
-	public Attribute getAttribute(int a) {
+	public Attribute get(int a) {
 		return attributes.get(a);
 	}
 
@@ -49,4 +49,9 @@ public class DataRecord {
 	public String toString() {
 		return attributes.toString();
 	}
+
+    @Override
+    public Iterator<Attribute> iterator() {
+        return attributes.iterator();
+    }
 }

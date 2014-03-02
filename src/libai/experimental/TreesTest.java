@@ -34,7 +34,7 @@ public class TreesTest {
 				new DataRecord(new DiscreteAttribute("outcome", "yes"), new ContinuousAttribute("val", 81)),
 				new DataRecord(new DiscreteAttribute("outcome", "yes"), new ContinuousAttribute("val", 83)),
 				new DataRecord(new DiscreteAttribute("outcome", "no"), new ContinuousAttribute("val", 85)));
-		DataSet sets[] = ds.splitKeepingRelation(1);
+		DataSet sets[] = ds.splitKeepingRelation(.5);
 		sets[0].print("");
 		sets[1].print("");
 		/*C45 tree = C45.getInstance(ds);

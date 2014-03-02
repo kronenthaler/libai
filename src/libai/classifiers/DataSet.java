@@ -18,12 +18,12 @@ import java.util.*;
  *
  * @author kronenthaler
  */
-public class DataSet {
+public class DataSet implements Iterable<DataRecord> {
 	private Vector<DataRecord> data;
 	private int output;
 	private int attributeCount;
 	private HashSet<Attribute> classes;
-	
+    
 	/**
 	 * Constructor. This constructor allows to create the DataRecords from
 	 * unnamed attributes and setting the name positionally after the creation
@@ -37,7 +37,7 @@ public class DataSet {
 		this(o, data_);
 		for (DataRecord d : data) {
 			for (int i = 0; i < d.getAttributeCount(); i++)
-				d.getAttribute(i).setName(names[i]);
+				d.get(i).setName(names[i]);
 		}
 	}
 
@@ -53,7 +53,7 @@ public class DataSet {
 		classes = new HashSet<Attribute>();
 		for (DataRecord d : data_) {
 			data.add(d);
-			Attribute outputClass = d.getAttribute(o);
+			Attribute outputClass = d.get(o);
 			classes.add(outputClass);
 		}
 
@@ -75,15 +75,17 @@ public class DataSet {
 	public DataSet(DataSet src, int lo, int hi) {
 		if (lo < 0)
 			throw new IllegalArgumentException("lo < 0, should be non-negative");
-
+        
+        classes = new HashSet<Attribute>();
+        output = src.output;
+		attributeCount = src.attributeCount;
+        
 		//take the info from other dataset.
 		data = new Vector<DataRecord>();
-		for (int i = lo; i < hi; i++)
+		for (int i = lo; i < hi; i++){
 			data.add(src.data.get(i));
-
-		output = src.output;
-		attributeCount = src.attributeCount;
-		classes = src.classes;
+            classes.add(src.data.get(i).get(output));
+        }
 	}
 
 	/**
@@ -94,7 +96,7 @@ public class DataSet {
 	public void addRecord(DataRecord r) {
 		data.add(r);
 		attributeCount = r.getAttributeCount();
-		classes.add(r.getAttribute(output));
+		classes.add(r.get(output));
 	}
 
 	/**
@@ -106,7 +108,7 @@ public class DataSet {
 	public void addRecord(String[] names, DataRecord r) {
 		addRecord(r);
 		for (int i = 0; i < names.length; i++)
-			r.getAttribute(i).setName(names[i]);
+			r.get(i).setName(names[i]);
 	}
 
 	/**
@@ -120,9 +122,9 @@ public class DataSet {
 		Collections.sort(data, new Comparator<DataRecord>() {
 			@Override
 			public int compare(DataRecord o1, DataRecord o2) {
-				int ret = o1.getAttribute(a).compareTo(o2.getAttribute(a));
+				int ret = o1.get(a).compareTo(o2.get(a));
 				if (ret == 0)
-					return o1.getAttribute(output).compareTo(o2.getAttribute(output));
+					return o1.get(output).compareTo(o2.get(output));
 				return ret;
 			}
 		});
@@ -143,10 +145,10 @@ public class DataSet {
 	private double[] info(int lo, int hi, int a) {
 		HashMap<String, Integer> freq = new HashMap<String, Integer>();
 		for (int i = lo; i < hi; i++) {
-			if (!(data.get(i).getAttribute(a) instanceof DiscreteAttribute))
+			if (!(data.get(i).get(a) instanceof DiscreteAttribute))
 				throw new IllegalArgumentException("The output attribute must be discrete");
 
-			String v = ((DiscreteAttribute) data.get(i).getAttribute(a)).getValue();
+			String v = ((DiscreteAttribute) data.get(i).get(a)).getValue();
 			if (freq.get(v) == null)
 				freq.put(v, 0);
 			freq.put(v, freq.get(v) + 1);
@@ -181,7 +183,7 @@ public class DataSet {
 	private double[] infoAvg(int lo, int hi, int a) {
 		sortOver(a);
 
-		if (data.get(lo).getAttribute(a) instanceof DiscreteAttribute)
+		if (data.get(lo).get(a) instanceof DiscreteAttribute)
 			return infoAvgDiscrete(lo, hi, a);
 		else
 			return infoAvgContinuous(lo, hi, a);
@@ -210,7 +212,7 @@ public class DataSet {
 			int nlo = i;
 
 			for (j = i; j < hi - 1; j++, i++)
-				if (!data.get(j).getAttribute(a).equals(data.get(j + 1).getAttribute(a)))
+				if (!data.get(j).get(a).equals(data.get(j + 1).get(a)))
 					break;
 			i++;
 
@@ -241,10 +243,10 @@ public class DataSet {
 		double splitInfo = 0;
 		double total = hi - lo;
 
-		//1. Calcular las frecuencias totales; son las mismas para todos los atributos.
-		//	 cuello de botella #1, como hacer que el dataset no tenga que recalcular las frecuencias
-		//	 en cada creacion => al saber cuales son las frecuencias por las que se hace el split, se
-		//	 puede inicializar el nuevo dataset con esas frecuencias.
+        //1. Calculate the total frequencies; they are the same for all the attributes.
+        //   Bottleneck #1, how to avoid to recalculate the frequencies in each creation.
+        //   => the frequencies can be recalculated when the spil is done, substracting the 
+        //   amount of elements that are left out on this range.
 		HashMap<String, Integer> totalFreq = new HashMap<String, Integer>();
 		HashMap<Double, HashMap<String, Integer>> freqAcum = new HashMap<Double, HashMap<String, Integer>>();
 
@@ -253,22 +255,22 @@ public class DataSet {
 		}
 
 		for (int i = lo; i < hi; i++) {
-			if (!(data.get(i).getAttribute(output) instanceof DiscreteAttribute))
+			if (!(data.get(i).get(output) instanceof DiscreteAttribute))
 				throw new IllegalArgumentException("The output attribute must be discrete");
 
-			String v = ((DiscreteAttribute) data.get(i).getAttribute(output)).getValue();
+			String v = ((DiscreteAttribute) data.get(i).get(output)).getValue();
 			if (totalFreq.get(v) == null)
 				totalFreq.put(v, 0);
 			totalFreq.put(v, totalFreq.get(v) + 1);
 
-			double va = ((ContinuousAttribute) data.get(i).getAttribute(a)).getValue();
+			double va = ((ContinuousAttribute) data.get(i).get(a)).getValue();
 			if (freqAcum.get(va) == null) {
 				freqAcum.put(va, new HashMap<String, Integer>());
 				for (Attribute e : classes) {
 					if (i - 1 < 0)
 						freqAcum.get(va).put(((DiscreteAttribute) e).getValue(), 0);
 					else {
-						double pva = ((ContinuousAttribute) data.get(i - 1).getAttribute(a)).getValue();
+						double pva = ((ContinuousAttribute) data.get(i - 1).get(a)).getValue();
 						freqAcum.get(va).put(((DiscreteAttribute) e).getValue(), freqAcum.get(pva).get(((DiscreteAttribute) e).getValue()));
 					}
 				}
@@ -281,9 +283,9 @@ public class DataSet {
 		double bestSplitValue = Integer.MAX_VALUE;
 		int bestIndex = -1000;
 
-		//2. Crear una tabla para saber las frecuencias acumuladas hasta un indice. (mismo valor, misma tabla anterior.)
+        //2. Create a table to know the accumulated frequencies until certain index. (same value, same previous table.)
 		for (int i = lo; i < hi; i++) {
-			double value = ((ContinuousAttribute) data.get(i).getAttribute(a)).getValue();
+			double value = ((ContinuousAttribute) data.get(i).get(a)).getValue();
 
 			HashMap<String, Integer> freq = freqAcum.get(value);
 
@@ -320,7 +322,7 @@ public class DataSet {
 				maxInfo = infoA + infoB;
 				int k = 0;
 				for (k = i + 1; k < hi; k++) {
-					double nextValue = ((ContinuousAttribute) data.get(k).getAttribute(a)).getValue();
+					double nextValue = ((ContinuousAttribute) data.get(k).get(a)).getValue();
 					if (value != nextValue) {
 						bestSplitValue = (value + nextValue) / 2;
 						bestIndex = k;
@@ -404,7 +406,7 @@ public class DataSet {
 	 */
 	public boolean allTheSameOutput() {
 		for (int i = 0; i < data.size(); i++) {
-			if (!data.get(i).getAttribute(output).equals(data.get(0).getAttribute(output)))
+			if (!data.get(i).get(output).equals(data.get(0).get(output)))
 				return false;
 		}
 		return true;
@@ -423,14 +425,14 @@ public class DataSet {
 		for (int i = 0; i < data.size(); i++) {
 			for (int j = 0; j < attributeCount; j++) {
 				if (j != output && 
-					!data.get(i).getAttribute(j).equals(data.get(0).getAttribute(j)))
+					!data.get(i).get(j).equals(data.get(0).get(j)))
 					return null;
 			}
 
-			if (!(data.get(i).getAttribute(output) instanceof DiscreteAttribute))
+			if (!(data.get(i).get(output) instanceof DiscreteAttribute))
 				throw new IllegalArgumentException("The output attribute must be discrete");
 
-			String v = ((DiscreteAttribute) data.get(i).getAttribute(output)).getValue();
+			String v = ((DiscreteAttribute) data.get(i).get(output)).getValue();
 			if (freq.get(v) == null)
 				freq.put(v, 0);
 			freq.put(v, freq.get(v) + 1);
@@ -444,20 +446,20 @@ public class DataSet {
 				mostCommon = e;
 			}
 		}
-		return new DiscreteAttribute(((DiscreteAttribute) data.get(0).getAttribute(output)).getName(),
+		return new DiscreteAttribute(((DiscreteAttribute) data.get(0).get(output)).getName(),
 				mostCommon);
 	}
 
 	/**
-	 * Split this data set into two new dataset where the propotion between the
+	 * Split this data set into two new dataset where the proportion between the
 	 * output classes is kept. The first dataset contains the
 	 * <code>proportion</code> of the original data set, for instance, if the
 	 * data set has 100 elements distributed between 2 classes, in a 60/40
 	 * proportion, this first set will contain (60*proportion + 40*proportion)
 	 * elements and the second data set will contain the rest. This method is
-	 * useful to generate trainning/test sets from one massive data set.
+	 * useful to generate training/test sets from one massive data set.
 	 *
-	 * @param proportion the percentaje of element to be keep of each class for
+	 * @param proportion the percentage of element to be keep of each class for
 	 * the first data set.
 	 * @return an array of 2 positions with the dataset as described above.
 	 */
@@ -470,7 +472,7 @@ public class DataSet {
 		for (int i = 0; i < data.size();) {
 			int lo = i;
 			while (i < data.size()
-					&& data.get(lo).getAttribute(output).compareTo(data.get(i++).getAttribute(output)) == 0) {
+					&& data.get(lo).get(output).compareTo(data.get(i++).get(output)) == 0) {
 			}
 			int hi = i;
 
@@ -496,9 +498,14 @@ public class DataSet {
 		for (int i = 0; i < data.size(); i++) {
 			System.err.print(deep);
 			for (int j = 0; j < attributeCount; j++)
-				System.err.print(data.get(i).getAttribute(j) + "\t\t");
+				System.err.print(data.get(i).get(j) + "\t\t");
 			System.err.println("");
 		}
 		System.err.println(deep + "END DATASET");
 	}
+
+    @Override
+    public Iterator<DataRecord> iterator() {
+        return data.iterator();
+    }
 }

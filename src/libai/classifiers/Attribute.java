@@ -16,11 +16,10 @@ public abstract class Attribute implements Comparable<Attribute> {
 	public void setName(String n) {
 		name = n;
 	}
+    
+    public abstract Object getValue();
 
-	public Object getValue() {
-		return "";
-	}
-
+    @Override
 	public int hashCode() {
 		return getValue().hashCode();
 	}
