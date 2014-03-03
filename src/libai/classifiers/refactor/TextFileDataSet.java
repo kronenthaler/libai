@@ -14,7 +14,7 @@ import libai.classifiers.DiscreteAttribute;
  * @author kronenthaler
  */
 public class TextFileDataSet implements DataSet{
-    private ArrayList<DataRecord> data = new ArrayList<DataRecord>();
+    private List<List<Attribute>> data = new ArrayList<List<Attribute>>();
     private Set<Attribute> classes = new HashSet<Attribute>();
     private int outputIndex;
     
@@ -26,19 +26,28 @@ public class TextFileDataSet implements DataSet{
 
         @Override
         public int getAttributeCount() {
-            return data.get(0).getAttributeCount();
+            return data.get(0).size();
+        }
+
+        @Override
+        public Set<Attribute> getClasses() {
+            return classes;
         }
     };
     
-    public TextFileDataSet(File dataSource, int output){
+    public TextFileDataSet(int output){
         outputIndex = output;
+    }
+    
+    public TextFileDataSet(File dataSource, int output){
+        this(output);
         try{
             BufferedReader in = new BufferedReader(new FileReader(dataSource));
             while (true){
                 String line = in.readLine();
                 if(line == null) break;
                 String[] tokens = line.split(",");
-                Attribute[] attributes = new Attribute[tokens.length];
+                ArrayList<Attribute> record = new ArrayList<Attribute>();
                 for(int i=0; i<tokens.length; i++){
                     String token = tokens[i];
                     Attribute attr = null;
@@ -48,11 +57,11 @@ public class TextFileDataSet implements DataSet{
                         attr = new DiscreteAttribute(token);
                     }
                 
-                    attributes[i] = attr;
+                    record.add(attr);
                     if(i==outputIndex)
                         classes.add(attr);
                 }
-                data.add(new DataRecord(attributes));
+                data.add(record);
             }
             in.close();
         }catch(Exception e){
@@ -66,11 +75,6 @@ public class TextFileDataSet implements DataSet{
     }
     
     @Override
-    public Set<Attribute> getClasses() {
-        return classes;
-    }
-
-    @Override
     public int getItemsCount() {
         return data.size();
     }
@@ -80,14 +84,63 @@ public class TextFileDataSet implements DataSet{
         return metadata;
     }
 
+    public Iterable<List<Attribute>> sortOver(final int fieldIndex){
+        ArrayList<List<Attribute>> copy = new ArrayList<List<Attribute>>(data);
+        Collections.sort(copy, new Comparator<List<Attribute>>(){
+           @Override
+			public int compare(List<Attribute> o1, List<Attribute> o2) {
+				int ret = o1.get(fieldIndex).compareTo(o2.get(fieldIndex));
+				if (ret == 0)
+					return o1.get(outputIndex).compareTo(o2.get(outputIndex));
+				return ret;
+			}
+        });
+        return copy;
+    }
+    
     @Override
     public DataSet[] splitKeepingRelation(double proportion) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        TextFileDataSet a = new TextFileDataSet(outputIndex);
+		TextFileDataSet b = new TextFileDataSet(outputIndex);
+        
+        Iterable<List<Attribute>> sortedData = sortOver(outputIndex);
+        Attribute prev = null;
+        List<List<Attribute>> buffer = new ArrayList<List<Attribute>>();
+        for (List<Attribute> record : sortedData){
+            if((prev != null && prev.compareTo(record.get(outputIndex)) != 0)){
+                Collections.shuffle(buffer);
+                a.addRecords(buffer.subList(0, (int)(buffer.size() * proportion)));
+                b.addRecords(buffer.subList((int)(buffer.size() * proportion), buffer.size()));
+                buffer.clear();
+            }
+            
+            buffer.add(record);
+            prev = record.get(outputIndex);
+        }
+        
+        if(!buffer.isEmpty()){
+            Collections.shuffle(buffer);
+            a.addRecords(buffer.subList(0, (int)(buffer.size() * proportion)));
+            b.addRecords(buffer.subList((int)(buffer.size() * proportion), buffer.size()));
+        }
+        
+		return new DataSet[]{a, b};
+    }
+    
+    public void addRecords(Collection<? extends List<Attribute>> list){
+        data.addAll(list);
+        for(List<Attribute> record : list){
+            classes.add(record.get(outputIndex));
+        }
+    }
+    
+    @Override
+    public String toString(){
+        return data.toString();
     }
 
     @Override
-    public Iterator<DataRecord> iterator() {
+    public Iterator<List<Attribute>> iterator() {
         return data.iterator();
     }
-
 }

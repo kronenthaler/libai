@@ -20,11 +20,15 @@ import libai.classifiers.DataRecord;
  *
  * @author kronenthaler
  */
-public interface DataSet extends Iterable<DataRecord> {
+public interface DataSet extends Iterable<List<Attribute>> {
+    
     public int getOutputIndex();
-    public Set<Attribute> getClasses();
+    
     public int getItemsCount();
+    
     public MetaData getMetaData(); //columns definitions
+    
+    public Iterable<List<Attribute>> sortOver(int fieldIndex);
     
 	/**
 	 * Split this data set into two new dataset where the proportion between the

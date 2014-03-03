@@ -16,7 +16,6 @@ public class MySQLDataSet implements DataSet{
     private String tableName;
     private ResultSetMetaData rsMetaData;
     private Set<Attribute> classes = new HashSet<Attribute>();
-    private ArrayList<DataRecord> data = new ArrayList<DataRecord>();
     
     private MetaData metadata = new MetaData(){
         @Override
@@ -37,33 +36,42 @@ public class MySQLDataSet implements DataSet{
                 return 0;
             }
         }
+
+        @Override
+        public Set<Attribute> getClasses() {
+            return classes;
+        }
     };
     
+    private MySQLDataSet(int output){
+        outputIndex = output;
+    }
+    
     public MySQLDataSet(Connection conn, String tableName, int output){
-        outputIndex = output + 1;
+        this(output);
+        
         connection = conn;
         this.tableName = tableName;
         try{
             PreparedStatement stmt = conn.prepareStatement("SELECT * from "+tableName, 
                     ResultSet.TYPE_SCROLL_INSENSITIVE,
-                    ResultSet.CONCUR_UPDATABLE);
+                    ResultSet.CONCUR_READ_ONLY,
+                    ResultSet.CLOSE_CURSORS_AT_COMMIT);
             
             ResultSet rs = stmt.executeQuery();
             rsMetaData = rs.getMetaData();
+            rs.close();
+            
+            stmt = conn.prepareStatement("SELECT DISTINCT("+rsMetaData.getColumnName(output+1)+") from "+tableName);
+            rs = stmt.executeQuery();
             while(rs.next()){
-                Attribute[] attributes = new Attribute[rsMetaData.getColumnCount()];
-                for(int i=1;i<=rsMetaData.getColumnCount();i++){
-                    Attribute attr = null;
-                    try{
-                        attr = new ContinuousAttribute(Double.parseDouble(rs.getString(i)));
-                    }catch(Exception e){
-                        attr = new DiscreteAttribute(rs.getString(i));
-                    }
-                    attributes[i-1] = attr;
-                    if(i == outputIndex)
-                        classes.add(attr);
+                Attribute attr = null;
+                try{
+                    attr = new ContinuousAttribute(Double.parseDouble(rs.getString(1)));
+                }catch(Exception e){
+                    attr = new DiscreteAttribute(rs.getString(1));
                 }
-                data.add(new DataRecord(attributes));
+                classes.add(attr);
             }
             rs.close();
         }catch(Exception e){
@@ -73,12 +81,7 @@ public class MySQLDataSet implements DataSet{
     
     @Override
     public int getOutputIndex() {
-        return outputIndex - 1;
-    }
-
-    @Override
-    public Set<Attribute> getClasses() {
-        return classes;
+        return outputIndex;
     }
 
     @Override
@@ -98,14 +101,97 @@ public class MySQLDataSet implements DataSet{
     public MetaData getMetaData() {
         return metadata;
     }
-
+    
+    @Override
+    public Iterable<List<Attribute>> sortOver(final int fieldIndex) {
+        return new Iterable<List<Attribute>>(){
+            @Override
+            public Iterator<List<Attribute>> iterator(){
+                try{
+                    PreparedStatement stmt = connection.prepareStatement("select * from "+tableName+" order by "+rsMetaData.getColumnName(fieldIndex+1));
+                    return buildIterator(stmt.executeQuery());
+                }catch(SQLException e){
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+        };
+    }
+    
     @Override
     public DataSet[] splitKeepingRelation(double proportion) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        TextFileDataSet a = new TextFileDataSet(outputIndex);
+		TextFileDataSet b = new TextFileDataSet(outputIndex);
+        
+        Iterable<List<Attribute>> sortedData = sortOver(outputIndex);
+        Attribute prev = null;
+        List<List<Attribute>> buffer = new ArrayList<List<Attribute>>();
+        for (List<Attribute> record : sortedData){
+            if((prev != null && prev.compareTo(record.get(outputIndex)) != 0)){
+                Collections.shuffle(buffer);
+                a.addRecords(buffer.subList(0, (int)(buffer.size() * proportion)));
+                b.addRecords(buffer.subList((int)(buffer.size() * proportion), buffer.size()));
+                buffer.clear();
+            }
+            
+            buffer.add(record);
+            prev = record.get(outputIndex);
+        }
+        
+        if(!buffer.isEmpty()){
+            Collections.shuffle(buffer);
+            a.addRecords(buffer.subList(0, (int)(buffer.size() * proportion)));
+            b.addRecords(buffer.subList((int)(buffer.size() * proportion), buffer.size()));
+        }
+        
+		return new DataSet[]{a, b};
     }
 
     @Override
-    public Iterator<DataRecord> iterator() {
-        return data.iterator();
+    public Iterator<List<Attribute>> iterator() {
+        try{
+            PreparedStatement stmt = connection.prepareStatement("select * from "+tableName);
+            return buildIterator(stmt.executeQuery());
+        }catch(SQLException ex){
+            return null;
+        }
+    }
+
+    private Iterator<List<Attribute>> buildIterator(final ResultSet rs){
+        return new Iterator<List<Attribute>>() {
+            int count = 0;
+            @Override
+            public boolean hasNext() {
+                try {
+                    return rs.next();
+                } catch (SQLException e) {
+                    return false;
+                }
+            }
+
+            @Override
+            public List<Attribute> next() {
+                try {
+                    List<Attribute> record = new ArrayList<Attribute>();
+                    for (int i = 1; i <= rsMetaData.getColumnCount(); i++) {
+                        Attribute attr = null;
+                        try {
+                            attr = new ContinuousAttribute(Double.parseDouble(rs.getString(i)));
+                        } catch (NumberFormatException e) {
+                            attr = new DiscreteAttribute(rs.getString(i));
+                        }
+                        record.add(attr);
+                    }
+                    return record;
+                } catch (SQLException e) {
+                    return null;
+                }
+            }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+        };
     }
 }

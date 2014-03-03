@@ -41,7 +41,7 @@ public class NaiveBayes {
 
 	private void initialize(DataSet ds) {
         int attributeCount =  metadata.getAttributeCount();
-        for (Attribute c : ds.getClasses()) {
+        for (Attribute c : metadata.getClasses()) {
 			params.put(c, new Object[attributeCount]);
 			for (int j = 0; j < attributeCount; j++) {
 				if (j == outputIndex) {
@@ -56,7 +56,7 @@ public class NaiveBayes {
 	}
 
 	private void precalculate(DataSet ds) {
-        for(DataRecord record : ds){
+        for(List<Attribute> record : ds){
             Attribute outputAttr = record.get(outputIndex);
             int j = 0;
             for(Attribute attr : record){
@@ -65,7 +65,7 @@ public class NaiveBayes {
                     //count simple frequencies of the output class
 					int current = (Integer) params.get(outputAttr)[j];
 					params.get(outputAttr)[j] = current + 1;
-				} else if (attr.isCategorical()) {
+				} else if (metadata.isCategorical(j)) {
                     // count frequencies of each different values in this attribute
 					HashMap<String, Integer> freq = (HashMap<String, Integer>) params.get(outputAttr)[j];
 					if (freq.get((String) value) == null)
@@ -130,7 +130,7 @@ public class NaiveBayes {
 		//look for all records in ds with class h.
         for (int k = 0, n = x.getAttributeCount(); k < n; k++) {
 			Attribute attr = x.get(k);
-			if (attr.isCategorical()) {
+			if (metadata.isCategorical(k)) {
 				p *= (count((DiscreteAttribute) attr, k, h) + 1) / (double) (((Integer) params.get(h)[outputIndex]) + 1);
 			} else {
 				p *= gaussian((ContinuousAttribute) attr, k, h);
