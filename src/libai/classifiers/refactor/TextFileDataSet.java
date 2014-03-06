@@ -33,6 +33,11 @@ public class TextFileDataSet implements DataSet{
         public Set<Attribute> getClasses() {
             return classes;
         }
+
+        @Override
+        public String getAttributeName(int fieldIndex) {
+            return "["+fieldIndex+"]";
+        }
     };
     
     TextFileDataSet(int output){

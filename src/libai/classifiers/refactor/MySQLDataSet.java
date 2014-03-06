@@ -42,6 +42,15 @@ public class MySQLDataSet implements DataSet {
         public Set<Attribute> getClasses() {
             return classes;
         }
+        
+        @Override
+        public String getAttributeName(int fieldIndex) {
+            try{
+                return rsMetaData.getColumnName(fieldIndex + 1);
+            }catch(SQLException e){
+                return "["+fieldIndex+"]";
+            }
+        }
     };
 
     private MySQLDataSet(int output) {
