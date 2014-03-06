@@ -35,8 +35,13 @@ public class TextFileDataSet implements DataSet{
         }
     };
     
-    public TextFileDataSet(int output){
+    TextFileDataSet(int output){
         outputIndex = output;
+    }
+    
+    private TextFileDataSet(TextFileDataSet parent, int lo, int hi){
+        this(parent.outputIndex);
+        addRecords(parent.data.subList(lo, hi));
     }
     
     public TextFileDataSet(File dataSource, int output){
@@ -67,6 +72,11 @@ public class TextFileDataSet implements DataSet{
         }catch(Exception e){
             e.printStackTrace();
         }
+    }
+    
+    @Override
+    public DataSet getSubset(int lo, int hi){
+        return new TextFileDataSet(this, lo, hi);
     }
     
     @Override
@@ -127,7 +137,7 @@ public class TextFileDataSet implements DataSet{
 		return new DataSet[]{a, b};
     }
     
-    public void addRecords(Collection<? extends List<Attribute>> list){
+    public final void addRecords(Collection<? extends List<Attribute>> list){
         data.addAll(list);
         for(List<Attribute> record : list){
             classes.add(record.get(outputIndex));

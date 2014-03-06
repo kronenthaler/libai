@@ -30,6 +30,8 @@ public interface DataSet extends Iterable<List<Attribute>> {
     
     public Iterable<List<Attribute>> sortOver(int fieldIndex);
     
+    public DataSet getSubset(int lo, int hi);
+    
 	/**
 	 * Split this data set into two new dataset where the proportion between the
 	 * output classes is kept. The first dataset contains the

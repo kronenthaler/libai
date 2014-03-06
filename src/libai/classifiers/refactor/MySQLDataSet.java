@@ -10,18 +10,19 @@ import libai.classifiers.*;
  *
  * @author kronenthaler
  */
-public class MySQLDataSet implements DataSet{
+public class MySQLDataSet implements DataSet {
     private int outputIndex;
-    private Connection connection;
     private String tableName;
+    private int orderBy;
+    private Connection connection;
     private ResultSetMetaData rsMetaData;
     private Set<Attribute> classes = new HashSet<Attribute>();
-    
-    private MetaData metadata = new MetaData(){
+
+    private MetaData metadata = new MetaData() {
         @Override
         public boolean isCategorical(int fieldIndex) {
             try {
-                String type = rsMetaData.getColumnClassName(fieldIndex+1); 
+                String type = rsMetaData.getColumnClassName(fieldIndex + 1);
                 return type.equals("java.lang.String");
             } catch (SQLException ex) {
                 return false;
@@ -42,41 +43,67 @@ public class MySQLDataSet implements DataSet{
             return classes;
         }
     };
-    
-    private MySQLDataSet(int output){
+
+    private MySQLDataSet(int output) {
         outputIndex = output;
+        orderBy = output;
     }
-    
-    public MySQLDataSet(Connection conn, String tableName, int output){
-        this(output);
+
+    private MySQLDataSet(MySQLDataSet parent, int lo, int hi) {
+        this(parent.outputIndex);
+
+        connection = parent.connection;
+        this.orderBy = parent.orderBy;
+        this.tableName = parent.tableName + System.currentTimeMillis();
+        this.rsMetaData = parent.rsMetaData;
         
-        connection = conn;
-        this.tableName = tableName;
-        try{
-            PreparedStatement stmt = conn.prepareStatement("SELECT * from "+tableName, 
+        try {
+            PreparedStatement stmt = connection.prepareStatement(
+                    String.format("CREATE VIEW `%s` AS SELECT * FROM `%s` ORDER BY `%s` LIMIT ?,?",
+                            this.tableName,
+                            parent.tableName,
+                            parent.rsMetaData.getColumnName(orderBy + 1)),
                     ResultSet.TYPE_SCROLL_INSENSITIVE,
                     ResultSet.CONCUR_READ_ONLY,
                     ResultSet.CLOSE_CURSORS_AT_COMMIT);
-            
+            stmt.setInt(1, lo);
+            stmt.setInt(2, hi - lo);
+            stmt.executeUpdate();
+
+            initializeClasses();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public MySQLDataSet(Connection conn, String tableName, int output) {
+        this(output);
+
+        connection = conn;
+        this.tableName = tableName;
+        try {
+            PreparedStatement stmt = conn.prepareStatement(
+                    String.format("SELECT * FROM `%s`",
+                            tableName),
+                    ResultSet.TYPE_SCROLL_INSENSITIVE,
+                    ResultSet.CONCUR_READ_ONLY,
+                    ResultSet.CLOSE_CURSORS_AT_COMMIT);
+
             ResultSet rs = stmt.executeQuery();
             rsMetaData = rs.getMetaData();
             rs.close();
-            
-            stmt = conn.prepareStatement("SELECT DISTINCT("+rsMetaData.getColumnName(output+1)+") from "+tableName);
-            rs = stmt.executeQuery();
-            while(rs.next()){
-                Attribute attr = null;
-                try{
-                    attr = new ContinuousAttribute(Double.parseDouble(rs.getString(1)));
-                }catch(Exception e){
-                    attr = new DiscreteAttribute(rs.getString(1));
-                }
-                classes.add(attr);
-            }
-            rs.close();
-        }catch(Exception e){
+
+            initializeClasses();
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override 
+    public DataSet getSubset(int lo, int hi){
+        return new MySQLDataSet(this, lo, hi);
     }
     
     @Override
@@ -86,12 +113,14 @@ public class MySQLDataSet implements DataSet{
 
     @Override
     public int getItemsCount() {
-        try{
-            PreparedStatement stmt = connection.prepareStatement("select count(*) from "+tableName);
+        try {
+            PreparedStatement stmt = connection.prepareStatement(
+                    String.format("SELECT COUNT(*) FROM `%s`",
+                            tableName));
             ResultSet rs = stmt.executeQuery();
-            if(rs.next())
+            if (rs.next())
                 return rs.getInt(1);
-        }catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return 0;
@@ -101,16 +130,20 @@ public class MySQLDataSet implements DataSet{
     public MetaData getMetaData() {
         return metadata;
     }
-    
+
     @Override
     public Iterable<List<Attribute>> sortOver(final int fieldIndex) {
-        return new Iterable<List<Attribute>>(){
+        orderBy = fieldIndex;
+        return new Iterable<List<Attribute>>() {
             @Override
-            public Iterator<List<Attribute>> iterator(){
-                try{
-                    PreparedStatement stmt = connection.prepareStatement("select * from "+tableName+" order by "+rsMetaData.getColumnName(fieldIndex+1));
+            public Iterator<List<Attribute>> iterator() {
+                try {
+                    PreparedStatement stmt = connection.prepareStatement(
+                            String.format("SELECT * FROM `%s` ORDER BY `%s`",
+                                    tableName,
+                                    rsMetaData.getColumnName(fieldIndex + 1)));
                     return buildIterator(stmt.executeQuery());
-                }catch(SQLException e){
+                } catch (SQLException e) {
                     e.printStackTrace();
                     return null;
                 }
@@ -118,48 +151,88 @@ public class MySQLDataSet implements DataSet{
         };
     }
     
+    /* TODO change the implementation to return datasets from the same type */
     @Override
     public DataSet[] splitKeepingRelation(double proportion) {
         TextFileDataSet a = new TextFileDataSet(outputIndex);
-		TextFileDataSet b = new TextFileDataSet(outputIndex);
-        
+        TextFileDataSet b = new TextFileDataSet(outputIndex);
+
         Iterable<List<Attribute>> sortedData = sortOver(outputIndex);
         Attribute prev = null;
         List<List<Attribute>> buffer = new ArrayList<List<Attribute>>();
-        for (List<Attribute> record : sortedData){
-            if((prev != null && prev.compareTo(record.get(outputIndex)) != 0)){
+        for (List<Attribute> record : sortedData) {
+            if ((prev != null && prev.compareTo(record.get(outputIndex)) != 0)) {
                 Collections.shuffle(buffer);
-                a.addRecords(buffer.subList(0, (int)(buffer.size() * proportion)));
-                b.addRecords(buffer.subList((int)(buffer.size() * proportion), buffer.size()));
+                a.addRecords(buffer.subList(0, (int) (buffer.size() * proportion)));
+                b.addRecords(buffer.subList((int) (buffer.size() * proportion), buffer.size()));
                 buffer.clear();
             }
-            
+
             buffer.add(record);
             prev = record.get(outputIndex);
         }
-        
-        if(!buffer.isEmpty()){
+
+        if (!buffer.isEmpty()) {
             Collections.shuffle(buffer);
-            a.addRecords(buffer.subList(0, (int)(buffer.size() * proportion)));
-            b.addRecords(buffer.subList((int)(buffer.size() * proportion), buffer.size()));
+            a.addRecords(buffer.subList(0, (int) (buffer.size() * proportion)));
+            b.addRecords(buffer.subList((int) (buffer.size() * proportion), buffer.size()));
         }
-        
-		return new DataSet[]{a, b};
+
+        return new DataSet[]{a, b};
     }
 
     @Override
     public Iterator<List<Attribute>> iterator() {
+        Iterator<List<Attribute>> result = null;
+        try {
+            PreparedStatement stmt = connection.prepareStatement(
+                    String.format("SELECT * FROM `%s`",
+                            tableName));
+            result = buildIterator(stmt.executeQuery());
+            stmt.close();
+        } catch (SQLException ex) {
+            
+        }
+        return result;
+    }
+    
+    public void clean(){
         try{
-            PreparedStatement stmt = connection.prepareStatement("select * from "+tableName);
-            return buildIterator(stmt.executeQuery());
+            PreparedStatement stmt = connection.prepareStatement(
+                    String.format("DROP VIEW IF EXISTS `%s`", tableName));
+            stmt.executeUpdate();
+            stmt.close();
         }catch(SQLException ex){
-            return null;
+            ex.printStackTrace();
         }
     }
-
-    private Iterator<List<Attribute>> buildIterator(final ResultSet rs){
+    
+    private void initializeClasses() {
+        try {
+            PreparedStatement stmt = connection.prepareStatement(
+                    String.format("SELECT DISTINCT(`%s`) FROM `%s`",
+                            rsMetaData.getColumnName(outputIndex + 1),
+                            tableName));
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Attribute attr = null;
+                try {
+                    attr = new ContinuousAttribute(Double.parseDouble(rs.getString(1)));
+                } catch (NumberFormatException e) {
+                    attr = new DiscreteAttribute(rs.getString(1));
+                }
+                classes.add(attr);
+            }
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private Iterator<List<Attribute>> buildIterator(final ResultSet rs) {
         return new Iterator<List<Attribute>>() {
             int count = 0;
+
             @Override
             public boolean hasNext() {
                 try {
