@@ -44,4 +44,12 @@ public abstract class Attribute implements Comparable<Attribute> {
 
 		return att;
 	}
+    
+    public static Attribute getInstance(String value){
+        try {
+            return new ContinuousAttribute(Double.parseDouble(value));
+        } catch (NumberFormatException e) {
+            return new DiscreteAttribute(value);
+        }
+    }
 }
