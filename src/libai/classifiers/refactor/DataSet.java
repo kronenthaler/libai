@@ -32,6 +32,10 @@ public interface DataSet extends Iterable<List<Attribute>> {
     
     public DataSet getSubset(int lo, int hi);
     
+    public boolean allTheSameOutput();
+    
+    public Attribute allTheSame();
+    
 	/**
 	 * Split this data set into two new dataset where the proportion between the
 	 * output classes is kept. The first dataset contains the

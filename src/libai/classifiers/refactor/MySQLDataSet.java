@@ -224,13 +224,7 @@ public class MySQLDataSet implements DataSet {
                             tableName));
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                Attribute attr = null;
-                try {
-                    attr = new ContinuousAttribute(Double.parseDouble(rs.getString(1)));
-                } catch (NumberFormatException e) {
-                    attr = new DiscreteAttribute(rs.getString(1));
-                }
-                classes.add(attr);
+                classes.add(Attribute.getInstance(rs.getString(1)));
             }
             rs.close();
         } catch (SQLException e) {
