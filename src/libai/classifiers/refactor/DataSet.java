@@ -32,6 +32,12 @@ public interface DataSet extends Iterable<List<Attribute>> {
     
     public DataSet getSubset(int lo, int hi);
     
+    public boolean allTheSameOutput();
+    
+    public Attribute allTheSame();
+    
+    public GainInformation gain(int lo, int hi, int fieldIndex);
+    
 	/**
 	 * Split this data set into two new dataset where the proportion between the
 	 * output classes is kept. The first dataset contains the
@@ -46,4 +52,12 @@ public interface DataSet extends Iterable<List<Attribute>> {
 	 * @return an array of 2 positions with the dataset as described above.
 	 */
 	public DataSet[] splitKeepingRelation(double proportion);
+    
+    public static class GainInformation{
+        double gain;
+        double ratio;
+        double splitValue;
+        int indexOfSplitValue;
+        boolean isContinuos;
+    }
 }

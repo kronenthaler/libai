@@ -224,13 +224,7 @@ public class MySQLDataSet implements DataSet {
                             tableName));
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                Attribute attr = null;
-                try {
-                    attr = new ContinuousAttribute(Double.parseDouble(rs.getString(1)));
-                } catch (NumberFormatException e) {
-                    attr = new DiscreteAttribute(rs.getString(1));
-                }
-                classes.add(attr);
+                classes.add(Attribute.getInstance(rs.getString(1)));
             }
             rs.close();
         } catch (SQLException e) {
@@ -256,13 +250,7 @@ public class MySQLDataSet implements DataSet {
                 try {
                     List<Attribute> record = new ArrayList<Attribute>();
                     for (int i = 1; i <= rsMetaData.getColumnCount(); i++) {
-                        Attribute attr = null;
-                        try {
-                            attr = new ContinuousAttribute(Double.parseDouble(rs.getString(i)));
-                        } catch (NumberFormatException e) {
-                            attr = new DiscreteAttribute(rs.getString(i));
-                        }
-                        record.add(attr);
+                        record.add(Attribute.getInstance(rs.getString(i)));
                     }
                     return record;
                 } catch (SQLException e) {
@@ -272,8 +260,49 @@ public class MySQLDataSet implements DataSet {
 
             @Override
             public void remove() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                throw new UnsupportedOperationException("Not supported yet.");
             }
         };
+    }
+
+    @Override
+    public boolean allTheSameOutput() {
+        return metadata.getClasses().size() != 1;
+    }
+
+    @Override
+    public Attribute allTheSame() {
+        try {
+            StringBuffer attributes = new StringBuffer();
+            for (int i = 0; i < metadata.getAttributeCount(); i++) {
+                if (i != outputIndex) {
+                    if (i > 0 && outputIndex != 0)
+                        attributes.append(',');
+                    attributes.append(metadata.getAttributeName(i + 1));
+                }
+            }
+
+            String query = String.format("SELECT %s, count(*) as size FROM %s group by %s", attributes, tableName, attributes);
+            PreparedStatement stmt = connection.prepareStatement(query);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                if (rs.getInt("size") != getItemsCount())
+                    return null;
+                else {
+                    stmt = connection.prepareStatement(String.format("SELECT %s, count(*) as count FROM %s GROUP BY %s ORDER BY count DESC LIMIT 1",
+                            metadata.getAttributeName(outputIndex), tableName, metadata.getAttributeName(outputIndex)));
+                    rs = stmt.executeQuery();
+                    if (rs.next())
+                        return Attribute.getInstance(rs.getString(1));
+                }
+            }
+        } catch (SQLException e) {
+        }
+        return null;
+    }
+    
+    @Override
+    public GainInformation gain(int lo, int hi, int fieldIndex){
+        throw new UnsupportedOperationException("not supported yet");
     }
 }

@@ -158,4 +158,19 @@ public class TextFileDataSet implements DataSet{
     public Iterator<List<Attribute>> iterator() {
         return data.iterator();
     }
+    
+    @Override
+    public boolean allTheSameOutput() {
+        return metadata.getClasses().size() != 1;
+    }
+
+    @Override
+    public Attribute allTheSame() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public GainInformation gain(int lo, int hi, int fieldIndex) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
