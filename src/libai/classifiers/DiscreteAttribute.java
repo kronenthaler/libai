@@ -5,7 +5,7 @@ package libai.classifiers;
  * @author kronenthaler
  */
 public class DiscreteAttribute extends Attribute {
-	private String value;
+	private final String value;
 
 	public DiscreteAttribute(String v) {
 		value = v;

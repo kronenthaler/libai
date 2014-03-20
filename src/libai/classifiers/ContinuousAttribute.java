@@ -5,7 +5,7 @@ package libai.classifiers;
  * @author kronenthaler
  */
 public class ContinuousAttribute extends Attribute {
-	private double value;
+	private final double value;
 
 	public ContinuousAttribute(double v) {
 		value = v;
