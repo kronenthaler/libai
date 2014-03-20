@@ -221,10 +221,10 @@ public class C45 implements Comparable<C45> {
 			DataSet l = ds.getSubset(0, indexOfValue);
 			DataSet r = ds.getSubset(indexOfValue, itemsCount);
 			C45 left = train(l, visited, deep + "\t");
-			children.add(new Pair<Attribute, C45>(new ContinuousAttribute(metadata.getAttributeName(index), splitValue), left));
+			children.add(new Pair<Attribute, C45>(Attribute.getInstance(splitValue), left));
 
 			C45 right = train(r, visited, deep + "\t");
-			children.add(new Pair<Attribute, C45>(new ContinuousAttribute(metadata.getAttributeName(index), splitValue), right));
+			children.add(new Pair<Attribute, C45>(Attribute.getInstance(splitValue), right));
 		}
 
 		return new C45(children);
