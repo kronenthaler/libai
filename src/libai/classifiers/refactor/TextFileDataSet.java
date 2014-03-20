@@ -168,4 +168,9 @@ public class TextFileDataSet implements DataSet{
     public Attribute allTheSame() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+    
+    @Override
+    public GainInformation gain(int lo, int hi, int fieldIndex){
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

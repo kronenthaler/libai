@@ -193,7 +193,7 @@ public class C45 implements Comparable<C45> {
 				if (gain.ratio > max) {
 					max = gain.ratio;
 					index = i; //split attribute
-					if (gain.isContinuos) {
+					if (!metadata.isCategorical(i)) {
 						splitValue = gain.splitValue;
 						indexOfValue = gain.indexOfSplitValue;
 					}
