@@ -60,13 +60,7 @@ public class TextFileDataSet implements DataSet{
                 ArrayList<Attribute> record = new ArrayList<Attribute>();
                 for(int i=0; i<tokens.length; i++){
                     String token = tokens[i];
-                    Attribute attr = null;
-                    try{
-                        attr = new ContinuousAttribute(Double.parseDouble(token));
-                    }catch(NumberFormatException e){
-                        attr = new DiscreteAttribute(token);
-                    }
-                
+                    Attribute attr = Attribute.getInstance(token);
                     record.add(attr);
                     if(i==outputIndex)
                         classes.add(attr);
@@ -166,7 +160,34 @@ public class TextFileDataSet implements DataSet{
 
     @Override
     public Attribute allTheSame() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        HashMap<String, Integer> freq = new HashMap<String, Integer>();
+
+		for (int i = 0; i < data.size(); i++) {
+			for (int j = 0, n = metadata.getAttributeCount(); j < n; j++) {
+				if (j != outputIndex && 
+					!data.get(i).get(j).equals(data.get(0).get(j)))
+					return null;
+			}
+
+			if (!(data.get(i).get(outputIndex) instanceof DiscreteAttribute))
+				throw new IllegalArgumentException("The output attribute must be discrete");
+
+			String v = ((DiscreteAttribute) data.get(i).get(outputIndex)).getValue();
+			if (freq.get(v) == null)
+				freq.put(v, 0);
+			freq.put(v, freq.get(v) + 1);
+		}
+
+		int max = Integer.MIN_VALUE;
+		String mostCommon = null;
+		for (String e : freq.keySet()) {
+			if (freq.get(e) > max) {
+				max = freq.get(e);
+				mostCommon = e;
+			}
+		}
+        
+        return Attribute.getInstance(mostCommon);
     }
     
     @Override
