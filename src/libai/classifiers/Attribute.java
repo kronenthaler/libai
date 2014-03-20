@@ -52,4 +52,12 @@ public abstract class Attribute implements Comparable<Attribute> {
             return new DiscreteAttribute(value);
         }
     }
+    
+    public static Attribute getInstance(double value){
+        return new ContinuousAttribute(value);
+    }
+    
+    public static Attribute getInstance(int value){
+        return new ContinuousAttribute(value);
+    }
 }
