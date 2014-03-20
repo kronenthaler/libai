@@ -189,24 +189,25 @@ public class C45 implements Comparable<C45> {
 		double splitValue = Double.MIN_VALUE;
 		for (int i = 0; i < attributeCount; i++) {
 			if (!visited.contains(i)) {
-				double g[] = ds.gain(0, itemsCount, i); //get the maximun gain ratio.
-				if (g[1] > max) {
-					max = g[1];
+				DataSet.GainInformation gain = ds.gain(0, itemsCount, i); //get the maximun gain ratio.
+				if (gain.ratio > max) {
+					max = gain.ratio;
 					index = i; //split attribute
-					if (g.length > 4) {
-						splitValue = g[4];
-						indexOfValue = (int) g[5];
+					if (gain.isContinuos) {
+						splitValue = gain.splitValue;
+						indexOfValue = gain.indexOfSplitValue;
 					}
 				}
 			}
 		}
 
-		ds.sortOver(index);
+		Iterable<List<Attribute>> records = ds.sortOver(index);
 		ArrayList<Pair<Attribute, C45>> children = new ArrayList<Pair<Attribute, C45>>();
 		if (metadata.isCategorical(index)) {
 			visited.add(index); //mark as ready, avoid revisiting a nominal attribute.
 
-			for (int i = 0, hi = itemsCount; i < hi;) {
+			
+            /*for (int i = 0, hi = itemsCount; i < hi;) {
 				int nlo = i;
 				for (int j = i; j < hi - 1; j++, i++)
 					if (!ds.get(j).get(index).equals(ds.get(j + 1).get(index)))
@@ -215,7 +216,7 @@ public class C45 implements Comparable<C45> {
 
 				children.add(new Pair<Attribute, C45>(ds.get(nlo).get(index),
 						train(ds.getSubset(nlo, i), visited, deep + "\t")));
-			}
+			}*/
 		} else {
 			DataSet l = ds.getSubset(0, indexOfValue);
 			DataSet r = ds.getSubset(indexOfValue, itemsCount);
