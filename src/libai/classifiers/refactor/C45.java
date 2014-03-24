@@ -18,7 +18,6 @@ public class C45 implements Comparable<C45> {
 	public static final int LAPLACE_PRUNE = 2;
 	protected Attribute output;
 	protected Pair<Attribute, C45> childs[];
-	protected int outputIndex;
 	protected double error;
 	protected double backedUpError;
 	//prune variables
@@ -169,12 +168,12 @@ public class C45 implements Comparable<C45> {
 
 		MetaData metadata = ds.getMetaData();
         int attributeCount = metadata.getAttributeCount();
-		int output = ds.getOutputIndex();
+        int outputIndex = ds.getOutputIndex();
 		int itemsCount = ds.getItemsCount();
         
 		//base case: all the output are the same.
 		if (ds.allTheSameOutput())
-			return new C45(ds.iterator().next().get(output));
+			return new C45(ds.iterator().next().get(outputIndex));
 
 		//base case: all the attributes are the same.
 		Attribute att = ds.allTheSame();
@@ -201,22 +200,35 @@ public class C45 implements Comparable<C45> {
 			}
 		}
 
-		Iterable<List<Attribute>> records = ds.sortOver(index);
+		Iterable<List<Attribute>> sortedRecords = ds.sortOver(index);
 		ArrayList<Pair<Attribute, C45>> children = new ArrayList<Pair<Attribute, C45>>();
 		if (metadata.isCategorical(index)) {
 			visited.add(index); //mark as ready, avoid revisiting a nominal attribute.
 
-			
-            /*for (int i = 0, hi = itemsCount; i < hi;) {
-				int nlo = i;
-				for (int j = i; j < hi - 1; j++, i++)
-					if (!ds.get(j).get(index).equals(ds.get(j + 1).get(index)))
-						break;
-				i++;
-
-				children.add(new Pair<Attribute, C45>(ds.get(nlo).get(index),
+            Iterator<List<Attribute>> records = sortedRecords.iterator();
+            records.hasNext(); //just to move the pointer.
+            
+            Attribute prev = records.next().get(index), current = null;
+            int nlo,i = 0;
+            while(prev != null){
+                current = null;
+                nlo = i;
+                
+                while(records.hasNext()){
+                    current = records.next().get(index);
+                    if(!prev.equals(current)){
+                        break;
+                    }
+                    i++;
+                }
+                i++;
+                
+                children.add(new Pair<Attribute, C45>(prev,
 						train(ds.getSubset(nlo, i), visited, deep + "\t")));
-			}*/
+                
+                prev = current;
+            }
+			
 		} else {
 			DataSet l = ds.getSubset(0, indexOfValue);
 			DataSet r = ds.getSubset(indexOfValue, itemsCount);
@@ -242,7 +254,7 @@ public class C45 implements Comparable<C45> {
 
 	public C45 prune(DataSet ds, int type) {
 		//first of all, evaluate all the data set over the tree, and keep track of the results.
-		outputIndex = ds.getOutputIndex();
+		int outputIndex = ds.getOutputIndex();
         for (List<Attribute> record : ds)
 			eval(record, true, record.get(outputIndex), ds);
 
