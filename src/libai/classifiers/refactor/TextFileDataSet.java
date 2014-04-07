@@ -191,7 +191,19 @@ public class TextFileDataSet implements DataSet{
     }
     
     @Override
-    public GainInformation gain(int lo, int hi, int fieldIndex){
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public HashMap<Attribute, Integer> getFrequencies(int lo, int hi, int fieldIndex) {
+        if(!metadata.isCategorical(fieldIndex))
+            throw new IllegalArgumentException("The attribute must be discrete");
+        
+        HashMap<Attribute, Integer> freq = new HashMap<Attribute, Integer>();
+        for(int i=lo;i<hi;i++){
+            List<Attribute> record = data.get(i);
+            Attribute v = record.get(fieldIndex);
+			if (freq.get(v) == null)
+				freq.put(v, 0);
+			freq.put(v, freq.get(v) + 1);
+        }
+        
+        return freq;
     }
 }

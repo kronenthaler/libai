@@ -12,6 +12,7 @@ import libai.classifiers.*;
  */
 public class MySQLDataSet implements DataSet {
     private int outputIndex;
+    private int itemCount = -1;
     private String tableName;
     private int orderBy;
     private Connection connection;
@@ -40,6 +41,8 @@ public class MySQLDataSet implements DataSet {
 
         @Override
         public Set<Attribute> getClasses() {
+            if(classes.size() == 0)
+                initializeClasses();
             return classes;
         }
         
@@ -103,8 +106,6 @@ public class MySQLDataSet implements DataSet {
             rsMetaData = rs.getMetaData();
             rs.close();
 
-            initializeClasses();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -122,13 +123,16 @@ public class MySQLDataSet implements DataSet {
 
     @Override
     public int getItemsCount() {
+        if(itemCount >= 0) 
+            return itemCount;
+        
         try {
             PreparedStatement stmt = connection.prepareStatement(
                     String.format("SELECT COUNT(*) FROM `%s`",
                             tableName));
             ResultSet rs = stmt.executeQuery();
             if (rs.next())
-                return rs.getInt(1);
+                return itemCount = rs.getInt(1);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -232,27 +236,29 @@ public class MySQLDataSet implements DataSet {
         }
     }
     
+    //TODO: fix this iterator so it can use the next as next and the the hasnext to just check (without side effects)
     private Iterator<List<Attribute>> buildIterator(final ResultSet rs) {
         return new Iterator<List<Attribute>>() {
-            int count = 0;
-
+            long size = getItemsCount();
+            
             @Override
             public boolean hasNext() {
-                try {
-                    return rs.next();
-                } catch (SQLException e) {
-                    return false;
-                }
+                return size > 0;
             }
 
             @Override
             public List<Attribute> next() {
                 try {
-                    List<Attribute> record = new ArrayList<Attribute>();
-                    for (int i = 1; i <= rsMetaData.getColumnCount(); i++) {
-                        record.add(Attribute.getInstance(rs.getString(i)));
+                    if(rs.next()){
+                        size--;
+                        List<Attribute> record = new ArrayList<Attribute>();
+                        for (int i = 1; i <= rsMetaData.getColumnCount(); i++) {
+                            record.add(Attribute.getInstance(rs.getString(i)));
+                        }
+                        return record;
+                    } else {
+                        return null;
                     }
-                    return record;
                 } catch (SQLException e) {
                     return null;
                 }
@@ -289,8 +295,10 @@ public class MySQLDataSet implements DataSet {
                 if (rs.getInt("size") != getItemsCount())
                     return null;
                 else {
-                    stmt = connection.prepareStatement(String.format("SELECT %s, count(*) as count FROM %s GROUP BY %s ORDER BY count DESC LIMIT 1",
-                            metadata.getAttributeName(outputIndex), tableName, metadata.getAttributeName(outputIndex)));
+                    String fieldName = metadata.getAttributeName(outputIndex); 
+                    String query2 = String.format("SELECT %s, count(*) as count FROM %s GROUP BY %s ORDER BY count DESC LIMIT 1",
+                            fieldName, tableName, fieldName);
+                    stmt = connection.prepareStatement(query2);
                     rs = stmt.executeQuery();
                     if (rs.next())
                         return Attribute.getInstance(rs.getString(1));
@@ -300,9 +308,28 @@ public class MySQLDataSet implements DataSet {
         }
         return null;
     }
-    
+
     @Override
-    public GainInformation gain(int lo, int hi, int fieldIndex){
-        throw new UnsupportedOperationException("not supported yet");
+    public HashMap<Attribute, Integer> getFrequencies(int lo, int hi, int fieldIndex) {
+        if(!metadata.isCategorical(fieldIndex))
+            throw new IllegalArgumentException("The attribute must be discrete");
+        
+        HashMap<Attribute, Integer> freq = new HashMap<Attribute, Integer>();
+        
+        String fieldName = metadata.getAttributeName(fieldIndex);
+        String query = String.format("SELECT `%s`, count(*) as count FROM (SELECT `%s` FROM `%s` ORDER BY `%s`,`%s` LIMIT %d,%d) as tmp GROUP BY `%s`",
+                    fieldName,fieldName, tableName, metadata.getAttributeName(orderBy), metadata.getAttributeName(outputIndex), lo, (hi-lo), fieldName);
+        
+        try{
+            PreparedStatement stmt = connection.prepareStatement(query);
+            ResultSet rs = stmt.executeQuery();
+            while(rs.next()){
+                freq.put(Attribute.getInstance(rs.getString(fieldName)), rs.getInt("count"));
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        
+        return freq;
     }
 }

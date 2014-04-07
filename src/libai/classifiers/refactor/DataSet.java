@@ -36,8 +36,6 @@ public interface DataSet extends Iterable<List<Attribute>> {
     
     public Attribute allTheSame();
     
-    public GainInformation gain(int lo, int hi, int fieldIndex);
-    
 	/**
 	 * Split this data set into two new dataset where the proportion between the
 	 * output classes is kept. The first dataset contains the
@@ -53,13 +51,5 @@ public interface DataSet extends Iterable<List<Attribute>> {
 	 */
 	public DataSet[] splitKeepingRelation(double proportion);
     
-    static class GainInformation {
-        public double gain;
-        public double ratio;
-        public double splitValue;
-        public int indexOfSplitValue;
-        
-        public double maxInfo;
-        public double maxSplitInfo;
-    }
+    public HashMap<Attribute,Integer> getFrequencies(int lo, int hi, int fieldIndex);
 }
