@@ -30,6 +30,8 @@ public interface DataSet extends Iterable<List<Attribute>> {
     
     public Iterable<List<Attribute>> sortOver(int fieldIndex);
     
+    public Iterable<List<Attribute>> sortOver(int lo, int hi, int fieldIndex);
+    
     public DataSet getSubset(int lo, int hi);
     
     public boolean allTheSameOutput();

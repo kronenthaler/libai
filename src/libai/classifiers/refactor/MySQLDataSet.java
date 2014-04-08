@@ -146,16 +146,22 @@ public class MySQLDataSet implements DataSet {
 
     @Override
     public Iterable<List<Attribute>> sortOver(final int fieldIndex) {
+        return sortOver(0, getItemsCount(), fieldIndex);
+    }
+    
+    @Override
+    public Iterable<List<Attribute>> sortOver(final int lo, final int hi, final int fieldIndex) {
         orderBy = fieldIndex;
         return new Iterable<List<Attribute>>() {
             @Override
             public Iterator<List<Attribute>> iterator() {
                 try {
-                    PreparedStatement stmt = connection.prepareStatement(
-                            String.format("SELECT * FROM `%s` ORDER BY `%s`",
+                    String query = String.format("SELECT * FROM `%s` ORDER BY `%s` LIMIT %d, %d",
                                     tableName,
-                                    rsMetaData.getColumnName(fieldIndex + 1)));
-                    return buildIterator(stmt.executeQuery());
+                                    rsMetaData.getColumnName(fieldIndex + 1),
+                                    lo, hi-lo);
+                    PreparedStatement stmt = connection.prepareStatement(query);
+                    return buildIterator(stmt.executeQuery(), hi-lo);
                 } catch (SQLException e) {
                     e.printStackTrace();
                     return null;
@@ -201,7 +207,7 @@ public class MySQLDataSet implements DataSet {
             PreparedStatement stmt = connection.prepareStatement(
                     String.format("SELECT * FROM `%s`",
                             tableName));
-            result = buildIterator(stmt.executeQuery());
+            result = buildIterator(stmt.executeQuery(), getItemsCount());
             stmt.close();
         } catch (SQLException ex) {
             
@@ -237,9 +243,9 @@ public class MySQLDataSet implements DataSet {
     }
     
     //TODO: fix this iterator so it can use the next as next and the the hasnext to just check (without side effects)
-    private Iterator<List<Attribute>> buildIterator(final ResultSet rs) {
+    private Iterator<List<Attribute>> buildIterator(final ResultSet rs, final int itemsCount) {
         return new Iterator<List<Attribute>>() {
-            long size = getItemsCount();
+            int size = itemsCount;
             
             @Override
             public boolean hasNext() {

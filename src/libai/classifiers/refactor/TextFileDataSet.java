@@ -94,6 +94,10 @@ public class TextFileDataSet implements DataSet{
     }
 
     public Iterable<List<Attribute>> sortOver(final int fieldIndex){
+        return sortOver(0, getItemsCount(), fieldIndex);
+    }
+    
+    public Iterable<List<Attribute>> sortOver(final int lo, final int hi, final int fieldIndex){
         ArrayList<List<Attribute>> copy = new ArrayList<List<Attribute>>(data);
         Collections.sort(copy, new Comparator<List<Attribute>>(){
            @Override
@@ -104,7 +108,7 @@ public class TextFileDataSet implements DataSet{
 				return ret;
 			}
         });
-        return copy;
+        return copy.subList(lo, hi);
     }
     
     @Override

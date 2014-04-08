@@ -289,18 +289,13 @@ public class C45 implements Comparable<C45> {
         DiscreteEntropyInformation info = new DiscreteEntropyInformation();
         double total = hi - lo;
         Attribute prev = null, current = null;
-        Iterable<List<Attribute>> sortedRecords = ds.sortOver(fieldIndex);
+        Iterable<List<Attribute>> sortedRecords = ds.sortOver(lo, hi, fieldIndex);
         Iterator<List<Attribute>> records = sortedRecords.iterator();
-
-        int nlo, i = 0;
-        //unnecesary bottleneck
-        for (i = 0; records.hasNext() && i < lo; i++) {
-            records.next().get(fieldIndex);
-        }
-
+        
         prev = records.next().get(fieldIndex);
 
-        while (prev != null && i < hi) {
+        int nlo, i = lo;
+        while (prev != null) {
             current = null;
             nlo = i;
 
