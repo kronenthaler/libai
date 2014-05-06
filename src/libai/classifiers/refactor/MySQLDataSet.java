@@ -333,7 +333,7 @@ public class MySQLDataSet implements DataSet {
         
         String fieldName = metadata.getAttributeName(fieldIndex);
         String query = String.format("SELECT `%s`, count(*) as count FROM (SELECT `%s` FROM `%s` ORDER BY `%s`,`%s` LIMIT %d,%d) as tmp GROUP BY `%s`",
-                    fieldName,fieldName, tableName, metadata.getAttributeName(orderBy), metadata.getAttributeName(outputIndex), lo, (hi-lo), fieldName);
+                    fieldName, fieldName, tableName, metadata.getAttributeName(orderBy), metadata.getAttributeName(outputIndex), lo, (hi-lo), fieldName);
         
         try{
             PreparedStatement stmt = connection.prepareStatement(query);
@@ -349,4 +349,37 @@ public class MySQLDataSet implements DataSet {
 		
 		return freq;
     }
+	
+	public HashMap<Double, HashMap<Attribute, Integer>> getAccumulatedFrequencies(int lo, int hi, int fieldIndex){
+		Iterable<List<Attribute>> records = sortOver(lo, hi, fieldIndex);
+		List<Attribute> prev = null;
+		HashMap<Double, HashMap<Attribute, Integer>> freqAcum = new HashMap<Double, HashMap<Attribute, Integer>>();
+		
+		for(List<Attribute> record : records){
+			double va = ((ContinuousAttribute)record.get(outputIndex)).getValue();
+			Attribute v = record.get(outputIndex);
+			
+			//if the value doesn't exist, initialize/
+			
+			freqAcum.get(va).put(v, freqAcum.get(va).get(v) + 1);
+		}
+		/*
+		for (int i = lo; i < hi; i++) {
+			double va = ((ContinuousAttribute) data.get(i).get(a)).getValue();
+			if (freqAcum.get(va) == null) {
+				freqAcum.put(va, new HashMap<String, Integer>());
+				for (Attribute e : classes) {
+					if (i - 1 < 0)
+						freqAcum.get(va).put(((DiscreteAttribute) e).getValue(), 0);
+					else {
+						double pva = ((ContinuousAttribute) data.get(i - 1).get(a)).getValue();
+						freqAcum.get(va).put(((DiscreteAttribute) e).getValue(), freqAcum.get(pva).get(((DiscreteAttribute) e).getValue()));
+					}
+				}
+			}
+			freqAcum.get(va).put(v, freqAcum.get(va).get(v) + 1);
+		}
+		*/
+		return freqAcum;
+	}
 }

@@ -54,4 +54,5 @@ public interface DataSet extends Iterable<List<Attribute>> {
 	public DataSet[] splitKeepingRelation(double proportion);
     
     public HashMap<Attribute,Integer> getFrequencies(int lo, int hi, int fieldIndex);
+	public HashMap<Double, HashMap<Attribute, Integer>> getAccumulatedFrequencies(int lo, int hi, int fieldIndex);
 }

@@ -320,6 +320,8 @@ public class C45 implements Comparable<C45> {
     }
 
     private ContinuousEntropyInformation infoAvgContinuous(DataSet ds, int lo, int hi, int fieldIndex) {
+		HashMap<Attribute, Integer> totalFreq = ds.getFrequencies(lo, hi, ds.getOutputIndex());
+		
         /*double splitInfo = 0;
 		double total = hi - lo;
 
@@ -330,19 +332,7 @@ public class C45 implements Comparable<C45> {
 		HashMap<String, Integer> totalFreq = new HashMap<String, Integer>();
 		HashMap<Double, HashMap<String, Integer>> freqAcum = new HashMap<Double, HashMap<String, Integer>>();
 
-		for (Attribute att : classes) {
-			totalFreq.put(((DiscreteAttribute) att).getValue(), 0);
-		}
-
 		for (int i = lo; i < hi; i++) {
-			if (!(data.get(i).get(output) instanceof DiscreteAttribute))
-				throw new IllegalArgumentException("The output attribute must be discrete");
-
-			String v = ((DiscreteAttribute) data.get(i).get(output)).getValue();
-			if (totalFreq.get(v) == null)
-				totalFreq.put(v, 0);
-			totalFreq.put(v, totalFreq.get(v) + 1);
-
 			double va = ((ContinuousAttribute) data.get(i).get(a)).getValue();
 			if (freqAcum.get(va) == null) {
 				freqAcum.put(va, new HashMap<String, Integer>());

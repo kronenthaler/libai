@@ -210,4 +210,8 @@ public class TextFileDataSet implements DataSet{
         
         return freq;
     }
+	
+	public HashMap<Double, HashMap<Attribute, Integer>> getAccumulatedFrequencies(int lo, int hi, int fieldIndex){
+		return null;
+	}
 }
