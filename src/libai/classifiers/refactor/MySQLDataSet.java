@@ -5,6 +5,7 @@ import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import libai.classifiers.*;
+import libai.common.*;
 
 /**
  *
@@ -18,6 +19,8 @@ public class MySQLDataSet implements DataSet {
     private Connection connection;
     private ResultSetMetaData rsMetaData;
     private Set<Attribute> classes = new HashSet<Attribute>();
+	private HashMap<Triplet<Integer,Integer,Integer>, HashMap<Attribute, Integer>> cache;
+	
 
     private MetaData metadata = new MetaData() {
         @Override
@@ -59,6 +62,7 @@ public class MySQLDataSet implements DataSet {
     private MySQLDataSet(int output) {
         outputIndex = output;
         orderBy = output;
+		cache = new HashMap<Triplet<Integer,Integer,Integer>, HashMap<Attribute, Integer>>();
     }
 
     private MySQLDataSet(MySQLDataSet parent, int lo, int hi) {
@@ -317,7 +321,12 @@ public class MySQLDataSet implements DataSet {
 
     @Override
     public HashMap<Attribute, Integer> getFrequencies(int lo, int hi, int fieldIndex) {
-        if(!metadata.isCategorical(fieldIndex))
+		Triplet<Integer, Integer, Integer> key = new Triplet<Integer, Integer, Integer>(lo, hi, fieldIndex);
+		
+		if(cache.get(key) != null)
+			return cache.get(key);
+		
+		if(!metadata.isCategorical(fieldIndex))
             throw new IllegalArgumentException("The attribute must be discrete");
         
         HashMap<Attribute, Integer> freq = new HashMap<Attribute, Integer>();
@@ -336,6 +345,8 @@ public class MySQLDataSet implements DataSet {
             e.printStackTrace();
         }
         
-        return freq;
+		cache.put(key, freq);
+		
+		return freq;
     }
 }
