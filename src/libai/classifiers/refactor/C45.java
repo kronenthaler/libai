@@ -96,7 +96,7 @@ public class C45 implements Comparable<C45> {
      * Return an unpruned tree from the given dataset.
      */
     public static C45 getInstance(DataSet ds) {
-        return new C45().train(ds);
+		return new C45().train(ds);
     }
 
     /**
@@ -123,8 +123,8 @@ public class C45 implements Comparable<C45> {
         return (childs == null || childs.length == 0) && output != null;
     }
 
-    public Attribute eval(List<Attribute> record) {
-        return eval(record, false, null, null);
+    public Attribute eval(List<Attribute> record, DataSet ds) {
+        return eval(record, false, null, ds);
     }
 
     private Attribute eval(List<Attribute> record, boolean keeptrack, Attribute expected, DataSet ds) {
@@ -159,14 +159,18 @@ public class C45 implements Comparable<C45> {
                         return p.second.eval(record, keeptrack, expected, ds);
                 }
             } else {
+				try{
                 for (int i = 0; i < ds.getMetaData().getAttributeCount(); i++) {
-                    if (record.get(i).getName().equals(childs[0].first.getName())) {
+					if (ds.getMetaData().getAttributeName(i).equals(childs[0].first.getName())) {
                         if (record.get(i).compareTo(childs[0].first) <= 0)
                             return childs[0].second.eval(record, keeptrack, expected, ds);
                         else
                             return childs[1].second.eval(record, keeptrack, expected, ds);
                     }
                 }
+				}catch(Exception ex){
+					ex.printStackTrace();
+				}
             }
         }
 
@@ -249,17 +253,18 @@ public class C45 implements Comparable<C45> {
         } else {
             DataSet l = ds.getSubset(0, indexOfValue);
             DataSet r = ds.getSubset(indexOfValue, itemsCount);
+			String fieldName = ds.getMetaData().getAttributeName(index);
             C45 left = train(l, visited, deep + "\t");
-            children.add(new Pair<Attribute, C45>(Attribute.getInstance(splitValue), left));
+            children.add(new Pair<Attribute, C45>(Attribute.getInstance(splitValue, fieldName), left));
 
             C45 right = train(r, visited, deep + "\t");
-            children.add(new Pair<Attribute, C45>(Attribute.getInstance(splitValue), right));
+            children.add(new Pair<Attribute, C45>(Attribute.getInstance(splitValue, fieldName), right));
         }
 
         return new C45(children);
     }
 
-    public GainInformation gain(DataSet ds, int lo, int hi, int fieldIndex) {
+    private GainInformation gain(DataSet ds, int lo, int hi, int fieldIndex) {
         DiscreteEntropyInformation info = (DiscreteEntropyInformation) infoAvg(ds, lo, hi, fieldIndex);
         double gain = info(ds, 0, ds.getItemsCount(), ds.getOutputIndex()) - info.maxInfo;
         double gainRatio = gain / info.maxSplitInfo;
@@ -278,14 +283,14 @@ public class C45 implements Comparable<C45> {
         return result;
     }
 
-    public EntropyInformation infoAvg(DataSet ds, int lo, int hi, int fieldIndex) {
+    private EntropyInformation infoAvg(DataSet ds, int lo, int hi, int fieldIndex) {
         if (ds.getMetaData().isCategorical(fieldIndex))
             return infoAvgDiscrete(ds, lo, hi, fieldIndex);
         else
             return infoAvgContinuous(ds, lo, hi, fieldIndex);
     }
 
-    public DiscreteEntropyInformation infoAvgDiscrete(DataSet ds, int lo, int hi, int fieldIndex) {
+    private DiscreteEntropyInformation infoAvgDiscrete(DataSet ds, int lo, int hi, int fieldIndex) {
         DiscreteEntropyInformation info = new DiscreteEntropyInformation();
         double total = hi - lo;
         Attribute prev = null, current = null;
@@ -321,63 +326,47 @@ public class C45 implements Comparable<C45> {
 
     private ContinuousEntropyInformation infoAvgContinuous(DataSet ds, int lo, int hi, int fieldIndex) {
 		HashMap<Attribute, Integer> totalFreq = ds.getFrequencies(lo, hi, ds.getOutputIndex());
+		HashMap<Double, HashMap<Attribute, Integer>> freqAcum = ds.getAccumulatedFrequencies(lo, hi, fieldIndex);
 		
-        /*double splitInfo = 0;
+		double splitInfo = 0;
 		double total = hi - lo;
 
-        //1. Calculate the total frequencies; they are the same for all the attributes.
-		//   Bottleneck #1, how to avoid to recalculate the frequencies in each creation.
-		//   => the frequencies can be recalculated when the spil is done, substracting the 
-		//   amount of elements that are left out on this range.
-		HashMap<String, Integer> totalFreq = new HashMap<String, Integer>();
-		HashMap<Double, HashMap<String, Integer>> freqAcum = new HashMap<Double, HashMap<String, Integer>>();
-
-		for (int i = lo; i < hi; i++) {
-			double va = ((ContinuousAttribute) data.get(i).get(a)).getValue();
-			if (freqAcum.get(va) == null) {
-				freqAcum.put(va, new HashMap<String, Integer>());
-				for (Attribute e : classes) {
-					if (i - 1 < 0)
-						freqAcum.get(va).put(((DiscreteAttribute) e).getValue(), 0);
-					else {
-						double pva = ((ContinuousAttribute) data.get(i - 1).get(a)).getValue();
-						freqAcum.get(va).put(((DiscreteAttribute) e).getValue(), freqAcum.get(pva).get(((DiscreteAttribute) e).getValue()));
-					}
-				}
-			}
-			freqAcum.get(va).put(v, freqAcum.get(va).get(v) + 1);
-		}
-
-		double maxInfo = -Double.MIN_VALUE;
+        double maxInfo = -Double.MIN_VALUE;
 		double maxSplitInfo = -Double.MIN_VALUE;
 		double bestSplitValue = Integer.MAX_VALUE;
-		int bestIndex = -1000;
-
-		//2. Create a table to know the accumulated frequencies until certain index. (same value, same previous table.)
-		for (int i = lo; i < hi; i++) {
-			double value = ((ContinuousAttribute) data.get(i).get(a)).getValue();
-
-			HashMap<String, Integer> freq = freqAcum.get(value);
-
+		int bestIndex = Integer.MIN_VALUE;
+		
+		for(Attribute key : ds.getMetaData().getClasses()){
+			if(totalFreq.get(key) == null)
+				totalFreq.put(key, 0);
+		}
+		
+		Iterable<List<Attribute>> records = ds.sortOver(lo, hi, fieldIndex);
+		int i = lo;
+		for(List<Attribute> record : records){
+			double value = ((ContinuousAttribute) record.get(fieldIndex)).getValue();
+			HashMap<Attribute, Integer> freq = freqAcum.get(value);
+			
 			double total2 = i - lo + 1;
 			double acum2 = 0;
 
 			double total3 = total - total2;
 			double acum3 = 0;
 
-			for (String e : freq.keySet()) {
+			for (Attribute e : freq.keySet()) {
 				int f = freq.get(e);
-				if (f != 0) {
+				if (f > 0) {
 					double p = (f / total2);
 					acum2 += -p * (Math.log10(p) / Math.log10(2));
 				}
-
+				
 				f = totalFreq.get(e) - freq.get(e);
-				if (f != 0) {
+				if (f > 0) {
 					double p = f / total3;
 					acum3 += -p * (Math.log10(p) / Math.log10(2));
 				}
 			}
+
 			double infoA = (total2 / total) * acum2;
 			double infoB = (total3 / total) * acum3;
 
@@ -390,14 +379,19 @@ public class C45 implements Comparable<C45> {
 
 			if (splitInfo > maxSplitInfo) {
 				maxInfo = infoA + infoB;
-				int k = 0;
-				for (k = i + 1; k < hi; k++) {
-					double nextValue = ((ContinuousAttribute) data.get(k).get(a)).getValue();
+				if(Double.isNaN(maxInfo)){
+					System.err.println("breakpoint");
+				}
+				int k = i + 1;
+				Iterable<List<Attribute>> subSet = ds.sortOver(i + 1, hi, fieldIndex);
+				for (List<Attribute> subSetRecord : subSet) {
+					double nextValue = ((ContinuousAttribute) subSetRecord.get(fieldIndex)).getValue();
 					if (value != nextValue) {
 						bestSplitValue = (value + nextValue) / 2;
 						bestIndex = k;
 						break;
 					}
+					k++;
 				}
 
 				if (k == hi) {
@@ -407,10 +401,16 @@ public class C45 implements Comparable<C45> {
 
 				maxSplitInfo = splitInfo;
 			}
+			i++;
 		}
-		return new double[]{maxInfo, maxSplitInfo, bestSplitValue, bestIndex};
-		*/
-		return null;
+		
+		ContinuousEntropyInformation result = new ContinuousEntropyInformation();
+		result.maxInfo = maxInfo;
+		result.maxSplitInfo = maxSplitInfo;
+		result.splitValue = bestSplitValue;
+		result.indexOfSplitValue = bestIndex;
+		
+		return result;
     }
 
     private double info(DataSet ds, int lo, int hi, int fieldIndex) {
@@ -432,7 +432,7 @@ public class C45 implements Comparable<C45> {
     public double error(DataSet ds) {
         int errorCount = 0;
         for (List<Attribute> record : ds) {
-            if ((eval(record).compareTo(record.get(ds.getOutputIndex())) != 0)) {
+            if ((eval(record, ds).compareTo(record.get(ds.getOutputIndex())) != 0)) {
                 errorCount++;
             }
         }

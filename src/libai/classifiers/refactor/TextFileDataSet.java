@@ -17,6 +17,7 @@ public class TextFileDataSet implements DataSet{
     private List<List<Attribute>> data = new ArrayList<List<Attribute>>();
     private Set<Attribute> classes = new HashSet<Attribute>();
     private int outputIndex;
+	private int orderBy;
     
     private MetaData metadata = new MetaData(){
         @Override
@@ -42,6 +43,7 @@ public class TextFileDataSet implements DataSet{
     
     TextFileDataSet(int output){
         outputIndex = output;
+		orderBy = outputIndex;
     }
     
     private TextFileDataSet(TextFileDataSet parent, int lo, int hi){
@@ -60,7 +62,7 @@ public class TextFileDataSet implements DataSet{
                 ArrayList<Attribute> record = new ArrayList<Attribute>();
                 for(int i=0; i<tokens.length; i++){
                     String token = tokens[i];
-                    Attribute attr = Attribute.getInstance(token);
+                    Attribute attr = Attribute.getInstance(token, metadata.getAttributeName(i));
                     record.add(attr);
                     if(i==outputIndex)
                         classes.add(attr);
@@ -98,6 +100,8 @@ public class TextFileDataSet implements DataSet{
     }
     
     public Iterable<List<Attribute>> sortOver(final int lo, final int hi, final int fieldIndex){
+		orderBy = fieldIndex;
+		
         ArrayList<List<Attribute>> copy = new ArrayList<List<Attribute>>(data);
         Collections.sort(copy, new Comparator<List<Attribute>>(){
            @Override
@@ -191,7 +195,7 @@ public class TextFileDataSet implements DataSet{
 			}
 		}
         
-        return Attribute.getInstance(mostCommon);
+        return Attribute.getInstance(mostCommon, metadata.getAttributeName(outputIndex));
     }
     
     @Override
@@ -213,7 +217,7 @@ public class TextFileDataSet implements DataSet{
 	
 	@Override
 	public HashMap<Double, HashMap<Attribute, Integer>> getAccumulatedFrequencies(final int lo, final int hi, final int fieldIndex){
-		Iterable<List<Attribute>> records = sortOver(lo, hi, fieldIndex);
+		Iterable<List<Attribute>> records = sortOver(lo, hi, orderBy);
 		List<Attribute> prev = null;
 		HashMap<Double, HashMap<Attribute, Integer>> freqAcum = new HashMap<Double, HashMap<Attribute, Integer>>();
 		

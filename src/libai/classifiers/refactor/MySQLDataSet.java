@@ -15,6 +15,7 @@ public class MySQLDataSet implements DataSet {
     private int outputIndex;
     private int itemCount = -1;
     private String tableName;
+	private String rootName;
     private int orderBy;
     private Connection connection;
     private ResultSetMetaData rsMetaData;
@@ -70,15 +71,17 @@ public class MySQLDataSet implements DataSet {
 
         connection = parent.connection;
         this.orderBy = parent.orderBy;
-        this.tableName = parent.tableName + System.currentTimeMillis();
+        this.tableName = parent.rootName + System.currentTimeMillis();
+		this.rootName = parent.rootName;
         this.rsMetaData = parent.rsMetaData;
         
         try {
             PreparedStatement stmt = connection.prepareStatement(
-                    String.format("CREATE VIEW `%s` AS SELECT * FROM `%s` ORDER BY `%s` LIMIT ?,?",
+                    String.format("CREATE VIEW `%s` AS SELECT * FROM `%s` ORDER BY `%s`, `%s` LIMIT ?,?",
                             this.tableName,
                             parent.tableName,
-                            parent.rsMetaData.getColumnName(orderBy + 1)),
+                            parent.metadata.getAttributeName(orderBy),
+							parent.metadata.getAttributeName(outputIndex)),
                     ResultSet.TYPE_SCROLL_INSENSITIVE,
                     ResultSet.CONCUR_READ_ONLY,
                     ResultSet.CLOSE_CURSORS_AT_COMMIT);
@@ -98,6 +101,7 @@ public class MySQLDataSet implements DataSet {
 
         connection = conn;
         this.tableName = tableName;
+		this.rootName = tableName;
         try {
             PreparedStatement stmt = conn.prepareStatement(
                     String.format("SELECT * FROM `%s`",
@@ -162,8 +166,8 @@ public class MySQLDataSet implements DataSet {
                 try {
                     String query = String.format("SELECT * FROM `%s` ORDER BY `%s`, `%s` LIMIT %d, %d",
                                     tableName,
-                                    rsMetaData.getColumnName(fieldIndex + 1),
-									rsMetaData.getColumnName(outputIndex + 1),
+                                    metadata.getAttributeName(fieldIndex),
+									metadata.getAttributeName(outputIndex),
                                     lo, hi-lo);
                     PreparedStatement stmt = connection.prepareStatement(query);
                     return buildIterator(stmt.executeQuery(), hi-lo);
@@ -213,7 +217,6 @@ public class MySQLDataSet implements DataSet {
                     String.format("SELECT * FROM `%s`",
                             tableName));
             result = buildIterator(stmt.executeQuery(), getItemsCount());
-            stmt.close();
         } catch (SQLException ex) {
             
         }
@@ -235,13 +238,13 @@ public class MySQLDataSet implements DataSet {
         try {
             PreparedStatement stmt = connection.prepareStatement(
                     String.format("SELECT DISTINCT(`%s`) FROM `%s`",
-                            rsMetaData.getColumnName(outputIndex + 1),
+                            metadata.getAttributeName(outputIndex),
                             tableName));
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                classes.add(Attribute.getInstance(rs.getString(1)));
+                classes.add(Attribute.getInstance(rs.getString(1), metadata.getAttributeName(outputIndex)));
             }
-            rs.close();
+			rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -263,15 +266,16 @@ public class MySQLDataSet implements DataSet {
                     if(rs.next()){
                         size--;
                         List<Attribute> record = new ArrayList<Attribute>();
-                        for (int i = 1; i <= rsMetaData.getColumnCount(); i++) {
-                            record.add(Attribute.getInstance(rs.getString(i)));
+                        for (int i = 0; i < metadata.getAttributeCount(); i++) {
+							String fieldName =metadata.getAttributeName(i);
+                            record.add(Attribute.getInstance(rs.getString(fieldName), fieldName));
                         }
                         return record;
                     } else {
                         return null;
                     }
                 } catch (SQLException e) {
-                    return null;
+					return null;
                 }
             }
 
@@ -284,7 +288,7 @@ public class MySQLDataSet implements DataSet {
 
     @Override
     public boolean allTheSameOutput() {
-        return metadata.getClasses().size() != 1;
+        return metadata.getClasses().size() == 1;
     }
 
     @Override
@@ -295,7 +299,7 @@ public class MySQLDataSet implements DataSet {
                 if (i != outputIndex) {
                     if (i > 0 && outputIndex != 0)
                         attributes.append(',');
-                    attributes.append(metadata.getAttributeName(i + 1));
+                    attributes.append(metadata.getAttributeName(i));
                 }
             }
 
@@ -312,7 +316,7 @@ public class MySQLDataSet implements DataSet {
                     stmt = connection.prepareStatement(query2);
                     rs = stmt.executeQuery();
                     if (rs.next())
-                        return Attribute.getInstance(rs.getString(1));
+                        return Attribute.getInstance(rs.getString(1), fieldName);
                 }
             }
         } catch (SQLException e) {
@@ -335,12 +339,12 @@ public class MySQLDataSet implements DataSet {
         String fieldName = metadata.getAttributeName(fieldIndex);
         String query = String.format("SELECT `%s`, count(*) as count FROM (SELECT `%s` FROM `%s` ORDER BY `%s`,`%s` LIMIT %d,%d) as tmp GROUP BY `%s`",
                     fieldName, fieldName, tableName, metadata.getAttributeName(orderBy), metadata.getAttributeName(outputIndex), lo, (hi-lo), fieldName);
-        
-        try{
+		
+		try{
             PreparedStatement stmt = connection.prepareStatement(query);
             ResultSet rs = stmt.executeQuery();
             while(rs.next()){
-                freq.put(Attribute.getInstance(rs.getString(fieldName)), rs.getInt("count"));
+                freq.put(Attribute.getInstance(rs.getString(fieldName), fieldName), rs.getInt("count"));
             }
         }catch(SQLException e){
             e.printStackTrace();
@@ -351,16 +355,19 @@ public class MySQLDataSet implements DataSet {
 		return freq;
     }
 	
-	private String print(Iterable<List<Attribute>> r){
+	public String toString(){
+		Iterable<List<Attribute>> r = sortOver(orderBy);
 		StringBuffer str = new StringBuffer();
 		for(List<Attribute> l : r)
-			str.append(l.toString());
+			str.append(l.toString()).append("\n");
 		return str.toString();
 	}
 	
 	@Override
 	public HashMap<Double, HashMap<Attribute, Integer>> getAccumulatedFrequencies(int lo, int hi, int fieldIndex){
-		Iterable<List<Attribute>> records = sortOver(lo, hi, fieldIndex);
+		Iterable<List<Attribute>> records = sortOver(lo, hi, orderBy);
+		DataSet aux = this.getSubset(lo, hi);
+		
 		List<Attribute> prev = null;
 		HashMap<Double, HashMap<Attribute, Integer>> freqAcum = new HashMap<Double, HashMap<Attribute, Integer>>();
 		
@@ -370,7 +377,7 @@ public class MySQLDataSet implements DataSet {
 			
 			if(freqAcum.get(va) == null){
 				freqAcum.put(va, new HashMap<Attribute, Integer>());
-				for(Attribute c : metadata.getClasses()){
+				for(Attribute c : aux.getMetaData().getClasses()){
 					if(prev == null)
 						freqAcum.get(va).put(c, 0);
 					else{
