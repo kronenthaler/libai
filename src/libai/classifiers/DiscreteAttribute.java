@@ -28,6 +28,6 @@ public class DiscreteAttribute extends Attribute {
 
 	@Override
 	public String toString() {
-		return value;
+		return "["+name+"]="+value;
 	}
 }

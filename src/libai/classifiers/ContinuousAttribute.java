@@ -32,6 +32,6 @@ public class ContinuousAttribute extends Attribute {
 
 	@Override
 	public String toString() {
-		return "" + value;
+		return "["+name+"]=" + value;
 	}
 }
