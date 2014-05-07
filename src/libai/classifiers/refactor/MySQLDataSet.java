@@ -160,9 +160,10 @@ public class MySQLDataSet implements DataSet {
             @Override
             public Iterator<List<Attribute>> iterator() {
                 try {
-                    String query = String.format("SELECT * FROM `%s` ORDER BY `%s` LIMIT %d, %d",
+                    String query = String.format("SELECT * FROM `%s` ORDER BY `%s`, `%s` LIMIT %d, %d",
                                     tableName,
                                     rsMetaData.getColumnName(fieldIndex + 1),
+									rsMetaData.getColumnName(outputIndex + 1),
                                     lo, hi-lo);
                     PreparedStatement stmt = connection.prepareStatement(query);
                     return buildIterator(stmt.executeQuery(), hi-lo);
@@ -350,36 +351,40 @@ public class MySQLDataSet implements DataSet {
 		return freq;
     }
 	
+	private String print(Iterable<List<Attribute>> r){
+		StringBuffer str = new StringBuffer();
+		for(List<Attribute> l : r)
+			str.append(l.toString());
+		return str.toString();
+	}
+	
+	@Override
 	public HashMap<Double, HashMap<Attribute, Integer>> getAccumulatedFrequencies(int lo, int hi, int fieldIndex){
 		Iterable<List<Attribute>> records = sortOver(lo, hi, fieldIndex);
 		List<Attribute> prev = null;
 		HashMap<Double, HashMap<Attribute, Integer>> freqAcum = new HashMap<Double, HashMap<Attribute, Integer>>();
 		
 		for(List<Attribute> record : records){
-			double va = ((ContinuousAttribute)record.get(outputIndex)).getValue();
+			double va = ((ContinuousAttribute) record.get(fieldIndex)).getValue();
 			Attribute v = record.get(outputIndex);
 			
-			//if the value doesn't exist, initialize/
-			
-			freqAcum.get(va).put(v, freqAcum.get(va).get(v) + 1);
-		}
-		/*
-		for (int i = lo; i < hi; i++) {
-			double va = ((ContinuousAttribute) data.get(i).get(a)).getValue();
-			if (freqAcum.get(va) == null) {
-				freqAcum.put(va, new HashMap<String, Integer>());
-				for (Attribute e : classes) {
-					if (i - 1 < 0)
-						freqAcum.get(va).put(((DiscreteAttribute) e).getValue(), 0);
-					else {
-						double pva = ((ContinuousAttribute) data.get(i - 1).get(a)).getValue();
-						freqAcum.get(va).put(((DiscreteAttribute) e).getValue(), freqAcum.get(pva).get(((DiscreteAttribute) e).getValue()));
+			if(freqAcum.get(va) == null){
+				freqAcum.put(va, new HashMap<Attribute, Integer>());
+				for(Attribute c : metadata.getClasses()){
+					if(prev == null)
+						freqAcum.get(va).put(c, 0);
+					else{
+						double pva = ((ContinuousAttribute) prev.get(fieldIndex)).getValue();
+						freqAcum.get(va).put(c, freqAcum.get(pva).get(c));
 					}
 				}
 			}
-			freqAcum.get(va).put(v, freqAcum.get(va).get(v) + 1);
+			
+			prev = record;
+			HashMap<Attribute, Integer> m = freqAcum.get(va);
+			m.put(v, m.get(v) + 1);
 		}
-		*/
+		
 		return freqAcum;
 	}
 }

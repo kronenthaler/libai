@@ -211,7 +211,33 @@ public class TextFileDataSet implements DataSet{
         return freq;
     }
 	
-	public HashMap<Double, HashMap<Attribute, Integer>> getAccumulatedFrequencies(int lo, int hi, int fieldIndex){
-		return null;
+	@Override
+	public HashMap<Double, HashMap<Attribute, Integer>> getAccumulatedFrequencies(final int lo, final int hi, final int fieldIndex){
+		Iterable<List<Attribute>> records = sortOver(lo, hi, fieldIndex);
+		List<Attribute> prev = null;
+		HashMap<Double, HashMap<Attribute, Integer>> freqAcum = new HashMap<Double, HashMap<Attribute, Integer>>();
+		
+		for(List<Attribute> record : records){
+			double va = ((ContinuousAttribute) record.get(fieldIndex)).getValue();
+			Attribute v = record.get(outputIndex);
+			
+			if(freqAcum.get(va) == null){
+				freqAcum.put(va, new HashMap<Attribute, Integer>());
+				for(Attribute c : metadata.getClasses()){
+					if(prev == null)
+						freqAcum.get(va).put(c, 0);
+					else{
+						double pva = ((ContinuousAttribute) prev.get(fieldIndex)).getValue();
+						freqAcum.get(va).put(c, freqAcum.get(pva).get(c));
+					}
+				}
+			}
+			
+			prev = record;
+			HashMap<Attribute, Integer> m = freqAcum.get(va);
+			m.put(v, m.get(v) + 1);
+		}
+		
+		return freqAcum;
 	}
 }
