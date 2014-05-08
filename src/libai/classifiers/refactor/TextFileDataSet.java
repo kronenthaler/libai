@@ -163,7 +163,7 @@ public class TextFileDataSet implements DataSet{
     
     @Override
     public boolean allTheSameOutput() {
-        return metadata.getClasses().size() != 1;
+        return metadata.getClasses().size() == 1;
     }
 
     @Override
@@ -217,7 +217,7 @@ public class TextFileDataSet implements DataSet{
 	
 	@Override
 	public HashMap<Double, HashMap<Attribute, Integer>> getAccumulatedFrequencies(final int lo, final int hi, final int fieldIndex){
-		Iterable<List<Attribute>> records = sortOver(lo, hi, orderBy);
+		Iterable<List<Attribute>> records = sortOver(lo, hi, fieldIndex);
 		List<Attribute> prev = null;
 		HashMap<Double, HashMap<Attribute, Integer>> freqAcum = new HashMap<Double, HashMap<Attribute, Integer>>();
 		

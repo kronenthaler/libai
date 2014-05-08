@@ -365,7 +365,7 @@ public class MySQLDataSet implements DataSet {
 	
 	@Override
 	public HashMap<Double, HashMap<Attribute, Integer>> getAccumulatedFrequencies(int lo, int hi, int fieldIndex){
-		Iterable<List<Attribute>> records = sortOver(lo, hi, orderBy);
+		Iterable<List<Attribute>> records = sortOver(lo, hi, fieldIndex);
 		DataSet aux = this.getSubset(lo, hi);
 		
 		List<Attribute> prev = null;
