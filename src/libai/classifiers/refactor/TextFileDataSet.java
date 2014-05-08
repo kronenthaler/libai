@@ -8,6 +8,7 @@ import java.io.*;
 import java.util.*;
 import libai.classifiers.ContinuousAttribute;
 import libai.classifiers.DiscreteAttribute;
+import libai.common.*;
 
 /**
  *
@@ -18,6 +19,7 @@ public class TextFileDataSet implements DataSet{
     private Set<Attribute> classes = new HashSet<Attribute>();
     private int outputIndex;
 	private int orderBy;
+	private HashMap<Triplet<Integer,Integer,Integer>, HashMap<Attribute, Integer>> cache;
     
     private MetaData metadata = new MetaData(){
         @Override
@@ -44,6 +46,7 @@ public class TextFileDataSet implements DataSet{
     TextFileDataSet(int output){
         outputIndex = output;
 		orderBy = outputIndex;
+		cache = new HashMap<Triplet<Integer,Integer,Integer>, HashMap<Attribute, Integer>>();
     }
     
     private TextFileDataSet(TextFileDataSet parent, int lo, int hi){
@@ -200,6 +203,11 @@ public class TextFileDataSet implements DataSet{
     
     @Override
     public HashMap<Attribute, Integer> getFrequencies(int lo, int hi, int fieldIndex) {
+		Triplet<Integer, Integer, Integer> key = new Triplet<Integer, Integer, Integer>(lo, hi, fieldIndex);
+		
+		if(cache.get(key) != null)
+			return cache.get(key);
+		
         if(!metadata.isCategorical(fieldIndex))
             throw new IllegalArgumentException("The attribute must be discrete");
         
@@ -212,12 +220,16 @@ public class TextFileDataSet implements DataSet{
 			freq.put(v, freq.get(v) + 1);
         }
         
+		cache.put(key, freq);
+		
         return freq;
     }
 	
 	@Override
-	public HashMap<Double, HashMap<Attribute, Integer>> getAccumulatedFrequencies(final int lo, final int hi, final int fieldIndex){
+	public HashMap<Double, HashMap<Attribute, Integer>> getAccumulatedFrequencies(int lo, int hi, int fieldIndex){
 		Iterable<List<Attribute>> records = sortOver(lo, hi, fieldIndex);
+		DataSet aux = this.getSubset(lo, hi);
+		
 		List<Attribute> prev = null;
 		HashMap<Double, HashMap<Attribute, Integer>> freqAcum = new HashMap<Double, HashMap<Attribute, Integer>>();
 		
@@ -227,7 +239,7 @@ public class TextFileDataSet implements DataSet{
 			
 			if(freqAcum.get(va) == null){
 				freqAcum.put(va, new HashMap<Attribute, Integer>());
-				for(Attribute c : metadata.getClasses()){
+				for(Attribute c : aux.getMetaData().getClasses()){
 					if(prev == null)
 						freqAcum.get(va).put(c, 0);
 					else{

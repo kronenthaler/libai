@@ -20,8 +20,8 @@ public class MySQLDataSet implements DataSet {
     private Connection connection;
     private ResultSetMetaData rsMetaData;
     private Set<Attribute> classes = new HashSet<Attribute>();
-	private HashMap<Triplet<Integer,Integer,Integer>, HashMap<Attribute, Integer>> cache;
-	
+	private HashMap<Triplet<Integer,Integer,Integer>, HashMap<Attribute, Integer>> cacheFrequencies;
+	private HashMap<Triplet<Integer,Integer,Integer>, HashMap<Double, HashMap<Attribute, Integer>>> cacheAccumulatedFrequencies;
 
     private MetaData metadata = new MetaData() {
         @Override
@@ -63,7 +63,8 @@ public class MySQLDataSet implements DataSet {
     private MySQLDataSet(int output) {
         outputIndex = output;
         orderBy = output;
-		cache = new HashMap<Triplet<Integer,Integer,Integer>, HashMap<Attribute, Integer>>();
+		cacheFrequencies = new HashMap<Triplet<Integer,Integer,Integer>, HashMap<Attribute, Integer>>();
+		cacheAccumulatedFrequencies = new HashMap<Triplet<Integer,Integer,Integer>, HashMap<Double, HashMap<Attribute, Integer>>>();
     }
 
     private MySQLDataSet(MySQLDataSet parent, int lo, int hi) {
@@ -323,13 +324,12 @@ public class MySQLDataSet implements DataSet {
         }
         return null;
     }
-
+	
     @Override
     public HashMap<Attribute, Integer> getFrequencies(int lo, int hi, int fieldIndex) {
 		Triplet<Integer, Integer, Integer> key = new Triplet<Integer, Integer, Integer>(lo, hi, fieldIndex);
-		
-		if(cache.get(key) != null)
-			return cache.get(key);
+		if(cacheFrequencies.get(key) != null)
+			return cacheFrequencies.get(key);
 		
 		if(!metadata.isCategorical(fieldIndex))
             throw new IllegalArgumentException("The attribute must be discrete");
@@ -350,7 +350,7 @@ public class MySQLDataSet implements DataSet {
             e.printStackTrace();
         }
         
-		cache.put(key, freq);
+		cacheFrequencies.put(key, freq);
 		
 		return freq;
     }
@@ -365,6 +365,10 @@ public class MySQLDataSet implements DataSet {
 	
 	@Override
 	public HashMap<Double, HashMap<Attribute, Integer>> getAccumulatedFrequencies(int lo, int hi, int fieldIndex){
+		Triplet<Integer,Integer,Integer> key = new Triplet<Integer, Integer, Integer>(lo, hi, fieldIndex);
+		if(cacheAccumulatedFrequencies.get(key)!=null)
+			return cacheAccumulatedFrequencies.get(key);
+				
 		Iterable<List<Attribute>> records = sortOver(lo, hi, fieldIndex);
 		DataSet aux = this.getSubset(lo, hi);
 		
@@ -391,6 +395,8 @@ public class MySQLDataSet implements DataSet {
 			HashMap<Attribute, Integer> m = freqAcum.get(va);
 			m.put(v, m.get(v) + 1);
 		}
+		
+		cacheAccumulatedFrequencies.put(key, freqAcum);
 		
 		return freqAcum;
 	}
