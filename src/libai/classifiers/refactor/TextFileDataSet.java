@@ -98,15 +98,15 @@ public class TextFileDataSet implements DataSet{
         return metadata;
     }
 
+    @Override
     public Iterable<List<Attribute>> sortOver(final int fieldIndex){
         return sortOver(0, getItemsCount(), fieldIndex);
     }
     
+    @Override
     public Iterable<List<Attribute>> sortOver(final int lo, final int hi, final int fieldIndex){
-		orderBy = fieldIndex;
-		
-        ArrayList<List<Attribute>> copy = new ArrayList<List<Attribute>>(data);
-        Collections.sort(copy, new Comparator<List<Attribute>>(){
+        orderBy = fieldIndex;
+        Collections.sort(data, new Comparator<List<Attribute>>(){
            @Override
 			public int compare(List<Attribute> o1, List<Attribute> o2) {
 				int ret = o1.get(fieldIndex).compareTo(o2.get(fieldIndex));
@@ -115,7 +115,7 @@ public class TextFileDataSet implements DataSet{
 				return ret;
 			}
         });
-        return copy.subList(lo, hi);
+        return data.subList(lo, hi);
     }
     
     @Override
@@ -156,7 +156,10 @@ public class TextFileDataSet implements DataSet{
     
     @Override
     public String toString(){
-        return data.toString();
+        StringBuffer str = new StringBuffer();
+        for(List<Attribute> r : sortOver(orderBy))
+            str.append(r.toString()).append('\n');
+        return str.toString();
     }
 
     @Override

@@ -184,15 +184,15 @@ public class C45 implements Comparable<C45> {
     }
 
     private C45 train(DataSet ds, HashSet<Integer> visited, String deep) {
-        if (ds.getItemsCount() == 0)
-            return null;
-        //ds.print(deep);
-
         MetaData metadata = ds.getMetaData();
         int attributeCount = metadata.getAttributeCount();
         int outputIndex = ds.getOutputIndex();
         int itemsCount = ds.getItemsCount();
-
+        
+        //no more attributes to visit or no more items to check
+        if (itemsCount == 0 || visited.size() == attributeCount) 
+            return null;
+        
         //base case: all the output are the same.
         if (ds.allTheSameOutput())
             return new C45(ds.iterator().next().get(outputIndex));
@@ -220,7 +220,7 @@ public class C45 implements Comparable<C45> {
                 }
             }
         }
-
+        
         Iterable<List<Attribute>> sortedRecords = ds.sortOver(index);
         ArrayList<Pair<Attribute, C45>> children = new ArrayList<Pair<Attribute, C45>>();
         if (metadata.isCategorical(index)) {
@@ -254,9 +254,10 @@ public class C45 implements Comparable<C45> {
             DataSet l = ds.getSubset(0, indexOfValue);
             DataSet r = ds.getSubset(indexOfValue, itemsCount);
 			String fieldName = ds.getMetaData().getAttributeName(index);
+            
             C45 left = train(l, visited, deep + "\t");
             children.add(new Pair<Attribute, C45>(Attribute.getInstance(splitValue, fieldName), left));
-
+            
             C45 right = train(r, visited, deep + "\t");
             children.add(new Pair<Attribute, C45>(Attribute.getInstance(splitValue, fieldName), right));
         }
@@ -379,9 +380,6 @@ public class C45 implements Comparable<C45> {
 
 			if (splitInfo > maxSplitInfo) {
 				maxInfo = infoA + infoB;
-				if(Double.isNaN(maxInfo)){
-					System.err.println("breakpoint");
-				}
 				int k = i + 1;
 				Iterable<List<Attribute>> subSet = ds.sortOver(i + 1, hi, fieldIndex);
 				for (List<Attribute> subSetRecord : subSet) {

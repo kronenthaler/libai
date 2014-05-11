@@ -45,7 +45,7 @@ public class MySQLDataSet implements DataSet {
 
         @Override
         public Set<Attribute> getClasses() {
-            if(classes.size() == 0)
+            if(classes.isEmpty())
                 initializeClasses();
             return classes;
         }
@@ -69,7 +69,7 @@ public class MySQLDataSet implements DataSet {
 
     private MySQLDataSet(MySQLDataSet parent, int lo, int hi) {
         this(parent.outputIndex);
-
+        
         connection = parent.connection;
         this.orderBy = parent.orderBy;
         this.tableName = parent.rootName + System.currentTimeMillis();
