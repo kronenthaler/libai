@@ -1,13 +1,8 @@
 package libai.classifiers.bayes;
 
 import java.io.*;
-import libai.classifiers.Attribute;
-import libai.classifiers.DiscreteAttribute;
-import libai.classifiers.ContinuousAttribute;
-import libai.classifiers.DataRecord;
-
-import libai.classifiers.refactor.DataSet;
-import libai.classifiers.refactor.MetaData;
+import libai.classifiers.*;
+import libai.classifiers.dataset.*;
 
 import libai.common.*;
 import java.util.*;
@@ -105,7 +100,7 @@ public class NaiveBayes {
 
 	//calculate the maximum posterior probability this data record (x) in the data set
 	//P(Ci|x) > P(Cj|x) 1 <= j < m, i!=j
-	public Attribute eval(DataRecord x) {
+	public Attribute eval(List<Attribute> x) {
 		Attribute winner = null;
 		double max = -Double.MAX_VALUE;
 		for (Attribute c : params.keySet()) {
@@ -121,14 +116,14 @@ public class NaiveBayes {
 	//P(H|x) = P(x|H)P(H) / P(x)
 	//relaxed calculation of P(H|x). the exact value is not necessary, just to know which class
 	//has the highest value.
-	private double P(Attribute h, DataRecord x) {
+	private double P(Attribute h, List<Attribute> x) {
 		return P(x, h) * P(h);
 	}
 
-	private double P(DataRecord x, Attribute h) {
+	private double P(List<Attribute> x, Attribute h) {
 		double p = 1;
 		//look for all records in ds with class h.
-        for (int k = 0, n = x.getAttributeCount(); k < n; k++) {
+        for (int k = 0, n = x.size(); k < n; k++) {
 			Attribute attr = x.get(k);
 			if (metadata.isCategorical(k)) {
 				p *= (count((DiscreteAttribute) attr, k, h) + 1) / (double) (((Integer) params.get(h)[outputIndex]) + 1);

@@ -1,9 +1,7 @@
-package libai.classifiers.refactor;
+package libai.classifiers.dataset;
 
 import java.util.*;
 import java.sql.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import libai.classifiers.*;
 import libai.common.*;
 
@@ -15,13 +13,13 @@ public class MySQLDataSet implements DataSet {
     private int outputIndex;
     private int itemCount = -1;
     private String tableName;
-	private String rootName;
+    private String rootName;
     private int orderBy;
     private Connection connection;
     private ResultSetMetaData rsMetaData;
     private Set<Attribute> classes = new HashSet<Attribute>();
-	private HashMap<Triplet<Integer,Integer,Integer>, HashMap<Attribute, Integer>> cacheFrequencies;
-	private HashMap<Triplet<Integer,Integer,Integer>, HashMap<Double, HashMap<Attribute, Integer>>> cacheAccumulatedFrequencies;
+    private HashMap<Triplet<Integer, Integer, Integer>, HashMap<Attribute, Integer>> cacheFrequencies;
+    private HashMap<Triplet<Integer, Integer, Integer>, HashMap<Double, HashMap<Attribute, Integer>>> cacheAccumulatedFrequencies;
 
     private MetaData metadata = new MetaData() {
         @Override
@@ -45,17 +43,17 @@ public class MySQLDataSet implements DataSet {
 
         @Override
         public Set<Attribute> getClasses() {
-            if(classes.isEmpty())
+            if (classes.isEmpty())
                 initializeClasses();
             return classes;
         }
-        
+
         @Override
         public String getAttributeName(int fieldIndex) {
-            try{
+            try {
                 return rsMetaData.getColumnName(fieldIndex + 1);
-            }catch(SQLException e){
-                return "["+fieldIndex+"]";
+            } catch (SQLException e) {
+                return "[" + fieldIndex + "]";
             }
         }
     };
@@ -63,26 +61,26 @@ public class MySQLDataSet implements DataSet {
     private MySQLDataSet(int output) {
         outputIndex = output;
         orderBy = output;
-		cacheFrequencies = new HashMap<Triplet<Integer,Integer,Integer>, HashMap<Attribute, Integer>>();
-		cacheAccumulatedFrequencies = new HashMap<Triplet<Integer,Integer,Integer>, HashMap<Double, HashMap<Attribute, Integer>>>();
+        cacheFrequencies = new HashMap<Triplet<Integer, Integer, Integer>, HashMap<Attribute, Integer>>();
+        cacheAccumulatedFrequencies = new HashMap<Triplet<Integer, Integer, Integer>, HashMap<Double, HashMap<Attribute, Integer>>>();
     }
 
     private MySQLDataSet(MySQLDataSet parent, int lo, int hi) {
         this(parent.outputIndex);
-        
+
         connection = parent.connection;
         this.orderBy = parent.orderBy;
         this.tableName = parent.rootName + System.currentTimeMillis();
-		this.rootName = parent.rootName;
+        this.rootName = parent.rootName;
         this.rsMetaData = parent.rsMetaData;
-        
+
         try {
             PreparedStatement stmt = connection.prepareStatement(
                     String.format("CREATE VIEW `%s` AS SELECT * FROM `%s` ORDER BY `%s`, `%s` LIMIT ?,?",
                             this.tableName,
                             parent.tableName,
                             parent.metadata.getAttributeName(orderBy),
-							parent.metadata.getAttributeName(outputIndex)),
+                            parent.metadata.getAttributeName(outputIndex)),
                     ResultSet.TYPE_SCROLL_INSENSITIVE,
                     ResultSet.CONCUR_READ_ONLY,
                     ResultSet.CLOSE_CURSORS_AT_COMMIT);
@@ -102,7 +100,7 @@ public class MySQLDataSet implements DataSet {
 
         connection = conn;
         this.tableName = tableName;
-		this.rootName = tableName;
+        this.rootName = tableName;
         try {
             PreparedStatement stmt = conn.prepareStatement(
                     String.format("SELECT * FROM `%s`",
@@ -120,11 +118,11 @@ public class MySQLDataSet implements DataSet {
         }
     }
 
-    @Override 
-    public DataSet getSubset(int lo, int hi){
+    @Override
+    public DataSet getSubset(int lo, int hi) {
         return new MySQLDataSet(this, lo, hi);
     }
-    
+
     @Override
     public int getOutputIndex() {
         return outputIndex;
@@ -132,9 +130,9 @@ public class MySQLDataSet implements DataSet {
 
     @Override
     public int getItemsCount() {
-        if(itemCount >= 0) 
+        if (itemCount >= 0)
             return itemCount;
-        
+
         try {
             PreparedStatement stmt = connection.prepareStatement(
                     String.format("SELECT COUNT(*) FROM `%s`",
@@ -157,7 +155,7 @@ public class MySQLDataSet implements DataSet {
     public Iterable<List<Attribute>> sortOver(final int fieldIndex) {
         return sortOver(0, getItemsCount(), fieldIndex);
     }
-    
+
     @Override
     public Iterable<List<Attribute>> sortOver(final int lo, final int hi, final int fieldIndex) {
         orderBy = fieldIndex;
@@ -166,12 +164,12 @@ public class MySQLDataSet implements DataSet {
             public Iterator<List<Attribute>> iterator() {
                 try {
                     String query = String.format("SELECT * FROM `%s` ORDER BY `%s`, `%s` LIMIT %d, %d",
-                                    tableName,
-                                    metadata.getAttributeName(fieldIndex),
-									metadata.getAttributeName(outputIndex),
-                                    lo, hi-lo);
+                            tableName,
+                            metadata.getAttributeName(fieldIndex),
+                            metadata.getAttributeName(outputIndex),
+                            lo, hi - lo);
                     PreparedStatement stmt = connection.prepareStatement(query);
-                    return buildIterator(stmt.executeQuery(), hi-lo);
+                    return buildIterator(stmt.executeQuery(), hi - lo);
                 } catch (SQLException e) {
                     e.printStackTrace();
                     return null;
@@ -179,7 +177,7 @@ public class MySQLDataSet implements DataSet {
             }
         };
     }
-    
+
     /* TODO change the implementation to return datasets from the same type */
     @Override
     public DataSet[] splitKeepingRelation(double proportion) {
@@ -219,22 +217,22 @@ public class MySQLDataSet implements DataSet {
                             tableName));
             result = buildIterator(stmt.executeQuery(), getItemsCount());
         } catch (SQLException ex) {
-            
+
         }
         return result;
     }
-    
-    public void clean(){
-        try{
+
+    public void clean() {
+        try {
             PreparedStatement stmt = connection.prepareStatement(
                     String.format("DROP VIEW IF EXISTS `%s`", tableName));
             stmt.executeUpdate();
             stmt.close();
-        }catch(SQLException ex){
+        } catch (SQLException ex) {
             ex.printStackTrace();
         }
     }
-    
+
     private void initializeClasses() {
         try {
             PreparedStatement stmt = connection.prepareStatement(
@@ -245,17 +243,17 @@ public class MySQLDataSet implements DataSet {
             while (rs.next()) {
                 classes.add(Attribute.getInstance(rs.getString(1), metadata.getAttributeName(outputIndex)));
             }
-			rs.close();
+            rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-    
+
     //TODO: fix this iterator so it can use the next as next and the the hasnext to just check (without side effects)
     private Iterator<List<Attribute>> buildIterator(final ResultSet rs, final int itemsCount) {
         return new Iterator<List<Attribute>>() {
             int size = itemsCount;
-            
+
             @Override
             public boolean hasNext() {
                 return size > 0;
@@ -264,11 +262,11 @@ public class MySQLDataSet implements DataSet {
             @Override
             public List<Attribute> next() {
                 try {
-                    if(rs.next()){
+                    if (rs.next()) {
                         size--;
                         List<Attribute> record = new ArrayList<Attribute>();
                         for (int i = 0; i < metadata.getAttributeCount(); i++) {
-							String fieldName =metadata.getAttributeName(i);
+                            String fieldName = metadata.getAttributeName(i);
                             record.add(Attribute.getInstance(rs.getString(fieldName), fieldName));
                         }
                         return record;
@@ -276,7 +274,7 @@ public class MySQLDataSet implements DataSet {
                         return null;
                     }
                 } catch (SQLException e) {
-					return null;
+                    return null;
                 }
             }
 
@@ -311,7 +309,7 @@ public class MySQLDataSet implements DataSet {
                 if (rs.getInt("size") != getItemsCount())
                     return null;
                 else {
-                    String fieldName = metadata.getAttributeName(outputIndex); 
+                    String fieldName = metadata.getAttributeName(outputIndex);
                     String query2 = String.format("SELECT %s, count(*) as count FROM %s GROUP BY %s ORDER BY count DESC LIMIT 1",
                             fieldName, tableName, fieldName);
                     stmt = connection.prepareStatement(query2);
@@ -324,80 +322,92 @@ public class MySQLDataSet implements DataSet {
         }
         return null;
     }
-	
+
     @Override
     public HashMap<Attribute, Integer> getFrequencies(int lo, int hi, int fieldIndex) {
-		Triplet<Integer, Integer, Integer> key = new Triplet<Integer, Integer, Integer>(lo, hi, fieldIndex);
-		if(cacheFrequencies.get(key) != null)
-			return cacheFrequencies.get(key);
-		
-		if(!metadata.isCategorical(fieldIndex))
+        Triplet<Integer, Integer, Integer> key = new Triplet<Integer, Integer, Integer>(lo, hi, fieldIndex);
+        if (cacheFrequencies.get(key) != null)
+            return cacheFrequencies.get(key);
+
+        if (!metadata.isCategorical(fieldIndex))
             throw new IllegalArgumentException("The attribute must be discrete");
-        
+
         HashMap<Attribute, Integer> freq = new HashMap<Attribute, Integer>();
-        
+
         String fieldName = metadata.getAttributeName(fieldIndex);
         String query = String.format("SELECT `%s`, count(*) as count FROM (SELECT `%s` FROM `%s` ORDER BY `%s`,`%s` LIMIT %d,%d) as tmp GROUP BY `%s`",
-                    fieldName, fieldName, tableName, metadata.getAttributeName(orderBy), metadata.getAttributeName(outputIndex), lo, (hi-lo), fieldName);
-		
-		try{
+                fieldName, fieldName, tableName, metadata.getAttributeName(orderBy), metadata.getAttributeName(outputIndex), lo, (hi - lo), fieldName);
+
+        try {
             PreparedStatement stmt = connection.prepareStatement(query);
             ResultSet rs = stmt.executeQuery();
-            while(rs.next()){
+            while (rs.next()) {
                 freq.put(Attribute.getInstance(rs.getString(fieldName), fieldName), rs.getInt("count"));
             }
-        }catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-        
-		cacheFrequencies.put(key, freq);
-		
-		return freq;
+
+        cacheFrequencies.put(key, freq);
+
+        return freq;
     }
-	
-	public String toString(){
-		Iterable<List<Attribute>> r = sortOver(orderBy);
-		StringBuffer str = new StringBuffer();
-		for(List<Attribute> l : r)
-			str.append(l.toString()).append("\n");
-		return str.toString();
-	}
-	
-	@Override
-	public HashMap<Double, HashMap<Attribute, Integer>> getAccumulatedFrequencies(int lo, int hi, int fieldIndex){
-		Triplet<Integer,Integer,Integer> key = new Triplet<Integer, Integer, Integer>(lo, hi, fieldIndex);
-		if(cacheAccumulatedFrequencies.get(key)!=null)
-			return cacheAccumulatedFrequencies.get(key);
-				
-		Iterable<List<Attribute>> records = sortOver(lo, hi, fieldIndex);
-		DataSet aux = this.getSubset(lo, hi);
-		
-		List<Attribute> prev = null;
-		HashMap<Double, HashMap<Attribute, Integer>> freqAcum = new HashMap<Double, HashMap<Attribute, Integer>>();
-		
-		for(List<Attribute> record : records){
-			double va = ((ContinuousAttribute) record.get(fieldIndex)).getValue();
-			Attribute v = record.get(outputIndex);
-			
-			if(freqAcum.get(va) == null){
-				freqAcum.put(va, new HashMap<Attribute, Integer>());
-				for(Attribute c : aux.getMetaData().getClasses()){
-					if(prev == null)
-						freqAcum.get(va).put(c, 0);
-					else{
-						double pva = ((ContinuousAttribute) prev.get(fieldIndex)).getValue();
-						freqAcum.get(va).put(c, freqAcum.get(pva).get(c));
-					}
-				}
-			}
-			
-			prev = record;
-			HashMap<Attribute, Integer> m = freqAcum.get(va);
-			m.put(v, m.get(v) + 1);
-		}
-		
-		cacheAccumulatedFrequencies.put(key, freqAcum);
-		
-		return freqAcum;
-	}
+
+    public String toString() {
+        Iterable<List<Attribute>> r = sortOver(orderBy);
+        StringBuffer str = new StringBuffer();
+        for (List<Attribute> l : r)
+            str.append(l.toString()).append("\n");
+        return str.toString();
+    }
+
+    @Override
+    public HashMap<Double, HashMap<Attribute, Integer>> getAccumulatedFrequencies(int lo, int hi, int fieldIndex) {
+        Triplet<Integer, Integer, Integer> key = new Triplet<Integer, Integer, Integer>(lo, hi, fieldIndex);
+        if (cacheAccumulatedFrequencies.get(key) != null)
+            return cacheAccumulatedFrequencies.get(key);
+
+        Iterable<List<Attribute>> records = sortOver(lo, hi, fieldIndex);
+        DataSet aux = this.getSubset(lo, hi);
+
+        List<Attribute> prev = null;
+        HashMap<Double, HashMap<Attribute, Integer>> freqAcum = new HashMap<Double, HashMap<Attribute, Integer>>();
+
+        for (List<Attribute> record : records) {
+            double va = ((ContinuousAttribute) record.get(fieldIndex)).getValue();
+            Attribute v = record.get(outputIndex);
+
+            if (freqAcum.get(va) == null) {
+                freqAcum.put(va, new HashMap<Attribute, Integer>());
+                for (Attribute c : aux.getMetaData().getClasses()) {
+                    if (prev == null)
+                        freqAcum.get(va).put(c, 0);
+                    else {
+                        double pva = ((ContinuousAttribute) prev.get(fieldIndex)).getValue();
+                        freqAcum.get(va).put(c, freqAcum.get(pva).get(c));
+                    }
+                }
+            }
+
+            prev = record;
+            HashMap<Attribute, Integer> m = freqAcum.get(va);
+            m.put(v, m.get(v) + 1);
+        }
+        
+        aux.close();
+        cacheAccumulatedFrequencies.put(key, freqAcum);
+
+        return freqAcum;
+    }
+
+    @Override
+    public void close() {
+        try{
+            PreparedStatement stmt = connection.prepareStatement(String.format("DROP VIEW `%s`", tableName));
+            stmt.executeUpdate();
+            stmt.close();
+        }catch(SQLException ex){
+            ex.printStackTrace();
+        }
+    }
 }

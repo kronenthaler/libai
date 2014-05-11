@@ -1,4 +1,4 @@
-package libai.classifiers.refactor;
+package libai.classifiers.dataset;
 
 import java.util.Set;
 import libai.classifiers.Attribute;
@@ -9,7 +9,10 @@ import libai.classifiers.Attribute;
  */
 public interface MetaData {
     public boolean isCategorical(int fieldIndex);
+
     public String getAttributeName(int fieldIndex);
+
     public int getAttributeCount();
+
     public Set<Attribute> getClasses();
 }
