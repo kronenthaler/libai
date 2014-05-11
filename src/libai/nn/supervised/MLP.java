@@ -186,8 +186,7 @@ public class MLP extends NeuralNetwork {
 			sort[i] = i;
 		}
 
-		while (error > minerror && /*(error=error(patterns,answers,offset,length)) > minerror &&/**/ epochs-- > 0) { //<-- cuello de botella...
-			//if(error > prevError) break;
+		while (error > minerror && epochs-- > 0) {
 			//shuffle patterns
 			shuffle(sort);
 
@@ -199,7 +198,7 @@ public class MLP extends NeuralNetwork {
 				//e=-2(t-Y[n-1])
 				answers[sort[i] + offset].subtract(Y[layers - 1], e);
 
-				//calcular el error
+				//calculate the error
 				for (int m = 0; m < nperlayer[layers - 1]; m++)
 					error += (e.position(m, 0) * e.position(m, 0));
 
@@ -213,11 +212,11 @@ public class MLP extends NeuralNetwork {
 						double acum = 0;
 						for (int t = 0; t < W[k + 1].getRows(); t++)
 							acum += W[k + 1].position(t, j) * d[k + 1].position(t, 0);
-						d[k].position(j, 0, alpha * acum * func[k].getDerivate().eval(u[k].position(j, 0)));//cual es el valor que se agrega al delta?
+						d[k].position(j, 0, alpha * acum * func[k].getDerivate().eval(u[k].position(j, 0)));
 					}
 				}
 
-				//actualizar pesos y umbrales
+				//update weights and thresholds
 				for (int l = 1; l < layers; l++) {
 					Y[l - 1].transpose(Yt[l - 1]);
 					d[l].multiply(Yt[l - 1], M[l]);
@@ -257,8 +256,7 @@ public class MLP extends NeuralNetwork {
 			b[i].copy(bprev[i]);
 		}
 
-		while (error > minerror && /*(error=error(patterns,answers,offset,length)) > minerror &&/**/ epochs-- > 0) { //<-- cuello de botella...
-			//if(error > prevError) break;
+		while (error > minerror && epochs-- > 0) {
 			//shuffle patterns
 			shuffle(sort);
 
@@ -270,7 +268,7 @@ public class MLP extends NeuralNetwork {
 				//e=-2(t-Y[n-1])
 				answers[sort[i] + offset].subtract(Y[layers - 1], e);
 
-				//calcular el error
+				//calculate the error
 				for (int m = 0; m < nperlayer[layers - 1]; m++)
 					error += (e.position(m, 0) * e.position(m, 0));
 
@@ -284,7 +282,7 @@ public class MLP extends NeuralNetwork {
 						double acum = 0;
 						for (int t = 0; t < W[k + 1].getRows(); t++)
 							acum += W[k + 1].position(t, j) * d[k + 1].position(t, 0);
-						d[k].position(j, 0, alpha * acum * func[k].getDerivate().eval(u[k].position(j, 0)));//cual es el valor que se agrega al delta?
+						d[k].position(j, 0, alpha * acum * func[k].getDerivate().eval(u[k].position(j, 0)));
 					}
 				}
 
@@ -358,10 +356,6 @@ public class MLP extends NeuralNetwork {
 		}
 
 		while (error > minerror && epochs-- > 0) {
-			//if(error > prevError) break;
-			//shuffle patterns
-			//shuffle(sort); //is irrelevant! you need them all to calculate the gradient.
-
 			error = 0;
 			for (int i = 0; i < length; i++) {
 				//Y[i]=Fi(<W[i],Y[i-1]>+b)
@@ -370,7 +364,7 @@ public class MLP extends NeuralNetwork {
 				//e=-2(t-Y[n-1])
 				answers[sort[i] + offset].subtract(Y[layers - 1], e);
 
-				//calcular el error
+				//calculate the error
 				for (int m = 0; m < nperlayer[layers - 1]; m++)
 					error += (e.position(m, 0) * e.position(m, 0));
 
@@ -385,7 +379,7 @@ public class MLP extends NeuralNetwork {
 						double acum = 0;
 						for (int t = 0; t < W[k + 1].getRows(); t++)
 							acum += W[k + 1].position(t, j) * d[k + 1].position(t, 0);
-						d[k].position(j, 0, acum * func[k].getDerivate().eval(u[k].position(j, 0)));//cual es el valor que se agrega al delta?
+						d[k].position(j, 0, acum * func[k].getDerivate().eval(u[k].position(j, 0)));
 					}
 				}
 
@@ -397,7 +391,7 @@ public class MLP extends NeuralNetwork {
 				}
 			}
 
-			//actualizar pesos y umbrales
+			//update weights and thresholds
 			for (int l = 1; l < layers; l++) {
 				for (int i = 0; i < W[l].getRows(); i++) {
 					for (int j = 0; j < W[l].getColumns(); j++) {

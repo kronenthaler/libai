@@ -82,8 +82,7 @@ public class Hopfield extends NeuralNetwork {
 	public void simulate(Matrix pattern, Matrix result) {
 		for (int col = 0; col < pattern.getRows(); col++) {
 			Matrix column = new Matrix(pattern.getRows(), pattern.getColumns(), W.getCol(col));
-			//hacer el producto punto entre esta fila
-
+			
 			double dotProduct = pattern.dotProduct(column);
 			result.position(col, 0, dotProduct > 0 ? 1 : -1);
 		}

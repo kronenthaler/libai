@@ -137,7 +137,7 @@ public class Hebb extends NeuralNetwork {
 	/**
 	 * Calculate the error of the networks using the Hamming distance instead
 	 * the Euclidean. Hamming distance is defined as the number of bits
-	 * differents between to bits chains,e.g. 7=111 2=010 the hamming distance
+	 * different between to bits chains,e.g. 7=111 2=010 the hamming distance
 	 * between H(7,2) = 2, the first and third bits differs.
 	 *
 	 * @param patterns The array with the patterns to test

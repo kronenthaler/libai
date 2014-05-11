@@ -40,7 +40,7 @@ public class LVQ extends Competitive {
 		W.fill();
 		W2.setValue(0);
 
-		//recorrer y llenar W2 con 1 por filas
+		//fill W2 with 1 per row
 		for (int i = 0, j = 0, k = 0; i < W2.getColumns(); i++) {
 			W2.position(j, i, 1);
 			if (k++ == subclasses - 1) {
@@ -123,7 +123,7 @@ public class LVQ extends Competitive {
 	@Override
 	public Matrix simulate(Matrix pattern) {
 		Matrix ret = new Matrix(outs, 1);
-		Matrix ret1 = super.simulate(pattern);//new Matrix(W2.getCols(),1);
+		Matrix ret1 = super.simulate(pattern);
 		W2.multiply(ret1, ret);
 		return ret;
 	}
