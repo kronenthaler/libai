@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<NaiveBayes outputIndex="3" totalCount="8" attributes="4">
+	<class>
+		<params type="libai.classifiers.DiscreteAttribute" name="null" ><![CDATA[female]]></params>
+		<attribute index="0">
+			<stats mean="5.4175" sd="0.09722499999999457"/>
+		</attribute>
+		<attribute index="1">
+			<stats mean="132.5" sd="558.3333333333334"/>
+		</attribute>
+		<attribute index="2">
+			<stats mean="7.5" sd="1.6666666666666667"/>
+		</attribute>
+		<attribute index="3">
+			<count>4</count>
+		</attribute>
+	</class>
+	<class>
+		<params type="libai.classifiers.DiscreteAttribute" name="null" ><![CDATA[male]]></params>
+		<attribute index="0">
+			<stats mean="5.855" sd="0.03503333333333103"/>
+		</attribute>
+		<attribute index="1">
+			<stats mean="176.25" sd="122.91666666666667"/>
+		</attribute>
+		<attribute index="2">
+			<stats mean="11.25" sd="0.9166666666666666"/>
+		</attribute>
+		<attribute index="3">
+			<count>4</count>
+		</attribute>
+	</class>
+</NaiveBayes>

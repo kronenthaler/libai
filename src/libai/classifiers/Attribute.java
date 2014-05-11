@@ -16,11 +16,10 @@ public abstract class Attribute implements Comparable<Attribute> {
 	public void setName(String n) {
 		name = n;
 	}
+    
+    public abstract Object getValue();
 
-	public Object getValue() {
-		return "";
-	}
-
+    @Override
 	public int hashCode() {
 		return getValue().hashCode();
 	}
@@ -45,4 +44,39 @@ public abstract class Attribute implements Comparable<Attribute> {
 
 		return att;
 	}
+    
+	public static Attribute getInstance(String value, String name){
+		Attribute attr = getInstance(value);
+		attr.setName(name);
+		return attr;
+	}
+	
+    public static Attribute getInstance(String value){
+        try {
+            return new ContinuousAttribute(Double.parseDouble(value));
+        } catch (NumberFormatException e) {
+            return new DiscreteAttribute(value);
+        }
+    }
+    
+	public static Attribute getInstance(double value, String name){
+		Attribute attr = getInstance(value);
+		attr.setName(name);
+		return attr;
+	}
+	
+    public static Attribute getInstance(double value){
+        return new ContinuousAttribute(value);
+    }
+    
+	
+	public static Attribute getInstance(int value, String name){
+		Attribute attr = getInstance(value);
+		attr.setName(name);
+		return attr;
+	}
+	
+    public static Attribute getInstance(int value){
+        return new ContinuousAttribute(value);
+    }
 }

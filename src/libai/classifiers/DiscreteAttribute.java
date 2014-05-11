@@ -5,7 +5,7 @@ package libai.classifiers;
  * @author kronenthaler
  */
 public class DiscreteAttribute extends Attribute {
-	private String value;
+	private final String value;
 
 	public DiscreteAttribute(String v) {
 		value = v;
@@ -28,6 +28,6 @@ public class DiscreteAttribute extends Attribute {
 
 	@Override
 	public String toString() {
-		return value;
+		return "["+name+"]="+value;
 	}
 }

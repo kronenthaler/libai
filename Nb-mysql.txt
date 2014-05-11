@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<NaiveBayes outputIndex="4" totalCount="3" attributes="5">
+	<class>
+		<params type="libai.classifiers.DiscreteAttribute" name="null" ><![CDATA[Iris-setosa]]></params>
+		<attribute index="0">
+		</attribute>
+		<attribute index="1">
+		</attribute>
+		<attribute index="2">
+		</attribute>
+		<attribute index="3">
+		</attribute>
+		<attribute index="4">
+			<count>0</count>
+		</attribute>
+	</class>
+	<class>
+		<params type="libai.classifiers.DiscreteAttribute" name="null" ><![CDATA[Iris-versicolor]]></params>
+		<attribute index="0">
+		</attribute>
+		<attribute index="1">
+		</attribute>
+		<attribute index="2">
+		</attribute>
+		<attribute index="3">
+		</attribute>
+		<attribute index="4">
+			<count>0</count>
+		</attribute>
+	</class>
+</NaiveBayes>

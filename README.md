@@ -1,7 +1,7 @@
 libai
 =====
 
-A library compiling Artificial Intelligence alorithms:
+A library compiling Artificial Intelligence algorithms:
 
 Neural Networks:
 Supervised: Perceptron (Single and Multilayer), Adaline, Learning Vector Quantization, Radial Basis Function, Support Vector Machines.

@@ -7,7 +7,13 @@ demos.search
 demos.trees
 libai.ants
 libai.ants.algorithms
+libai.classifiers
+libai.classifiers.bayes
+libai.classifiers.refactor
+libai.classifiers.trees
 libai.common
+libai.common.functions
+libai.common.kernels
 libai.experimental
 libai.fuzzy
 libai.fuzzy.sets
@@ -17,4 +23,3 @@ libai.nn
 libai.nn.supervised
 libai.nn.unsupervised
 libai.search
-libai.trees
