@@ -181,31 +181,44 @@ public class MySQLDataSet implements DataSet {
     /* TODO change the implementation to return datasets from the same type */
     @Override
     public DataSet[] splitKeepingRelation(double proportion) {
-        TextFileDataSet a = new TextFileDataSet(outputIndex);
-        TextFileDataSet b = new TextFileDataSet(outputIndex);
+        long seed = System.currentTimeMillis();
+        String nameA = tableName+"_a_"+seed;
+        String nameB = tableName+"_b_"+seed;
+        
+        try {
+            PreparedStatement stmt = connection.prepareStatement(String.format("CREATE TABLE `%s` select * from `%s` limit 0", nameA, tableName));
+            stmt.executeUpdate();
+            stmt.close();
+            
+            stmt = connection.prepareStatement(String.format("CREATE TABLE `%s` SELECT * FROM `%s` LIMIT 0", nameB, tableName));
+            stmt.executeUpdate();
+            stmt.close();
+        
+            MySQLDataSet a = new MySQLDataSet(connection, nameA, outputIndex);
+            MySQLDataSet b = new MySQLDataSet(connection, nameB, outputIndex);
 
-        Iterable<List<Attribute>> sortedData = sortOver(outputIndex);
-        Attribute prev = null;
-        List<List<Attribute>> buffer = new ArrayList<List<Attribute>>();
-        for (List<Attribute> record : sortedData) {
-            if ((prev != null && prev.compareTo(record.get(outputIndex)) != 0)) {
-                Collections.shuffle(buffer);
-                a.addRecords(buffer.subList(0, (int) (buffer.size() * proportion)));
-                b.addRecords(buffer.subList((int) (buffer.size() * proportion), buffer.size()));
-                buffer.clear();
+            HashMap<Attribute, Integer> freq = getFrequencies(0, getItemsCount(), outputIndex);
+            for(Attribute output : freq.keySet()){
+                
+                String baseQuery = "INSERT INTO `%s` SELECT * FROM `%s` WHERE `%s` = '%s' ORDER BY RAND(%d) LIMIT %d, %d";
+                int size = (int)(freq.get(output) * proportion);
+                String aQuery = String.format(baseQuery, nameA, tableName, metadata.getAttributeName(outputIndex), output.getValue(), seed, 0, size);
+                String bQuery = String.format(baseQuery, nameB, tableName, metadata.getAttributeName(outputIndex), output.getValue(), seed, size, getItemsCount());
+                
+                stmt = connection.prepareStatement(aQuery);
+                stmt.executeUpdate();
+                stmt.close();
+                
+                stmt = connection.prepareStatement(bQuery);
+                stmt.executeUpdate();
+                stmt.close();
             }
-
-            buffer.add(record);
-            prev = record.get(outputIndex);
+            
+            return new DataSet[]{a, b};
+        } catch (SQLException ex) {
+            ex.printStackTrace();
         }
-
-        if (!buffer.isEmpty()) {
-            Collections.shuffle(buffer);
-            a.addRecords(buffer.subList(0, (int) (buffer.size() * proportion)));
-            b.addRecords(buffer.subList((int) (buffer.size() * proportion), buffer.size()));
-        }
-
-        return new DataSet[]{a, b};
+        return null;
     }
 
     @Override
@@ -407,7 +420,13 @@ public class MySQLDataSet implements DataSet {
             stmt.executeUpdate();
             stmt.close();
         }catch(SQLException ex){
-            ex.printStackTrace();
+            try{
+                PreparedStatement stmt = connection.prepareStatement(String.format("DROP TABLE `%s`", tableName));
+                stmt.executeUpdate();
+                stmt.close();
+            }catch(SQLException ex2){
+                ex2.printStackTrace();
+            }
         }
     }
 }
