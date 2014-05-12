@@ -94,16 +94,6 @@ public interface DataSet extends Iterable<List<Attribute>> {
      */
     public HashMap<Attribute, Integer> getFrequencies(int lo, int hi, int fieldIndex);
 
-    /** 
-     * Gets a map of the different values and their accumulated frequencies for each class until that point.
-     * It limits the count space to [lo, hi).
-     * @param lo The lower bound (inclusive) of the data set to be returned
-     * @param hi The upper bound (exclusive) of the data set to be returned.
-     * @param fieldIndex The field to count.
-     * @return a map with the different values and their respective accumulated frequencies.
-     */
-    public HashMap<Double, HashMap<Attribute, Integer>> getAccumulatedFrequencies(int lo, int hi, int fieldIndex);
-    
     /** Closes the underlying data source if possible. */
     public void close();
 }

@@ -334,7 +334,7 @@ public class C45 implements Comparable<C45> {
 
     private ContinuousEntropyInformation infoAvgContinuous(DataSet ds, int lo, int hi, int fieldIndex) {
         HashMap<Attribute, Integer> totalFreq = ds.getFrequencies(lo, hi, ds.getOutputIndex());
-        HashMap<Double, HashMap<Attribute, Integer>> freqAcum = ds.getAccumulatedFrequencies(lo, hi, fieldIndex);
+        HashMap<Double, HashMap<Attribute, Integer>> freqAcum = getAccumulatedFrequencies(ds, lo, hi, fieldIndex);
 
         double splitInfo = 0;
         double total = hi - lo;
@@ -432,6 +432,39 @@ public class C45 implements Comparable<C45> {
         }
 
         return acum;
+    }
+	
+	private HashMap<Double, HashMap<Attribute, Integer>> getAccumulatedFrequencies(DataSet ds, int lo, int hi, int fieldIndex) {
+        Iterable<List<Attribute>> records = ds.sortOver(lo, hi, fieldIndex);
+        DataSet aux = ds.getSubset(lo, hi);
+
+        List<Attribute> prev = null;
+        HashMap<Double, HashMap<Attribute, Integer>> freqAcum = new HashMap<Double, HashMap<Attribute, Integer>>();
+
+        for (List<Attribute> record : records) {
+            double va = ((ContinuousAttribute) record.get(fieldIndex)).getValue();
+            Attribute v = record.get(ds.getOutputIndex());
+
+            if (freqAcum.get(va) == null) {
+                freqAcum.put(va, new HashMap<Attribute, Integer>());
+                for (Attribute c : aux.getMetaData().getClasses()) {
+                    if (prev == null)
+                        freqAcum.get(va).put(c, 0);
+                    else {
+                        double pva = ((ContinuousAttribute) prev.get(fieldIndex)).getValue();
+                        freqAcum.get(va).put(c, freqAcum.get(pva).get(c));
+                    }
+                }
+            }
+
+            prev = record;
+            HashMap<Attribute, Integer> m = freqAcum.get(va);
+            m.put(v, m.get(v) + 1);
+        }
+        
+        aux.close();
+        
+        return freqAcum;
     }
 
     public double error(DataSet ds) {

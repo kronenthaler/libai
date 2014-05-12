@@ -375,45 +375,6 @@ public class MySQLDataSet implements DataSet {
     }
 
     @Override
-    public HashMap<Double, HashMap<Attribute, Integer>> getAccumulatedFrequencies(int lo, int hi, int fieldIndex) {
-        Triplet<Integer, Integer, Integer> key = new Triplet<Integer, Integer, Integer>(lo, hi, fieldIndex);
-        if (cacheAccumulatedFrequencies.get(key) != null)
-            return cacheAccumulatedFrequencies.get(key);
-
-        Iterable<List<Attribute>> records = sortOver(lo, hi, fieldIndex);
-        DataSet aux = this.getSubset(lo, hi);
-
-        List<Attribute> prev = null;
-        HashMap<Double, HashMap<Attribute, Integer>> freqAcum = new HashMap<Double, HashMap<Attribute, Integer>>();
-
-        for (List<Attribute> record : records) {
-            double va = ((ContinuousAttribute) record.get(fieldIndex)).getValue();
-            Attribute v = record.get(outputIndex);
-
-            if (freqAcum.get(va) == null) {
-                freqAcum.put(va, new HashMap<Attribute, Integer>());
-                for (Attribute c : aux.getMetaData().getClasses()) {
-                    if (prev == null)
-                        freqAcum.get(va).put(c, 0);
-                    else {
-                        double pva = ((ContinuousAttribute) prev.get(fieldIndex)).getValue();
-                        freqAcum.get(va).put(c, freqAcum.get(pva).get(c));
-                    }
-                }
-            }
-
-            prev = record;
-            HashMap<Attribute, Integer> m = freqAcum.get(va);
-            m.put(v, m.get(v) + 1);
-        }
-        
-        aux.close();
-        cacheAccumulatedFrequencies.put(key, freqAcum);
-
-        return freqAcum;
-    }
-
-    @Override
     public void close() {
         try{
             PreparedStatement stmt = connection.prepareStatement(String.format("DROP VIEW `%s`", tableName));
