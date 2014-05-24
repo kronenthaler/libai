@@ -7,11 +7,11 @@ package libai.common.functions;
  * @author kronenthaler
  */
 public class Sign implements Function {
-	public double eval(double x) {
-		return x > 0 ? 1 : 0;
-	}
+    public double eval(double x) {
+        return x > 0 ? 1 : 0;
+    }
 
-	public Function getDerivate() {
-		return null;
-	}
+    public Function getDerivate() {
+        return null;
+    }
 }

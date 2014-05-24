@@ -211,7 +211,6 @@ public class TextFileDataSet implements DataSet {
 
         //if (!metadata.isCategorical(fieldIndex))
         //    throw new IllegalArgumentException("The attribute must be discrete");
-
         HashMap<Attribute, Integer> freq = new HashMap<Attribute, Integer>();
         for (int i = lo; i < hi; i++) {
             List<Attribute> record = data.get(i);
@@ -235,15 +234,15 @@ public class TextFileDataSet implements DataSet {
     @Override
     public int getFrecuencyOf(Pair<Integer, Attribute>... values) {
         int count = 0;
-        for(List<Attribute> record : sortOver(outputIndex)){
+        for (List<Attribute> record : sortOver(outputIndex)) {
             boolean flag = true;
-            for(Pair<Integer, Attribute> var : values){
-                if(!record.get(var.first).equals(var.second)){
+            for (Pair<Integer, Attribute> var : values) {
+                if (!record.get(var.first).equals(var.second)) {
                     flag = false;
                     break;
                 }
             }
-            if(flag) 
+            if (flag)
                 count++;
         }
         return count;

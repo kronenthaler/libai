@@ -182,38 +182,38 @@ public class MySQLDataSet implements DataSet {
     @Override
     public DataSet[] splitKeepingRelation(double proportion) {
         long seed = System.currentTimeMillis();
-        String nameA = tableName+"_a_"+seed;
-        String nameB = tableName+"_b_"+seed;
-        
+        String nameA = tableName + "_a_" + seed;
+        String nameB = tableName + "_b_" + seed;
+
         try {
             PreparedStatement stmt = connection.prepareStatement(String.format("CREATE TABLE `%s` select * from `%s` limit 0", nameA, tableName));
             stmt.executeUpdate();
             stmt.close();
-            
+
             stmt = connection.prepareStatement(String.format("CREATE TABLE `%s` SELECT * FROM `%s` LIMIT 0", nameB, tableName));
             stmt.executeUpdate();
             stmt.close();
-        
+
             MySQLDataSet a = new MySQLDataSet(connection, nameA, outputIndex);
             MySQLDataSet b = new MySQLDataSet(connection, nameB, outputIndex);
 
             HashMap<Attribute, Integer> freq = getFrequencies(0, getItemsCount(), outputIndex);
-            for(Attribute output : freq.keySet()){
-                
+            for (Attribute output : freq.keySet()) {
+
                 String baseQuery = "INSERT INTO `%s` SELECT * FROM `%s` WHERE `%s` = '%s' ORDER BY RAND(%d) LIMIT %d, %d";
-                int size = (int)(freq.get(output) * proportion);
+                int size = (int) (freq.get(output) * proportion);
                 String aQuery = String.format(baseQuery, nameA, tableName, metadata.getAttributeName(outputIndex), output.getValue(), seed, 0, size);
                 String bQuery = String.format(baseQuery, nameB, tableName, metadata.getAttributeName(outputIndex), output.getValue(), seed, size, getItemsCount());
-                
+
                 stmt = connection.prepareStatement(aQuery);
                 stmt.executeUpdate();
                 stmt.close();
-                
+
                 stmt = connection.prepareStatement(bQuery);
                 stmt.executeUpdate();
                 stmt.close();
             }
-            
+
             return new DataSet[]{a, b};
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -344,7 +344,6 @@ public class MySQLDataSet implements DataSet {
 
         //if (!metadata.isCategorical(fieldIndex))
         //    throw new IllegalArgumentException("The attribute must be discrete");
-
         HashMap<Attribute, Integer> freq = new HashMap<Attribute, Integer>();
 
         String fieldName = metadata.getAttributeName(fieldIndex);
@@ -376,16 +375,16 @@ public class MySQLDataSet implements DataSet {
 
     @Override
     public void close() {
-        try{
+        try {
             PreparedStatement stmt = connection.prepareStatement(String.format("DROP VIEW `%s`", tableName));
             stmt.executeUpdate();
             stmt.close();
-        }catch(SQLException ex){
-            try{
+        } catch (SQLException ex) {
+            try {
                 PreparedStatement stmt = connection.prepareStatement(String.format("DROP TABLE `%s`", tableName));
                 stmt.executeUpdate();
                 stmt.close();
-            }catch(SQLException ex2){
+            } catch (SQLException ex2) {
                 ex2.printStackTrace();
             }
         }
@@ -395,15 +394,15 @@ public class MySQLDataSet implements DataSet {
     @Override
     public int getFrecuencyOf(Pair<Integer, Attribute>... values) {
         int count = 0;
-        for(List<Attribute> record : sortOver(outputIndex)){
+        for (List<Attribute> record : sortOver(outputIndex)) {
             boolean flag = true;
-            for(Pair<Integer, Attribute> var : values){
-                if(!record.get(var.first).equals(var.second)){
+            for (Pair<Integer, Attribute> var : values) {
+                if (!record.get(var.first).equals(var.second)) {
                     flag = false;
                     break;
                 }
             }
-            if(flag) 
+            if (flag)
                 count++;
         }
         return count;

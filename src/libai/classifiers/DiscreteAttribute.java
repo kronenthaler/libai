@@ -5,29 +5,29 @@ package libai.classifiers;
  * @author kronenthaler
  */
 public class DiscreteAttribute extends Attribute {
-	private final String value;
+    private final String value;
 
-	public DiscreteAttribute(String v) {
-		value = v;
-	}
+    public DiscreteAttribute(String v) {
+        value = v;
+    }
 
-	public DiscreteAttribute(String name, String v) {
-		this.name = name;
-		value = v;
-	}
+    public DiscreteAttribute(String name, String v) {
+        this.name = name;
+        value = v;
+    }
 
-	@Override
-	public String getValue() {
-		return value;
-	}
+    @Override
+    public String getValue() {
+        return value;
+    }
 
-	@Override
-	public int compareTo(Attribute o) {
-		return value.compareTo(((DiscreteAttribute) o).value);
-	}
+    @Override
+    public int compareTo(Attribute o) {
+        return value.compareTo(((DiscreteAttribute) o).value);
+    }
 
-	@Override
-	public String toString() {
-		return "["+name+"]="+value;
-	}
+    @Override
+    public String toString() {
+        return "[" + name + "]=" + value;
+    }
 }

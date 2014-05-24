@@ -238,7 +238,9 @@ public class SVM extends NeuralNetwork {
 
         int y1 = 0, y2 = 0, s = 0;
         double alph1 = 0, alph2 = 0; /* old_values of alpha_1, alpha_2 */
+
         double a1 = 0, a2 = 0;       /* new values of alpha_1, alpha_2 */
+
         double E1 = 0, E2 = 0, L = 0, H = 0, k11 = 0, k22 = 0, k12 = 0, eta = 0, Lobj = 0, Hobj = 0;
 
         alph1 = alph[i1];

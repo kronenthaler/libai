@@ -9,8 +9,10 @@ import javax.swing.*;
  *
  * @author kronenthaler
  */
-public interface Plotter{
-	public void paint(Graphics g2);
-	public void update(Graphics g2);
-	public void setError(int epoch, double error);
+public interface Plotter {
+    public void paint(Graphics g2);
+
+    public void update(Graphics g2);
+
+    public void setError(int epoch, double error);
 }

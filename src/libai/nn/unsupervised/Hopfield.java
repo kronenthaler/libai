@@ -18,85 +18,86 @@ import libai.common.functions.SymmetricSign;
  * @author kronenthaler
  */
 public class Hopfield extends NeuralNetwork {
-	protected Matrix W;
-	protected static SymmetricSign ssign = new SymmetricSign();
-	/**
-	 * Constructor. Receives the number of input to the network.
-	 *
-	 * @param inputs	The number of input to the network.
-	 */
-	public Hopfield(int inputs) {
-		W = new Matrix(inputs, inputs);
-	}
+    protected Matrix W;
+    protected static SymmetricSign ssign = new SymmetricSign();
 
-	/**
-	 * Train the network. The answers, alpha, epochs and minerror are meaningless
-	 * in this algorithm.
-	 *
-	 * @param patterns	The patterns to be learned.
-	 * @param answers	The expected answers. [useless]
-	 * @param alpha	The learning rate. [useless]
-	 * @param epochs	The maximum number of iterations [useless]
-	 * @param offset	The first pattern position
-	 * @param length	How many patterns will be used.
-	 * @param minerror The minimal error expected.	[useless]
-	 */
-	@Override
-	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
-		Matrix I = new Matrix(W.getRows(), W.getColumns(), true);
-		Matrix patternT = new Matrix(patterns[0].getColumns(), patterns[0].getRows());
-		Matrix temp = new Matrix(W.getRows(), W.getColumns());
+    /**
+     * Constructor. Receives the number of input to the network.
+     *
+     * @param inputs	The number of input to the network.
+     */
+    public Hopfield(int inputs) {
+        W = new Matrix(inputs, inputs);
+    }
 
-		if (progress != null) {
-			progress.setMaximum(length - 1);
-			progress.setMinimum(0);
-			progress.setValue(0);
-		}
+    /**
+     * Train the network. The answers, alpha, epochs and minerror are
+     * meaningless in this algorithm.
+     *
+     * @param patterns	The patterns to be learned.
+     * @param answers	The expected answers. [useless]
+     * @param alpha	The learning rate. [useless]
+     * @param epochs	The maximum number of iterations [useless]
+     * @param offset	The first pattern position
+     * @param length	How many patterns will be used.
+     * @param minerror The minimal error expected.	[useless]
+     */
+    @Override
+    public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
+        Matrix I = new Matrix(W.getRows(), W.getColumns(), true);
+        Matrix patternT = new Matrix(patterns[0].getColumns(), patterns[0].getRows());
+        Matrix temp = new Matrix(W.getRows(), W.getColumns());
 
-		for (int i = 0; i < length; i++) {
-			patterns[i + offset].apply(ssign, patterns[i + offset]);
-			Matrix pattern = patterns[i + offset];
+        if (progress != null) {
+            progress.setMaximum(length - 1);
+            progress.setMinimum(0);
+            progress.setValue(0);
+        }
 
-			//p^t.p
-			pattern.transpose(patternT);
-			pattern.multiply(patternT, temp);
+        for (int i = 0; i < length; i++) {
+            patterns[i + offset].apply(ssign, patterns[i + offset]);
+            Matrix pattern = patterns[i + offset];
 
-			temp.subtract(I, temp);
+            //p^t.p
+            pattern.transpose(patternT);
+            pattern.multiply(patternT, temp);
 
-			W.add(temp, W);
+            temp.subtract(I, temp);
 
-			if (progress != null)
-				progress.setValue(i);
-		}
-	}
+            W.add(temp, W);
 
-	@Override
-	public Matrix simulate(Matrix pattern) {
-		pattern.apply(ssign, pattern);
-		Matrix result = new Matrix(pattern.getRows(), pattern.getColumns());
-		simulate(pattern, result);
-		return result;
-	}
+            if (progress != null)
+                progress.setValue(i);
+        }
+    }
 
-	@Override
-	public void simulate(Matrix pattern, Matrix result) {
-		for (int col = 0; col < pattern.getRows(); col++) {
-			Matrix column = new Matrix(pattern.getRows(), pattern.getColumns(), W.getCol(col));
-			
-			double dotProduct = pattern.dotProduct(column);
-			result.position(col, 0, dotProduct > 0 ? 1 : -1);
-		}
-	}
+    @Override
+    public Matrix simulate(Matrix pattern) {
+        pattern.apply(ssign, pattern);
+        Matrix result = new Matrix(pattern.getRows(), pattern.getColumns());
+        simulate(pattern, result);
+        return result;
+    }
 
-	public static Hopfield open(String path) {
-		try {
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream(path));
-			Hopfield p = (Hopfield) in.readObject();
-			in.close();
-			return p;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
+    @Override
+    public void simulate(Matrix pattern, Matrix result) {
+        for (int col = 0; col < pattern.getRows(); col++) {
+            Matrix column = new Matrix(pattern.getRows(), pattern.getColumns(), W.getCol(col));
+
+            double dotProduct = pattern.dotProduct(column);
+            result.position(col, 0, dotProduct > 0 ? 1 : -1);
+        }
+    }
+
+    public static Hopfield open(String path) {
+        try {
+            ObjectInputStream in = new ObjectInputStream(new FileInputStream(path));
+            Hopfield p = (Hopfield) in.readObject();
+            in.close();
+            return p;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

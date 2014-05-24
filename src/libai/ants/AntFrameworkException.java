@@ -15,13 +15,13 @@ package libai.ants;
  *
  */
 public class AntFrameworkException extends Exception {
-	/**
-	 * Constructor. Calls super() method, i.e.: the constructor of the Exception
-	 * class.
-	 *
-	 * @param msg String with the information of the error
-	 */
-	public AntFrameworkException(String msg) {
-		super(msg);
-	}
+    /**
+     * Constructor. Calls super() method, i.e.: the constructor of the Exception
+     * class.
+     *
+     * @param msg String with the information of the error
+     */
+    public AntFrameworkException(String msg) {
+        super(msg);
+    }
 }

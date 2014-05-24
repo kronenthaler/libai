@@ -7,11 +7,11 @@ package libai.common.functions;
  * @author kronenthaler
  */
 public class SymmetricSign implements Function {
-	public double eval(double x) {
-		return x < 0 ? -1 : 1;
-	}
+    public double eval(double x) {
+        return x < 0 ? -1 : 1;
+    }
 
-	public Function getDerivate() {
-		return null;
-	}
+    public Function getDerivate() {
+        return null;
+    }
 }

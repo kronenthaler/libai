@@ -6,28 +6,28 @@ package libai.common.functions;
  * @author kronenthaler
  */
 public class Identity implements Function {
-	/**
-	 * Singleton variable for the first derivate.
-	 */
-	private static Function derivate;
+    /**
+     * Singleton variable for the first derivate.
+     */
+    private static Function derivate;
 
-	public double eval(double x) {
-		return x;
-	}
+    public double eval(double x) {
+        return x;
+    }
 
-	public Function getDerivate() {
-		if (derivate == null) {
-			derivate = new Function() {
-				public double eval(double x) {
-					return 1;
-				}
+    public Function getDerivate() {
+        if (derivate == null) {
+            derivate = new Function() {
+                public double eval(double x) {
+                    return 1;
+                }
 
-				public Function getDerivate() {
-					return null;
-				}
-			};
-		}
+                public Function getDerivate() {
+                    return null;
+                }
+            };
+        }
 
-		return derivate;
-	}
+        return derivate;
+    }
 }

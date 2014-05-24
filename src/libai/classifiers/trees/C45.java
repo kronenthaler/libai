@@ -245,12 +245,12 @@ public class C45 implements Comparable<C45> {
                     i++;
                 }
                 i++;
-                
+
                 DataSet section = ds.getSubset(nlo, i);
                 children.add(new Pair<Attribute, C45>(prev,
                         train(section, visited, deep + "\t")));
                 section.close();
-                
+
                 prev = current;
             }
 
@@ -264,7 +264,7 @@ public class C45 implements Comparable<C45> {
 
             C45 right = train(r, visited, deep + "\t");
             children.add(new Pair<Attribute, C45>(Attribute.getInstance(splitValue, fieldName), right));
-            
+
             l.close();
             r.close();
         }
@@ -433,8 +433,8 @@ public class C45 implements Comparable<C45> {
 
         return acum;
     }
-	
-	private HashMap<Double, HashMap<Attribute, Integer>> getAccumulatedFrequencies(DataSet ds, int lo, int hi, int fieldIndex) {
+
+    private HashMap<Double, HashMap<Attribute, Integer>> getAccumulatedFrequencies(DataSet ds, int lo, int hi, int fieldIndex) {
         Iterable<List<Attribute>> records = ds.sortOver(lo, hi, fieldIndex);
         DataSet aux = ds.getSubset(lo, hi);
 
@@ -461,9 +461,9 @@ public class C45 implements Comparable<C45> {
             HashMap<Attribute, Integer> m = freqAcum.get(va);
             m.put(v, m.get(v) + 1);
         }
-        
+
         aux.close();
-        
+
         return freqAcum;
     }
 

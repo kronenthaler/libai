@@ -8,11 +8,11 @@ import libai.common.Matrix;
  * @author kronenthaler
  */
 public class LinearKernel implements Kernel {
-	public double eval(Matrix A, Matrix B) {
-		return A.dotProduct(B);
-	}
+    public double eval(Matrix A, Matrix B) {
+        return A.dotProduct(B);
+    }
 
-	public double eval(double dotProduct) {
-		return dotProduct;
-	}
+    public double eval(double dotProduct) {
+        return dotProduct;
+    }
 }
