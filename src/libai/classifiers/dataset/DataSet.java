@@ -2,7 +2,7 @@ package libai.classifiers.dataset;
 
 import java.util.*;
 import libai.classifiers.Attribute;
-import libai.classifiers.Attribute;
+import libai.common.*;
 
 /**
  * DataSet is a container compound by examples. Each example (or DataRecord) is
@@ -96,4 +96,6 @@ public interface DataSet extends Iterable<List<Attribute>> {
 
     /** Closes the underlying data source if possible. */
     public void close();
+    
+    public int getFrecuencyOf(Pair<Integer, Attribute>... values);
 }
