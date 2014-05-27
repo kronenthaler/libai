@@ -407,4 +407,31 @@ public class MySQLDataSet implements DataSet {
         }
         return count;
     }
+    
+    @Override
+    public Iterable<List<Attribute>> getCombinedValuesOf(final int... values){
+        return new Iterable<List<Attribute>>() {
+            @Override
+            public Iterator<List<Attribute>> iterator() {
+                try {
+                    String groups = "";
+                    for(int v : values){
+                        groups += (groups.length()>0?",":"")+metadata.getAttributeName(v);
+                    }
+                    String base = String.format("SELECT * FROM `%s` GROUP BY %s", tableName, groups);
+                    PreparedStatement count = connection.prepareStatement(String.format("SELECT count(*) FROM (%s) as tmp", base));
+                    ResultSet rs = count.executeQuery();
+                    int countDistinct = 0;
+                    if(rs.next()){
+                        countDistinct = rs.getInt(1);
+                    }
+                    rs.close();
+                    PreparedStatement stmt = connection.prepareStatement(base);
+                    return buildIterator(stmt.executeQuery(), countDistinct);
+                }catch(SQLException ex){
+                    return null;
+                }
+            }
+        };
+    }
 }

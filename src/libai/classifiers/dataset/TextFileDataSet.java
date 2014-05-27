@@ -247,4 +247,9 @@ public class TextFileDataSet implements DataSet {
         }
         return count;
     }
+    
+    @Override
+    public Iterable<List<Attribute>> getCombinedValuesOf(int... values){
+        return null;
+    }
 }
