@@ -1,4 +1,4 @@
-package libai.classifiers.dataset;
+package libai.common.dataset;
 
 import java.util.*;
 import java.sql.*;
@@ -393,19 +393,25 @@ public class MySQLDataSet implements DataSet {
     //TODO needs to be rewritten to exploit the count abilities of sql
     @Override
     public int getFrecuencyOf(Pair<Integer, Attribute>... values) {
-        int count = 0;
-        for (List<Attribute> record : sortOver(outputIndex)) {
-            boolean flag = true;
-            for (Pair<Integer, Attribute> var : values) {
-                if (!record.get(var.first).equals(var.second)) {
-                    flag = false;
-                    break;
-                }
+        try{
+            String attributes = "";
+            for(Pair<Integer, Attribute> var : values){
+                if(var.second instanceof ContinuousAttribute)
+                    attributes += (attributes.length() > 0 ?" AND ": "") + String.format("ABS(`%s` - '%s') < 1.e-5", metadata.getAttributeName(var.first), var.second.getValue());
+                else
+                    attributes += (attributes.length() > 0 ?" AND ": "") + String.format("`%s` = '%s'", metadata.getAttributeName(var.first), var.second.getValue());
             }
-            if (flag)
-                count++;
+            String query = String.format("SELECT count(*) FROM `%s` WHERE %s", tableName, attributes);
+            PreparedStatement stmt = connection.prepareStatement(query);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()){
+                int count = rs.getInt(1);
+                return count;
+            }
+        }catch(SQLException ex){
+            ex.printStackTrace();
         }
-        return count;
+        return 0;
     }
     
     @Override
@@ -419,7 +425,8 @@ public class MySQLDataSet implements DataSet {
                         groups += (groups.length()>0?",":"")+metadata.getAttributeName(v);
                     }
                     String base = String.format("SELECT * FROM `%s` GROUP BY %s", tableName, groups);
-                    PreparedStatement count = connection.prepareStatement(String.format("SELECT count(*) FROM (%s) as tmp", base));
+                    String query = String.format("SELECT count(*) FROM (%s) as tmp", base);
+                    PreparedStatement count = connection.prepareStatement(query);
                     ResultSet rs = count.executeQuery();
                     int countDistinct = 0;
                     if(rs.next()){

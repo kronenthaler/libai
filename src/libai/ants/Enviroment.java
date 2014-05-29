@@ -4,6 +4,7 @@
  */
 package libai.ants;
 
+import libai.common.Graph;
 import libai.common.Matrix;
 import java.util.*;
 

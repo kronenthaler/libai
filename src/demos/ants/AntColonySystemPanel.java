@@ -12,7 +12,7 @@ package demos.ants;
 
 import libai.common.Matrix;
 import libai.ants.algorithms.AntColonySystem;
-import libai.ants.Graph;
+import libai.common.Graph;
 import libai.ants.Node;
 import libai.ants.Enviroment;
 import java.util.*;

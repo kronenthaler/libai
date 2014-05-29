@@ -5,8 +5,8 @@ import java.io.*;
 import java.util.*;
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
-import libai.classifiers.dataset.DataSet;
-import libai.classifiers.dataset.MetaData;
+import libai.common.dataset.DataSet;
+import libai.common.dataset.MetaData;
 import libai.common.Pair;
 
 /**

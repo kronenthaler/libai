@@ -1,4 +1,4 @@
-package libai.classifiers.dataset;
+package libai.common.dataset;
 
 import java.util.*;
 import libai.classifiers.Attribute;

@@ -6,7 +6,7 @@ package libai.ants.algorithms;
 
 import libai.common.Matrix;
 import libai.ants.AntFrameworkException;
-import libai.ants.Graph;
+import libai.common.Graph;
 import libai.ants.Node;
 import libai.ants.Ant;
 import libai.ants.Enviroment;

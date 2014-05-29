@@ -11,7 +11,7 @@
 package demos.ants;
 
 import libai.ants.algorithms.MMAS;
-import libai.ants.Graph;
+import libai.common.Graph;
 import libai.ants.Enviroment;
 import java.util.*;
 

@@ -1,60 +1,77 @@
 package libai.classifiers.bayes;
 
+import libai.common.dataset.MySQLDataSet;
+import libai.common.dataset.DataSet;
 import java.sql.*;
 import java.util.*;
 import libai.classifiers.*;
-import libai.classifiers.dataset.*;
 import libai.common.*;
 
 /**
  *
  * @author kronenthaler
  */
-public class BayesNetwork {
+public class BayesNetwork extends Bayes {
     public static double EPSILON = 0.01;
     Set<Integer> cutSet = new HashSet<Integer>();
-    HashMap<Pair<Integer,Integer>, Double> cacheInformation = new HashMap<Pair<Integer,Integer>, Double>();
-    
-    public List<Pair<Integer, Integer>> train(DataSet ds, double eps) {
-        List<Pair<Integer, Integer>> E = new Vector<Pair<Integer, Integer>>(); //the list should be a set to avoid multiarcs
+    HashMap<Pair<Integer, Integer>, Double> cacheInformation = new HashMap<Pair<Integer, Integer>, Double>();
+
+    public Graph train(DataSet ds, double eps) {
+        //this function should first recover the structure and then 
+        //calculate the table of parameters.
+        
+        Graph G = new Graph(ds.getMetaData().getAttributeCount());
+        Set<Pair<Integer, Integer>> L = new HashSet<Pair<Integer, Integer>>();
 
         //1. build a list of pairs where there is information flow between them
-        for (int x = 0, n = ds.getMetaData().getAttributeCount(); x < n; x++) {
+        for (int x = 0, n = G.getVertexCount(); x < n; x++) {
             for (int y = 0; y < n; y++) {
                 if (x != y && I(ds, x, y) > eps) {
-                    E.add(new Pair<Integer, Integer>(x, y));
+                    L.add(new Pair<Integer, Integer>(x, y));
+                    G.addEdge(x, y);
                 }
             }
         }
+
         System.err.println("step 1/3");
-        //2. thickering [ToDo: is this correct? E should be pass below?]
-        for (Pair<Integer, Integer> e : E) { //careful the edges may fuck with the iterator.
-            if (edgeNeeded(E, e, ds, eps)) {
-                E.add(e);
+        System.err.println(G);
+        //2. thickering
+        for (Pair<Integer, Integer> e : L) {
+            if (edgeNeeded(G, e, ds, eps)) {
+                G.addEdge(e);
             }
         }
+
         System.err.println("step 2/3");
+        System.err.println(G);
+        
         //3: Thinning
-        for (Pair<Integer, Integer> e : E) {
-            if (isPath(e.first, e.second, e)) {
-                List<Pair<Integer, Integer>> E1 = new Vector<Pair<Integer, Integer>>(E);
-                E1.remove(e);
-                if (!edgeNeeded(E1, e, ds, eps))
-                    E = E1;
+        for (int i = 0, n = G.getVertexCount(); i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (G.isEdge(i, j, true)) {
+                    Pair<Integer, Integer> e = new Pair<Integer, Integer>(i, j);
+                    if (G.pathExists(i, j, e)) {
+                        G.removeEdge(i, j);
+                        if (edgeNeeded(G, e, ds, eps))
+                            G.addEdge(i, j);
+                    }
+                }
             }
         }
+
         System.err.println("step 3/3");
+        System.err.println(G);
         //4: orient edges
-        return orientEdges(E, ds);
+        return orientEdges(G, ds);
     }
 
-    public boolean edgeNeeded(List<Pair<Integer, Integer>> E, Pair<Integer, Integer> e, DataSet ds, double eps) {
+    public boolean edgeNeeded(Graph G, Pair<Integer, Integer> e, DataSet ds, double eps) {
         int X = e.first;
         int Y = e.second;
-        Set<Integer> path = adjPath(X, Y, E);
-        Set<Integer> Sx = sequence(X, path, E);
-        Set<Integer> Sy = sequence(Y, path, E);
-        
+        Set<Integer> path = G.adjacencyPath(X, Y, true);
+        Set<Integer> Sx = sequence(X, path, G);
+        Set<Integer> Sy = sequence(Y, path, G);
+
         Set<Integer> C = Sx.size() < Sy.size() ? Sx : Sy;
         double s = I(ds, X, Y, C);
         if (s < eps) {
@@ -95,81 +112,74 @@ public class BayesNetwork {
 
         return true;
     }
-    
-    public Set<Integer> sequence(int X, Set<Integer> adjPath, List<Pair<Integer,Integer>> E){
-        Set<Integer> Sx = neighbors(X, E);
+
+    public Set<Integer> sequence(int X, Set<Integer> adjPath, Graph G) {
+        Set<Integer> Sx = G.neighbors(X, true);
         Sx.retainAll(adjPath);
         Set<Integer> Sx1 = new HashSet<Integer>();
         for (Integer x : Sx) {
-            Set<Integer> aux = neighbors(x, E);
+            Set<Integer> aux = G.neighbors(x, true);
             aux.removeAll(Sx);
             Sx1.addAll(aux);
         }
         Sx1.retainAll(adjPath);
         Sx.addAll(Sx1);
-        
+
         return Sx;
     }
 
-    private Set<Integer> adjPath(int X, int Y, List<Pair<Integer, Integer>> E) {
-        class node {
-            int x;
-            node prev;
+    public Graph orientEdges(Graph G, DataSet ds) {
+        Set<Pair<Integer, Integer>> oriented = new HashSet<Pair<Integer, Integer>>();
+        
+        for (int x = 0, n = G.getVertexCount(); x < n; x++) {
+            for (int y = 0; y < n; y++) {
+                for (int z = 0; z < n; z++) {
+                    if (G.isEdge(x, y, true) 
+                            && G.isEdge(y, z, true) 
+                            && !G.isEdge(x, z, true)) {
+                        if ((cutSet.contains(x) && cutSet.contains(z) && !cutSet.contains(y)) 
+                                || (!cutSet.contains(x) && !cutSet.contains(z))) {
+                            G.removeEdge(x, y, true);
+                            G.addEdge(x, y);
 
-            node(int _x) {
-                x = _x;
-            }
+                            G.removeEdge(z, y, true);
+                            G.addEdge(z, y);
 
-            node(int _x, node _p) {
-                x = _x;
-                prev = _p;
-            }
-        }
-
-        Set<Integer> path = new HashSet<Integer>();
-        HashMap<Pair<Integer, Integer>, Boolean> visited = new HashMap<Pair<Integer, Integer>, Boolean>();
-        List<node> queue = new ArrayList<node>();
-        queue.add(new node(X));
-
-        while (!queue.isEmpty()) {
-            node v = queue.remove((int) 0);
-            if (v.x == Y) {
-                while (v != null) {
-                    path.add(v.x);
-                    v = v.prev;
-                }
-                path.add(X);
-                path.add(Y);
-                return path;
-            }
-
-            for (Pair<Integer, Integer> e : E) {
-                if (visited.get(e) == null && (e.first == v.x || e.second == v.x)){
-                    visited.put(e, Boolean.TRUE);
-                    queue.add(new node(e.first == v.x ? e.second : e.first, v));
+                            oriented.add(new Pair<Integer, Integer>(x, y));
+                            oriented.add(new Pair<Integer, Integer>(z, y));
+                        }
+                    }
                 }
             }
         }
-        return path;
-    }
-
-    public boolean isPath(int x, int y, Pair<Integer, Integer> e) {
-        return false;
-    }
-
-    public List<Pair<Integer, Integer>> orientEdges(List<Pair<Integer, Integer>> E, DataSet ds) {
-        return E;
-    }
-
-    private Set<Integer> neighbors(int X, List<Pair<Integer, Integer>> E) {
-        Set<Integer> ngbrs = new HashSet<Integer>();
-        for (Pair<Integer, Integer> e : E) {
-            if (e.first == X)
-                ngbrs.add(e.second);
-            if (e.second == X)
-                ngbrs.add(e.first);
+        for (int x = 0, n = G.getVertexCount(); x < n; x++) {
+            for (int y = 0; y < n; y++) {
+                for (int z = 0; z < n; z++) {
+                    if (G.isEdge(x, y, false)
+                            && G.isEdge(y, z, true)
+                            && !G.isEdge(x, z, true)
+                            && !oriented.contains(new Pair<Integer, Integer>(y, z))) {
+                        G.removeEdge(y, z, true);
+                        G.addEdge(y, z);
+                        oriented.add(new Pair<Integer, Integer>(y, z));
+                    }
+                }
+            }
         }
-        return ngbrs;
+
+        for (int x = 0, n = G.getVertexCount(); x < n; x++) {
+            for (int y = 0; y < n; y++) {
+                if (G.isEdge(x, y, true) && !oriented.contains(new Pair<Integer, Integer>(x, y))) {
+                    if (G.adjacencyPath(x, y, false).size() > 0) {
+                        G.removeEdge(x, y, true);
+                        G.addEdge(x, y);
+                        oriented.add(new Pair<Integer, Integer>(x, y));
+                    }
+                }
+            }
+        }
+
+        return G;
     }
 
     public double I(DataSet ds, int X, int Y, Set<Integer> C) {
@@ -179,7 +189,7 @@ public class BayesNetwork {
         HashMap<Attribute, Integer> freqY = ds.getFrequencies(0, N, Y);
         for (Integer ci : C) {
             HashMap<Attribute, Integer> freqC = ds.getFrequencies(0, N, ci);
-            for(List<Attribute> record : ds.getCombinedValuesOf(X, Y, ci)){
+            for (List<Attribute> record : ds.getCombinedValuesOf(X, Y, ci)) {
                 Attribute valuex = record.get(X);
                 Attribute valuey = record.get(Y);
                 Attribute valuec = record.get(ci);
@@ -193,22 +203,21 @@ public class BayesNetwork {
                 info += Pabc * Math.log(Pabc / (Pac * Pbc));
             }
         }
-        
+
         return info;
     }
 
     public double I(DataSet ds, int X, int Y) {
-        Pair<Integer,Integer> edge = new Pair<Integer,Integer>(X,Y);
-        if(cacheInformation.get(edge)!=null)
+        Pair<Integer, Integer> edge = new Pair<Integer, Integer>(X, Y);
+        if (cacheInformation.get(edge) != null)
             return cacheInformation.get(edge);
-        
+
         double info = 0;
         int N = ds.getItemsCount();
         HashMap<Attribute, Integer> freqX = ds.getFrequencies(0, N, X);
         HashMap<Attribute, Integer> freqY = ds.getFrequencies(0, N, Y);
-        
         //give me all the records with different values of x, y
-        for(List<Attribute> record : ds.getCombinedValuesOf(X, Y)){
+        for (List<Attribute> record : ds.getCombinedValuesOf(X, Y)) {
             Attribute valuex = record.get(X);
             Attribute valuey = record.get(Y);
             Pair<Integer, Attribute> x = new Pair<Integer, Attribute>(X, valuex);
@@ -220,25 +229,18 @@ public class BayesNetwork {
         }
 
         cacheInformation.put(edge, info);
-        cacheInformation.put(new Pair<Integer,Integer>(Y,X), info);
-        
+        cacheInformation.put(new Pair<Integer, Integer>(Y, X), info);
+
         return info;
     }
 
+    //TODO: try it using one of the know databases like alarm, the structure should be recovered somehow correctly.
     public static void main(String arg[]) throws Exception {
         Class.forName("com.mysql.jdbc.Driver");
         Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/iris", "root", "r00t");
-        DataSet ds = new MySQLDataSet(conn, "iris", 0);
+        DataSet ds = new MySQLDataSet(conn, "reorder_iris", 0);
 
         BayesNetwork bn = new BayesNetwork();
-        System.err.println("Graph: " + bn.train(ds, EPSILON));
-        /*
-        for (int x = 0, n = ds.getMetaData().getAttributeCount(); x < n; x++) {
-            for (int y = 0; y < n; y++) {
-                if (x != y) {
-                    System.err.println(bn.I(ds, x, y));
-                }
-            }
-        }*/
+        System.err.println(bn.train(ds, EPSILON));
     }
 }

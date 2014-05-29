@@ -1,8 +1,9 @@
 package libai.classifiers.bayes;
 
+import libai.common.dataset.MetaData;
 import java.io.*;
 import libai.classifiers.*;
-import libai.classifiers.dataset.*;
+import libai.common.dataset.*;
 
 import libai.common.*;
 import java.util.*;
@@ -16,7 +17,7 @@ import org.w3c.dom.NodeList;
  *
  * @author kronenthaler
  */
-public class NaiveBayes {
+public class NaiveBayes extends Bayes{
     protected int outputIndex;
     protected int totalCount;
     protected MetaData metadata;

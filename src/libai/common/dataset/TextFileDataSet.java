@@ -1,4 +1,4 @@
-package libai.classifiers.dataset;
+package libai.common.dataset;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -234,7 +234,7 @@ public class TextFileDataSet implements DataSet {
     @Override
     public int getFrecuencyOf(Pair<Integer, Attribute>... values) {
         int count = 0;
-        for (List<Attribute> record : sortOver(outputIndex)) {
+        for (List<Attribute> record : data) {
             boolean flag = true;
             for (Pair<Integer, Attribute> var : values) {
                 if (!record.get(var.first).equals(var.second)) {
