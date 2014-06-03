@@ -72,6 +72,17 @@ public class Graph {
         return M.getColumns();
     }
     
+    public int getEdgeCount(){
+        int count = 0;
+        for(int i=0,n=M.getRows();i<n;i++){
+            for(int j=0,m=M.getColumns();j<m;j++){
+                if(M.position(i,j) > 0)
+                    count++;
+            }
+        }
+        return count;
+    }
+    
     public void addEdge(Pair<Integer, Integer> e, double cost){
         addEdge(e.first, e.second, cost);
     }
@@ -155,6 +166,7 @@ public class Graph {
         
         while(!queue.isEmpty()){
             Pair<Integer, Pair> current = queue.remove(0);
+            visited.add(current.first);
             if(current.first == Y){
                 while(current!=null){
                     path.add(current.first);
@@ -166,7 +178,6 @@ public class Graph {
             for(int i=0;i<M.getColumns();i++){
                 if(!visited.contains(i)){
                     if(isEdge(current.first, i, ignoreDirection)){
-                        visited.add(i);
                         queue.add(new Pair<Integer, Pair>(i, current));
                     }
                 }
@@ -180,9 +191,14 @@ public class Graph {
      * If there is another path between X and Y besides this edge e.
      */
     public boolean pathExists(int X, int Y, Pair<Integer, Integer> e){
-        removeEdge(e);
+        boolean xy = isEdge(e.first, e.second, false);
+        boolean yx = isEdge(e.second, e.first, false);
+        removeEdge(e.first, e.second, true);
+        
         boolean pathExists = adjacencyPath(X, Y, true).size() > 0;
-        addEdge(e);
+        
+        if(xy) addEdge(e.first, e.second);
+        if(yx) addEdge(e.second, e.first);
         
         return pathExists;
     }
