@@ -17,10 +17,8 @@ import libai.common.*;
  */
 public class BayesNetwork extends Bayes {
     public static final double EPSILON = 0.01;
-    
-    HashMap<Pair<Integer, Integer>, Double> cacheInformation = new HashMap<Pair<Integer, Integer>, Double>();
-    HashMap<Pair< Pair<Integer, Integer>, Integer>, Double> cacheInformationCutset = new HashMap<Pair< Pair<Integer, Integer>, Integer>, Double>();
-    boolean enableCaches = true;
+    private Graph structure;
+    //private ? weight, parameters depend on the number of values that the attribute can have
     
     public Graph train(DataSet ds, double eps) {
         //this function should first recover the structure and then 
@@ -329,11 +327,6 @@ public class BayesNetwork extends Bayes {
     }
 
     private double I(DataSet ds, int X, int Y, Set<Integer> C) {
-        Pair< Pair<Integer, Integer>, Integer> key;
-        key = new Pair<Pair<Integer, Integer>, Integer>(new Pair<Integer,Integer>(X,Y), C.hashCode());
-        if(enableCaches && cacheInformationCutset.get(key) != null)
-            return cacheInformationCutset.get(key);
-            
         double info = 0;
         int N = ds.getItemsCount();
         HashMap<Attribute, Integer> freqX = ds.getFrequencies(0, N, X);
@@ -356,11 +349,6 @@ public class BayesNetwork extends Bayes {
                 double Pbc = ((ds.getFrecuencyOf(y, z) / (double) N) * Pb) / Pc;
                 info += Pabc * Math.log(Pabc / (Pac * Pbc));
             }
-        }
-        
-        if(enableCaches){
-            cacheInformationCutset.put(key, info);
-            cacheInformationCutset.put(new Pair<Pair<Integer, Integer>, Integer>(new Pair<Integer,Integer>(X,Y), C.hashCode()), info);
         }
         
         return info;
