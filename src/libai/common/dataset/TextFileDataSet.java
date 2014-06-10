@@ -247,9 +247,22 @@ public class TextFileDataSet implements DataSet {
         }
         return count;
     }
-    
+
     @Override
-    public Iterable<List<Attribute>> getCombinedValuesOf(int... values){
-        return null;
+    public Iterable<List<Attribute>> getCombinedValuesOf(final int... values) {
+        return new Iterable<List<Attribute>>() {
+            @Override
+            public Iterator<List<Attribute>> iterator() {
+                HashMap<String, List<Attribute>> combinations = new HashMap<String, List<Attribute>>();
+                for(List<Attribute> record : data){
+                    String key = "";
+                    for(int v : values){
+                        key += record.get(v).getValue()+";";
+                    }
+                    combinations.put(key, record);
+                }
+                return combinations.values().iterator();
+            }
+        };
     }
 }

@@ -19,7 +19,7 @@ public class MySQLDataSet implements DataSet {
     private ResultSetMetaData rsMetaData;
     private Set<Attribute> classes = new HashSet<Attribute>();
     private HashMap<Triplet<Integer, Integer, Integer>, HashMap<Attribute, Integer>> cacheFrequencies;
-    private HashMap<Triplet<Integer, Integer, Integer>, HashMap<Double, HashMap<Attribute, Integer>>> cacheAccumulatedFrequencies;
+    private HashMap<String, Integer> cacheFrequencyOfCombination;
 
     private MetaData metadata = new MetaData() {
         @Override
@@ -62,7 +62,7 @@ public class MySQLDataSet implements DataSet {
         outputIndex = output;
         orderBy = output;
         cacheFrequencies = new HashMap<Triplet<Integer, Integer, Integer>, HashMap<Attribute, Integer>>();
-        cacheAccumulatedFrequencies = new HashMap<Triplet<Integer, Integer, Integer>, HashMap<Double, HashMap<Attribute, Integer>>>();
+        cacheFrequencyOfCombination = new HashMap<String, Integer>();
     }
 
     private MySQLDataSet(MySQLDataSet parent, int lo, int hi) {
@@ -284,6 +284,8 @@ public class MySQLDataSet implements DataSet {
                         }
                         return record;
                     } else {
+                        rs.getStatement().close();
+                        rs.close();
                         return null;
                     }
                 } catch (SQLException e) {
@@ -342,8 +344,6 @@ public class MySQLDataSet implements DataSet {
         if (cacheFrequencies.get(key) != null)
             return cacheFrequencies.get(key);
 
-        //if (!metadata.isCategorical(fieldIndex))
-        //    throw new IllegalArgumentException("The attribute must be discrete");
         HashMap<Attribute, Integer> freq = new HashMap<Attribute, Integer>();
 
         String fieldName = metadata.getAttributeName(fieldIndex);
@@ -365,6 +365,7 @@ public class MySQLDataSet implements DataSet {
         return freq;
     }
 
+    @Override
     public String toString() {
         Iterable<List<Attribute>> r = sortOver(orderBy);
         StringBuffer str = new StringBuffer();
@@ -390,52 +391,63 @@ public class MySQLDataSet implements DataSet {
         }
     }
 
-    //TODO needs to be rewritten to exploit the count abilities of sql
     @Override
     public int getFrecuencyOf(Pair<Integer, Attribute>... values) {
-        try{
+        String key = "";
+        for(Pair<Integer, Attribute> v: values)
+            key += v.toString()+";";
+        
+        if(cacheFrequencyOfCombination.get(key) != null)
+            return cacheFrequencyOfCombination.get(key);
+        
+        try {
             String attributes = "";
-            for(Pair<Integer, Attribute> var : values){
-                if(var.second instanceof ContinuousAttribute)
-                    attributes += (attributes.length() > 0 ?" AND ": "") + String.format("ABS(`%s` - '%s') < 1.e-5", metadata.getAttributeName(var.first), var.second.getValue());
+            for (Pair<Integer, Attribute> var : values) {
+                if (var.second instanceof ContinuousAttribute)
+                    attributes += (attributes.length() > 0 ? " AND " : "") + String.format("ABS(`%s` - '%s') < 1.e-5", metadata.getAttributeName(var.first), var.second.getValue());
                 else
-                    attributes += (attributes.length() > 0 ?" AND ": "") + String.format("`%s` = '%s'", metadata.getAttributeName(var.first), var.second.getValue());
+                    attributes += (attributes.length() > 0 ? " AND " : "") + String.format("`%s` = '%s'", metadata.getAttributeName(var.first), var.second.getValue());
             }
             String query = String.format("SELECT count(*) FROM `%s` WHERE %s", tableName, attributes);
             PreparedStatement stmt = connection.prepareStatement(query);
             ResultSet rs = stmt.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 int count = rs.getInt(1);
+                cacheFrequencyOfCombination.put(key, count);
+                
+                stmt.close();
+                rs.close();
                 return count;
             }
-        }catch(SQLException ex){
+        } catch (SQLException ex) {
             ex.printStackTrace();
         }
         return 0;
     }
-    
+
     @Override
-    public Iterable<List<Attribute>> getCombinedValuesOf(final int... values){
+    public Iterable<List<Attribute>> getCombinedValuesOf(final int... values) {
         return new Iterable<List<Attribute>>() {
             @Override
             public Iterator<List<Attribute>> iterator() {
                 try {
                     String groups = "";
-                    for(int v : values){
-                        groups += (groups.length()>0?",":"")+metadata.getAttributeName(v);
+                    for (int v : values) {
+                        groups += (groups.length() > 0 ? "," : "") + "`" + metadata.getAttributeName(v) + "`";
                     }
                     String base = String.format("SELECT * FROM `%s` GROUP BY %s", tableName, groups);
                     String query = String.format("SELECT count(*) FROM (%s) as tmp", base);
                     PreparedStatement count = connection.prepareStatement(query);
                     ResultSet rs = count.executeQuery();
                     int countDistinct = 0;
-                    if(rs.next()){
+                    if (rs.next()) {
                         countDistinct = rs.getInt(1);
                     }
                     rs.close();
                     PreparedStatement stmt = connection.prepareStatement(base);
                     return buildIterator(stmt.executeQuery(), countDistinct);
-                }catch(SQLException ex){
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
                     return null;
                 }
             }

@@ -119,6 +119,6 @@ public interface DataSet extends Iterable<List<Attribute>> {
     public void close();
 
     public int getFrecuencyOf(Pair<Integer, Attribute>... values);
-    
+
     public Iterable<List<Attribute>> getCombinedValuesOf(int... values);
 }

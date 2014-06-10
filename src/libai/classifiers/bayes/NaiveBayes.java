@@ -17,7 +17,7 @@ import org.w3c.dom.NodeList;
  *
  * @author kronenthaler
  */
-public class NaiveBayes extends Bayes{
+public class NaiveBayes extends Bayes {
     protected int outputIndex;
     protected int totalCount;
     protected MetaData metadata;

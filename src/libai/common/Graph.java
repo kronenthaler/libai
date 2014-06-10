@@ -55,64 +55,82 @@ public class Graph {
     public Graph(int r, int c, double[] d) {
         this.setM(new Matrix(r, c, d));
     }
-    
-    public Graph(int vertices){
+
+    public Graph(int vertices) {
         M = new Matrix(vertices, vertices);
         M.setValue(0);
     }
-    
+
     /**
      * @return The matrix M
      */
     public Matrix getM() {
         return M;
     }
-    
-    public int getVertexCount(){
+
+    public int getVertexCount() {
         return M.getColumns();
     }
-    
-    public int getEdgeCount(){
+
+    public int getEdgeCount() {
         int count = 0;
-        for(int i=0,n=M.getRows();i<n;i++){
-            for(int j=0,m=M.getColumns();j<m;j++){
-                if(M.position(i,j) > 0)
+        for (int i = 0, n = M.getRows(); i < n; i++) {
+            for (int j = 0, m = M.getColumns(); j < m; j++) {
+                if (M.position(i, j) > 0)
                     count++;
             }
         }
         return count;
     }
-    
-    public void addEdge(Pair<Integer, Integer> e, double cost){
-        addEdge(e.first, e.second, cost);
+
+    public void addEdge(Pair<Integer, Integer> e, double cost) {
+        addEdge(e.first, e.second, cost, false);
     }
-    
-    public void addEdge(Pair<Integer, Integer> e){
-        addEdge(e.first, e.second);
+
+    public void addEdge(Pair<Integer, Integer> e, double cost, boolean ignoreDirection) {
+        addEdge(e.first, e.second, cost, ignoreDirection);
     }
-    
-    public void addEdge(int X, int Y){
+
+    public void addEdge(Pair<Integer, Integer> e) {
+        addEdge(e.first, e.second, false);
+    }
+
+    public void addEdge(Pair<Integer, Integer> e, boolean ignoreDirection) {
+        addEdge(e.first, e.second, ignoreDirection);
+    }
+
+    public void addEdge(int X, int Y) {
         addEdge(X, Y, 1);
     }
-    
-    public void addEdge(int X, int Y, double cost){
-        M.position(X, Y, cost);
+
+    public void addEdge(int X, int Y, boolean ignoreDirection) {
+        addEdge(X, Y, 1, ignoreDirection);
     }
-    
-    public void removeEdge(Pair<Integer, Integer> e){
+
+    public void addEdge(int X, int Y, double cost) {
+        addEdge(X, Y, cost, false);
+    }
+
+    public void addEdge(int X, int Y, double cost, boolean ignoreDirection) {
+        M.position(X, Y, cost);
+        if (ignoreDirection)
+            M.position(Y, X, cost);
+    }
+
+    public void removeEdge(Pair<Integer, Integer> e) {
         removeEdge(e.first, e.second);
     }
-    
-    public void removeEdge(int X, int Y){
+
+    public void removeEdge(int X, int Y) {
         removeEdge(X, Y, false);
     }
-    
-    public void removeEdge(int X, int Y, boolean ignoreDirection){
+
+    public void removeEdge(int X, int Y, boolean ignoreDirection) {
         M.position(X, Y, 0);
-        if(ignoreDirection)
+        if (ignoreDirection)
             M.position(Y, X, 0);
     }
-    
+
     /**
      * Sets the Matrix M which holds the graph information
      *
@@ -148,66 +166,103 @@ public class Graph {
         out.writeObject(M);
         out.close();
     }
-    
-    public Set<Integer> neighbors(int X, boolean ignoreDirection){
+
+    public Set<Integer> neighbors(int X, boolean ignoreDirection) {
         Set<Integer> neighbors = new HashSet<Integer>();
-        for(int i=0;i<M.getColumns();i++){
-            if(isEdge(X, i, ignoreDirection))
+        for (int i = 0; i < M.getColumns(); i++) {
+            if (isEdge(X, i, ignoreDirection))
                 neighbors.add(i);
         }
         return neighbors;
     }
-    
-    public Set<Integer> adjacencyPath(int X, int Y, boolean ignoreDirection){
+
+    public Set<Integer> adjacencyPath(int X, int Y, boolean ignoreDirection) {
         Set<Integer> path = new HashSet<Integer>();
         HashSet<Integer> visited = new HashSet<Integer>();
         List<Pair<Integer, Pair>> queue = new ArrayList<Pair<Integer, Pair>>();
-        queue.add(new Pair<Integer, Pair>(X,null));
-        
-        while(!queue.isEmpty()){
+        queue.add(new Pair<Integer, Pair>(X, null));
+
+        while (!queue.isEmpty()) {
             Pair<Integer, Pair> current = queue.remove(0);
             visited.add(current.first);
-            if(current.first == Y){
-                while(current!=null){
+            if (current.first == Y) {
+                while (current != null) {
                     path.add(current.first);
                     current = current.second;
                 }
-                break;
+                continue;// all paths
             }
-            
-            for(int i=0;i<M.getColumns();i++){
-                if(!visited.contains(i)){
-                    if(isEdge(current.first, i, ignoreDirection)){
+
+            for (int i = 0; i < M.getColumns(); i++) {
+                if (!visited.contains(i)) {
+                    if (isEdge(current.first, i, ignoreDirection)) {
                         queue.add(new Pair<Integer, Pair>(i, current));
                     }
                 }
             }
         }
-        
+
         return path;
     }
-    
-    /**
-     * If there is another path between X and Y besides this edge e.
-     */
-    public boolean pathExists(int X, int Y, Pair<Integer, Integer> e){
+
+    public boolean pathExists(int X, int Y, Pair<Integer, Integer> e) {
         boolean xy = isEdge(e.first, e.second, false);
         boolean yx = isEdge(e.second, e.first, false);
         removeEdge(e.first, e.second, true);
-        
-        boolean pathExists = adjacencyPath(X, Y, true).size() > 0;
-        
-        if(xy) addEdge(e.first, e.second);
-        if(yx) addEdge(e.second, e.first);
-        
+
+        Set<Integer> path = adjacencyPath(X, Y, true);
+        boolean pathExists = path.size() > 0;
+
+        if (xy)
+            addEdge(e.first, e.second);
+        if (yx)
+            addEdge(e.second, e.first);
+
         return pathExists;
     }
-    
-    public boolean isEdge(int x, int y, boolean ignoreDirection){
+
+    public boolean isEdge(int x, int y, boolean ignoreDirection) {
         return M.position(x, y) > 0 || (ignoreDirection && M.position(y, x) > 0);
     }
-    
-    public String toString(){
+
+    public boolean isParent(int x, int y) {
+        return isEdge(x, y, false) && !isEdge(y, x, false);
+    }
+
+    public boolean isOriented(int x, int y) {
+        boolean a = isEdge(x, y, false);
+        boolean b = isEdge(y, x, false);
+        return isEdge(x, y, true) && a ^ b;
+    }
+
+    public String toString() {
         return M.toString();
+    }
+
+    public void saveAsDot(File path, boolean directed, String[] names) {
+        try {
+            PrintStream out = new PrintStream(path);
+            String name = "graph";
+            String separator = " -- ";
+            if (directed) {
+                name = "digraph";
+                separator = " -> ";
+            }
+
+            out.println(name + " G {");
+            for (int i = 0, n = getVertexCount(); i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    if (!isEdge(i, j, !directed))
+                        continue;
+                    if (names == null)
+                        out.println(i + separator + j + ";");
+                    else
+                        out.println(names[i] + separator + names[j] + ";");
+                }
+            }
+            out.println("}");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
 }
