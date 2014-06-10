@@ -365,12 +365,8 @@ public class BayesNetwork extends Bayes {
         
         return info;
     }
-
+    
     private double I(DataSet ds, int X, int Y) {
-        Pair<Integer, Integer> edge = new Pair<Integer, Integer>(X, Y);
-        if(enableCaches && cacheInformation.get(edge) != null)
-            return cacheInformation.get(edge);
-        
         double info = 0;
         int N = ds.getItemsCount();
         HashMap<Attribute, Integer> freqX = ds.getFrequencies(0, N, X);
@@ -387,11 +383,6 @@ public class BayesNetwork extends Bayes {
             info += Pxy * Math.log(Pxy / (Px * Py));
         }
 
-        if(enableCaches){
-            cacheInformation.put(edge, info);
-            cacheInformation.put(new Pair<Integer, Integer>(Y, X), info);
-        }
-        
         return info;
     }
 

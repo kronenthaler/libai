@@ -396,7 +396,6 @@ public class MySQLDataSet implements DataSet {
         String key = "";
         for(Pair<Integer, Attribute> v: values)
             key += v.toString()+";";
-        
         if(cacheFrequencyOfCombination.get(key) != null)
             return cacheFrequencyOfCombination.get(key);
         
@@ -414,7 +413,6 @@ public class MySQLDataSet implements DataSet {
             if (rs.next()) {
                 int count = rs.getInt(1);
                 cacheFrequencyOfCombination.put(key, count);
-                
                 stmt.close();
                 rs.close();
                 return count;
