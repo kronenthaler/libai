@@ -284,8 +284,8 @@ public class MySQLDataSet implements DataSet {
                         }
                         return record;
                     } else {
-                        rs.getStatement().close();
-                        rs.close();
+                        //rs.getStatement().close();
+                        //rs.close();
                         return null;
                     }
                 } catch (SQLException e) {
@@ -393,12 +393,6 @@ public class MySQLDataSet implements DataSet {
 
     @Override
     public int getFrecuencyOf(Pair<Integer, Attribute>... values) {
-        String key = "";
-        for(Pair<Integer, Attribute> v: values)
-            key += v.toString()+";";
-        if(cacheFrequencyOfCombination.get(key) != null)
-            return cacheFrequencyOfCombination.get(key);
-        
         try {
             String attributes = "";
             for (Pair<Integer, Attribute> var : values) {
@@ -412,7 +406,6 @@ public class MySQLDataSet implements DataSet {
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 int count = rs.getInt(1);
-                cacheFrequencyOfCombination.put(key, count);
                 stmt.close();
                 rs.close();
                 return count;

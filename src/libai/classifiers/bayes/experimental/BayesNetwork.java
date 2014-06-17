@@ -19,10 +19,13 @@ public class BayesNetwork extends Bayes {
     public static final double EPSILON = 0.01;
     private Graph structure;
     //private ? weight, parameters depend on the number of values that the attribute can have
-    
+
     public Graph train(DataSet ds, double eps) {
         //this function should first recover the structure and then 
         //calculate the table of parameters.
+        String[] names = new String[ds.getMetaData().getAttributeCount()];
+        for (int i = 0; i < names.length; i++)
+            names[i] = ds.getMetaData().getAttributeName(i).replace("-", "_");
 
         Graph G = new Graph(ds.getMetaData().getAttributeCount());
         List<Pair<Double, Pair<Integer, Integer>>> L = new ArrayList<Pair<Double, Pair<Integer, Integer>>>();
@@ -30,11 +33,12 @@ public class BayesNetwork extends Bayes {
         //1. Drafting
         int N = G.getVertexCount();
         //calculate the mutual information between every pair of nodes first.
-        for (int x = 0; x < N; x++) {
-            for (int y = 0; y < N; y++) {
+        for (int x = 0; x < N - 1; x++) {
+            for (int y = x + 1; y < N; y++) {
                 double info = I(ds, x, y);
                 if (x != y && info > eps) {
                     L.add(new Pair<Double, Pair<Integer, Integer>>(info, new Pair<Integer, Integer>(x, y)));
+                    L.add(new Pair<Double, Pair<Integer, Integer>>(info, new Pair<Integer, Integer>(y, x)));
                 }
             }
         }
@@ -57,6 +61,8 @@ public class BayesNetwork extends Bayes {
             } else
                 head++;
         }
+        G.saveAsDot(new File("drafting.dot"), false, names);
+        System.err.println("Thickering: " + G.getEdgeCount() / 2);
 
         //2. Thickering
         while (!L.isEmpty()) {
@@ -65,7 +71,8 @@ public class BayesNetwork extends Bayes {
                 G.addEdge(e, true);
             }
         }
-
+        G.saveAsDot(new File("thickering.dot"), false, names);
+        System.err.println("Thinning 1/2: " + G.getEdgeCount() / 2);
         //3. Thinning
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
@@ -79,6 +86,8 @@ public class BayesNetwork extends Bayes {
                 }
             }
         }
+        System.err.println("Thinning 2/2: " + G.getEdgeCount() / 2);
+        G.saveAsDot(new File("thinning1.dot"), false, names);
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
                 if (G.isEdge(i, j, true)) {
@@ -91,7 +100,8 @@ public class BayesNetwork extends Bayes {
                 }
             }
         }
-        
+        G.saveAsDot(new File("thinning2.dot"), false, names);
+        System.err.println("orienting: " + G.getEdgeCount() / 2);
         //4. orient edges
         return orientEdges(G, ds, eps); //also weird behaviour here, more edges are created
     }
@@ -200,7 +210,7 @@ public class BayesNetwork extends Bayes {
         for (int s1 = 0; s1 < N; s1++) {
             for (int s2 = 0; s2 < N; s2++) {
                 int step = ((s1 * N) + s2);
-                
+
                 if (s1 == s2)
                     continue;
 
@@ -326,40 +336,57 @@ public class BayesNetwork extends Bayes {
         return G;
     }
 
+    //this function is the problem for sure!
+    //P(x,y|C0,C1,C2...) <- YES this has to be done!!!
+    // P(C) = P(c0, c1, ... cn) ?
+    // So, the expressions need to be rewritten to reflect the combination of multiple elements in C.
     private double I(DataSet ds, int X, int Y, Set<Integer> C) {
         double info = 0;
         int N = ds.getItemsCount();
-        HashMap<Attribute, Integer> freqX = ds.getFrequencies(0, N, X);
-        HashMap<Attribute, Integer> freqY = ds.getFrequencies(0, N, Y);
-        for (Integer ci : C) {
-            HashMap<Attribute, Integer> freqC = ds.getFrequencies(0, N, ci);
-            for (List<Attribute> record : ds.getCombinedValuesOf(X, Y, ci)) {
-                Attribute valuex = record.get(X);
-                Attribute valuey = record.get(Y);
-                Attribute valuec = record.get(ci);
-                Pair<Integer, Attribute> x = new Pair<Integer, Attribute>(X, valuex);
-                Pair<Integer, Attribute> y = new Pair<Integer, Attribute>(Y, valuey);
-                Pair<Integer, Attribute> z = new Pair<Integer, Attribute>(ci, valuec);
-                double Pc = freqC.get(valuec) / (double) N;
-                double Pa = freqX.get(valuex) / (double) N;
-                double Pb = freqY.get(valuey) / (double) N;
-                double Pab = (ds.getFrecuencyOf(x, y) / (double) N) * Pb;
-                double Pabc = ((ds.getFrecuencyOf(x, y, z) / (double) N) * Pab) / Pc;
-                double Pac = ((ds.getFrecuencyOf(x, z) / (double) N) * Pa) / Pc;
-                double Pbc = ((ds.getFrecuencyOf(y, z) / (double) N) * Pb) / Pc;
-                info += Pabc * Math.log(Pabc / (Pac * Pbc));
-            }
+
+        int xyz[] = new int[C.size() + 2];
+        int j = 0;
+        for (int i : C) {
+            xyz[j++] = i;
         }
-        
+        xyz[j++] = X;
+        xyz[j++] = Y;
+
+        for (List<Attribute> record : ds.getCombinedValuesOf(xyz)) {
+            Attribute valuex = record.get(X);
+            Attribute valuey = record.get(Y);
+            //Attribute valuec = record.get(ci);
+            Pair<Integer, Attribute> x = new Pair<Integer, Attribute>(X, valuex);
+            Pair<Integer, Attribute> y = new Pair<Integer, Attribute>(Y, valuey);
+            ArrayList<Pair<Integer, Attribute>> z = new ArrayList<Pair<Integer, Attribute>>();
+            for (int i = 0; i < xyz.length - 2; i++) {
+                Attribute valuez = record.get(xyz[i]);
+                Pair<Integer, Attribute> vz = new Pair<Integer, Attribute>(xyz[i], valuez);
+                z.add(vz);
+            }
+            double Pz = (ds.getFrecuencyOf(z.toArray(new Pair[0])) / (double) N);
+
+            z.add(x);
+            double Pxz = (ds.getFrecuencyOf(z.toArray(new Pair[0])) / (double) N);
+            z.remove(z.size() - 1);
+
+            z.add(y);
+            double Pyz = (ds.getFrecuencyOf(z.toArray(new Pair[0])) / (double) N);
+
+            z.add(x);
+            double Pxyz = (ds.getFrecuencyOf(z.toArray(new Pair[0])) / (double) N);
+
+            info += (Pxyz) * Math.log((Pxyz * Pz) / (Pxz * Pyz));
+            //check: http://en.wikipedia.org/wiki/Conditional_mutual_information 
+        }
         return info;
     }
-    
+
     private double I(DataSet ds, int X, int Y) {
         double info = 0;
         int N = ds.getItemsCount();
         HashMap<Attribute, Integer> freqX = ds.getFrequencies(0, N, X);
         HashMap<Attribute, Integer> freqY = ds.getFrequencies(0, N, Y);
-        //give me all the records with different values of x, y
         for (List<Attribute> record : ds.getCombinedValuesOf(X, Y)) {
             Attribute valuex = record.get(X);
             Attribute valuey = record.get(Y);
@@ -367,23 +394,88 @@ public class BayesNetwork extends Bayes {
             Pair<Integer, Attribute> y = new Pair<Integer, Attribute>(Y, valuey);
             double Px = freqX.get(valuex) / (double) N;
             double Py = freqY.get(valuey) / (double) N;
-            double Pxy = ((ds.getFrecuencyOf(x, y) / (double) N) * Py) / Px;
+            double Pxy = ((ds.getFrecuencyOf(x, y) / (double) N));
             info += Pxy * Math.log(Pxy / (Px * Py));
         }
-
         return info;
+    }
+
+    private double IH(DataSet ds, int X, int Y, Set<Integer> C) {
+        System.err.printf("I(%d,%d,%s)\n", X, Y, C.toString());
+        double Hx = 0, Hy = 0, Hz = 0, Hxy = 0, Hzx = 0, Hzy = 0, Hzxy = 0;
+
+        int N = ds.getItemsCount();
+        HashMap<Attribute, Integer> freqX = ds.getFrequencies(0, N, X);
+        HashMap<Attribute, Integer> freqY = ds.getFrequencies(0, N, Y);
+        HashSet<Triplet<Attribute, Attribute, Long>> visitedY = new HashSet<Triplet<Attribute, Attribute, Long>>();
+        HashSet<Triplet<Attribute, Attribute, Long>> visitedX = new HashSet<Triplet<Attribute, Attribute, Long>>();
+        for (Integer Z : C) {
+            HashMap<Attribute, Integer> freqZ = ds.getFrequencies(0, N, Z);
+
+            for (Attribute z : freqZ.keySet()) {
+                Pair<Integer, Attribute> vz = new Pair<Integer, Attribute>(Z, z);
+                double Pz = freqZ.get(z) / (double) N;
+                Hz += -Pz * Math.log(Pz);
+
+                for (Attribute x : freqX.keySet()) {
+                    Pair<Integer, Attribute> vx = new Pair<Integer, Attribute>(X, x);
+                    if (!visitedX.contains(new Triplet<Attribute, Attribute, Long>(z, x, 0l))) {
+                        visitedX.add(new Triplet<Attribute, Attribute, Long>(z, x, 0l));
+                        //Hzx 
+                        double Pzx = ds.getFrecuencyOf(vx, vz) / (double) N;
+                        if (Pzx > EPSILON)
+                            Hzx += -Pzx * Math.log(Pzx);
+                    }
+                    for (Attribute y : freqY.keySet()) {
+                        Pair<Integer, Attribute> vy = new Pair<Integer, Attribute>(Y, y);
+                        //double Py = freqY.get(y) / (double)N;
+                        if (!visitedY.contains(new Triplet<Attribute, Attribute, Long>(z, y, 0l))) {
+                            visitedY.add(new Triplet<Attribute, Attribute, Long>(z, y, 0l));
+
+                            //Hzy 
+                            double Pzy = ds.getFrecuencyOf(vy, vz) / (double) N;
+                            if (Pzy > EPSILON)
+                                Hzy += -Pzy * Math.log(Pzy);
+                        }
+
+                        //Hzyx
+                        double Pzxy = ds.getFrecuencyOf(vx, vy, vz) / (double) N;
+                        if (Pzxy > EPSILON)
+                            Hzxy += -Pzxy * Math.log(Pzxy);
+                    }
+                }
+            }
+        }
+        /*System.err.println(visitedY);
+         System.err.printf("H(%d,%d)=%f\n",X,1, Hzx);
+         System.err.printf("H(%d,%d)=%f\n",Y,1, Hzy);
+         System.err.printf("H(%d,%d,%d)=%f\n",X,Y,1, Hzxy);
+         System.err.printf("H(1)=%f\n", Hz);*/
+        return Hzx + Hzy - Hzxy - Hz;
     }
 
     public static void main(String arg[]) throws Exception {
         Class.forName("com.mysql.jdbc.Driver");
         Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/iris", "root", "r00t");
-        DataSet ds = new MySQLDataSet(conn, "alarm", 0);
+        DataSet ds = new MySQLDataSet(conn, "asia", 0);
 
+        /*BayesNetwork bn =new BayesNetwork();
+         Set<Integer> C = new HashSet<Integer>();
+         C.add(1);// |C| = 1
+         for(int i=0,n=ds.getMetaData().getAttributeCount();i<n;i++){
+         for(int j=0;j<n;j++){
+         if(i!=j){
+         System.err.printf("I(%d,%d,%s) = %f ? %f\n", i,j,C.toString(), bn.I(ds, i, j, C), bn.IH(ds, i, j, C));
+         }
+         }
+         }
+        
+         if(true) return;//*/
         Graph control = new BayesNetwork().train(ds, EPSILON);
         System.err.println(control);
         String[] names = new String[ds.getMetaData().getAttributeCount()];
         for (int i = 0; i < names.length; i++)
             names[i] = ds.getMetaData().getAttributeName(i).replace("-", "_");
-        control.saveAsDot(new java.io.File("asia.dot"), true, names);
+        control.saveAsDot(new java.io.File("oriented.dot"), true, names);//*/
     }
 }
