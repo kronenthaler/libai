@@ -1,10 +1,11 @@
 package libai.classifiers.bayes;
 
+import libai.common.dataset.*;
 /**
  *
  * @author kronenthaler
  */
-public class Bayes {
+public abstract class Bayes {
     //add methods to calculate the P(A|C) and so on, take them from the naive bayes implementation and improve the calculation where possible.
     //precalculate:
     //frequencies of each categorical attribute
@@ -16,4 +17,6 @@ public class Bayes {
     //P(x,y) = P(x|y)
     //P(x,y,c) = P(x,y|c)
     //P(x)
+    
+    public abstract Bayes train(DataSet ds);
 }
