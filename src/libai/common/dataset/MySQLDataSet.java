@@ -197,7 +197,7 @@ public class MySQLDataSet implements DataSet {
             MySQLDataSet a = new MySQLDataSet(connection, nameA, outputIndex);
             MySQLDataSet b = new MySQLDataSet(connection, nameB, outputIndex);
 
-            HashMap<Attribute, Integer> freq = getFrequencies(0, getItemsCount(), outputIndex);
+            Map<Attribute, Integer> freq = getFrequencies(0, getItemsCount(), outputIndex);
             for (Attribute output : freq.keySet()) {
 
                 String baseQuery = "INSERT INTO `%s` SELECT * FROM `%s` WHERE `%s` = '%s' ORDER BY RAND(%d) LIMIT %d, %d";
@@ -339,7 +339,7 @@ public class MySQLDataSet implements DataSet {
     }
 
     @Override
-    public HashMap<Attribute, Integer> getFrequencies(int lo, int hi, int fieldIndex) {
+    public Map<Attribute, Integer> getFrequencies(int lo, int hi, int fieldIndex) {
         Triplet<Integer, Integer, Integer> key = new Triplet<Integer, Integer, Integer>(lo, hi, fieldIndex);
         if (cacheFrequencies.get(key) != null)
             return cacheFrequencies.get(key);

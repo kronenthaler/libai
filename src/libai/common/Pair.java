@@ -6,7 +6,7 @@ package libai.common;
  *
  * @author kronenthaler
  */
-public final class Pair<V extends Comparable, K extends Comparable> implements Comparable<Pair> {
+public final class Pair<V extends Comparable, K> implements Comparable<Pair> {
     /**
      * First element of the pair (the 'key').
      */

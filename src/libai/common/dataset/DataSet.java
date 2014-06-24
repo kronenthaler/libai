@@ -111,7 +111,7 @@ public interface DataSet extends Iterable<List<Attribute>> {
      * @param fieldIndex The field to count
      * @return a map with the different values and their respective frequencies.
      */
-    public HashMap<Attribute, Integer> getFrequencies(int lo, int hi, int fieldIndex);
+    public Map<Attribute, Integer> getFrequencies(int lo, int hi, int fieldIndex);
 
     /**
      * Closes the underlying data source if possible.

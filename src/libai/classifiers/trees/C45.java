@@ -333,8 +333,8 @@ public class C45 implements Comparable<C45> {
     }
 
     private ContinuousEntropyInformation infoAvgContinuous(DataSet ds, int lo, int hi, int fieldIndex) {
-        HashMap<Attribute, Integer> totalFreq = ds.getFrequencies(lo, hi, ds.getOutputIndex());
-        HashMap<Double, HashMap<Attribute, Integer>> freqAcum = getAccumulatedFrequencies(ds, lo, hi, fieldIndex);
+        Map<Attribute, Integer> totalFreq = ds.getFrequencies(lo, hi, ds.getOutputIndex());
+        Map<Double, HashMap<Attribute, Integer>> freqAcum = getAccumulatedFrequencies(ds, lo, hi, fieldIndex);
 
         double splitInfo = 0;
         double total = hi - lo;
@@ -419,7 +419,7 @@ public class C45 implements Comparable<C45> {
     }
 
     private double info(DataSet ds, int lo, int hi, int fieldIndex) {
-        HashMap<Attribute, Integer> freq = ds.getFrequencies(lo, hi, fieldIndex);
+        Map<Attribute, Integer> freq = ds.getFrequencies(lo, hi, fieldIndex);
 
         double total = hi - lo;
         double acum = 0;

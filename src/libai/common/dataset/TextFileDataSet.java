@@ -203,7 +203,7 @@ public class TextFileDataSet implements DataSet {
     }
 
     @Override
-    public HashMap<Attribute, Integer> getFrequencies(int lo, int hi, int fieldIndex) {
+    public Map<Attribute, Integer> getFrequencies(int lo, int hi, int fieldIndex) {
         Triplet<Integer, Integer, Integer> key = new Triplet<Integer, Integer, Integer>(lo, hi, fieldIndex);
 
         if (cache.get(key) != null)
