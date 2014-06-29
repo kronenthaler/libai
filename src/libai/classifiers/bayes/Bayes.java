@@ -1,8 +1,10 @@
 package libai.classifiers.bayes;
 
+import java.io.File;
 import java.util.List;
 import libai.classifiers.Attribute;
 import libai.common.dataset.*;
+import org.w3c.dom.Node;
 /**
  *
  * @author kronenthaler
@@ -49,4 +51,10 @@ public abstract class Bayes {
         
         return winner;
     }
+    
+    //need some factory methods.
+    
+    public abstract boolean save(File path);
+    
+    protected abstract Bayes load(Node root);
 }

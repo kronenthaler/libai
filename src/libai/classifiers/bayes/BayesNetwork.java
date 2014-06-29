@@ -1,4 +1,4 @@
-package libai.classifiers.bayes.experimental;
+package libai.classifiers.bayes;
 
 import libai.common.dataset.*;
 import java.io.*;
@@ -7,6 +7,7 @@ import java.util.*;
 import libai.classifiers.*;
 import libai.classifiers.bayes.Bayes;
 import libai.common.*;
+import org.w3c.dom.Node;
 
 /**
  * Implementation based on the technical report of Jie-Cheng for Bayes
@@ -499,6 +500,16 @@ public class BayesNetwork extends Bayes {
         return info;
     }
 
+    @Override
+    public boolean save(File path) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    protected Bayes load(Node root) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
     public static void main(String arg[]) throws Exception {
         Class.forName("com.mysql.jdbc.Driver");
         Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/iris", "root", "r00t");

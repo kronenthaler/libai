@@ -158,6 +158,7 @@ public class NaiveBayes extends Bayes {
     }
 
     //IO functions
+    @Override
     public boolean save(File path) {
         try {
             PrintStream out = new PrintStream(new FileOutputStream(path));
@@ -202,7 +203,8 @@ public class NaiveBayes extends Bayes {
         }
     }
 
-    private NaiveBayes load(Node root) {
+    @Override
+    protected NaiveBayes load(Node root) {
         outputIndex = Integer.parseInt(root.getAttributes().getNamedItem("outputIndex").getTextContent());
         totalCount = Integer.parseInt(root.getAttributes().getNamedItem("totalCount").getTextContent());
         params = new HashMap<Attribute, Object[]>();
