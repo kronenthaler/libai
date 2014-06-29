@@ -18,9 +18,6 @@ import org.w3c.dom.NodeList;
  * @author kronenthaler
  */
 public class NaiveBayes extends Bayes {
-    protected int outputIndex;
-    protected int totalCount;
-    protected MetaData metadata;
     protected HashMap<Attribute, Object[]> params;
 
     public NaiveBayes train(DataSet ds) {
@@ -99,25 +96,11 @@ public class NaiveBayes extends Bayes {
         }
     }
 
-    //calculate the maximum posterior probability this data record (x) in the data set
-    //P(Ci|x) > P(Cj|x) 1 <= j < m, i!=j
-    public Attribute eval(List<Attribute> x) {
-        Attribute winner = null;
-        double max = -Double.MAX_VALUE;
-        for (Attribute c : params.keySet()) {
-            double tmp = P(c, x);
-            if (tmp > max) {
-                max = tmp;
-                winner = c;
-            }
-        }
-        return winner;
-    }
-
     //P(H|x) = P(x|H)P(H) / P(x)
     //relaxed calculation of P(H|x). the exact value is not necessary, just to know which class
     //has the highest value.
-    private double P(Attribute h, List<Attribute> x) {
+    @Override
+    protected double P(Attribute h, List<Attribute> x) {
         return P(x, h) * P(h);
     }
 

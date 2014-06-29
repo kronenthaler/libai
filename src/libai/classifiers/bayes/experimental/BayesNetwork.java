@@ -1,7 +1,6 @@
 package libai.classifiers.bayes.experimental;
 
-import libai.common.dataset.MySQLDataSet;
-import libai.common.dataset.DataSet;
+import libai.common.dataset.*;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
@@ -18,10 +17,14 @@ import libai.common.*;
 public class BayesNetwork extends Bayes {
     public static final double EPSILON = 0.01;
     private Graph structure;
-    private Map<Pair<Attribute,List<Pair<Integer, Attribute>>>, Double> weights[];
+    private Map<String, Double> weights[];
     
     @Override
     public BayesNetwork train(DataSet ds) {
+        outputIndex = ds.getOutputIndex();
+        totalCount = ds.getItemsCount();
+        metadata = ds.getMetaData();
+        
         structure = getStructure(ds, EPSILON);
         weights = new HashMap[structure.getVertexCount()];
         
@@ -33,29 +36,25 @@ public class BayesNetwork extends Bayes {
         return this;
     }
     
-    private Map<Pair<Attribute, List<Pair<Integer, Attribute>>>, Double> learnWeights(int vertex, Graph g, DataSet ds){
-        Map<Pair<Attribute, List<Pair<Integer, Attribute>>>, Double> result = new HashMap<Pair<Attribute, List<Pair<Integer, Attribute>>>, Double>();
+    private Map<String, Double> learnWeights(int vertex, Graph g, DataSet ds){
+        Map<String, Double> result = new HashMap<String, Double>();
         
         //get the parents of vertex.
-        Set<Integer> parentsSet = new HashSet<Integer>();
+        List<Integer> parents = new ArrayList<Integer>();
         for(int i=0;i<g.getVertexCount();i++){
             if(i == vertex) continue;
             if(g.isParent(i, vertex)){ //i is parent of vertex
-                parentsSet.add(i);
+                parents.add(i);
             }
         }
-        int parents[] = new int[parentsSet.size()];
-        int k=0;
-        for(Integer p : parentsSet){
-            parents[k++] = p;
-        }
-                
-        if(parents.length == 0){
+        Collections.sort(parents);
+        
+        if(parents.size() == 0){
             int N = ds.getItemsCount();
             Map<Attribute, Integer> freq = ds.getFrequencies(0, N, vertex);
             for(Attribute v : freq.keySet()){
                 double Pv = freq.get(v) / (double)N;
-                result.put(new Pair<Attribute, List<Pair<Integer, Attribute>>>(v, null), Pv);
+                result.put(new Pair<Attribute, List<Pair<Integer, Attribute>>>(v, null).toString(), Pv);
             }
             
             return result;
@@ -64,11 +63,11 @@ public class BayesNetwork extends Bayes {
         return permutations(ds, parents, 0, new ArrayList<Pair<Integer, Attribute>>(), vertex);
     }
     
-    private Map<Pair<Attribute, List<Pair<Integer, Attribute>>>, Double> permutations(DataSet ds, int[] parents, int currentIndex, List<Pair<Integer, Attribute>> values, int vertex){
-        Map<Pair<Attribute, List<Pair<Integer, Attribute>>>, Double> buffer = new HashMap<Pair<Attribute, List<Pair<Integer, Attribute>>>, Double>();
+    private Map<String, Double> permutations(DataSet ds, List<Integer> parents, int currentIndex, List<Pair<Integer, Attribute>> values, int vertex){
+        Map<String, Double> buffer = new HashMap<String, Double>();
         int N = ds.getItemsCount();
         
-        if(currentIndex >= parents.length){
+        if(currentIndex >= parents.size()){
             Map<Attribute, Integer> freq = ds.getFrequencies(0, N, vertex);
             int acumCount = 0;
             for(Attribute value : freq.keySet()){
@@ -78,19 +77,19 @@ public class BayesNetwork extends Bayes {
                 values.remove(values.size()-1);
                 
                 Pair<Attribute, List<Pair<Integer, Attribute>>> key = new Pair<Attribute, List<Pair<Integer, Attribute>>>(value, values);
-                buffer.put(key, (double)frequency);
+                buffer.put(key.toString(), (double)frequency);
             }
             
-            for(Pair<Attribute, List<Pair<Integer, Attribute>>> key: buffer.keySet()){
+            for(String key: buffer.keySet()){
                 buffer.put(key, (buffer.get(key) + 1) / (double)(acumCount + freq.size()));
             }
             
             return buffer;
         }
         
-        Map<Attribute, Integer> parentValues = ds.getFrequencies(0, N, parents[currentIndex]);
+        Map<Attribute, Integer> parentValues = ds.getFrequencies(0, N, parents.get(currentIndex));
         for(Attribute value : parentValues.keySet()){
-            Pair<Integer, Attribute> v = new Pair<Integer, Attribute>(parents[currentIndex], value);
+            Pair<Integer, Attribute> v = new Pair<Integer, Attribute>(parents.get(currentIndex), value);
             List<Pair<Integer, Attribute>> newValues = new ArrayList<Pair<Integer, Attribute>>(values);
             newValues.add(v);
             buffer.putAll(permutations(ds, parents, currentIndex+1, newValues, vertex));
@@ -99,9 +98,34 @@ public class BayesNetwork extends Bayes {
         return buffer;
     }
     
+    @Override
+    protected double P(Attribute c, List<Attribute> x){
+        //iterate over all parents of outputIndex, all the way up, until there is no more parents.
+        //acumulate the results multiplying them.
+        double p = 1;
+        x.remove(outputIndex); //remove placeholder attribute
+        x.add(outputIndex, c); //insert the current value in use/
+        for(int current = 0;current < structure.getVertexCount();current++){
+            Attribute z = x.get(current);
+            
+            List<Pair<Integer, Attribute>> parents = null;
+            for(int i=0;i<structure.getVertexCount();i++){
+                if(structure.isParent(i, current)){
+                    if(parents == null)
+                        parents = new ArrayList<Pair<Integer, Attribute>>();
+                    parents.add(new Pair<Integer,Attribute>(i,x.get(i)));
+                }
+            }
+            
+            Pair<Attribute, List<Pair<Integer, Attribute>>> key = new Pair<Attribute, List<Pair<Integer, Attribute>>>(z, parents);
+            Double d = weights[current].get(key.toString());
+            p *= d;
+        }
+        
+        return p;
+    }
+    
     private Graph getStructure(DataSet ds, double eps) {
-        //this function should first recover the structure and then 
-        //calculate the table of parameters.
         String[] names = new String[ds.getMetaData().getAttributeCount()];
         for (int i = 0; i < names.length; i++)
             names[i] = ds.getMetaData().getAttributeName(i).replace("-", "_");
@@ -140,8 +164,8 @@ public class BayesNetwork extends Bayes {
             } else
                 head++;
         }
-        G.saveAsDot(new File("drafting.dot"), false, names);
-        System.err.println("Thickering: " + G.getEdgeCount() / 2);
+        //G.saveAsDot(new File("drafting.dot"), false, names);
+        //System.err.println("Thickering: " + G.getEdgeCount() / 2);
 
         //2. Thickering
         while (!L.isEmpty()) {
@@ -150,11 +174,11 @@ public class BayesNetwork extends Bayes {
                 G.addEdge(e, true);
             }
         }
-        G.saveAsDot(new File("thickering.dot"), false, names);
-        System.err.println("Thinning 1/2: " + G.getEdgeCount() / 2);
+        //G.saveAsDot(new File("thickering.dot"), false, names);
+        //System.err.println("Thinning 1/2: " + G.getEdgeCount() / 2);
         //3. Thinning
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
+        for (int i = 0; i < N-1; i++) {
+            for (int j = i+1; j < N; j++) {
                 if (G.isEdge(i, j, true)) {
                     Pair<Integer, Integer> e = new Pair<Integer, Integer>(i, j);
                     if (G.pathExists(i, j, e)) { //this might be the problem
@@ -165,10 +189,10 @@ public class BayesNetwork extends Bayes {
                 }
             }
         }
-        System.err.println("Thinning 2/2: " + G.getEdgeCount() / 2);
-        G.saveAsDot(new File("thinning1.dot"), false, names);
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
+        //System.err.println("Thinning 2/2: " + G.getEdgeCount() / 2);
+        //G.saveAsDot(new File("thinning1.dot"), false, names);
+        for (int i = 0; i < N-1; i++) {
+            for (int j = i+1; j < N; j++) {
                 if (G.isEdge(i, j, true)) {
                     Pair<Integer, Integer> e = new Pair<Integer, Integer>(i, j);
                     if (G.pathExists(i, j, e)) {
@@ -179,8 +203,8 @@ public class BayesNetwork extends Bayes {
                 }
             }
         }
-        G.saveAsDot(new File("thinning2.dot"), false, names);
-        System.err.println("orienting: " + G.getEdgeCount() / 2);
+        //G.saveAsDot(new File("thinning2.dot"), false, names);//*/
+        //System.err.println("orienting: " + G.getEdgeCount() / 2);
         //4. orient edges
         return orientEdges(G, ds, eps); //also weird behaviour here, more edges are created
     }
@@ -188,6 +212,7 @@ public class BayesNetwork extends Bayes {
     private boolean tryToSeparateA(Graph G, Pair<Integer, Integer> e, DataSet ds, double eps) {
         int X = e.first;
         int Y = e.second;
+        //check this again, the intersection are making the |c| = 1 and breaking.
         Set<Integer> path = G.adjacencyPath(X, Y, true);
         Set<Integer> N1 = G.neighbors(X, true);
         N1.retainAll(path);
@@ -415,15 +440,13 @@ public class BayesNetwork extends Bayes {
         return G;
     }
 
-    // this can be optimized using some sort of kd-tree (AD tree to be precise) this should be in the superclass???
-    // this will speed this up big time!!
-    private double I(DataSet ds, int X, int Y, Set<Integer> C) {
+    private double I(DataSet ds, int X, int Y, Set<Integer> Z) {
         double info = 0;
         int N = ds.getItemsCount();
 
-        int xyz[] = new int[C.size() + 2];
+        int xyz[] = new int[Z.size() + 2];
         int j = 0;
-        for (int i : C) {
+        for (int i : Z) {
             xyz[j++] = i;
         }
         xyz[j++] = X;
@@ -457,11 +480,7 @@ public class BayesNetwork extends Bayes {
         }
         return info;
     }
-    
-    //This can be the ultimate validation for the method above.
-    ///rewrite the function i(x,y,Z) -> i(x,Z)
-    //replace the function above with: I(X,Z+y) - I(X,Z)
-    
+   
     private double I(DataSet ds, int X, int Y) {
         double info = 0;
         int N = ds.getItemsCount();
@@ -484,25 +503,30 @@ public class BayesNetwork extends Bayes {
         Class.forName("com.mysql.jdbc.Driver");
         Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/iris", "root", "r00t");
         DataSet ds = new MySQLDataSet(conn, "outlook", 0);
-/*
-        Graph g = new Graph(ds.getMetaData().getAttributeCount());
-        g.addEdge(4, 0);
-        g.addEdge(4, 1);
-        g.addEdge(4, 2);
-        g.addEdge(4, 3);
-        g.addEdge(0, 1);
-        g.addEdge(0, 3);
-        g.addEdge(1, 2);
-        BayesNetwork bn = new BayesNetwork();
-        int i=3 ;
-        for(i=0;i<g.getVertexCount();i++)
-        {
-            System.err.println(bn.learnWeights(i, g, ds));
-            System.err.println("--");
-        }*/
         
-        BayesNetwork bn = new BayesNetwork().train(ds);
-        System.err.println(bn.structure);
-        System.err.println(Arrays.deepToString(bn.weights));
+        BayesNetwork bn = new BayesNetwork();
+        
+        //bn.train(ds);
+               
+        bn.structure = new Graph(5);
+        bn.structure.addEdge(0,1);
+        bn.structure.addEdge(0,2);
+        bn.structure.addEdge(0,3);
+        bn.structure.addEdge(0,4);
+        bn.structure.addEdge(1,2);
+        bn.structure.addEdge(1,4);
+        bn.structure.addEdge(2,3);
+        
+        bn.train(ds);
+        
+        List<Attribute> E = new ArrayList<Attribute>();
+        E.add(null); //play
+        E.add(Attribute.getInstance("Rain","outlook"));
+        E.add(Attribute.getInstance("Cool","temp"));
+        E.add(Attribute.getInstance("High","humidity"));
+        E.add(Attribute.getInstance("Weak","wind"));
+        
+        System.err.println(bn.eval(E));
+        //System.err.println(Arrays.deepToString(bn.weights));//*/
     }
 }

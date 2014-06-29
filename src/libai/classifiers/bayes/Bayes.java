@@ -1,22 +1,49 @@
 package libai.classifiers.bayes;
 
+import java.util.List;
+import libai.classifiers.Attribute;
 import libai.common.dataset.*;
 /**
  *
  * @author kronenthaler
  */
 public abstract class Bayes {
-    //add methods to calculate the P(A|C) and so on, take them from the naive bayes implementation and improve the calculation where possible.
-    //precalculate:
-    //frequencies of each categorical attribute
-    //mean & SD of the continuos attributes
-    //frequencies of pair of attributes (too much memory?)
-    //frecuencies of triplets of attributes (too much memory?) 
-    //find a way to calculate the I(x,y|C) using a single query... => move the calculation to the DataSet
+    protected int outputIndex;
+    protected int totalCount;
+    protected MetaData metadata;
     
-    //P(x,y) = P(x|y)
-    //P(x,y,c) = P(x,y|c)
-    //P(x)
+    // include a method to create a frequency tree and use it for every counting related activity.
     
+    
+    /** 
+     * Train a Bayes system given a dataset. Depending of the implementation it
+     * might train structure and weight alike.
+     * @params ds DataSet to learn the Bayes system from.
+     * @return An instance of the same type ready to evaluate vectors of evidence.
+     */
     public abstract Bayes train(DataSet ds);
+    
+    /** Calculates the condition probability of h given the vector of evidence x. */
+    protected abstract double P(Attribute h, List<Attribute> x);
+    
+    /** 
+     * Calculates the maximum posterior probability this data record (x) in the data set
+     * against all possible output classes, returns the most likely output using: 
+     * P(Ci|x) > P(Cj|x) 1 <= j < m, i!=j
+     * @param x Vector of evidences
+     * @return The most likely output class for the given evidence.
+     */
+    public Attribute eval(List<Attribute> x) {
+        Attribute winner = null;
+        double max = -Double.MAX_VALUE;
+        for (Attribute c : metadata.getClasses()) {
+            double tmp = P(c, x);
+            if (tmp > max) {
+                max = tmp;
+                winner = c;
+            }
+        }
+        
+        return winner;
+    }
 }
