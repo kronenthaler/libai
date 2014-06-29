@@ -11,9 +11,12 @@ public abstract class Bayes {
     protected int outputIndex;
     protected int totalCount;
     protected MetaData metadata;
+    protected CountTree countTree;
     
     // include a method to create a frequency tree and use it for every counting related activity.
-    
+    private void initCountTree(DataSet ds){
+        countTree = new CountTree(ds);
+    }
     
     /** 
      * Train a Bayes system given a dataset. Depending of the implementation it

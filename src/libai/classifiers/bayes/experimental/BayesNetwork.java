@@ -502,31 +502,7 @@ public class BayesNetwork extends Bayes {
     public static void main(String arg[]) throws Exception {
         Class.forName("com.mysql.jdbc.Driver");
         Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/iris", "root", "r00t");
-        DataSet ds = new MySQLDataSet(conn, "outlook", 0);
-        
-        BayesNetwork bn = new BayesNetwork();
-        
-        //bn.train(ds);
-               
-        bn.structure = new Graph(5);
-        bn.structure.addEdge(0,1);
-        bn.structure.addEdge(0,2);
-        bn.structure.addEdge(0,3);
-        bn.structure.addEdge(0,4);
-        bn.structure.addEdge(1,2);
-        bn.structure.addEdge(1,4);
-        bn.structure.addEdge(2,3);
-        
-        bn.train(ds);
-        
-        List<Attribute> E = new ArrayList<Attribute>();
-        E.add(null); //play
-        E.add(Attribute.getInstance("Rain","outlook"));
-        E.add(Attribute.getInstance("Cool","temp"));
-        E.add(Attribute.getInstance("High","humidity"));
-        E.add(Attribute.getInstance("Weak","wind"));
-        
-        System.err.println(bn.eval(E));
-        //System.err.println(Arrays.deepToString(bn.weights));//*/
+        DataSet ds = new MySQLDataSet(conn, "asia", 0);
+        BayesNetwork bn = new BayesNetwork().train(ds);
     }
 }
