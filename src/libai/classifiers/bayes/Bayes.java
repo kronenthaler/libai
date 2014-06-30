@@ -16,7 +16,7 @@ public abstract class Bayes {
     protected CountTree countTree;
     
     // include a method to create a frequency tree and use it for every counting related activity.
-    private void initCountTree(DataSet ds){
+    protected void initCountTree(DataSet ds){
         countTree = new CountTree(ds);
     }
     

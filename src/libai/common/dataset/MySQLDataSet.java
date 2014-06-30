@@ -392,31 +392,6 @@ public class MySQLDataSet implements DataSet {
     }
 
     @Override
-    public int getFrecuencyOf(Pair<Integer, Attribute>... values) {
-        try {
-            String attributes = "";
-            for (Pair<Integer, Attribute> var : values) {
-                if (var.second instanceof ContinuousAttribute)
-                    attributes += (attributes.length() > 0 ? " AND " : "") + String.format("ABS(`%s` - '%s') < 1.e-5", metadata.getAttributeName(var.first), var.second.getValue());
-                else
-                    attributes += (attributes.length() > 0 ? " AND " : "") + String.format("`%s` = '%s'", metadata.getAttributeName(var.first), var.second.getValue());
-            }
-            String query = String.format("SELECT count(*) FROM `%s` WHERE %s", tableName, attributes);
-            PreparedStatement stmt = connection.prepareStatement(query);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                int count = rs.getInt(1);
-                stmt.close();
-                rs.close();
-                return count;
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return 0;
-    }
-
-    @Override
     public Iterable<List<Attribute>> getCombinedValuesOf(final int... values) {
         return new Iterable<List<Attribute>>() {
             @Override

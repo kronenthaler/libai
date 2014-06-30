@@ -17,14 +17,15 @@ import org.w3c.dom.Node;
  */
 public class BayesNetwork extends Bayes {
     public static final double EPSILON = 0.01;
-    private Graph structure;
-    private Map<String, Double> weights[];
+    protected Graph structure;
+    protected Map<String, Double> weights[];
     
     @Override
     public BayesNetwork train(DataSet ds) {
         outputIndex = ds.getOutputIndex();
         totalCount = ds.getItemsCount();
         metadata = ds.getMetaData();
+        initCountTree(ds);
         
         structure = getStructure(ds, EPSILON);
         weights = new HashMap[structure.getVertexCount()];
@@ -73,7 +74,7 @@ public class BayesNetwork extends Bayes {
             int acumCount = 0;
             for(Attribute value : freq.keySet()){
                 values.add(new Pair<Integer, Attribute>(vertex, value));
-                int frequency = ds.getFrecuencyOf(values.toArray(new Pair[0]));
+                int frequency = countTree.getCount(values.toArray(new Pair[0]));
                 acumCount += frequency;
                 values.remove(values.size()-1);
                 
@@ -166,7 +167,7 @@ public class BayesNetwork extends Bayes {
                 head++;
         }
         //G.saveAsDot(new File("drafting.dot"), false, names);
-        //System.err.println("Thickering: " + G.getEdgeCount() / 2);
+        System.err.println("Thickering: " + G.getEdgeCount() / 2);
 
         //2. Thickering
         while (!L.isEmpty()) {
@@ -176,7 +177,7 @@ public class BayesNetwork extends Bayes {
             }
         }
         //G.saveAsDot(new File("thickering.dot"), false, names);
-        //System.err.println("Thinning 1/2: " + G.getEdgeCount() / 2);
+        System.err.println("Thinning 1/2: " + G.getEdgeCount() / 2);
         //3. Thinning
         for (int i = 0; i < N-1; i++) {
             for (int j = i+1; j < N; j++) {
@@ -191,7 +192,7 @@ public class BayesNetwork extends Bayes {
             }
         }
         //System.err.println("Thinning 2/2: " + G.getEdgeCount() / 2);
-        //G.saveAsDot(new File("thinning1.dot"), false, names);
+        G.saveAsDot(new File("thinning1.dot"), false, names);
         for (int i = 0; i < N-1; i++) {
             for (int j = i+1; j < N; j++) {
                 if (G.isEdge(i, j, true)) {
@@ -205,7 +206,7 @@ public class BayesNetwork extends Bayes {
             }
         }
         //G.saveAsDot(new File("thinning2.dot"), false, names);//*/
-        //System.err.println("orienting: " + G.getEdgeCount() / 2);
+        System.err.println("orienting: " + G.getEdgeCount() / 2);
         //4. orient edges
         return orientEdges(G, ds, eps); //also weird behaviour here, more edges are created
     }
@@ -465,17 +466,17 @@ public class BayesNetwork extends Bayes {
                 Pair<Integer, Attribute> vz = new Pair<Integer, Attribute>(xyz[i], valuez);
                 z.add(vz);
             }
-            double Pz = (ds.getFrecuencyOf(z.toArray(new Pair[0])) / (double) N);
+            double Pz = (countTree.getCount(z.toArray(new Pair[0])) / (double) N);
 
             z.add(x);
-            double Pxz = (ds.getFrecuencyOf(z.toArray(new Pair[0])) / (double) N);
+            double Pxz = (countTree.getCount(z.toArray(new Pair[0])) / (double) N);
             z.remove(z.size() - 1);
 
             z.add(y);
-            double Pyz = (ds.getFrecuencyOf(z.toArray(new Pair[0])) / (double) N);
+            double Pyz = (countTree.getCount(z.toArray(new Pair[0])) / (double) N);
 
             z.add(x);
-            double Pxyz = (ds.getFrecuencyOf(z.toArray(new Pair[0])) / (double) N);
+            double Pxyz = (countTree.getCount(z.toArray(new Pair[0])) / (double) N);
 
             info += (Pxyz) * Math.log((Pxyz * Pz) / (Pxz * Pyz));
         }
@@ -494,7 +495,7 @@ public class BayesNetwork extends Bayes {
             Pair<Integer, Attribute> y = new Pair<Integer, Attribute>(Y, valuey);
             double Px = freqX.get(valuex) / (double) N;
             double Py = freqY.get(valuey) / (double) N;
-            double Pxy = ((ds.getFrecuencyOf(x, y) / (double) N));
+            double Pxy = ((countTree.getCount(x, y) / (double) N));
             info += Pxy * Math.log(Pxy / (Px * Py));
         }
         return info;
@@ -513,7 +514,21 @@ public class BayesNetwork extends Bayes {
     public static void main(String arg[]) throws Exception {
         Class.forName("com.mysql.jdbc.Driver");
         Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/iris", "root", "r00t");
-        DataSet ds = new MySQLDataSet(conn, "asia", 0);
-        BayesNetwork bn = new BayesNetwork().train(ds);
+        DataSet ds = new MySQLDataSet(conn, "alarm2", 0);
+        BayesNetwork bn = new BayesNetwork();
+        bn.train(ds);
+        
+        //System.err.println(root);
+        /*for(List<Attribute> r : ds.getCombinedValuesOf(0,1,2)){
+            Pair<Integer,Attribute> x1 = new Pair<Integer,Attribute>(0,r.get(0));
+            Pair<Integer,Attribute> x2 = new Pair<Integer,Attribute>(1,r.get(1));
+            Pair<Integer,Attribute> x3 = new Pair<Integer,Attribute>(2,r.get(2));
+            System.err.println(x1+" "+x2+" "+x3);
+            int f = countTree.getCount(x1,x3);
+            int f1 = root.getCount(x1,x3);
+            
+            System.err.println("f1: "+f1+" f:" +f);
+        }//**/
+        
     }
-}
+}   

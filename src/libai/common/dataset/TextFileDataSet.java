@@ -232,23 +232,6 @@ public class TextFileDataSet implements DataSet {
     }
 
     @Override
-    public int getFrecuencyOf(Pair<Integer, Attribute>... values) {
-        int count = 0;
-        for (List<Attribute> record : data) {
-            boolean flag = true;
-            for (Pair<Integer, Attribute> var : values) {
-                if (!record.get(var.first).equals(var.second)) {
-                    flag = false;
-                    break;
-                }
-            }
-            if (flag)
-                count++;
-        }
-        return count;
-    }
-
-    @Override
     public Iterable<List<Attribute>> getCombinedValuesOf(final int... values) {
         return new Iterable<List<Attribute>>() {
             @Override

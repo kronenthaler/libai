@@ -13,16 +13,20 @@ public class CountTree {
     protected Attribute root; //root for the top level.
     protected int index;
     protected List<CountTree> children;
+    public CountTree skipThisNode;
+    private int attributeCount;
     
     private CountTree(){
         children = new ArrayList<CountTree>();
         root = null;
         count = 0;
+        index = -1;
     }
     
     public CountTree(DataSet ds){
         this();
         int i=0;
+        attributeCount = ds.getMetaData().getAttributeCount();
         for(List<Attribute> record : ds){
             System.err.println(i++);
             add(record);
@@ -30,57 +34,73 @@ public class CountTree {
         }
     }
     
-    private CountTree(Attribute a, int i){
+    private CountTree(Attribute a, int i, int c){
         this();
         root = a;
         index = i;
+        attributeCount = c;
     }
     
-    public int add(List<Attribute> v){
-        return add(v, -1);
+    public void add(List<Attribute> v){
+        add(v, 0);
     }
     
-    private int add(List<Attribute> v, int index){
-        //System.err.println("index: "+index);
-        //use integers instead of attribute.toString();
-        //for(Attribute a : v){
-        for(int i=index+1;i<v.size();i++){
-            Attribute a = v.get(i);
-            
-            boolean counted = false;
-            for(CountTree c : children){
-                if(c.index == i && c.root.equals(a)){
-                    c.count++;
-                    c.add(v, i);
-                    counted = true;
-                }
-            }
-            
-            if(!counted){
-                CountTree node = new CountTree(a, i);
-                
-                children.add(node);
-                node.count++;
-                node.add(v, i);
+    private void add(List<Attribute> v, int index){
+        //System.err.println(v+" "+index);
+        if(index >= v.size())
+            return;
+        
+        //just process the given index.
+        Attribute a = v.get(index);
+
+        //insert in the skipThisNode child too.
+        /*if(skipThisNode==null)
+            skipThisNode = new CountTree(null, index, attributeCount);
+        skipThisNode.count++;
+        skipThisNode.add(v, index+1);*/
+        
+        //look in the existing children tree.
+        for(CountTree c : children){
+            if(c.index == index && c.root.equals(a)){
+                c.count++;
+                c.add(v, index+1);
+                return;
             }
         }
-        
-        return count;
+
+        //if it's the first time trying this node, create that child.
+        CountTree node = new CountTree(a, index, attributeCount);
+        children.add(node);
+        node.count++;
+        node.add(v, index+1);
     }
     
     public int getCount(Pair<Integer,Attribute>... values){
         Arrays.sort(values);
+        return getCount(0, values);
+    }    
+    private int getCount(int currentValue, Pair<Integer,Attribute>... values){
+        if(isLeaf())
+            return count;
         
-        CountTree base = this;
-        for(Pair<Integer,Attribute> value : values){
-            for(CountTree child : base.children){
-                if(child.index == value.first && 
-                   child.root.equals(value.second)){
-                    base=child;
+        if(currentValue >= values.length)
+            return count;
+        
+        if(values[currentValue].first != index+1){
+            int acum = 0;
+            for(CountTree c : children){
+                acum += c.getCount(currentValue, values);
+            }
+            return acum;
+        }else{
+            for(CountTree c : children){
+                if(c.root.equals(values[currentValue].second)){
+                    return c.getCount(currentValue+1, values);
                 }
             }
         }
-        return base.count;
+        
+        return 0;
     }
     
     public boolean isLeaf(){
@@ -93,11 +113,15 @@ public class CountTree {
     
     private String toString(String deep){
         StringBuilder str = new StringBuilder();
-        str.append(deep+root+" = "+count);
+        str.append(deep+root+"["+index+"] = "+count);
         str.append(" {\n");
         for(CountTree c : children){
             str.append(deep+c.toString(deep+" "));
         }
+        
+        if(skipThisNode!=null)
+            str.append(deep+skipThisNode.toString(deep+" "));
+        
         str.append(deep+"}\n");
         return str.toString();
     }
