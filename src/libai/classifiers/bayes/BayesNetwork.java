@@ -17,8 +17,7 @@ import org.w3c.dom.Node;
  */
 public class BayesNetwork extends Bayes {
     public static final double EPSILON = 0.01;
-    protected Graph structure;
-    protected Map<String, Double> weights[];
+    protected CPTable weights[];
     
     @Override
     public BayesNetwork train(DataSet ds) {
@@ -27,8 +26,8 @@ public class BayesNetwork extends Bayes {
         metadata = ds.getMetaData();
         initCountTree(ds);
         
-        structure = getStructure(ds, EPSILON);
-        weights = new HashMap[structure.getVertexCount()];
+        Graph structure = getStructure(ds, EPSILON);
+        weights = new CPTable[structure.getVertexCount()];
         
         //for each vertex, calculate the weight given the structure.
         for(int i=0;i<weights.length;i++){
@@ -38,7 +37,7 @@ public class BayesNetwork extends Bayes {
         return this;
     }
     
-    private Map<String, Double> learnWeights(int vertex, Graph g, DataSet ds){
+    private CPTable learnWeights(int vertex, Graph g, DataSet ds){
         Map<String, Double> result = new HashMap<String, Double>();
         
         //get the parents of vertex.
@@ -51,53 +50,10 @@ public class BayesNetwork extends Bayes {
         }
         Collections.sort(parents);
         
-        if(parents.size() == 0){
-            int N = ds.getItemsCount();
-            Map<Attribute, Integer> freq = ds.getFrequencies(0, N, vertex);
-            for(Attribute v : freq.keySet()){
-                double Pv = freq.get(v) / (double)N;
-                result.put(new Pair<Attribute, List<Pair<Integer, Attribute>>>(v, null).toString(), Pv);
-            }
+        if(parents.isEmpty())
+            return new CPTable(ds, vertex);
             
-            return result;
-        }
-        
-        return permutations(ds, parents, 0, new ArrayList<Pair<Integer, Attribute>>(), vertex);
-    }
-    
-    private Map<String, Double> permutations(DataSet ds, List<Integer> parents, int currentIndex, List<Pair<Integer, Attribute>> values, int vertex){
-        Map<String, Double> buffer = new HashMap<String, Double>();
-        int N = ds.getItemsCount();
-        
-        if(currentIndex >= parents.size()){
-            Map<Attribute, Integer> freq = ds.getFrequencies(0, N, vertex);
-            int acumCount = 0;
-            for(Attribute value : freq.keySet()){
-                values.add(new Pair<Integer, Attribute>(vertex, value));
-                int frequency = countTree.getCount(values.toArray(new Pair[0]));
-                acumCount += frequency;
-                values.remove(values.size()-1);
-                
-                Pair<Attribute, List<Pair<Integer, Attribute>>> key = new Pair<Attribute, List<Pair<Integer, Attribute>>>(value, values);
-                buffer.put(key.toString(), (double)frequency);
-            }
-            
-            for(String key: buffer.keySet()){
-                buffer.put(key, (buffer.get(key) + 1) / (double)(acumCount + freq.size()));
-            }
-            
-            return buffer;
-        }
-        
-        Map<Attribute, Integer> parentValues = ds.getFrequencies(0, N, parents.get(currentIndex));
-        for(Attribute value : parentValues.keySet()){
-            Pair<Integer, Attribute> v = new Pair<Integer, Attribute>(parents.get(currentIndex), value);
-            List<Pair<Integer, Attribute>> newValues = new ArrayList<Pair<Integer, Attribute>>(values);
-            newValues.add(v);
-            buffer.putAll(permutations(ds, parents, currentIndex+1, newValues, vertex));
-        }
-        
-        return buffer;
+        return new CPTable(ds, countTree, parents, vertex);
     }
     
     @Override
@@ -106,21 +62,11 @@ public class BayesNetwork extends Bayes {
         //acumulate the results multiplying them.
         double p = 1;
         x.remove(outputIndex); //remove placeholder attribute
-        x.add(outputIndex, c); //insert the current value in use/
-        for(int current = 0;current < structure.getVertexCount();current++){
+        x.add(outputIndex, c); //insert the current value in use
+        for(int current=0; current < weights.length; current++){
             Attribute z = x.get(current);
             
-            List<Pair<Integer, Attribute>> parents = null;
-            for(int i=0;i<structure.getVertexCount();i++){
-                if(structure.isParent(i, current)){
-                    if(parents == null)
-                        parents = new ArrayList<Pair<Integer, Attribute>>();
-                    parents.add(new Pair<Integer,Attribute>(i,x.get(i)));
-                }
-            }
-            
-            Pair<Attribute, List<Pair<Integer, Attribute>>> key = new Pair<Attribute, List<Pair<Integer, Attribute>>>(z, parents);
-            Double d = weights[current].get(key.toString());
+            double d = weights[current].P(z, x);
             p *= d;
         }
         
@@ -503,20 +449,77 @@ public class BayesNetwork extends Bayes {
 
     @Override
     public boolean save(File path) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try{
+            PrintStream out = new PrintStream(path);
+            out.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+            out.println("<BIF VERSION=\"0.3\">");
+            out.println("<NETWORK>");
+            out.println("<NAME><![CDATA["+path+"]]></NAME>");
+            
+            for(CPTable table : weights){
+                Set<Attribute> v = table.getEventValues();
+                Attribute[] values = v.toArray(new Attribute[0]);
+                Arrays.sort(values);
+                
+                //all variables
+                out.println("<VARIABLE TYPE=\"nature\">");
+                out.println("<NAME>"+values[0].getName()+"</NAME>");
+                for(Attribute outcome : values)
+                    out.println("<OUTCOME>"+outcome.getValue()+"</OUTCOME>");
+                out.println("</VARIABLE>");
+                
+                //all tables
+                out.println(table.toXMLBIF());
+            }
+            
+            out.println("</NETWORK>");
+            out.println("</BIF>");
+            out.close();
+        }catch(FileNotFoundException ex){
+            return false;
+        }
+        
+        return true;
     }
 
     @Override
     protected Bayes load(Node root) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //read first the variables.
+        //read the definitions, pass the info of the variables to the CPTable load ?
+        throws new UnsupportedOperationException("to be implemented");
     }
     
     public static void main(String arg[]) throws Exception {
         Class.forName("com.mysql.jdbc.Driver");
         Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/iris", "root", "r00t");
-        DataSet ds = new MySQLDataSet(conn, "alarm2", 0);
+        DataSet ds = new MySQLDataSet(conn, "outlook", 0); //todo, still some thing to be checked.
+        /*List<Integer> parents = new ArrayList<Integer>();
+        parents.add(0);
+        parents.add(1);
+        CPTable cpt = new CPTable(ds, new CountTree(ds), parents, 4);
+        System.err.println(cpt.toString());
+        System.err.println(cpt.toXMLBIF());//*/
+        
         BayesNetwork bn = new BayesNetwork();
-        bn.train(ds);
+        Graph g = new Graph(5);
+        g.addEdge(0,1,false);
+        g.addEdge(0,2,false);
+        g.addEdge(0,3,false);
+        g.addEdge(0,4,false);
+        g.addEdge(1,4,false);
+        g.addEdge(1,2,false);
+        g.addEdge(2,3,false);
+        
+        bn.train(ds).save(new File("outlook.bif"));
+        
+        List<Attribute> record = new ArrayList<Attribute>();
+        record.add(null);
+        record.add(Attribute.getInstance("Rain","outlook"));
+        record.add(Attribute.getInstance("Cool","temp"));
+        record.add(Attribute.getInstance("High","humidity"));
+        record.add(Attribute.getInstance("Weak","wind"));
+        
+        System.err.println(bn.eval(record));
         
         //System.err.println(root);
         /*for(List<Attribute> r : ds.getCombinedValuesOf(0,1,2)){

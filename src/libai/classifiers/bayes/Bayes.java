@@ -53,7 +53,7 @@ public abstract class Bayes {
     }
     
     //need some factory methods.
-    
+    // implement http://www.cs.cmu.edu/~fgcozman/Research/InterchangeFormat/ XMLBIF
     public abstract boolean save(File path);
     
     protected abstract Bayes load(Node root);

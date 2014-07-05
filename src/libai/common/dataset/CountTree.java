@@ -28,7 +28,6 @@ public class CountTree {
         int i=0;
         attributeCount = ds.getMetaData().getAttributeCount();
         for(List<Attribute> record : ds){
-            System.err.println(i++);
             add(record);
             count++;
         }
@@ -46,18 +45,9 @@ public class CountTree {
     }
     
     private void add(List<Attribute> v, int index){
-        //System.err.println(v+" "+index);
         if(index >= v.size())
             return;
-        
-        //just process the given index.
         Attribute a = v.get(index);
-
-        //insert in the skipThisNode child too.
-        /*if(skipThisNode==null)
-            skipThisNode = new CountTree(null, index, attributeCount);
-        skipThisNode.count++;
-        skipThisNode.add(v, index+1);*/
         
         //look in the existing children tree.
         for(CountTree c : children){
@@ -78,7 +68,8 @@ public class CountTree {
     public int getCount(Pair<Integer,Attribute>... values){
         Arrays.sort(values);
         return getCount(0, values);
-    }    
+    }
+    
     private int getCount(int currentValue, Pair<Integer,Attribute>... values){
         if(isLeaf())
             return count;
@@ -107,6 +98,7 @@ public class CountTree {
         return children == null || children.isEmpty();
     }
     
+    @Override
     public String toString(){
         return toString("");
     }
