@@ -7,7 +7,7 @@ import org.w3c.dom.*;
  * @author kronenthaler
  */
 public abstract class Attribute implements Comparable<Attribute> {
-    protected String name;
+    protected String name = "";
 
     public String getName() {
         return name;
@@ -21,7 +21,7 @@ public abstract class Attribute implements Comparable<Attribute> {
 
     @Override
     public int hashCode() {
-        return getValue().hashCode();
+        return getValue().hashCode() + name.hashCode();
     }
 
     @Override

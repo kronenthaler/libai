@@ -35,11 +35,29 @@ public final class Pair<V extends Comparable, K> implements Comparable<Pair> {
      * @return -1 if this is less than o, 0 if are equals, 1 if this is greater
      * than o.
      */
+    @Override
     public int compareTo(Pair o) {
         return first.compareTo(o.first);
     }
 
+    @Override
     public String toString() {
         return "(" + first + "," + second + ")";
+    }
+    
+    @Override
+    public boolean equals(Object obj){
+        return obj != null 
+                && obj instanceof Pair 
+                && ((Pair)obj).first.compareTo(first)==0 
+                && ((Pair)obj).second.equals(second);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 23 * hash + (this.first != null ? this.first.hashCode() : 0);
+        hash = 23 * hash + (this.second != null ? this.second.hashCode() : 0);
+        return hash;
     }
 }
