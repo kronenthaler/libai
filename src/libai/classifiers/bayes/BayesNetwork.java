@@ -22,6 +22,7 @@ import org.w3c.dom.NodeList;
 public class BayesNetwork extends Bayes {
     public static final double EPSILON = 0.01;
     protected CPTable weights[];
+    private Set<Integer> childs[];
     
     @Override
     public BayesNetwork train(DataSet ds) {
@@ -93,10 +94,14 @@ public class BayesNetwork extends Bayes {
             names[i] = ds.getMetaData().getAttributeName(i).replace("-", "_");
 
         Graph G = new Graph(ds.getMetaData().getAttributeCount());
-        List<Pair<Double, Pair<Integer, Integer>>> L = new ArrayList<Pair<Double, Pair<Integer, Integer>>>();
-
-        //1. Drafting
         int N = G.getVertexCount();
+        
+        childs = new Set[N];
+        for(int i=0;i<N;i++)
+            childs[i]=new HashSet<Integer>();
+        
+        //1. Drafting
+        List<Pair<Double, Pair<Integer, Integer>>> L = new ArrayList<Pair<Double, Pair<Integer, Integer>>>();
         //calculate the mutual information between every pair of nodes first.
         for (int x = 0; x < N - 1; x++) {
             for (int y = x + 1; y < N; y++) {
@@ -114,7 +119,7 @@ public class BayesNetwork extends Bayes {
         //take the first 2 edges and add them to E, remove'em from L
         G.addEdge(L.remove(0).second, true);
         G.addEdge(L.remove(0).second, true);
-
+        
         //for the rest: while number of edges is N-1 or L is empty:
         //if there is no adjacency path between x,y, add to E, remove it anyway
         int head = 0;
@@ -127,8 +132,7 @@ public class BayesNetwork extends Bayes {
                 head++;
         }
         G.saveAsDot(new File("drafting.dot"), false, names);
-        System.err.println("Thickering: " + G.getEdgeCount() / 2);
-
+        System.err.println("Drafting: " + G.getEdgeCount() / 2);
         //2. Thickering
         while (!L.isEmpty()) {
             Pair<Integer, Integer> e = L.remove(0).second;
@@ -136,8 +140,8 @@ public class BayesNetwork extends Bayes {
                 G.addEdge(e, true);
             }
         }
-        //G.saveAsDot(new File("thickering.dot"), false, names);
-        System.err.println("Thinning 1/2: " + G.getEdgeCount() / 2);
+        System.err.println("Thickering: " + G.getEdgeCount() / 2);
+        G.saveAsDot(new File("thickering.dot"), false, names);
         //3. Thinning
         for (int i = 0; i < N-1; i++) {
             for (int j = i+1; j < N; j++) {
@@ -151,7 +155,7 @@ public class BayesNetwork extends Bayes {
                 }
             }
         }
-        System.err.println("Thinning 2/2: " + G.getEdgeCount() / 2);
+        System.err.println("Thinning 1/2: " + G.getEdgeCount() / 2);
         G.saveAsDot(new File("thinning1.dot"), false, names);
         for (int i = 0; i < N-1; i++) {
             for (int j = i+1; j < N; j++) {
@@ -165,10 +169,14 @@ public class BayesNetwork extends Bayes {
                 }
             }
         }
+        System.err.println("Thinning 2/2: " + G.getEdgeCount() / 2);
         G.saveAsDot(new File("thinning2.dot"), false, names);//*/
-        System.err.println("orienting: " + G.getEdgeCount() / 2);
+        
         //4. orient edges
-        return orientEdges(G, ds, eps); //also weird behaviour here, more edges are created
+        G = orientEdges(G, ds, eps); //also weird behaviour here, more edges are created
+        System.err.println("orienting: " + G.getEdgeCount());
+        G.saveAsDot(new File("oriented.dot"), true, names);//*/
+        return G;
     }
 
     private boolean tryToSeparateA(Graph G, Pair<Integer, Integer> e, DataSet ds, double eps) {
@@ -178,20 +186,23 @@ public class BayesNetwork extends Bayes {
         Set<Integer> path = G.adjacencyPath(X, Y, true);
         Set<Integer> N1 = G.neighbors(X, true);
         N1.retainAll(path);
+        N1.removeAll(childs[X]);
         Set<Integer> N2 = G.neighbors(Y, true);
         N2.retainAll(path);
-
+        N2.removeAll(childs[Y]);
+        
         Set<Integer>[] order = new Set[]{
             N1.size() > N2.size() ? N2 : N1,
             N1.size() <= N2.size() ? N1 : N2
         };
+        int currentOrder = N1.size() <= N2.size() ? 0 : 1;
 
         for (Set<Integer> C : order) {
             double v = I(ds, X, Y, C);
             if (v < eps)
                 return true;
 
-            while (C.size() > 1) {
+            while (C.size() > 1) { //condition set
                 Set<Integer> Cx[] = new Set[C.size()];
                 double vx[] = new double[C.size()];
                 double min = Double.MAX_VALUE;
@@ -209,11 +220,13 @@ public class BayesNetwork extends Bayes {
                 if (vx[m] < eps) {
                     return true;
                 } else if (vx[m] > v) {
+                    childs[m].add(currentOrder == 0 ? X : Y);
                     break;
                 } else {
                     C = Cx[m];
                 }
             }
+            currentOrder = 1-currentOrder;
         }
 
         return false;
@@ -262,6 +275,7 @@ public class BayesNetwork extends Bayes {
         Set<Integer> Sx1 = new HashSet<Integer>();
         for (Integer x : Sx) {
             Set<Integer> aux = G.neighbors(x, true);
+            aux.retainAll(adjPath);
             aux.removeAll(Sx);
             Sx1.addAll(aux);
         }
@@ -360,9 +374,9 @@ public class BayesNetwork extends Bayes {
             }
         }
 
-        boolean canOrientAEdge = true;
-        while (canOrientAEdge) {
-            canOrientAEdge = false;
+        boolean canOrientAnEdge = true;
+        while (canOrientAnEdge) {
+            canOrientAnEdge = false;
             //9. For any three nodes a, b, c, if , b and c are adjacent, and a and c are not adjacent and edge (b, c)
             //is not oriented, let b be a parent of c.
             for (int a = 0; a < N; a++) {
@@ -378,7 +392,7 @@ public class BayesNetwork extends Bayes {
                                 !G.isOriented(b, c)) { //edge (b, c) is not oriented
                             G.removeEdge(b, c, true);
                             G.addEdge(b, c, false);
-                            canOrientAEdge = true;
+                            canOrientAnEdge = true;
                         }
                     }
                 }
@@ -392,7 +406,7 @@ public class BayesNetwork extends Bayes {
                     if (!G.isOriented(a, b) && G.adjacencyPath(a, b, false).size() > 0) {
                         G.removeEdge(a, b, true);
                         G.addEdge(a, b, false);
-                        canOrientAEdge = true;
+                        canOrientAnEdge = true;
                     }
                 }
             }
@@ -553,42 +567,8 @@ public class BayesNetwork extends Bayes {
     public static void main(String arg[]) throws Exception {
         Class.forName("com.mysql.jdbc.Driver");
         Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/iris", "root", "r00t");
-        DataSet ds = new MySQLDataSet(conn, "outlook", 0); //todo, still some thing to be checked.
-        /*List<Integer> parents = new ArrayList<Integer>();
-        parents.add(0);
-        parents.add(1);
-        CPTable cpt = new CPTable(ds, new CountTree(ds), parents, 4);
-        System.err.println(cpt.toString());
-        System.err.println(cpt.toXMLBIF());//*/
+        DataSet ds = new MySQLDataSet(conn, "alarm2", 0);
         
-        BayesNetwork bn = new BayesNetwork();
-        bn.train(ds).save(new File("outlook.xml"));
-        
-        BayesNetwork bn2 = BayesNetwork.getInstance(new File("outlook.xml"));
-        bn2.save(new File("outlook2.xml"));
-                
-        List<Attribute> record = new ArrayList<Attribute>();
-        record.add(null);
-        record.add(Attribute.getInstance("Rain","outlook"));
-        record.add(Attribute.getInstance("Cool","temp"));
-        record.add(Attribute.getInstance("High","humidity"));
-        record.add(Attribute.getInstance("Weak","wind"));
-        
-        System.err.println(bn.eval(0,record));
-        System.err.println(bn2.eval(0,record));
-        
-        
-        //System.err.println(root);
-        /*for(List<Attribute> r : ds.getCombinedValuesOf(0,1,2)){
-            Pair<Integer,Attribute> x1 = new Pair<Integer,Attribute>(0,r.get(0));
-            Pair<Integer,Attribute> x2 = new Pair<Integer,Attribute>(1,r.get(1));
-            Pair<Integer,Attribute> x3 = new Pair<Integer,Attribute>(2,r.get(2));
-            System.err.println(x1+" "+x2+" "+x3);
-            int f = countTree.getCount(x1,x3);
-            int f1 = root.getCount(x1,x3);
-            
-            System.err.println("f1: "+f1+" f:" +f);
-        }//**/
-        
+        BayesNetwork.getInstance(ds);
     }
 }   

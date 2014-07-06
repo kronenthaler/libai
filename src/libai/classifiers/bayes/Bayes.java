@@ -10,7 +10,7 @@ import org.w3c.dom.Node;
  * @author kronenthaler
  */
 public abstract class Bayes {
-    protected int outputIndex; //can be removed when tge CPT is used.
+    protected int outputIndex; //can be removed when tge CPT is used, it can be part of the BIF 0.50 specification.
     protected int totalCount; //can be removed when the CPT is used.
     protected MetaData metadata; //can be removed when the CPT is used.
     protected CountTree countTree;
