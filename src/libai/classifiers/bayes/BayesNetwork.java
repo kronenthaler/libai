@@ -4,10 +4,14 @@ import libai.common.dataset.*;
 import java.io.*;
 import java.sql.*;
 import java.util.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import libai.classifiers.*;
 import libai.classifiers.bayes.Bayes;
 import libai.common.*;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Implementation based on the technical report of Jie-Cheng for Bayes
@@ -21,9 +25,7 @@ public class BayesNetwork extends Bayes {
     
     @Override
     public BayesNetwork train(DataSet ds) {
-        outputIndex = ds.getOutputIndex();
-        totalCount = ds.getItemsCount();
-        metadata = ds.getMetaData();
+        //outputIndex = ds.getOutputIndex();
         initCountTree(ds);
         
         Graph structure = getStructure(ds, EPSILON);
@@ -38,8 +40,6 @@ public class BayesNetwork extends Bayes {
     }
     
     private CPTable learnWeights(int vertex, Graph g, DataSet ds){
-        Map<String, Double> result = new HashMap<String, Double>();
-        
         //get the parents of vertex.
         List<Integer> parents = new ArrayList<Integer>();
         for(int i=0;i<g.getVertexCount();i++){
@@ -57,19 +57,33 @@ public class BayesNetwork extends Bayes {
     }
     
     @Override
+    public Attribute eval(int outputIndex, List<Attribute> x) {
+        Attribute winner = null;
+        double max = -Double.MAX_VALUE;
+        for (Attribute c : weights[outputIndex].getEventValues()) {
+            x.remove(outputIndex); //remove placeholder attribute
+            x.add(outputIndex, c); //insert the current value in use
+            double tmp = P(c, x);
+            if (tmp > max) {
+                max = tmp;
+                winner = c;
+            }
+        }
+        
+        return winner;
+    }
+    
+    @Override
     protected double P(Attribute c, List<Attribute> x){
         //iterate over all parents of outputIndex, all the way up, until there is no more parents.
         //acumulate the results multiplying them.
         double p = 1;
-        x.remove(outputIndex); //remove placeholder attribute
-        x.add(outputIndex, c); //insert the current value in use
         for(int current=0; current < weights.length; current++){
             Attribute z = x.get(current);
-            
             double d = weights[current].P(z, x);
             p *= d;
         }
-        
+        System.err.printf("P(%s | %s) = %f\n", c,x, p);
         return p;
     }
     
@@ -112,7 +126,7 @@ public class BayesNetwork extends Bayes {
             } else
                 head++;
         }
-        //G.saveAsDot(new File("drafting.dot"), false, names);
+        G.saveAsDot(new File("drafting.dot"), false, names);
         System.err.println("Thickering: " + G.getEdgeCount() / 2);
 
         //2. Thickering
@@ -137,7 +151,7 @@ public class BayesNetwork extends Bayes {
                 }
             }
         }
-        //System.err.println("Thinning 2/2: " + G.getEdgeCount() / 2);
+        System.err.println("Thinning 2/2: " + G.getEdgeCount() / 2);
         G.saveAsDot(new File("thinning1.dot"), false, names);
         for (int i = 0; i < N-1; i++) {
             for (int j = i+1; j < N; j++) {
@@ -151,7 +165,7 @@ public class BayesNetwork extends Bayes {
                 }
             }
         }
-        //G.saveAsDot(new File("thinning2.dot"), false, names);//*/
+        G.saveAsDot(new File("thinning2.dot"), false, names);//*/
         System.err.println("orienting: " + G.getEdgeCount() / 2);
         //4. orient edges
         return orientEdges(G, ds, eps); //also weird behaviour here, more edges are created
@@ -483,10 +497,57 @@ public class BayesNetwork extends Bayes {
     }
 
     @Override
-    protected Bayes load(Node root) {
+    protected BayesNetwork load(Node root) {
         //read first the variables.
         //read the definitions, pass the info of the variables to the CPTable load ?
-        throws new UnsupportedOperationException("to be implemented");
+        Map<String, List<String>> variables = new HashMap<String, List<String>>();
+        //same order of the variables!
+        NodeList children = root.getChildNodes();
+        for(int i=0,n=children.getLength();i<n;i++){
+            Node current = children.item(i);
+            if(current.getNodeName().equals("VARIABLE")){
+                NodeList var = current.getChildNodes();
+                String name="";
+                List<String> values = new ArrayList<String>();
+                for(int j=0,m=var.getLength();j<m;j++){
+                    if(var.item(j).getNodeName().equals("NAME"))
+                        name = var.item(j).getTextContent();
+                    else if(var.item(j).getNodeName().equals("OUTCOME"))
+                        values.add(var.item(j).getTextContent());
+                }
+                variables.put(name, values);
+            }
+        }
+        
+        weights = new CPTable[variables.size()];
+        for(int i=0,k=0,n=root.getChildNodes().getLength();i<n;i++){
+            //look up for definitions
+            //table has to generate permutations of the parents in the same order they were written.
+            Node current = children.item(i);
+            if(current.getNodeName().equals("DEFINITION")){
+                weights[k++] = new CPTable(current, variables);
+            }
+        }
+        
+        return this;
+    }
+    
+    public static BayesNetwork getInstance(File xmlbif){
+        try {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            Document doc = db.parse(new FileInputStream(xmlbif));
+            Node root = doc.getElementsByTagName("NETWORK").item(0);
+
+            return new BayesNetwork().load(root);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    public static BayesNetwork getInstance(DataSet ds) {
+        return new BayesNetwork().train(ds);
     }
     
     public static void main(String arg[]) throws Exception {
@@ -501,17 +562,11 @@ public class BayesNetwork extends Bayes {
         System.err.println(cpt.toXMLBIF());//*/
         
         BayesNetwork bn = new BayesNetwork();
-        Graph g = new Graph(5);
-        g.addEdge(0,1,false);
-        g.addEdge(0,2,false);
-        g.addEdge(0,3,false);
-        g.addEdge(0,4,false);
-        g.addEdge(1,4,false);
-        g.addEdge(1,2,false);
-        g.addEdge(2,3,false);
+        bn.train(ds).save(new File("outlook.xml"));
         
-        bn.train(ds).save(new File("outlook.bif"));
-        
+        BayesNetwork bn2 = BayesNetwork.getInstance(new File("outlook.xml"));
+        bn2.save(new File("outlook2.xml"));
+                
         List<Attribute> record = new ArrayList<Attribute>();
         record.add(null);
         record.add(Attribute.getInstance("Rain","outlook"));
@@ -519,7 +574,9 @@ public class BayesNetwork extends Bayes {
         record.add(Attribute.getInstance("High","humidity"));
         record.add(Attribute.getInstance("Weak","wind"));
         
-        System.err.println(bn.eval(record));
+        System.err.println(bn.eval(0,record));
+        System.err.println(bn2.eval(0,record));
+        
         
         //System.err.println(root);
         /*for(List<Attribute> r : ds.getCombinedValuesOf(0,1,2)){

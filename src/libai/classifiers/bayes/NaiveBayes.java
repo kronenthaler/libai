@@ -33,6 +33,8 @@ public class NaiveBayes extends Bayes {
     }
 
     private void initialize(DataSet ds) {
+        MetaData metadata = ds.getMetaData();
+        int outputIndex = ds.getOutputIndex();
         int attributeCount = metadata.getAttributeCount();
         for (Attribute c : metadata.getClasses()) {
             params.put(c, new Object[attributeCount]);
@@ -49,6 +51,8 @@ public class NaiveBayes extends Bayes {
     }
 
     private void precalculate(DataSet ds) {
+        MetaData metadata = ds.getMetaData();
+        int outputIndex = ds.getOutputIndex();
         for (List<Attribute> record : ds) {
             Attribute outputAttr = record.get(outputIndex);
             int j = 0;
@@ -95,6 +99,28 @@ public class NaiveBayes extends Bayes {
             }
         }
     }
+    
+    /** 
+     * Calculates the maximum posterior probability this data record (x) in the data set
+     * against all possible output classes, returns the most likely output using: 
+     * P(Ci|x) > P(Cj|x) 1 <= j < m, i!=j
+     * @param x Vector of evidences
+     * @return The most likely output class for the given evidence.
+     */
+    @Override
+    public Attribute eval(int outputIndex, List<Attribute> x) {
+        Attribute winner = null;
+        double max = -Double.MAX_VALUE;
+        for (Attribute c : metadata.getClasses()) { //different values of the i-th element?
+            double tmp = P(c, x);
+            if (tmp > max) {
+                max = tmp;
+                winner = c;
+            }
+        }
+        
+        return winner;
+    }
 
     //P(H|x) = P(x|H)P(H) / P(x)
     //relaxed calculation of P(H|x). the exact value is not necessary, just to know which class
@@ -109,7 +135,7 @@ public class NaiveBayes extends Bayes {
         //look for all records in ds with class h.
         for (int k = 0, n = x.size(); k < n; k++) {
             Attribute attr = x.get(k);
-            if (metadata.isCategorical(k)) {
+            if (attr instanceof DiscreteAttribute) {
                 p *= (count((DiscreteAttribute) attr, k, h) + 1) / (double) (((Integer) params.get(h)[outputIndex]) + 1);
             } else {
                 p *= gaussian((ContinuousAttribute) attr, k, h);
@@ -230,8 +256,6 @@ public class NaiveBayes extends Bayes {
                 }
             }
         }
-
-        System.err.println(this);
 
         return this;
     }

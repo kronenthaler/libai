@@ -8,6 +8,8 @@ import libai.classifiers.Attribute;
 import libai.common.Pair;
 import libai.common.dataset.CountTree;
 import libai.common.dataset.DataSet;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  *
@@ -17,11 +19,16 @@ public class CPTable {
     private Map<Attribute,Integer> lookupEvent;
     private Map<List<Attribute>, Integer> lookupGiven;
     private double table[][]; //given, event
-    private List<Integer> parents; //important to restore!
+    private List<String> parents; //important to restore!
     
     private CPTable(){
         lookupEvent = new HashMap<Attribute, Integer>();
         lookupGiven = new HashMap<List<Attribute>, Integer>();
+    }
+    
+    public CPTable(Node root, Map<String, List<String>> variables){
+        this();
+        load(root, variables);
     }
     
     public CPTable(DataSet ds, int vertex){
@@ -37,13 +44,15 @@ public class CPTable {
     
     public CPTable(DataSet ds, CountTree countTree, List<Integer> parents, int vertex){
         this();
-        this.parents = parents;
+        this.parents = new ArrayList<String>();
         
         int N = ds.getItemsCount();
         Map<Attribute, Integer> events = ds.getFrequencies(0, N, vertex);
         int combinations = 1;
-        for(Integer parent : parents)
+        for(Integer parent : parents){
+            this.parents.add(ds.getMetaData().getAttributeName(parent));
             combinations *= ds.getFrequencies(0, N, parent).size();
+        }
         
         table = new double[combinations][events.size()];
         for(int i=0;i<combinations;i++)
@@ -104,8 +113,9 @@ public class CPTable {
         List<Attribute> evidenceSubset = null;
         if(parents != null){
             evidenceSubset = new ArrayList<Attribute>();
-            for(Integer parent : parents){
-                evidenceSubset.add(evidence.get(parent));
+            for(Attribute attr : evidence){
+                if(parents.contains(attr.getName()))
+                    evidenceSubset.add(attr);
             }
         }
         return P1(event, evidenceSubset);
@@ -119,7 +129,61 @@ public class CPTable {
         return lookupEvent.keySet();
     }
     
+    private void generateLookupGiven(Map<String, List<String>> variables, int currentIndex, List<Attribute> currentValues){
+        if(parents == null){
+            lookupGiven.put(null, lookupGiven.size());
+            return;
+        }
+        if(currentIndex >= parents.size()){
+            lookupGiven.put(currentValues, lookupGiven.size());
+            return;
+        }
+        
+        for(String value : variables.get(parents.get(currentIndex))){
+            List<Attribute> newValues = new ArrayList<Attribute>(currentValues);
+            newValues.add(Attribute.getInstance(value, parents.get(currentIndex)));
+            generateLookupGiven(variables, currentIndex+1, newValues);
+        }
+    }
+    
     //load from XML node formatted as BIF. it might require some aditional info, about the variables and their values.
+    public CPTable load(Node root, Map<String, List<String>> variables){
+        //read up the node's info and then process it.
+        NodeList children = root.getChildNodes();
+        String event = "";
+        String[] tableTokens = null;
+        int combinations = 1;
+        for(int i=0,n=children.getLength();i<n;i++){
+            Node current = children.item(i);
+            if(current.getNodeName().equals("FOR")){
+                event = current.getTextContent();
+            }else if(current.getNodeName().equals("GIVEN")){
+                String parent = current.getTextContent();
+                if(parents == null)
+                    parents = new ArrayList<String>();
+                parents.add(parent);
+                combinations *= variables.get(parent).size();
+            }else if(current.getNodeName().equals("TABLE"))
+                tableTokens = current.getTextContent().split("[^0-9\\.]");
+        }
+        
+        //initialize the table
+        this.table = new double[combinations][variables.get(event).size()];
+        
+        //initialize the lookup hashes in order of the variable values (sorted permutation in the parents)
+        for(String value : variables.get(event)){
+            lookupEvent.put(Attribute.getInstance(value, event), lookupEvent.size());
+        }
+        generateLookupGiven(variables, 0, new ArrayList<Attribute>());
+        
+        //assign the table values in the proper order.
+        //go over the table Tokens.
+        for(int i=0,k=0;i<combinations;i++)
+            for(int j=0;j<variables.get(event).size();j++,k++)
+                table[i][j] = Double.parseDouble(tableTokens[k]);
+        
+        return this;
+    }
     
     public boolean save(File path){
         try{
@@ -139,12 +203,11 @@ public class CPTable {
         str.append("<DEFINITION>\n");
         //attribute name in the events.
         Attribute event = lookupEvent.keySet().iterator().next();
-        str.append("<FOR>").append(event.getName()).append("<FOR>\n"); 
+        str.append("<FOR>").append(event.getName()).append("</FOR>\n"); 
         
-        List<Attribute> evidence = lookupGiven.keySet().iterator().next();
-        if(evidence!=null){
-            for(Attribute attr : evidence){
-                str.append("<GIVEN>").append(attr.getName()).append("</GIVEN>\n"); //as many as the evidence list
+        if(parents!=null){
+            for(String name : parents){
+                str.append("<GIVEN>").append(name).append("</GIVEN>\n"); //as many as the evidence list
             }
         }
         
@@ -179,7 +242,6 @@ public class CPTable {
     public String toString(){
         StringBuilder str = new StringBuilder();
         int spacing = 0;
-        int spacing2 = 0;
         for(Attribute key : lookupEvent.keySet()){
             spacing = Math.max(spacing, key.toString().length());
         }

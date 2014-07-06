@@ -10,9 +10,9 @@ import org.w3c.dom.Node;
  * @author kronenthaler
  */
 public abstract class Bayes {
-    protected int outputIndex;
-    protected int totalCount;
-    protected MetaData metadata;
+    protected int outputIndex; //can be removed when tge CPT is used.
+    protected int totalCount; //can be removed when the CPT is used.
+    protected MetaData metadata; //can be removed when the CPT is used.
     protected CountTree countTree;
     
     // include a method to create a frequency tree and use it for every counting related activity.
@@ -31,26 +31,8 @@ public abstract class Bayes {
     /** Calculates the condition probability of h given the vector of evidence x. */
     protected abstract double P(Attribute h, List<Attribute> x);
     
-    /** 
-     * Calculates the maximum posterior probability this data record (x) in the data set
-     * against all possible output classes, returns the most likely output using: 
-     * P(Ci|x) > P(Cj|x) 1 <= j < m, i!=j
-     * @param x Vector of evidences
-     * @return The most likely output class for the given evidence.
-     */
-    public Attribute eval(List<Attribute> x) {
-        Attribute winner = null;
-        double max = -Double.MAX_VALUE;
-        for (Attribute c : metadata.getClasses()) {
-            double tmp = P(c, x);
-            if (tmp > max) {
-                max = tmp;
-                winner = c;
-            }
-        }
-        
-        return winner;
-    }
+    //this might be reimplemented here if both algorithms use the CPTable structure.
+    public abstract Attribute eval(int outputIndex, List<Attribute> x);
     
     //need some factory methods.
     // implement http://www.cs.cmu.edu/~fgcozman/Research/InterchangeFormat/ XMLBIF
