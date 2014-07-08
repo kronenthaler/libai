@@ -1,15 +1,20 @@
 package libai.classifiers.bayes;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import libai.classifiers.*;
 import libai.common.*;
 import libai.common.dataset.DataSet;
 import libai.common.dataset.MySQLDataSet;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 /**
  *
@@ -23,6 +28,7 @@ public class K2 extends BayesNetwork{
     }
     
     public K2(List<Integer> ordering, int upperBound){
+        this();
         this.ordering = ordering;
         this.upperBound = upperBound;
     }
@@ -116,6 +122,25 @@ public class K2 extends BayesNetwork{
         for(long i=n;i>=1;i--) 
             fact += Math.log(i);
         return fact;
+    }
+    
+    //Factories
+    public static K2 getInstance(File path) {
+        try {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            Document doc = db.parse(new FileInputStream(path));
+            Node root = doc.getElementsByTagName("NaiveBayes").item(0);
+
+            return (K2)new K2().load(root);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static K2 getInstance(DataSet ds) {
+        return (K2)new K2().train(ds);
     }
     
     public static void main(String arg[])throws Exception{

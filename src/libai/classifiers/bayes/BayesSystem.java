@@ -16,8 +16,12 @@ import libai.common.Graph;
 import libai.common.dataset.*;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
 /**
- *
+ * TODO:
+ * - check the calculation of the P(x|E) is correct [need a text book to check]
+ * - consider continuous attributes.
+ * - 
  * @author kronenthaler
  */
 public abstract class BayesSystem {

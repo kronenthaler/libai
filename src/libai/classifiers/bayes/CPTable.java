@@ -12,7 +12,11 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- *
+ * TODO: 
+ * - manage continuous probabilities
+ * - parse the new version of the format
+ * - check the calculation of the probabilities.
+ * 
  * @author kronenthaler
  */
 public class CPTable {

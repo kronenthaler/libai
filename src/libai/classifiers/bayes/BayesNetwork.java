@@ -14,9 +14,14 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
+ * TODO: 
+ * - make it work with the same results as in the paper
+ * - double check the paper for hidden details in the first part of the algorithm
+ * - implement the variant that receives the ordering as parameter to check correctness.
+ * 
  * Implementation based on the technical report of Jie-Cheng for BayesSystem
  PowerConstruct.
- *
+ * 
  * @author kronenthaler
  */
 public class BayesNetwork extends BayesSystem {
