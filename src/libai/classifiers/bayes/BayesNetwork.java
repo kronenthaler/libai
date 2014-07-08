@@ -7,88 +7,24 @@ import java.util.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import libai.classifiers.*;
-import libai.classifiers.bayes.Bayes;
+import libai.classifiers.bayes.BayesSystem;
 import libai.common.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * Implementation based on the technical report of Jie-Cheng for Bayes
- * PowerConstruct.
+ * Implementation based on the technical report of Jie-Cheng for BayesSystem
+ PowerConstruct.
  *
  * @author kronenthaler
  */
-public class BayesNetwork extends Bayes {
+public class BayesNetwork extends BayesSystem {
     public static final double EPSILON = 0.01;
-    protected CPTable weights[];
     private Set<Integer> childs[];
     
     @Override
-    public BayesNetwork train(DataSet ds) {
-        //outputIndex = ds.getOutputIndex();
-        initCountTree(ds);
-        
-        Graph structure = getStructure(ds, EPSILON);
-        weights = new CPTable[structure.getVertexCount()];
-        
-        //for each vertex, calculate the weight given the structure.
-        for(int i=0;i<weights.length;i++){
-            weights[i] = learnWeights(i, structure, ds);
-        }
-        
-        return this;
-    }
-    
-    private CPTable learnWeights(int vertex, Graph g, DataSet ds){
-        //get the parents of vertex.
-        List<Integer> parents = new ArrayList<Integer>();
-        for(int i=0;i<g.getVertexCount();i++){
-            if(i == vertex) continue;
-            if(g.isParent(i, vertex)){ //i is parent of vertex
-                parents.add(i);
-            }
-        }
-        Collections.sort(parents);
-        
-        if(parents.isEmpty())
-            return new CPTable(ds, vertex);
-            
-        return new CPTable(ds, countTree, parents, vertex);
-    }
-    
-    @Override
-    public Attribute eval(int outputIndex, List<Attribute> x) {
-        Attribute winner = null;
-        double max = -Double.MAX_VALUE;
-        for (Attribute c : weights[outputIndex].getEventValues()) {
-            x.remove(outputIndex); //remove placeholder attribute
-            x.add(outputIndex, c); //insert the current value in use
-            double tmp = P(c, x);
-            if (tmp > max) {
-                max = tmp;
-                winner = c;
-            }
-        }
-        
-        return winner;
-    }
-    
-    @Override
-    protected double P(Attribute c, List<Attribute> x){
-        //iterate over all parents of outputIndex, all the way up, until there is no more parents.
-        //acumulate the results multiplying them.
-        double p = 1;
-        for(int current=0; current < weights.length; current++){
-            Attribute z = x.get(current);
-            double d = weights[current].P(z, x);
-            p *= d;
-        }
-        System.err.printf("P(%s | %s) = %f\n", c,x, p);
-        return p;
-    }
-    
-    private Graph getStructure(DataSet ds, double eps) {
+    protected Graph getStructure(DataSet ds, double eps) {
         String[] names = new String[ds.getMetaData().getAttributeCount()];
         for (int i = 0; i < names.length; i++)
             names[i] = ds.getMetaData().getAttributeName(i).replace("-", "_");
@@ -475,77 +411,6 @@ public class BayesNetwork extends Bayes {
         return info;
     }
 
-    @Override
-    public boolean save(File path) {
-        try{
-            PrintStream out = new PrintStream(path);
-            out.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-            out.println("<BIF VERSION=\"0.3\">");
-            out.println("<NETWORK>");
-            out.println("<NAME><![CDATA["+path+"]]></NAME>");
-            
-            for(CPTable table : weights){
-                Set<Attribute> v = table.getEventValues();
-                Attribute[] values = v.toArray(new Attribute[0]);
-                Arrays.sort(values);
-                
-                //all variables
-                out.println("<VARIABLE TYPE=\"nature\">");
-                out.println("<NAME>"+values[0].getName()+"</NAME>");
-                for(Attribute outcome : values)
-                    out.println("<OUTCOME>"+outcome.getValue()+"</OUTCOME>");
-                out.println("</VARIABLE>");
-                
-                //all tables
-                out.println(table.toXMLBIF());
-            }
-            
-            out.println("</NETWORK>");
-            out.println("</BIF>");
-            out.close();
-        }catch(FileNotFoundException ex){
-            return false;
-        }
-        
-        return true;
-    }
-
-    @Override
-    protected BayesNetwork load(Node root) {
-        //read first the variables.
-        //read the definitions, pass the info of the variables to the CPTable load ?
-        Map<String, List<String>> variables = new HashMap<String, List<String>>();
-        //same order of the variables!
-        NodeList children = root.getChildNodes();
-        for(int i=0,n=children.getLength();i<n;i++){
-            Node current = children.item(i);
-            if(current.getNodeName().equals("VARIABLE")){
-                NodeList var = current.getChildNodes();
-                String name="";
-                List<String> values = new ArrayList<String>();
-                for(int j=0,m=var.getLength();j<m;j++){
-                    if(var.item(j).getNodeName().equals("NAME"))
-                        name = var.item(j).getTextContent();
-                    else if(var.item(j).getNodeName().equals("OUTCOME"))
-                        values.add(var.item(j).getTextContent());
-                }
-                variables.put(name, values);
-            }
-        }
-        
-        weights = new CPTable[variables.size()];
-        for(int i=0,k=0,n=root.getChildNodes().getLength();i<n;i++){
-            //look up for definitions
-            //table has to generate permutations of the parents in the same order they were written.
-            Node current = children.item(i);
-            if(current.getNodeName().equals("DEFINITION")){
-                weights[k++] = new CPTable(current, variables);
-            }
-        }
-        
-        return this;
-    }
-    
     public static BayesNetwork getInstance(File xmlbif){
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -553,7 +418,7 @@ public class BayesNetwork extends Bayes {
             Document doc = db.parse(new FileInputStream(xmlbif));
             Node root = doc.getElementsByTagName("NETWORK").item(0);
 
-            return new BayesNetwork().load(root);
+            return (BayesNetwork)new BayesNetwork().load(root);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -561,7 +426,7 @@ public class BayesNetwork extends Bayes {
     }
     
     public static BayesNetwork getInstance(DataSet ds) {
-        return new BayesNetwork().train(ds);
+        return (BayesNetwork)new BayesNetwork().train(ds);
     }
     
     public static void main(String arg[]) throws Exception {

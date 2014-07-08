@@ -17,21 +17,46 @@ import org.w3c.dom.NodeList;
  *
  * @author kronenthaler
  */
-public class NaiveBayes extends Bayes {
+public class NaiveBayes extends BayesSystem {
     protected HashMap<Attribute, Object[]> params;
 
-    public NaiveBayes train(DataSet ds) {
+    @Override
+    protected Graph getStructure(DataSet ds, double eps){
+        return new Graph(ds.getMetaData().getAttributeCount()); //disconnected graph
+    }
+
+    //Factories
+    public static NaiveBayes getInstance(File path) {
+        try {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            Document doc = db.parse(new FileInputStream(path));
+            Node root = doc.getElementsByTagName("NaiveBayes").item(0);
+
+            return (NaiveBayes)new NaiveBayes().load(root);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static NaiveBayes getInstance(DataSet ds) {
+        return (NaiveBayes)new NaiveBayes().train(ds);
+    }
+    
+    /*
+    public NaiveBayes train2(DataSet ds) {
         outputIndex = ds.getOutputIndex();
         totalCount = ds.getItemsCount();
         metadata = ds.getMetaData();
-
+        
         params = new HashMap<Attribute, Object[]>();
         initialize(ds);
         precalculate(ds);
 
         return this;
     }
-
+    
     private void initialize(DataSet ds) {
         MetaData metadata = ds.getMetaData();
         int outputIndex = ds.getOutputIndex();
@@ -100,13 +125,6 @@ public class NaiveBayes extends Bayes {
         }
     }
     
-    /** 
-     * Calculates the maximum posterior probability this data record (x) in the data set
-     * against all possible output classes, returns the most likely output using: 
-     * P(Ci|x) > P(Cj|x) 1 <= j < m, i!=j
-     * @param x Vector of evidences
-     * @return The most likely output class for the given evidence.
-     */
     @Override
     public Attribute eval(int outputIndex, List<Attribute> x) {
         Attribute winner = null;
@@ -120,12 +138,11 @@ public class NaiveBayes extends Bayes {
         }
         
         return winner;
-    }
-
+    } 
+    
     //P(H|x) = P(x|H)P(H) / P(x)
     //relaxed calculation of P(H|x). the exact value is not necessary, just to know which class
     //has the highest value.
-    @Override
     protected double P(Attribute h, List<Attribute> x) {
         return P(x, h) * P(h);
     }
@@ -163,26 +180,7 @@ public class NaiveBayes extends Bayes {
         double x = xk.getValue();
         return Math.exp(-(Math.pow(x - mean, 2) / (2 * sd))) * (1 / (Math.sqrt(2 * Math.PI * sd)));
     }
-
-    //Factories
-    public static NaiveBayes getInstance(File path) {
-        try {
-            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-            DocumentBuilder db = dbf.newDocumentBuilder();
-            Document doc = db.parse(new FileInputStream(path));
-            Node root = doc.getElementsByTagName("NaiveBayes").item(0);
-
-            return new NaiveBayes().load(root);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public static NaiveBayes getInstance(DataSet ds) {
-        return new NaiveBayes().train(ds);
-    }
-
+    
     //IO functions
     @Override
     public boolean save(File path) {
@@ -278,5 +276,5 @@ public class NaiveBayes extends Bayes {
             }
         }
         return freq;
-    }
+    }*/
 }

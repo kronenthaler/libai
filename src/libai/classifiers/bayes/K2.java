@@ -15,28 +15,20 @@ import libai.common.dataset.MySQLDataSet;
  *
  * @author kronenthaler
  */
-public class BayesNetworkK2 extends BayesNetwork{
+public class K2 extends BayesNetwork{
     private List<Integer> ordering;
     private int upperBound;
     
-    public BayesNetworkK2(){
+    public K2(){
     }
     
-    public BayesNetworkK2(List<Integer> ordering, int upperBound){
+    public K2(List<Integer> ordering, int upperBound){
         this.ordering = ordering;
         this.upperBound = upperBound;
     }
     
     @Override
-    public BayesNetworkK2 train(DataSet ds) {
-        initCountTree(ds);
-        //do it.
-        Graph G = getStructure(ds, 0);
-        //learnWeights(G, ds);
-        return this;
-    }
-    
-    private Graph getStructure(DataSet ds, double eps) {    
+    protected Graph getStructure(DataSet ds, double eps) {    
         Graph G = new Graph(ds.getMetaData().getAttributeCount());
         int N = G.getVertexCount();
         for(int i=0;i<N;i++){
@@ -146,7 +138,7 @@ public class BayesNetworkK2 extends BayesNetwork{
 //        ordering.add(1);
 //        ordering.add(2);
                 
-        BayesNetworkK2 bn = new BayesNetworkK2(ordering, 2);
+        K2 bn = new K2(ordering, 1);
         bn.train(ds);
     }
 }
