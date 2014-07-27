@@ -35,7 +35,7 @@ public abstract class BayesSystem {
     protected abstract Graph getStructure(DataSet ds, double eps);
     
     // include a method to create a frequency tree and use it for every counting related activity.
-    private void initCountTree(DataSet ds){
+    protected void initCountTree(DataSet ds){
         countTree = new CountTree(ds);
     }
     

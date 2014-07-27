@@ -177,6 +177,10 @@ public class Graph {
     }
 
     public Set<Integer> adjacencyPath(int X, int Y, boolean ignoreDirection) {
+        return adjacencyPath(X, Y, ignoreDirection, false);
+    }
+    
+    public Set<Integer> adjacencyPath(int X, int Y, boolean ignoreDirection, boolean all) {
         Set<Integer> path = new HashSet<Integer>();
         HashSet<Integer> visited = new HashSet<Integer>();
         List<Pair<Integer, Pair>> queue = new ArrayList<Pair<Integer, Pair>>();
@@ -184,15 +188,18 @@ public class Graph {
 
         while (!queue.isEmpty()) {
             Pair<Integer, Pair> current = queue.remove(0);
-            visited.add(current.first);
-            if (current.first == Y) {
+            if (current.first == Y) { //what happen if there is more than one path?
                 while (current != null) {
                     path.add(current.first);
                     current = current.second;
                 }
-                continue;// all paths
+                if(all)
+                    continue;// all paths
+                else
+                    break;
             }
-
+            
+            visited.add(current.first);
             for (int i = 0; i < M.getColumns(); i++) {
                 if (!visited.contains(i)) {
                     if (isEdge(current.first, i, ignoreDirection)) {

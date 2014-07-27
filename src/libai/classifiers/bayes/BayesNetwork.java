@@ -27,27 +27,24 @@ import org.w3c.dom.NodeList;
 public class BayesNetwork extends BayesSystem {
     public static final double EPSILON = 0.01;
     private Set<Integer> childs[];
+    private Map<Pair<Integer, Integer>, Set<Integer>> CutSet = new HashMap<Pair<Integer, Integer>, Set<Integer>>();
     
     @Override
     protected Graph getStructure(DataSet ds, double eps) {
         String[] names = new String[ds.getMetaData().getAttributeCount()];
         for (int i = 0; i < names.length; i++)
-            names[i] = ds.getMetaData().getAttributeName(i).replace("-", "_");
+            names[i] = ""+(i+1);//ds.getMetaData().getAttributeName(i).replace("-", "_");//
 
         Graph G = new Graph(ds.getMetaData().getAttributeCount());
         int N = G.getVertexCount();
         
-        childs = new Set[N];
-        for(int i=0;i<N;i++)
-            childs[i]=new HashSet<Integer>();
-        
         //1. Drafting
         List<Pair<Double, Pair<Integer, Integer>>> L = new ArrayList<Pair<Double, Pair<Integer, Integer>>>();
         //calculate the mutual information between every pair of nodes first.
-        for (int x = 0; x < N - 1; x++) {
+        for (int x = 0; x < N; x++) {
             for (int y = x + 1; y < N; y++) {
                 double info = I(ds, x, y);
-                if (x != y && info > eps) {
+                if (x != y && info >= eps) {
                     L.add(new Pair<Double, Pair<Integer, Integer>>(info, new Pair<Integer, Integer>(x, y)));
                     L.add(new Pair<Double, Pair<Integer, Integer>>(info, new Pair<Integer, Integer>(y, x)));
                 }
@@ -58,11 +55,8 @@ public class BayesNetwork extends BayesSystem {
         Collections.reverse(L);
 
         //take the first 2 edges and add them to E, remove'em from L
-        G.addEdge(L.remove(0).second, true);
-        G.addEdge(L.remove(0).second, true);
-        
         //for the rest: while number of edges is N-1 or L is empty:
-        //if there is no adjacency path between x,y, add to E, remove it anyway
+        //if there is no adjacency path between x,y, add to E, remove it
         int head = 0;
         while (!L.isEmpty() && head < L.size() && G.getEdgeCount() / 2 < N - 1) {
             Pair<Integer, Integer> e = L.get(head).second;
@@ -72,78 +66,81 @@ public class BayesNetwork extends BayesSystem {
             } else
                 head++;
         }
-        G.saveAsDot(new File("drafting.dot"), false, names);
+        G.saveAsDot(new File("1drafting.dot"), false, names);
         System.err.println("Drafting: " + G.getEdgeCount() / 2);
-        //2. Thickering
+        
+        //2. Thickening
         while (!L.isEmpty()) {
+            System.err.println(L.size());
             Pair<Integer, Integer> e = L.remove(0).second;
-            if (!tryToSeparateA(G, e, ds, eps)) {
+            if (!edgeNeededHeuristic(G, e, ds, eps)) {
                 G.addEdge(e, true);
             }
         }
-        System.err.println("Thickering: " + G.getEdgeCount() / 2);
-        G.saveAsDot(new File("thickering.dot"), false, names);
+        System.err.println("Thickening: " + G.getEdgeCount() / 2);
+        G.saveAsDot(new File("2thickening.dot"), false, names);
+        
         //3. Thinning
-        for (int i = 0; i < N-1; i++) {
-            for (int j = i+1; j < N; j++) {
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                if(i == j) continue;
                 if (G.isEdge(i, j, true)) {
                     Pair<Integer, Integer> e = new Pair<Integer, Integer>(i, j);
-                    if (G.pathExists(i, j, e)) { //this might be the problem
+                    if (G.pathExists(i, j, e)) {
                         G.removeEdge(i, j, true);
-                        if (!tryToSeparateA(G, e, ds, eps))
+                        if (!edgeNeededHeuristic(G, e, ds, eps))
                             G.addEdge(e, true);
                     }
                 }
             }
         }
         System.err.println("Thinning 1/2: " + G.getEdgeCount() / 2);
-        G.saveAsDot(new File("thinning1.dot"), false, names);
-        for (int i = 0; i < N-1; i++) {
-            for (int j = i+1; j < N; j++) {
+        G.saveAsDot(new File("3thinning1.dot"), false, names);
+        
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                if(i==j) continue;
                 if (G.isEdge(i, j, true)) {
                     Pair<Integer, Integer> e = new Pair<Integer, Integer>(i, j);
                     if (G.pathExists(i, j, e)) {
                         G.removeEdge(i, j, true);
-                        if (!tryToSeparateB(G, e, ds, eps))
+                        if (!edgeNeeded(G, e, ds, eps))
                             G.addEdge(e, true);
                     }
                 }
             }
         }
         System.err.println("Thinning 2/2: " + G.getEdgeCount() / 2);
-        G.saveAsDot(new File("thinning2.dot"), false, names);//*/
+        G.saveAsDot(new File("4thinning2.dot"), false, names);//*/
         
         //4. orient edges
         G = orientEdges(G, ds, eps); //also weird behaviour here, more edges are created
         System.err.println("orienting: " + G.getEdgeCount());
-        G.saveAsDot(new File("oriented.dot"), true, names);//*/
+        G.saveAsDot(new File("5oriented.dot"), true, names);//*/
         return G;
     }
 
-    private boolean tryToSeparateA(Graph G, Pair<Integer, Integer> e, DataSet ds, double eps) {
+    private boolean edgeNeededHeuristic(Graph G, Pair<Integer, Integer> e, DataSet ds, double eps) {
         int X = e.first;
         int Y = e.second;
         //check this again, the intersection are making the |c| = 1 and breaking.
-        Set<Integer> path = G.adjacencyPath(X, Y, true);
-        Set<Integer> N1 = G.neighbors(X, true);
-        N1.retainAll(path);
-        N1.removeAll(childs[X]);
-        Set<Integer> N2 = G.neighbors(Y, true);
-        N2.retainAll(path);
-        N2.removeAll(childs[Y]);
+        //Set<Integer> path = G.adjacencyPath(X, Y, true); //get just the neighbors that can reach target!
+        Set<Integer> N1 = neighborsToPath(X, Y, G);//G.neighbors(X, true);
+        Set<Integer> N2 = neighborsToPath(Y, X, G);//G.neighbors(Y, true);
         
         Set<Integer>[] order = new Set[]{
             N1.size() > N2.size() ? N2 : N1,
             N1.size() <= N2.size() ? N1 : N2
         };
-        int currentOrder = N1.size() <= N2.size() ? 0 : 1;
-
+        
         for (Set<Integer> C : order) {
             double v = I(ds, X, Y, C);
-            if (v < eps)
+            if (v < eps){
                 return true;
+            }
 
             while (C.size() > 1) { //condition set
+                System.err.println("|C|: "+C.size());
                 Set<Integer> Cx[] = new Set[C.size()];
                 double vx[] = new double[C.size()];
                 double min = Double.MAX_VALUE;
@@ -161,65 +158,93 @@ public class BayesNetwork extends BayesSystem {
                 if (vx[m] < eps) {
                     return true;
                 } else if (vx[m] > v) {
-                    childs[m].add(currentOrder == 0 ? X : Y);
                     break;
                 } else {
                     C = Cx[m];
+                    v = vx[m];// from the paper.
                 }
             }
-            currentOrder = 1-currentOrder;
         }
 
         return false;
     }
 
-    private boolean tryToSeparateB(Graph G, Pair<Integer, Integer> e, DataSet ds, double eps) {
+    private boolean edgeNeeded(Graph G, Pair<Integer, Integer> e, DataSet ds, double eps) {
         int X = e.first;
         int Y = e.second;
-        Set<Integer> path = G.adjacencyPath(X, Y, true);
-        Set<Integer> N1 = sequence(X, path, G);
-        Set<Integer> N2 = sequence(Y, path, G);
+        //Set<Integer> path = G.adjacencyPath(X, Y, true);
+        Set<Integer> N1 = neighborsOfNeighborsToPath(X,Y,G);//sequence(X, path, G);
+        Set<Integer> N2 = neighborsOfNeighborsToPath(Y,X,G);//sequence(Y, path, G);
         Set<Integer> C = N1.size() < N2.size() ? N1 : N2;
-        Set<Integer> Cs;
-
-        while (true) {
-            double v = I(ds, X, Y, C);
-            if (v < eps)
-                return true;
-            else if (C.size() == 1)
-                return false;
-
-            Cs = new HashSet<Integer>(C);
+        
+        double s = I(ds, X, Y, C);
+        if (s < eps){
+            return true;
+        }
+        
+        while (C.size() > 1) { //condition set
+            System.err.println("|C|: "+C.size());
+            Set<Integer> Cx[] = new Set[C.size()];
+            double sm[] = new double[C.size()];
+            double min = Double.MAX_VALUE;
+            int i = 0, m = -1;
             for (Integer x : C) {
-                Set<Integer> tmp = new HashSet<Integer>(C);
-                tmp.remove(x);
-                double vi = I(ds, X, Y, tmp);
-                if (vi < eps)
-                    return true;
-                if (vi <= v + eps)
-                    Cs.remove(x);
+                Cx[i] = new HashSet<Integer>(C);
+                Cx[i].remove(x);
+                sm[i] = I(ds, X, Y, Cx[i]);
+                if (sm[i] < min) {
+                    min = sm[i];
+                    m = i;
+                }
             }
 
-            if (Cs.size() < C.size())
-                C = Cs;
-            else
+            if (sm[m] < eps) {
+                return true;
+            } else if (sm[m] > s) {
                 break;
+            } else {
+                C = Cx[m];
+                s = sm[m];// from the paper.
+            }
         }
-
+        
         return false;
     }
 
+    private Set<Integer> neighborsToPath(int X, int Y, Graph G){
+        Set<Integer> neighbors = new HashSet<Integer>();
+        Set<Integer> Sx = G.neighbors(X, true);
+        for(Integer neighbor : Sx){
+            if(!G.adjacencyPath(neighbor, Y, true).isEmpty()){
+                neighbors.add(neighbor);
+            }
+        }
+        
+        return neighbors;
+    }
+    
+    private Set<Integer> neighborsOfNeighborsToPath(int X, int Y, Graph G){
+        Set<Integer> neighbors = new HashSet<Integer>();
+        Set<Integer> N = neighborsToPath(X, Y, G);
+        for(Integer neighbor : N){
+            neighbors.addAll(neighborsToPath(neighbor, Y, G));
+        }
+        neighbors.remove(X);
+        neighbors.remove(Y);
+        
+        return neighbors;
+    }
+    
     private Set<Integer> sequence(int X, Set<Integer> adjPath, Graph G) {
-        //TODO: double/triple check this function, something seem off...
         Set<Integer> Sx = G.neighbors(X, true);
         Sx.retainAll(adjPath);
         Set<Integer> Sx1 = new HashSet<Integer>();
         for (Integer x : Sx) {
             Set<Integer> aux = G.neighbors(x, true);
-            aux.retainAll(adjPath);
             aux.removeAll(Sx);
             Sx1.addAll(aux);
         }
+        Sx1.retainAll(adjPath);
         Sx.addAll(Sx1);
 
         return Sx;
@@ -249,15 +274,15 @@ public class BayesNetwork extends BayesSystem {
 
                 //find the neighbors of s1 and s2 that are on the adjacency paths between s1 and s2.
                 //Put them into two sets N1 and N2 respectively.
-                Set<Integer> path = G.adjacencyPath(s1, s2, true);
+                Set<Integer> path = G.adjacencyPath(s1, s2, true, true);
 
                 //2. Find the neighbors of the nodes in N1 that are on the adjacency paths between s1 and s2, and do not belong to
                 //N1. Put them into set N1’.
-                N1 = sequence(s1, path, G);
+                N1 = sequence(s1, path, G);//sequence(s1, path, G);
 
                 //3. Find the neighbors of the nodes in N2 that are on the adjacency paths between s1 and s2, and do not belong to
                 //N2. Put them into set N2’.
-                N2 = sequence(s2, path, G);
+                N2 = sequence(s2, path, G);//sequence(s2, path, G);
 
                 //4. If |N1+N1’| < |N2+N2’| let set C=N1+N1’ else let C=N2+N2’.
                 Set<Integer> C = (N1.size() < N2.size()) ? N1 : N2;
@@ -356,6 +381,56 @@ public class BayesNetwork extends BayesSystem {
 
         return G;
     }
+    
+    private Graph orientEdges2(Graph G, DataSet ds, double eps){
+        int N = G.getVertexCount();
+        for(int x=0;x<N;x++){
+            for(int y=0;y<N;y++){
+                if(x==y) continue;
+                for(int z=0;z<N;z++){
+                    if(x==z || y==z) continue;
+                    if(G.isEdge(x, y, true) &&
+                       G.isEdge(y, z, true) &&
+                       !G.isEdge(x, z, true)){
+                        Set<Integer> cs = CutSet.get(new Pair<Integer,Integer>(x,z));
+                        if(cs==null || !cs.contains(y)){
+                            G.removeEdge(x, y, true);
+                            G.removeEdge(z, y, true);
+                            G.addEdge(x, y, false);
+                            G.addEdge(z, y, false);
+                        }
+                    }
+                }
+            }
+        }
+        
+        for(int x=0;x<N;x++){
+            for(int y=0;y<N;y++){
+                if(x==y) continue;
+                for(int z=0;z<N;z++){
+                    if(x==z || y==z) continue;
+                    if(G.isParent(x, y) &&
+                       G.isEdge(y, z, true) &&
+                       !G.isEdge(x, z, true) &&
+                       !G.isOriented(y, z)){
+                        G.removeEdge(y, z, true);
+                        G.addEdge(y, z, false);
+                    }
+                }
+            }
+        }
+        
+        for(int x=0;x<N;x++){
+            for(int y=0;y<N;y++){
+                if(x==y || !G.isEdge(x, y, true)) continue;
+                if(!G.isOriented(x, y) && G.adjacencyPath(x, y, false).size() > 0){
+                    G.removeEdge(x,y,true);
+                    G.addEdge(x,y,false);
+                }
+            }
+        }
+        return G;
+    }
 
     private double I(DataSet ds, int X, int Y, Set<Integer> Z) {
         double info = 0;
@@ -393,7 +468,7 @@ public class BayesNetwork extends BayesSystem {
             z.add(x);
             double Pxyz = (countTree.getCount(z.toArray(new Pair[0])) / (double) N);
 
-            info += (Pxyz) * Math.log((Pxyz * Pz) / (Pxz * Pyz));
+            info += (Pxyz) * (Math.log(Pxyz * Pz) - Math.log(Pxz) - Math.log(Pyz));
         }
         return info;
     }
@@ -401,17 +476,15 @@ public class BayesNetwork extends BayesSystem {
     private double I(DataSet ds, int X, int Y) {
         double info = 0;
         int N = ds.getItemsCount();
-        Map<Attribute, Integer> freqX = ds.getFrequencies(0, N, X);
-        Map<Attribute, Integer> freqY = ds.getFrequencies(0, N, Y);
         for (List<Attribute> record : ds.getCombinedValuesOf(X, Y)) {
             Attribute valuex = record.get(X);
             Attribute valuey = record.get(Y);
             Pair<Integer, Attribute> x = new Pair<Integer, Attribute>(X, valuex);
             Pair<Integer, Attribute> y = new Pair<Integer, Attribute>(Y, valuey);
-            double Px = freqX.get(valuex) / (double) N;
-            double Py = freqY.get(valuey) / (double) N;
-            double Pxy = ((countTree.getCount(x, y) / (double) N));
-            info += Pxy * Math.log(Pxy / (Px * Py));
+            double Px = countTree.getCount(x) / (double) N;
+            double Py = countTree.getCount(y) / (double) N;
+            double Pxy = countTree.getCount(x, y) / (double) N;
+            info += Pxy * (Math.log(Pxy) - Math.log(Px) - Math.log(Py));
         }
         return info;
     }
@@ -437,8 +510,25 @@ public class BayesNetwork extends BayesSystem {
     public static void main(String arg[]) throws Exception {
         Class.forName("com.mysql.jdbc.Driver");
         Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/iris", "root", "r00t");
-        DataSet ds = new MySQLDataSet(conn, "alarm2", 0);
+        DataSet ds = new MySQLDataSet(conn, "alarm4", 0);
+        int N = ds.getMetaData().getAttributeCount();
+        BayesNetwork bn = new BayesNetwork();
+        bn.initCountTree(ds);
+        Graph G = bn.getStructure(ds, EPSILON);
         
-        BayesNetwork.getInstance(ds);
+        /*for(int i=0;i<N;i++){
+            for(int j=0;j<N;j++){
+                if(i==j) continue;
+                Set<Integer> adj = G.adjacencyPath(i, j, true);
+                Set<Integer> N1 = G.neighbors(i, true);
+                N1.retainAll(adj);
+                
+                Set<Integer> N2 = bn.neighborsToPath(i, j, G);
+                
+                System.err.println(N2+" "+N1);
+            }
+        }*/
+        
+        //BayesNetwork.getInstance(ds);
     }
 }   
