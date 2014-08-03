@@ -1,11 +1,11 @@
 package libai.classifiers.bayes;
 
-import com.sun.corba.se.impl.util.RepositoryId;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.*;
 import libai.classifiers.Attribute;
+import libai.classifiers.ContinuousAttribute;
 
 import libai.common.*;
 import libai.common.dataset.DataSet;
@@ -31,11 +31,18 @@ public class PC extends BayesSystem {
         int k = 0;
         boolean arcRemoved = true;
         while(arcRemoved){
+            System.err.println("K: "+k);
             arcRemoved = false;
+            int t=0;
             for (int x = 0; x < N; x++) {
                 for (int y = 0; y < N; y++) {
-                    if (x == y || !G.isEdge(x, y, false))
+                    if (x == y || !G.isEdge(x, y, true))
                         continue;
+                    
+                    if(++t%100==0)
+                        System.err.println(t+" / "+(N*N));
+                    
+                    //check: why some links remain after, maybe the cache it's caching too much?
                     Set<Integer> adjacencies = G.neighbors(x, true);
                     adjacencies.remove(y);
                     if (adjacencies.size() >= k) { 
@@ -72,7 +79,7 @@ public class PC extends BayesSystem {
                         
                         Set<Integer> C = SepSet.get(new Pair<Integer, Integer>(x, z));
                         if (C != null && !C.contains(y)) {
-                            System.err.printf("%s->%s<-%s\n", names[x],names[y],names[z]);
+                            System.err.printf("%s -> %s <- %s\n", names[x],names[y],names[z]);
                             G.removeEdge(x, y, true);
                             G.removeEdge(z, y, true);
 
@@ -91,7 +98,6 @@ public class PC extends BayesSystem {
         //If there is a directed path from A to B, and an edge between A and B, then orient
         //A - B as A -> B.
         //until no more edges can be oriented.
-        /*
         //check this part only.
         boolean changed = true;
         while (changed) {
@@ -106,38 +112,36 @@ public class PC extends BayesSystem {
                             if (c == a)
                                 continue;
                             if (!G.isEdge(a, c, true)
-                                    && !G.isEdge(c, b, false)) {
+                                    && !G.isOriented(c, b)) {
                                 G.removeEdge(b, c, true);
                                 G.addEdge(b, c, false);
 
                                 changed = true;
                             }
                         }
-                    } else {
-                        if (!G.adjacencyPath(a, b, false).isEmpty()) {
+                    } else if (G.isEdge(a, b, true) && !G.isOriented(a, b)) {
+                        if(!G.adjacencyPath(a, b, false).isEmpty()) {
                             G.removeEdge(a, b, true);
                             G.addEdge(a, b, false);
 
                             changed = true;
                         }
                     }
-
                 }
             }
         }
-        */
+        //*/
         return G;
     }
 
     private boolean isDSeparable(DataSet ds, Graph G, int X, int Y, int k, Set<Integer> adjacencies) {
-        System.err.printf("isD-separable(%d,%d,%d,%s)\n",k,X,Y,adjacencies.toString());
         List<Set<Integer>> adjs = getSubsets(adjacencies, k);
-        System.err.printf("All subsets: %s\n", adjs.toString());
+        int N = G.getVertexCount();
         for (Set<Integer> S : adjs) {
-            int freedom = S.isEmpty() ? 2 : 3;
             double Rxys = correlation(ds, X, Y, S);
-            double t = Rxys * Math.sqrt(G.getVertexCount()-freedom);
-            t /= Math.sqrt(1-(Rxys * Rxys));
+            double t = 0;
+            //t = Rxys * Math.sqrt((N-(S.isEmpty() ? 2 : 3))/(1-(Rxys * Rxys)));
+            t = .5 * Math.sqrt(N - S.size() - 3) * Math.log((1+Rxys)/(1-Rxys));
             if (Math.abs(t) < 0.05) { //0.05 from the documentation, lower than that is exagerated.
                 SepSet.put(new Pair<Integer, Integer>(X, Y), S);
                 SepSet.put(new Pair<Integer, Integer>(Y, X), S);
@@ -176,6 +180,7 @@ public class PC extends BayesSystem {
         return res;
     }
 
+    //check this because something is not working as it should...
     private double correlation(DataSet ds, int X, int Y, Set<Integer> Z) {
         if (Z.isEmpty()) {
             return correlation(ds, X, Y);
@@ -236,31 +241,40 @@ public class PC extends BayesSystem {
 
         for (Attribute v : freqX.keySet()) {
             lookupX.put(v, lookupX.size() + 1);
-            x += freqX.get(v) * lookupX.get(v);
-            x2 += freqX.get(v) * (lookupX.get(v) * lookupX.get(v));
+            double aux = getValue(v, lookupX);
+            x += freqX.get(v) * aux;
+            x2 += freqX.get(v) * (aux * aux);
         }
 
         for (Attribute v : freqY.keySet()) {
             lookupY.put(v, lookupY.size() + 1);
-            y += freqY.get(v) * lookupY.get(v);
-            y2 += freqY.get(v) * (lookupY.get(v) * lookupY.get(v));
+            double aux = getValue(v, lookupY);
+            y += freqY.get(v) * aux;
+            y2 += freqY.get(v) * (aux * aux);
         }
 
         for (List<Attribute> record : ds.getCombinedValuesOf(X, Y)) {
             //count the combinations of xiyi and multiply for the lookup values
             Pair<Integer, Attribute> xi = new Pair<Integer, Attribute>(X, record.get(X));
             Pair<Integer, Attribute> yi = new Pair<Integer, Attribute>(Y, record.get(Y));
-            xy += countTree.getCount(xi, yi) * lookupX.get(record.get(X)) * lookupY.get(record.get(Y));
+            xy += countTree.getCount(xi, yi) * getValue(record.get(X), lookupX) * getValue(record.get(Y), lookupY);
         }
 
         double result = (N * xy - (x * y)) / (Math.sqrt((N * x2) - (x * x)) * Math.sqrt((N * y2) - (y * y)));
-        cacheCorrelation.put(key, result);
-        cacheCorrelation.put(key2, result);
+        //cacheCorrelation.put(key, result);
+        //cacheCorrelation.put(key2, result);
         return result;
     }
 
+    private double getValue(Attribute v, Map<Attribute, Integer> lookup){
+        //check: how to calculate the correlation of discrete samples. they mention something in the paper.
+        if(!v.isCategorical())
+            return ((ContinuousAttribute)v).getValue();
+        else
+            return lookup.get(v);
+    }
     
-static String[] names; 
+    static String[] names; 
     public static void main(String arg[]) throws Exception {
         Class.forName("com.mysql.jdbc.Driver");
         Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/iris", "root", "r00t");
@@ -268,12 +282,20 @@ static String[] names;
         
         names = new String[ds.getMetaData().getAttributeCount()];
         for (int i = 0; i < names.length; i++)
-            names[i] = ds.getMetaData().getAttributeName(i).replace("-", "_");//
+            names[i] = /*""+(i+1);//*/ds.getMetaData().getAttributeName(i).replace("-", "_");//
         
         int N = ds.getMetaData().getAttributeCount();
         PC pc = new PC();
         pc.initCountTree(ds);
-        Set<Integer> z = new HashSet<Integer>();
+        /*for(int i=0;i<N;i++){
+            for(int j=0;j<N;j++){
+                int freedom = 2;
+                double Rxys = pc.correlation(ds, i, j);
+                double t = .5 * Math.sqrt(N - 0 - 3) * Math.abs(Math.log((1+Rxys)/(1-Rxys)));
+                System.err.printf("R(%d,%d) = %f\n", i+1,j+1,t);
+            }
+        }//*/
+        /*Set<Integer> z = new HashSet<Integer>();
         for(int i=0;i<N;i++)
             for(int j=0;j<N;j++)
                 for(int k=0;k<N;k++){
@@ -283,11 +305,10 @@ static String[] names;
                         System.err.printf("C(%d,%d|%s) = %f\n",i,j,z.toString(),pc.correlation(ds, i, j, z));
                     }
                 }
+        if(true) return;
+        //*/
         //if(true) return;
         Graph G = pc.getStructure(ds, 0.01);
-               
-        
-        
         G.saveAsDot(new File("oriented.dot"), true, names);
     }
 }
