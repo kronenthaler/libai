@@ -4,8 +4,7 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.*;
-import libai.classifiers.Attribute;
-import libai.classifiers.ContinuousAttribute;
+import libai.classifiers.*;
 
 import libai.common.*;
 import libai.common.dataset.DataSet;
@@ -31,40 +30,58 @@ public class PC extends BayesSystem {
         int k = 0;
         boolean arcRemoved = true;
         while(arcRemoved){
+            //copy G to auxG
+            Graph Gk = new Graph(G);
             System.err.println("K: "+k);
             arcRemoved = false;
             int t=0;
             for (int x = 0; x < N; x++) {
-                for (int y = 0; y < N; y++) {
+                for (int y = x; y < N; y++) {
                     if (x == y || !G.isEdge(x, y, true))
                         continue;
+                    
+                    if(k==2 && x==4 && y == 5)
+                        System.err.println("break");
                     
                     if(++t%100==0)
                         System.err.println(t+" / "+(N*N));
                     
-                    //check: why some links remain after, maybe the cache it's caching too much?
-                    Set<Integer> adjacencies = G.neighbors(x, true);
-                    adjacencies.remove(y);
-                    if (adjacencies.size() >= k) { 
-                        if (isDSeparable(ds, G, x, y, k, adjacencies)) { //check all subsets of S 
-                            G.removeEdge(x, y, true);
+                    Set<Integer> Aab = G.neighbors(x, true);
+                    Aab.addAll(G.neighbors(y, true));
+                    Aab.remove(y);
+                    Aab.remove(x);
+                    
+                    Set<Integer> Uab = G.adjacencyPath(x, y, true, true);
+                    Set<Integer> intersection = new HashSet<Integer>(Aab);
+                    intersection.retainAll(Uab);
+                    
+                    //if (adjacencies.size() >= k) { 
+                    if (intersection.size() >= k && Aab.size() >= k) { 
+                        //if (isDSeparable(ds, G, x, y, k, adjacencies)) { //check all subsets of S 
+                        if (isDSeparable(ds, G, x, y, k+1, intersection)) { //check all subsets of S 
+                            Gk.removeEdge(x, y, true);
                             arcRemoved = true;
                         }
                     }
                 }
             }
+            //swap Gaux to G
+            //G.saveAsDot(new File(k+"graph.dot"), false, names);
+            G = Gk;
             k++;
         }
         
         System.err.println("orienting");
-        G.saveAsDot(new File("plain.dot"), false, names);
-        
         return orientEdges(G);
     }
 
     private Graph orientEdges(Graph G) {
         int N = G.getVertexCount();
-        System.err.println("Identifying colliders ");
+        for(int i=0;i<N;i++)
+            for(int j=0;j<i;j++)
+                G.removeEdge(i, j, false);
+        if(true) return G;
+        System.err.println("Identifying colliders "+G.getEdgeCount());
         //C. identify colliders: for each triple x,y,z that: x-y and y-z but not x-z and Y not in sepset(x,z) then orient x->y<-z
         for (int x = 0; x < N; x++) {
             for (int y = 0; y < N; y++) {
@@ -91,7 +108,7 @@ public class PC extends BayesSystem {
             }
         }
         
-        System.err.println("the rest");
+        System.err.println("the rest "+G.getEdgeCount());
         //D. repeat
         //If A -> B, B and C are adjacent, A and C are not adjacent, and there is no
         //arrowhead at B, then orient B - C as B -> C.
@@ -136,13 +153,8 @@ public class PC extends BayesSystem {
 
     private boolean isDSeparable(DataSet ds, Graph G, int X, int Y, int k, Set<Integer> adjacencies) {
         List<Set<Integer>> adjs = getSubsets(adjacencies, k);
-        int N = G.getVertexCount();
         for (Set<Integer> S : adjs) {
-            double Rxys = correlation(ds, X, Y, S);
-            double t = 0;
-            //t = Rxys * Math.sqrt((N-(S.isEmpty() ? 2 : 3))/(1-(Rxys * Rxys)));
-            t = .5 * Math.sqrt(N - S.size() - 3) * Math.log((1+Rxys)/(1-Rxys));
-            if (Math.abs(t) < 0.05) { //0.05 from the documentation, lower than that is exagerated.
+            if (I(ds, X, Y, S)) {
                 SepSet.put(new Pair<Integer, Integer>(X, Y), S);
                 SepSet.put(new Pair<Integer, Integer>(Y, X), S);
                 return true;
@@ -179,110 +191,89 @@ public class PC extends BayesSystem {
         getSubsets(new ArrayList<Integer>(superSet), k, 0, new HashSet<Integer>(), res);
         return res;
     }
-
-    //check this because something is not working as it should...
-    private double correlation(DataSet ds, int X, int Y, Set<Integer> Z) {
-        if (Z.isEmpty()) {
-            return correlation(ds, X, Y);
-        }
-
-        if (Z.size() == 1) {
-            int z = Z.iterator().next();
-            Triplet<Integer,Integer,Integer> key = new Triplet<Integer,Integer,Integer>(X,Y,z);
-            Triplet<Integer,Integer,Integer> key2 = new Triplet<Integer,Integer,Integer>(Y,X,z);
-
-            if (cacheCorrelation3.containsKey(key))
-                return cacheCorrelation3.get(key);
-
-            double pxy = correlation(ds, X, Y);
-            double pxz = correlation(ds, X, z);
-            double pyz = correlation(ds, Y, z);
-
-            double result = (pxy - (pxz * pyz)) / (Math.sqrt(1 - (pxz * pxz)) * Math.sqrt(1 - (pyz * pyz)));
-            cacheCorrelation3.put(key, result);
-            cacheCorrelation3.put(key2, result);
-            return result;
-        }
-
-        int z0 = Z.iterator().next();
-        Z.remove(z0);
-
-        double pxyz = correlation(ds, X, Y, Z);
-        double pxz0z = correlation(ds, X, z0, Z);
-        double pyz0z = correlation(ds, Y, z0, Z);
-
-        double result = (pxyz - (pxz0z * pyz0z)) / (Math.sqrt(1 - (pxz0z * pxz0z)) * Math.sqrt(1 - (pyz0z * pyz0z)));
-        return result;
-    }
-
-    //n * sum(xi*yi) - sum(xi) * sum(yi)
-    //-----------------------------------
-    //sqrt(n * sum(xi^2)-sum(xi)^2) * sqrt(n * sum(yi^2) - sum(yi)^2)
-    private double correlation(DataSet ds, int X, int Y) {
-        Pair<Integer, Integer> key = new Pair<Integer, Integer>(X,Y);
-        Pair<Integer, Integer> key2 = new Pair<Integer, Integer>(X,Y);
-
-        if (cacheCorrelation.containsKey(key))
-            return cacheCorrelation.get(key);
-
-        double xy = 0;
-        double x = 0;
-        double y = 0;
-        double x2 = 0;
-        double y2 = 0;
-
+    
+    //table for chi square to p=0.05
+    static double[] lookupChi = new double[]{ 0,
+        3.84,  5.99,  7.81,  9.49, 11.07, 12.53, 14.07, 15.51, 16.92, 18.31, 19.68, 21.03, 22.36, 23.68, 25,    26.3,  27.59, 28.87, 30.14, 31.41, 39.67, 33.92, 35.17, 36.42, 37.65, 38.89, 40.11, 41.34, 42.56, 43.77, 55.76, 67.5,  79.08, 101.9, 124.3 
+//        2.71,4.61,6.25,7.78,9.24,10.64,12.02,13.36,14.68,15.99,17.29,18.55,19.81,21.06,22.31,23.54,24.77,25.99,27.20,28.41,29.62,30.81,32.01,33.20,34.38,35.56,36.74,37.92,39.09,40.26,
+    };
+    
+    private boolean I(DataSet ds, int X, int Y, Set<Integer>Z){
         int N = ds.getItemsCount();
-        //iterate over the data set?
-        Map<Attribute, Integer> freqX = ds.getFrequencies(0, N, X);
-        Map<Attribute, Integer> freqY = ds.getFrequencies(0, N, Y);
-
-        Map<Attribute, Integer> lookupX = new HashMap<Attribute, Integer>();
-        Map<Attribute, Integer> lookupY = new HashMap<Attribute, Integer>();
-
-        for (Attribute v : freqX.keySet()) {
-            lookupX.put(v, lookupX.size() + 1);
-            double aux = getValue(v, lookupX);
-            x += freqX.get(v) * aux;
-            x2 += freqX.get(v) * (aux * aux);
+        Map<Attribute, Integer> x = ds.getFrequencies(0, N, X);
+        Map<Attribute, Integer> y = ds.getFrequencies(0, N, Y);
+        int df = (x.size()-1)*(y.size()-1);
+        double chi = 0;
+        
+        if(Z.isEmpty()){
+            chi = chiSquared(ds, X, Y, new ArrayList<Pair<Integer, Attribute>>());
+            //System.err.printf("X2(%s, %s | %s; %d) = %f < %f\n",names[X],names[Y], Z.toString(), df, chi, lookupChi[df]);
+            return chi < lookupChi[df];
         }
-
-        for (Attribute v : freqY.keySet()) {
-            lookupY.put(v, lookupY.size() + 1);
-            double aux = getValue(v, lookupY);
-            y += freqY.get(v) * aux;
-            y2 += freqY.get(v) * (aux * aux);
+        
+        int[] z = new int[Z.size()];
+        int i=0;
+        String Zs = "";
+        for(Integer z1 : Z){
+            z[i++] = z1;
+            Zs += names[z1]+" ";
         }
-
-        for (List<Attribute> record : ds.getCombinedValuesOf(X, Y)) {
-            //count the combinations of xiyi and multiply for the lookup values
-            Pair<Integer, Attribute> xi = new Pair<Integer, Attribute>(X, record.get(X));
-            Pair<Integer, Attribute> yi = new Pair<Integer, Attribute>(Y, record.get(Y));
-            xy += countTree.getCount(xi, yi) * getValue(record.get(X), lookupX) * getValue(record.get(Y), lookupY);
+        
+        for(List<Attribute> record : ds.getCombinedValuesOf(z)){
+            List<Pair<Integer, Attribute>> xyz = new ArrayList<Pair<Integer, Attribute>>();
+            for(int k=0;k<z.length;k++){
+                xyz.add(new Pair<Integer, Attribute>(z[k], record.get(z[k])));
+            }
+            
+            chi = chiSquared(ds, X, Y, xyz);
+            if(chi >= lookupChi[df])
+                return false;
+            
         }
-
-        double result = (N * xy - (x * y)) / (Math.sqrt((N * x2) - (x * x)) * Math.sqrt((N * y2) - (y * y)));
-        //cacheCorrelation.put(key, result);
-        //cacheCorrelation.put(key2, result);
-        return result;
+        ///df *= (x.size()-1)*(y.size()-1);
+        //System.err.printf("X2(%s, %s | [%s]; %d) = %f < %f\n",names[X],names[Y], Zs, df, chi, lookupChi[df]);
+        return true;
     }
+    
+    private double chiSquared(DataSet ds, int X, int Y, List<Pair<Integer, Attribute>> xyz){
+        double chi = 0;
+        int M = countTree.getCount(xyz.toArray(new Pair[0]));
+        int N = ds.getItemsCount();
+        Map<Attribute, Integer> x = ds.getFrequencies(0, N, X);
+        Map<Attribute, Integer> y = ds.getFrequencies(0, N, Y);
+        
+        for(Attribute xi : x.keySet()){
+            for(Attribute yj : y.keySet()){
+                xyz.add(new Pair<Integer, Attribute>(X, xi));
+                double pi = countTree.getCount(xyz.toArray(new Pair[0]));
+                xyz.remove(xyz.size()-1);
 
-    private double getValue(Attribute v, Map<Attribute, Integer> lookup){
-        //check: how to calculate the correlation of discrete samples. they mention something in the paper.
-        if(!v.isCategorical())
-            return ((ContinuousAttribute)v).getValue();
-        else
-            return lookup.get(v);
+                xyz.add(new Pair<Integer, Attribute>(Y, yj));
+                double pj = countTree.getCount(xyz.toArray(new Pair[0]));
+
+                xyz.add(new Pair<Integer, Attribute>(X, xi));
+                double pij = countTree.getCount(xyz.toArray(new Pair[0]));
+                xyz.remove(xyz.size()-1); //x
+                xyz.remove(xyz.size()-1); //y
+                
+                double Eij = (pi * pj) / (double)M;
+                if(Eij > 1.e-7){
+                    chi += ((pij - Eij)*(pij - Eij)) / Eij;
+                }
+            }
+        }
+        return chi;
     }
     
     static String[] names; 
     public static void main(String arg[]) throws Exception {
         Class.forName("com.mysql.jdbc.Driver");
         Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/iris", "root", "r00t");
-        DataSet ds = new MySQLDataSet(conn, "asia", 0);
+        DataSet ds = new MySQLDataSet(conn, "alarm4", 0);
         
         names = new String[ds.getMetaData().getAttributeCount()];
         for (int i = 0; i < names.length; i++)
-            names[i] = /*""+(i+1);//*/ds.getMetaData().getAttributeName(i).replace("-", "_");//
+            names[i] = ""+(i+1);//*/ds.getMetaData().getAttributeName(i).replace("-", "_");//
         
         int N = ds.getMetaData().getAttributeCount();
         PC pc = new PC();
@@ -307,8 +298,27 @@ public class PC extends BayesSystem {
                 }
         if(true) return;
         //*/
-        //if(true) return;
+        
+        /*int[][][] scouts = new int[][][]{
+            {{169, 42},{43, 11}},
+            {{132, 20},{104, 14}},
+            {{59, 2}, {196, 8}}};
+        for(int s=0;s<3;s++){
+            for(int b=0;b<2;b++){
+                for(int d=0;d<2;d++){
+                    for(int k=0;k<scouts[s][b][d];k++){
+                        System.err.printf("INSERT INTO chi (s,b,d) VALUES (%d,%d,%d);\n", s, b, d);
+                    }
+                }
+            }
+        }*/
+        /*Set<Integer> z = new HashSet<Integer>();
+        z.add(0);
+        pc.I(ds, 1, 2, z);
+        
+        //pc.I(ds, 0, 1, new HashSet<Integer>());
+        if(true) return;*/
         Graph G = pc.getStructure(ds, 0.01);
-        G.saveAsDot(new File("oriented.dot"), true, names);
+        G.saveAsDot(new File("oriented.dot"), !true, names);
     }
 }

@@ -60,7 +60,12 @@ public class Graph {
         M = new Matrix(vertices, vertices);
         M.setValue(0);
     }
-
+    
+    public Graph(Graph g){
+        this(g.getVertexCount());
+        g.getM().copy(M);
+    }
+    
     /**
      * @return The matrix M
      */
@@ -259,7 +264,7 @@ public class Graph {
             out.println(name + " G {");
             for (int i = 0, n = getVertexCount(); i < n; i++) {
                 for (int j = 0; j < n; j++) {
-                    if (!isEdge(i, j, !directed))
+                    if (!isEdge(i, j, directed))
                         continue;
                     if (names == null)
                         out.println(i + separator + j + ";");

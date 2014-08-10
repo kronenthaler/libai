@@ -397,6 +397,13 @@ public class MySQLDataSet implements DataSet {
             @Override
             public Iterator<List<Attribute>> iterator() {
                 try {
+                    /*int[] list = values;
+                    if(values.length == 0){
+                        list = new int[metadata.getAttributeCount()];
+                        for(int i=0;i<list.length;i++)
+                            list[i]=i;
+                    }
+                    */
                     String groups = "";
                     for (int v : values) {
                         groups += (groups.length() > 0 ? "," : "") + "`" + metadata.getAttributeName(v) + "`";

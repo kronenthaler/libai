@@ -33,7 +33,7 @@ public class BayesNetwork extends BayesSystem {
     protected Graph getStructure(DataSet ds, double eps) {
         String[] names = new String[ds.getMetaData().getAttributeCount()];
         for (int i = 0; i < names.length; i++)
-            names[i] = ""+(i+1);//ds.getMetaData().getAttributeName(i).replace("-", "_");//
+            names[i] = ""+(i+1);//*/ds.getMetaData().getAttributeName(i).replace("-", "_");//
 
         Graph G = new Graph(ds.getMetaData().getAttributeCount());
         int N = G.getVertexCount();
@@ -456,17 +456,18 @@ public class BayesNetwork extends BayesSystem {
                 Pair<Integer, Attribute> vz = new Pair<Integer, Attribute>(xyz[i], valuez);
                 z.add(vz);
             }
-            double Pz = (countTree.getCount(z.toArray(new Pair[0])) / (double) N);
+            int M = (countTree.getCount(z.toArray(new Pair[0])));
+            double Pz = ((M) / (double) N);
 
             z.add(x);
-            double Pxz = (countTree.getCount(z.toArray(new Pair[0])) / (double) N);
+            double Pxz = (countTree.getCount(z.toArray(new Pair[0])) / (double) M);
             z.remove(z.size() - 1);
 
             z.add(y);
-            double Pyz = (countTree.getCount(z.toArray(new Pair[0])) / (double) N);
+            double Pyz = (countTree.getCount(z.toArray(new Pair[0])) / (double) M);
 
             z.add(x);
-            double Pxyz = (countTree.getCount(z.toArray(new Pair[0])) / (double) N);
+            double Pxyz = (countTree.getCount(z.toArray(new Pair[0])) / (double) M);
 
             info += (Pxyz) * (Math.log(Pxyz * Pz) - Math.log(Pxz) - Math.log(Pyz));
         }
@@ -510,7 +511,7 @@ public class BayesNetwork extends BayesSystem {
     public static void main(String arg[]) throws Exception {
         Class.forName("com.mysql.jdbc.Driver");
         Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/iris", "root", "r00t");
-        DataSet ds = new MySQLDataSet(conn, "alarm4", 0);
+        DataSet ds = new MySQLDataSet(conn, "alarm5", 0);
         int N = ds.getMetaData().getAttributeCount();
         BayesNetwork bn = new BayesNetwork();
         bn.initCountTree(ds);
