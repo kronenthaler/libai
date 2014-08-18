@@ -111,12 +111,11 @@ public class BayesNetwork extends BayesSystem {
             }
         }
         System.err.println("Thinning 2/2: " + G.getEdgeCount() / 2);
-        G.saveAsDot(new File("4thinning2.dot"), false, names);//*/
-        
+        G.saveAsDot(new File("4thinning2.dot"), false, names);        
         //4. orient edges
         G = orientEdges(G, ds, eps); //also weird behaviour here, more edges are created
         System.err.println("orienting: " + G.getEdgeCount());
-        G.saveAsDot(new File("5oriented.dot"), true, names);//*/
+        G.saveAsDot(new File("5oriented.dot"), false, names);
         return G;
     }
 

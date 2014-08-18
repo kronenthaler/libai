@@ -66,6 +66,11 @@ public class Graph {
         g.getM().copy(M);
     }
     
+    public Graph(Matrix m){
+        this(m.getRows());
+        m.copy(this.M);
+    }
+    
     /**
      * @return The matrix M
      */
@@ -256,20 +261,36 @@ public class Graph {
             PrintStream out = new PrintStream(path);
             String name = "graph";
             String separator = " -- ";
-            if (directed) {
+            
+            if(directed){
                 name = "digraph";
                 separator = " -> ";
             }
-
+            
             out.println(name + " G {");
             for (int i = 0, n = getVertexCount(); i < n; i++) {
-                for (int j = 0; j < n; j++) {
-                    if (!isEdge(i, j, directed))
+                for (int j = i; j < n; j++) {
+                    if (!isEdge(i, j, true))
                         continue;
+                    int x = i;
+                    int y = j;
+                    
+                    if(isEdge(i, j, false) && isEdge(j,i,false)){
+                        if(directed){
+                            if (names == null)
+                                out.println(y + separator + x + ";");
+                            else
+                                out.println(names[y] + separator + names[x] + ";");
+                        }
+                    }else if(isEdge(j, i, false)){
+                        x=j;
+                        y=i;
+                    }
+                    
                     if (names == null)
-                        out.println(i + separator + j + ";");
+                        out.println(x + separator + y + ";");
                     else
-                        out.println(names[i] + separator + names[j] + ";");
+                        out.println(names[x] + separator + names[y] + ";");
                 }
             }
             out.println("}");
