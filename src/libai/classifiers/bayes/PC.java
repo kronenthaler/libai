@@ -30,21 +30,12 @@ public class PC extends BayesSystem {
         int k = 0;
         boolean arcRemoved = true;
         while(arcRemoved){
-            //copy G to auxG
             Graph Gk = new Graph(G);
-            System.err.println("K: "+k);
             arcRemoved = false;
-            int t=0;
             for (int x = 0; x < N; x++) {
                 for (int y = x; y < N; y++) {
                     if (x == y || !G.isEdge(x, y, true))
                         continue;
-                    
-                    if(k==2 && x==4 && y == 5)
-                        System.err.println("break");
-                    
-                    if(++t%100==0)
-                        System.err.println(t+" / "+(N*N));
                     
                     Set<Integer> Aab = G.neighbors(x, true);
                     Aab.addAll(G.neighbors(y, true));
@@ -55,9 +46,7 @@ public class PC extends BayesSystem {
                     Set<Integer> intersection = new HashSet<Integer>(Aab);
                     intersection.retainAll(Uab);
                     
-                    //if (adjacencies.size() >= k) { 
                     if (intersection.size() >= k && Aab.size() >= k) { 
-                        //if (isDSeparable(ds, G, x, y, k, adjacencies)) { //check all subsets of S 
                         if (isDSeparable(ds, G, x, y, k+1, intersection, eps)) { //check all subsets of S 
                             Gk.removeEdge(x, y, true);
                             arcRemoved = true;
@@ -66,20 +55,16 @@ public class PC extends BayesSystem {
                 }
             }
             //swap Gaux to G
-            //G.saveAsDot(new File(k+"graph.dot"), false, names);
             G = Gk;
             k++;
         }
         
-        System.err.println("orienting");
         return orientEdges(G);
     }
 
     private Graph orientEdges(Graph G) {
         int N = G.getVertexCount();
         
-        System.err.println("Identifying colliders "+G.getEdgeCount());
-        //C. identify colliders: for each triple x,y,z that: x-y and y-z but not x-z and Y not in sepset(x,z) then orient x->y<-z
         for (int x = 0; x < N; x++) {
             for (int y = 0; y < N; y++) {
                 if (x == y)
@@ -93,7 +78,6 @@ public class PC extends BayesSystem {
                         
                         Set<Integer> C = SepSet.get(new Pair<Integer, Integer>(x, z));
                         if (C != null && !C.contains(y)) {
-                            System.err.printf("%s -> %s <- %s\n", names[x],names[y],names[z]);
                             G.removeEdge(x, y, true);
                             G.removeEdge(z, y, true);
 
@@ -104,15 +88,6 @@ public class PC extends BayesSystem {
                 }
             }
         }
-        
-        System.err.println("the rest "+G.getEdgeCount());
-        //D. repeat
-        //If A -> B, B and C are adjacent, A and C are not adjacent, and there is no
-        //arrowhead at B, then orient B - C as B -> C.
-        //If there is a directed path from A to B, and an edge between A and B, then orient
-        //A - B as A -> B.
-        //until no more edges can be oriented.
-        //check this part only.
         
         for(int x=0;x<N;x++){
             for(int y=0;y<N;y++){
@@ -139,38 +114,7 @@ public class PC extends BayesSystem {
                 }
             }
         }
-        /*boolean changed = true;
-        while (changed) {
-            changed = false;
-            for (int a = 0; a < N; a++) {
-                for (int b = 0; b < N; b++) {
-                    if (a == b || !G.isEdge(a, b, true))
-                        continue;
-
-                    if (G.isOriented(a, b)) {
-                        for (int c : G.neighbors(b, true)) {
-                            if (c == a)
-                                continue;
-                            if (!G.isEdge(a, c, true)
-                                    && !G.isOriented(c, b)) {
-                                G.removeEdge(b, c, true);
-                                G.addEdge(b, c, false);
-
-                                changed = true;
-                            }
-                        }
-                    } else {
-                        if(!G.adjacencyPath(a, b, false).isEmpty()) {
-                            G.removeEdge(a, b, true);
-                            G.addEdge(a, b, false);
-
-                            changed = true;
-                        }
-                    }
-                }
-            }
-        }
-        //*/
+        
         return G;
     }
 
@@ -278,93 +222,5 @@ public class PC extends BayesSystem {
     
     private double pValue(double x, double k){
         return 1 - Gamma.incompleteGamma(x/2.0, k/2.0);
-    }
-    
-    static String[] names; 
-    public static void main(String arg[]) throws Exception {
-        Class.forName("com.mysql.jdbc.Driver");
-        Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/iris", "root", "r00t");
-        DataSet ds = new MySQLDataSet(conn, "alarm4", 0);
-        
-        names = new String[ds.getMetaData().getAttributeCount()];
-        for (int i = 0; i < names.length; i++)
-            names[i] = ""+(i+1);//*/ds.getMetaData().getAttributeName(i).replace("-", "_");//
-        
-        int N = ds.getMetaData().getAttributeCount();
-        PC pc = new PC();
-        pc.initCountTree(ds);
-        
-        Graph G = pc.getStructure(ds, 0.01);
-        G.saveAsDot(new File("oriented.dot"), true, names);
-        
-        if(N < 37)
-            return;
-        
-        Graph alarm = new Graph(new Matrix(37, 37, new double[]{
-        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,
-        0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,
-        1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,}));
-        alarm.saveAsDot(new File("alarm.dot"), true, names);
-        
-        
-        Set<Pair<Integer, Integer>> correct= new HashSet<Pair<Integer,Integer>>();
-        Set<Pair<Integer, Integer>> missing= new HashSet<Pair<Integer,Integer>>();
-        Set<Pair<Integer, Integer>> extra= new HashSet<Pair<Integer,Integer>>();
-        Set<Pair<Integer, Integer>> misoriented= new HashSet<Pair<Integer,Integer>>();
-        for(int i=0;i<N;i++){
-            for(int j=0;j<N;j++){
-                if(alarm.isEdge(i, j, false) && G.isEdge(i, j, false)) correct.add(new Pair<Integer, Integer>(i,j));
-                else if(alarm.isEdge(i, j, false) && !G.isEdge(i, j, false)) missing.add(new Pair<Integer, Integer>(i,j));
-                else if(!alarm.isEdge(i, j, false) && G.isEdge(i, j, false)) extra.add(new Pair<Integer, Integer>(i,j));
-                else if(alarm.isEdge(i, j, false) && G.isEdge(j, i, false)) misoriented.add(new Pair<Integer, Integer>(i,j));
-            }
-        }
-        
-        System.err.printf(
-                "Total: %d\n"+
-                "Correct: %d / %d\n"
-                + "Missing: %d : %s\n"
-                + "Extra: %d : %s\n"
-                + "Missoriented: %d : %s\n",
-                G.getEdgeCount(), 
-                correct.size(), 
-                alarm.getEdgeCount(),
-                missing.size(), missing, 
-                extra.size(), extra,
-                misoriented.size(), misoriented);
     }
 }
