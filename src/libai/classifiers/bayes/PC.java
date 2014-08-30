@@ -1,14 +1,15 @@
 package libai.classifiers.bayes;
 
-import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
+import java.io.*;
 import java.util.*;
+import javax.xml.parsers.*;
+import org.w3c.dom.*;
 import libai.classifiers.*;
 
 import libai.common.*;
 import libai.common.dataset.DataSet;
 import libai.common.dataset.MySQLDataSet;
+
 
 /**
  *
@@ -222,5 +223,23 @@ public class PC extends BayesSystem {
     
     private double pValue(double x, double k){
         return 1 - Gamma.incompleteGamma(x/2.0, k/2.0);
+    }
+    
+    public static PC getInstance(File xmlbif){
+        try {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            Document doc = db.parse(new FileInputStream(xmlbif));
+            Node root = doc.getElementsByTagName("NETWORK").item(0);
+
+            return (PC)new PC().load(root);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    public static PC getInstance(DataSet ds) {
+        return (PC)new PC().train(ds);
     }
 }
