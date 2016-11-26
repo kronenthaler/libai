@@ -435,4 +435,90 @@ public class MatrixTest {
         Matrix m = new Matrix(20, 10);
         assertEquals(10, m.getColumns());
     }
+
+    @Test
+    public void testPosition() {
+        Matrix a = new Matrix(5, 5);
+        Matrix b = new Matrix(5, 5, true);
+        assertNotEquals(a, b);
+        a.position(0, 0, 1);
+        a.position(1, 1, 1);
+        a.position(2, 2, 1);
+        a.position(3, 3, 1);
+        a.position(4, 4, 1);
+        assertEquals(a, b);
+    }
+
+    @Test
+    public void testPosition1() {
+        Matrix a = Matrix.random(2, 5);
+        assertArrayNotEquals(new double[]{1,2,3,4,5}, a.getRow(0), DELTA);
+        a.position(0, 0, 1);
+        a.position(0, 1, 2);
+        a.position(0, 2, 3);
+        a.position(0, 3, 4);
+        a.position(0, 4, 5);
+        assertArrayEquals(new double[]{1,2,3,4,5}, a.getRow(0), DELTA);
+    }
+
+    @Test
+    public void testPosition2() {
+        Matrix a = Matrix.random(5, 1);
+        assertArrayNotEquals(new double[]{1,2,3,4,5}, a.getCol(0), DELTA);
+        a.position(0, 0, 1);
+        a.position(1, 0, 2);
+        a.position(2, 0, 3);
+        a.position(3, 0, 4);
+        a.position(4, 0, 5);
+        assertArrayEquals(new double[]{1,2,3,4,5}, a.getCol(0), DELTA);
+    }
+
+    @Test
+    public void testPosition3() {
+        Matrix a = new Matrix(10, 10, true);
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                assertEquals(i==j?1:0, a.position(i, j), DELTA);
+            }
+        }
+    }
+
+    @Test
+    public void testPosition4() {
+        Matrix a = Matrix.random(5, 1);
+        assertArrayNotEquals(new double[]{1,2,3,4,5}, a.getCol(0), DELTA);
+        a.position(0, 0, 1);
+        a.position(1, 0, 2);
+        a.position(2, 0, 3);
+        a.position(3, 0, 4);
+        a.position(4, 0, 5);
+        assertEquals(1, a.position(0, 0), DELTA);
+        assertEquals(2, a.position(1, 0), DELTA);
+        assertEquals(3, a.position(2, 0), DELTA);
+        assertEquals(4, a.position(3, 0), DELTA);
+        assertEquals(5, a.position(4, 0), DELTA);
+    }
+
+    @Test
+    public void testPosition5() {
+        Matrix a = Matrix.random(1, 5);
+        assertArrayNotEquals(new double[]{1,2,3,4,5}, a.getRow(0), DELTA);
+        a.position(0, 0, 1);
+        a.position(0, 1, 2);
+        a.position(0, 2, 3);
+        a.position(0, 3, 4);
+        a.position(0, 4, 5);
+        assertEquals(1, a.position(0, 0), DELTA);
+        assertEquals(2, a.position(0, 1), DELTA);
+        assertEquals(3, a.position(0, 2), DELTA);
+        assertEquals(4, a.position(0, 3), DELTA);
+        assertEquals(5, a.position(0, 4), DELTA);
+    }
+    
+    private void assertArrayNotEquals(double[] a, double[] b, double DELTA) {
+        try {
+            assertArrayEquals(a, b, DELTA);
+            throw new AssertionError("Both arrays are equal!");
+        } catch (AssertionError ignoreMe) {}
+    }
 }
