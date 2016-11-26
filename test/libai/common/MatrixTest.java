@@ -634,7 +634,52 @@ public class MatrixTest {
         assertTrue(hasNegativeA);
         assertTrue(hasNegativeB);
     }
-
+    
+    @Test
+    public void testDotProduct() {
+        //product was calculated with GNU-Octave 4.0.2 (x86_64-pc-linux-gnu)
+        Matrix a = new Matrix(1, 10, a3_data);
+        Matrix b = new Matrix(1, 10, b3_data);
+        double product = a.dotProduct(b);
+        assertEquals(result, product, DELTA);
+    }
+    
+    @Test
+    public void testDotProduct1() {
+        //product was calculated with GNU-Octave 4.0.2 (x86_64-pc-linux-gnu)
+        Matrix a = new Matrix(10, 1, a3_data);
+        Matrix b = new Matrix(10, 1, b3_data);
+        double product = a.dotProduct(b);
+        assertEquals(result, product, DELTA);
+    }
+    
+    @Test
+    public void testDotProduct2() {
+        //product was calculated with GNU-Octave 4.0.2 (x86_64-pc-linux-gnu)
+        Matrix a = new Matrix(1, 10, a3_data);
+        Matrix b = new Matrix(10, 1, b3_data);
+        double product = a.dotProduct(b);
+        assertEquals(result, product, DELTA);
+    }
+    
+    @Test
+    public void testDotProduct3() {
+        //product was calculated with GNU-Octave 4.0.2 (x86_64-pc-linux-gnu)
+        Matrix a = new Matrix(10, 1, a3_data);
+        Matrix b = new Matrix(1, 10, b3_data);
+        double product = a.dotProduct(b);
+        assertEquals(result, product, DELTA);
+    }
+    double[] a3_data = {
+        0.008836540313295,  0.005681073763455,  0.006258204252537, 0.008306752574195,  0.000227322631636, 
+       -0.002351919190952, -0.002525625167333, -0.006263386710295, 0.002164190369792, -0.006667604294500, 
+    };
+    double[] b3_data = {
+         0.001482773049231, -0.001347142606673,  0.007705866269837,  0.009591078927415, -0.000875775794850,
+        -0.007544329405404, -0.005619909996736, -0.001928699595623, -0.006332203264881, -0.001393287402837, 
+    };
+    double result = 1.7274931467510147E-4;
+    
     private void assertArrayNotEquals(double[] a, double[] b, double DELTA) {
         try {
             assertArrayEquals(a, b, DELTA);
