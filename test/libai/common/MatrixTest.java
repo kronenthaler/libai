@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
 
 /**
  *
- * @author Federico Vera {@literal dktcoding [at] gmail}
+ * @author Federico Vera {@literal <dktcoding [at] gmail>}
  */
 public class MatrixTest {
     private static final double DELTA = 1e-12;
