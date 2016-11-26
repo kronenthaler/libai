@@ -88,7 +88,7 @@ public class MatrixTest {
     }
 
     @Test
-    public void testRandom_3args() {
+    public void testMatrixRandom() {
         Matrix a = Matrix.random(50, 100, true);
         Matrix b = Matrix.random(50, 100, false);
         assertNotEquals(a, b); //<- yes... this test could actually fail...
@@ -98,8 +98,8 @@ public class MatrixTest {
         
         for (int i = 0; i < a.getRows(); i++) {
             for (int j = 0; j < a.getColumns(); j++) {
-                hasNegativeA = hasNegativeA || a.position(i, j) < 0;
-                hasNegativeB = hasNegativeB || b.position(i, j) < 0;
+                hasNegativeA |= a.position(i, j) < 0;
+                hasNegativeB |= b.position(i, j) < 0;
             }
         }
         
@@ -514,7 +514,127 @@ public class MatrixTest {
         assertEquals(4, a.position(0, 3), DELTA);
         assertEquals(5, a.position(0, 4), DELTA);
     }
-    
+
+    @Test
+    public void testAdd() {
+        Matrix a = new Matrix(10, 10, true);
+        Matrix b = new Matrix(10, 10, true);
+        a.add(a, b);
+        assertNotEquals(a, b);
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                assertEquals(i==j?2:0, b.position(i, j), DELTA);
+            }
+        }
+    }
+
+    @Test
+    public void testAdd1() {
+        Matrix a = Matrix.random(5, 15);
+        Matrix b = new Matrix(5, 15, true);
+        Matrix c = new Matrix(5, 15);
+        a.add(b, c);
+        assertNotEquals(a, b);
+        assertNotEquals(b, c);
+        assertNotEquals(a, c);
+        for (int i = 0; i < a.getRows(); i++) {
+            for (int j = 0; j < a.getColumns(); j++) {
+                double av = a.position(i, j);
+                assertEquals(i==j ? av + 1 : av, c.position(i, j), DELTA);
+            }
+        }
+    }
+
+    @Test
+    public void testSubtract() {
+        Matrix a = new Matrix(10, 10, true);
+        Matrix b = new Matrix(10, 10, true);
+        a.subtract(a, b);
+        assertNotEquals(a, b);
+        assertEquals(b, new Matrix(10, 10));
+    }
+
+    @Test
+    public void testSubtract1() {
+        Matrix a = Matrix.random(5, 15);
+        Matrix b = new Matrix(5, 15, true);
+        Matrix c = new Matrix(5, 15);
+        a.subtract(b, c);
+        assertNotEquals(a, b);
+        assertNotEquals(b, c);
+        assertNotEquals(a, c);
+        for (int i = 0; i < a.getRows(); i++) {
+            for (int j = 0; j < a.getColumns(); j++) {
+                double av = a.position(i, j);
+                assertEquals(i==j ? av - 1 : av, c.position(i, j), DELTA);
+            }
+        }
+    }
+
+    @Test
+    public void testFillBoolean() {
+        Matrix a = new Matrix(5, 10);
+        Matrix b = new Matrix(5, 10);
+        assertEquals(a, b);
+        a.fill(true);
+        assertNotEquals(a, b);
+        b.fill(true);
+        assertNotEquals(a, b);
+        
+        boolean hasNegativeA = false;
+        boolean hasNegativeB = false;
+        
+        for (int i = 0; i < a.getRows(); i++) {
+            for (int j = 0; j < a.getColumns(); j++) {
+                hasNegativeA |= a.position(i, j) < 0;
+                hasNegativeB |= b.position(i, j) < 0;
+            }
+        }
+        
+        assertTrue(hasNegativeA);
+        assertTrue(hasNegativeB);
+        
+        hasNegativeA = false;
+        hasNegativeB = false;
+        a.fill(false);
+        b.fill(false);
+        assertNotEquals(a, b);
+        
+        for (int i = 0; i < a.getRows(); i++) {
+            for (int j = 0; j < a.getColumns(); j++) {
+                hasNegativeA |= a.position(i, j) < 0;
+                hasNegativeB |= b.position(i, j) < 0;
+            }
+        }
+        
+        assertFalse(hasNegativeA);
+        assertFalse(hasNegativeB);
+    }
+
+    @Test
+    public void testFill() {
+        Matrix a = new Matrix(5, 10);
+        Matrix b = new Matrix(5, 10);
+        assertEquals(a, b);
+        a.fill();
+        assertNotEquals(a, b);
+        b.fill();
+        assertNotEquals(a, b);
+        
+        boolean hasNegativeA = false;
+        boolean hasNegativeB = false;
+        
+        for (int i = 0; i < a.getRows(); i++) {
+            for (int j = 0; j < a.getColumns(); j++) {
+                hasNegativeA |= a.position(i, j) < 0;
+                hasNegativeB |= b.position(i, j) < 0;
+            }
+        }
+        
+        assertTrue(hasNegativeA);
+        assertTrue(hasNegativeB);
+    }
+
     private void assertArrayNotEquals(double[] a, double[] b, double DELTA) {
         try {
             assertArrayEquals(a, b, DELTA);
