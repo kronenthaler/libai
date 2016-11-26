@@ -257,6 +257,7 @@ public class MatrixTest {
     public void testCopy() {
         Matrix a = Matrix.random(5, 10);
         Matrix b = new Matrix(5, 10);
+        assertNotEquals(a, b);
         a.copy(b);
         assertEquals(a, b);
         a.position(0, 0, 0);
@@ -267,6 +268,7 @@ public class MatrixTest {
     public void testCopy1() {
         Matrix a = Matrix.random(10, 5);
         Matrix b = new Matrix(10, 5);
+        assertNotEquals(a, b);
         a.copy(b);
         assertEquals(a, b);
         a.position(0, 0, 0);
@@ -519,6 +521,7 @@ public class MatrixTest {
     public void testAdd() {
         Matrix a = new Matrix(10, 10, true);
         Matrix b = new Matrix(10, 10, true);
+        assertEquals(a, b);
         a.add(a, b);
         assertNotEquals(a, b);
         for (int i = 0; i < 10; i++) {
@@ -549,9 +552,10 @@ public class MatrixTest {
     public void testSubtract() {
         Matrix a = new Matrix(10, 10, true);
         Matrix b = new Matrix(10, 10, true);
+        assertEquals(a, b);
         a.subtract(a, b);
         assertNotEquals(a, b);
-        assertEquals(b, new Matrix(10, 10));
+        assertEquals(new Matrix(10, 10), b);
     }
 
     @Test
