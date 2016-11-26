@@ -679,7 +679,67 @@ public class MatrixTest {
         -0.007544329405404, -0.005619909996736, -0.001928699595623, -0.006332203264881, -0.001393287402837, 
     };
     double result = 1.7274931467510147E-4;
-    
+
+    @Test
+    public void testSetGetRow() {
+        Matrix a = Matrix.random(3, 5);
+        double[] row = new double[]{1,2,3,4,5};
+        assertArrayNotEquals(row, a.getRow(0), DELTA);
+        assertArrayNotEquals(row, a.getRow(1), DELTA);
+        assertArrayNotEquals(row, a.getRow(2), DELTA);
+        a.setRow(2, row);
+        assertArrayNotEquals(row, a.getRow(0), DELTA);
+        assertArrayNotEquals(row, a.getRow(1), DELTA);
+        assertArrayEquals   (row, a.getRow(2), DELTA);
+    }
+
+    @Test
+    public void testGetCol() {
+        Matrix a = Matrix.random(10, 15);
+        assertArrayEquals(a.getCol(12), a.transpose().getRow(12), DELTA);
+        for (int i = 0; i < 10; i++) {
+            a.position(i, 9, 0);
+        }
+        assertArrayEquals(new double[10], a.getCol(9), DELTA);
+        for (int i = 0; i < 10; i++) {
+            a.position(i, 3, i);
+        }
+        assertArrayEquals(new double[]{0,1,2,3,4,5,6,7,8,9}, a.getCol(3), DELTA);
+    }
+
+    @Test
+    public void testSubtractAndCopy() {
+        Matrix a = Matrix.random(5, 10);
+        Matrix b = Matrix.random(5, 10);
+        Matrix c = Matrix.random(5, 10);
+        Matrix d = Matrix.random(5, 10);
+        assertNotEquals(a, d);
+        a.subtractAndCopy(b, c, d);
+        assertEquals(a, d);
+        a.subtract(b, d);
+        assertEquals(c, d);
+        a.subtractAndCopy(a, b, c);
+        assertEquals(a, c);
+        assertEquals(new Matrix(5, 10), b);
+    }
+
+    @Test
+    public void testMultiplyAndAdd() {
+        Matrix a = Matrix.random(10, 20);
+        Matrix b = Matrix.random(10, 20);
+        Matrix c = new Matrix(10, 20);
+        Matrix d = new Matrix(10, 20);
+        assertNotEquals(a, b);
+        assertNotEquals(a, c);
+        a.multiplyAndAdd(0, b, c);
+        assertEquals(b, c);
+        double scale = Math.random();
+        a.multiply(scale, d);
+        d.add(b, d);
+        a.multiplyAndAdd(scale, b, c);
+        assertEquals(c, d);
+    }
+
     private void assertArrayNotEquals(double[] a, double[] b, double DELTA) {
         try {
             assertArrayEquals(a, b, DELTA);
