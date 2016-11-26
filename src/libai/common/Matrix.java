@@ -37,7 +37,7 @@ public final class Matrix implements Serializable {
 		matrix = new double[r * c];
 		rows = r;
 		cols = c;
-		seed = System.currentTimeMillis();
+		seed = System.nanoTime();
 		//seed = 0;
 
 		if (identity) {
