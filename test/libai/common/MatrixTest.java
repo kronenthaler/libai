@@ -739,6 +739,41 @@ public class MatrixTest {
         a.multiplyAndAdd(scale, b, c);
         assertEquals(c, d);
     }
+    
+    @Test
+    public void testApplyInIdentity() {
+        Function f = new Function() {
+            @Override
+            public double eval(double x) {
+                return 0;
+            }
+            @Override public Function getDerivate() {return null;}
+        };
+        Matrix a = Matrix.random(10, 10);
+        Matrix b = new Matrix(10, 1);
+        b.applyInIdentity(f, a);
+        for (int i = 0; i < a.getRows(); i++) {
+            assertEquals(0, a.position(i, i), DELTA);
+        }
+        b.setValue(5);
+        f = new Function() {
+            @Override
+            public double eval(double x) {
+                return x;
+            }
+            @Override public Function getDerivate() {return null;}
+        };
+        b.applyInIdentity(f, a);
+        for (int i = 0; i < a.getRows(); i++) {
+            for (int j = 0; j < a.getColumns(); j++) {
+                if (i == j) {
+                    assertEquals(5, a.position(i, j), DELTA);
+                } else {
+                    assertNotEquals(5, a.position(i, j), DELTA);
+                }
+            }
+        }
+    }
 
     private void assertArrayNotEquals(double[] a, double[] b, double DELTA) {
         try {
