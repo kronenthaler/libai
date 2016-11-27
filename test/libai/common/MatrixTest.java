@@ -91,7 +91,7 @@ public class MatrixTest {
     public void testMatrixRandom() {
         Matrix a = Matrix.random(50, 100, true);
         Matrix b = Matrix.random(50, 100, false);
-        assertNotEquals(a, b); //<- yes... this test could actually fail...
+        assertNotEquals(a, b);
         
         boolean hasNegativeA = false;
         boolean hasNegativeB = false;
@@ -111,7 +111,9 @@ public class MatrixTest {
     public void testRandomIntInt() {
         Matrix a = Matrix.random(50, 100);
         Matrix b = Matrix.random(50, 100);
-        assertNotEquals(a, b); //<- yes... this test could actually fail...
+        assertNotEquals(a, b);
+        //If this test fails, please check if:
+        //seed = 0; is commented in line 41 of the Matrix class
     }
 
     @Test
@@ -305,7 +307,6 @@ public class MatrixTest {
     public void testSetValue() {
         Matrix a = Matrix.random(10, 15);
         Matrix b = Matrix.random(10, 15);
-        b.position(0, 0, 1000); // <- Random always creates the same matrix!
         assertNotEquals(a, b);
         a.setValue(Math.PI);
         b.setValue(Math.PI);
