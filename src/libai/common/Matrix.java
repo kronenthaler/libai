@@ -64,7 +64,7 @@ public final class Matrix implements Serializable {
 		//seed = 0;
 
 		if (identity) {
-			for (int i = 0, m = r < c ? r : c; i < m; i++)
+			for (int i = 0, m = Math.min(r, c); i < m; i++)
 				matrix[i * c + i] = 1;
 		}
 	}
