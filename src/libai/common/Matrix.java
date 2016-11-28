@@ -99,6 +99,20 @@ public final class Matrix implements Serializable {
 	 * @param c number of cols
 	 * @param signed {@code true} if the matrix should be filled with positive and negative numbers
 	 * {@code false} if the numbers should be greater or equal than zero.
+	 * @return a new matrix filled with low random numbers.
+	 * @see Matrix#fill(boolean, java.util.Random)
+	 */
+	public static Matrix random(int r, int c, boolean signed) {
+		return random(r, c, signed, null);
+	}
+
+	/**
+	 * Create a new Matrix filled with low random numbers.
+	 *
+	 * @param r number of rows
+	 * @param c number of cols
+	 * @param signed {@code true} if the matrix should be filled with positive and negative numbers
+	 * {@code false} if the numbers should be greater or equal than zero.
 	 * @param rand The {@link Random} object used to fill the matrix, if {@code null} it will
 	 * fallback to {@link ThreadLocalRandom#current()}
 	 * @return a new matrix filled with low random numbers.
@@ -110,8 +124,17 @@ public final class Matrix implements Serializable {
 		return ret;
 	}
 
+	/**
+	 * Create a new Matrix filled with low random numbers.
+	 *
+	 * @param r number of rows
+	 * @param c number of cols
+	 * @return a new matrix filled with low random numbers.
+     * @see Matrix#random(int, int, boolean) 
+     * @see Matrix#random(int, int, boolean, java.util.Random) 
+     */
 	public static Matrix random(int r, int c) {
-		return random(r, c, true, null);
+		return random(r, c, true);
 	}
 
 	/**
@@ -224,7 +247,17 @@ public final class Matrix implements Serializable {
 	 * Fill the matrix with random values. Alias for fill(true).
 	 */
 	public void fill() {
-		fill(true, null);
+		fill(true);
+	}
+
+	/**
+	 * Fill the matrix with random values. If the fill must be positive call
+	 * with false.
+	 *
+	 * @param signed if allow signed values or not
+	 */
+	public void fill(boolean signed) {
+        fill(signed, null);
 	}
 
 	/**
