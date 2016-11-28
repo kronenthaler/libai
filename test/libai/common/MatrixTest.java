@@ -702,6 +702,17 @@ public class MatrixTest {
     }
 
     @Test
+    public void testFillBooleanRandom4() {
+        Matrix a = new Matrix(5, 10);
+        Matrix b = new Matrix(5, 10);
+        assertEquals(a, b);
+        a.fill(true, null);
+        assertNotEquals(a, b);
+        b.fill(true);
+        assertNotEquals(a, b);
+    }
+
+    @Test
     public void testFill() {
         Matrix a = new Matrix(5, 10);
         Matrix b = new Matrix(5, 10);
