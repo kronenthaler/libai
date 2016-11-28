@@ -26,6 +26,7 @@ package libai.common;
 import libai.common.functions.Function;
 import java.util.*;
 import java.io.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Matrix implementation. This class can handle the basic operations of matrix
@@ -43,10 +44,6 @@ public final class Matrix implements Serializable {
 	 * Number of rows and columns of the matrix.
 	 */
 	private int rows, cols;
-	/**
-	 * Seed for random number generation. Is useful for debugging purposes.
-	 */
-	private long seed;
 
 	/**
 	 * Constructor. Allocated the matrix and could initialize with the identity.
@@ -60,8 +57,6 @@ public final class Matrix implements Serializable {
 		matrix = new double[r * c];
 		rows = r;
 		cols = c;
-		seed = System.nanoTime();
-		//seed = 0;
 
 		if (identity) {
 			for (int i = 0; i < r; i++)
@@ -102,16 +97,21 @@ public final class Matrix implements Serializable {
 	 *
 	 * @param r number of rows
 	 * @param c number of cols
-	 * @return a new matrix filled with low random numbers.s
+	 * @param signed {@code true} if the matrix should be filled with positive and negative numbers
+	 * {@code false} if the numbers should be greater or equal than zero.
+	 * @param rand The {@link Random} object used to fill the matrix, if {@code null} it will
+	 * fallback to {@link ThreadLocalRandom#current()}
+	 * @return a new matrix filled with low random numbers.
+	 * @see Matrix#fill(boolean, java.util.Random)
 	 */
-	public static Matrix random(int r, int c, boolean signed) {
+	public static Matrix random(int r, int c, boolean signed, Random rand) {
 		Matrix ret = new Matrix(r, c);
-		ret.fill(signed);
+		ret.fill(signed, rand);
 		return ret;
 	}
 
 	public static Matrix random(int r, int c) {
-		return random(r, c, true);
+		return random(r, c, true, null);
 	}
 
 	/**
@@ -224,7 +224,7 @@ public final class Matrix implements Serializable {
 	 * Fill the matrix with random values. Alias for fill(true).
 	 */
 	public void fill() {
-		fill(true);
+		fill(true, null);
 	}
 
 	/**
@@ -232,9 +232,12 @@ public final class Matrix implements Serializable {
 	 * with false.
 	 *
 	 * @param signed if allow signed values or not
+	 * @param r The {@link Random} object used to fill the matrix, if {@code null} it will fallback
+	 * to {@link ThreadLocalRandom#current()}
 	 */
-	public void fill(boolean signed) {
-		Random r = new Random(seed);
+	public void fill(boolean signed, Random r) {
+		if (r == null) r = ThreadLocalRandom.current();
+
 		for (int i = 0, n = rows * cols; i < n; i++) {
 			matrix[i] = r.nextDouble() * 0.01 * (double) Math.pow(-1, r.nextInt(2));
 			if (!signed)

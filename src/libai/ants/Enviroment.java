@@ -78,7 +78,7 @@ public class Enviroment {
 	public Enviroment(Graph G, boolean randomPheromones) {
 		this.setGraph(G);
 		if (randomPheromones) {
-			this.Pheromones = Matrix.random(G.getM().getRows(), G.getM().getColumns(), false);
+			this.Pheromones = Matrix.random(G.getM().getRows(), G.getM().getColumns(), false, null);
 		}
 	}
 
