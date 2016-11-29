@@ -289,6 +289,7 @@ public abstract class AntColonySystem extends Metaheuristic {
 	 * in the list.
 	 *
 	 * @param i source node
+	 * @param possibleNodes {@code possibleNodes}
 	 * @return destination node
 	 */
 	public int decisionRuleNotFromCandidate(int i, Vector<Integer> possibleNodes) {

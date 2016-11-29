@@ -74,6 +74,7 @@ public class Enviroment {
 	 * Constructor. Allocates only the Graph and the pheromone trail
 	 *
 	 * @param G the graph with the problem related information
+	 * @param randomPheromones {@code randomPheromones}
 	 */
 	public Enviroment(Graph G, boolean randomPheromones) {
 		this.setGraph(G);
@@ -102,6 +103,7 @@ public class Enviroment {
 	 *
 	 * @param numberOfAnts the number of ants to use
 	 * @param G the graph with the problem related information
+	 * @param randomPheromones {@code randomPheromones}
 	 * @throws AntFrameworkException if numberOfAnts is less or equal to 0
 	 */
 	public Enviroment(int numberOfAnts, Graph G, boolean randomPheromones) throws AntFrameworkException {
@@ -120,6 +122,7 @@ public class Enviroment {
 	 * @param numberOfAnts number of ants
 	 * @param G object Graph
 	 * @param v initial value of the pheromone trail
+	 * @throws libai.ants.AntFrameworkException AntFrameworkException
 	 */
 	public Enviroment(int numberOfAnts, Graph G, double v) throws AntFrameworkException {
 		this(numberOfAnts, G, false);
@@ -130,7 +133,7 @@ public class Enviroment {
 	/**
 	 * Sets the number of ants of this Enviroment
 	 *
-	 * @param numberOfAnts
+	 * @param numberOfAnts  {@code numberOfAnts}
 	 */
 	public void setNumberOfAnts(int numberOfAnts) {
 		this.numberOfAnts = numberOfAnts;
@@ -157,6 +160,7 @@ public class Enviroment {
 
 	/**
 	 * Sets the array of ants of this enviroment.
+	 * @throws libai.ants.AntFrameworkException AntFrameworkException
 	 */
 	public void setAnts() throws AntFrameworkException {
 		if (this.numberOfAnts <= 0) {

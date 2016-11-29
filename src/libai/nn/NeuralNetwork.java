@@ -211,6 +211,8 @@ public abstract class NeuralNetwork implements Serializable {
 	 * <code>sigma</code> and input parameter
 	 * <code>u^2</code>
 	 *
+	 * @param u2  {@code u2}
+	 * @param sigma  {@code sigma}
 	 * @return e^(-u^2/2.sigma)
 	 */
 	public static double gaussian(double u2, double sigma) {

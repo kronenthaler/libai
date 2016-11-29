@@ -138,6 +138,8 @@ public class BinaryChromosome extends Chromosome {
 	 * as reference. If the chromosome is too large this value can be
 	 * overflowed.
 	 *
+	 * @param minValue {@code minValue}
+	 * @param maxValue {@code maxValue}
 	 * @return The double representation of the chromosome.
 	 */
 	public double decode(double minValue, double maxValue) {

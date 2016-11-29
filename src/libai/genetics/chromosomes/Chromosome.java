@@ -46,21 +46,29 @@ public abstract class Chromosome {
 	 * <code>position</code> and swap lower portion of this with the lower
 	 * portion of
 	 * <code>b</code> and return the new individual
+	 * @param b {@code b}
+	 * @param position {@code position}
+	 * @return new individual
 	 */
 	public abstract Chromosome[] cross(Chromosome b, int position);
 
 	/**
 	 * Change one gene of the chromosome
+	 * @param pm {@code pm}
+	 * @return mutated {@code Chromosome}
 	 */
 	public abstract Chromosome mutate(double pm);
 
 	/**
 	 * Copy constructor
+	 * @return copy of this Chromosome
 	 */
 	public abstract Chromosome getCopy();
 
 	/**
 	 * Generic constructor
+	 * @param length {@code length}
+	 * @return {@code Chromosome} instance
 	 */
 	public abstract Chromosome getInstance(int length);
 

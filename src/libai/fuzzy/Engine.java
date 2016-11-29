@@ -58,6 +58,7 @@ public class Engine {
 
 	/**
 	 * Constructor. Creates a Engine with verbose output.
+	 * @param _debug {@code _debug}
 	 */
 	public Engine(boolean _debug) {
 		this();
