@@ -28,8 +28,8 @@ import java.util.ArrayList;
 
 public interface FuzzySet {
 	/**
-	 * Evaluate the membership of the set with the especified value. Alias of
-	 * eval(s.getValue()).
+	 * Evaluate the membership of the set with the specified value. Alias of
+	 * {@code eval(s.getValue())}
 	 *
 	 * @param s Value to evaluate.
 	 * @return The membership value for the input.

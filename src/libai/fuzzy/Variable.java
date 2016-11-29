@@ -26,7 +26,7 @@ package libai.fuzzy;
 /**
  * Wrapper around a double value. This implementation allows, change the type of
  * the double, for other types more precises or maybe any type suitable for
- * embebbed devices without change the structure of the rest of the engine.
+ * embedded devices without change the structure of the rest of the engine.
  *
  * @author kronenthaler
  */

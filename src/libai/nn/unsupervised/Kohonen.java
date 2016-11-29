@@ -34,10 +34,10 @@ import libai.nn.NeuralNetwork;
  * Kohonen's Self-organizative Maps or SOM or Kohonen. This maps are one of the
  * most important unsupervised neural networks of the history. The most
  * important feature of the kohonen's maps is the possibility of transform any
- * multidimensional space into a R^2 space, providing a highly precise clusteing
- * method. One of the most famous examples for the kohonen's maps is the
- * transform the RGB color cube into a plane where the reds, greens, blues, etc
- * are clustered in a very similar way of the any color picker utility.
+ * multidimensional space into a R^2 space, providing a highly precise 
+ * clustering method. One of the most famous examples for the kohonen's maps is 
+ * the transform the RGB color cube into a plane where the reds, greens, blues, 
+ * etc are clustered in a very similar way of the any color picker utility.
  *
  * @author kronenthaler
  */

@@ -32,7 +32,7 @@ import libai.genetics.chromosomes.Chromosome;
  */
 public interface Fitness {
 	/**
-	 * evaluate the fitnes of the passed chromosome.
+	 * evaluate the fitness of the passed chromosome.
 	 * @param c  {@code c}
 	 * @return fitness value for a given Chromosome
 	 */
@@ -48,8 +48,8 @@ public interface Fitness {
 	public boolean isBetter(double fitness, double best);
 
 	/**
-	 * the worst posible value OO or -OO
-	 * @return worst posible value OO or -OO
+	 * the worst possible value OO or -OO
+	 * @return worst possible value OO or -OO
 	 */
 	public double theWorst();
 }

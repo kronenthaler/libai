@@ -29,10 +29,10 @@ import java.util.Random;
 
 /**
  * Engine class provides complete algorithm to evolve populations of
- * chormosomes, regardless of these kind. This implementation of the genetic
- * algorithm contemplates the ellitism variant for the selection. The mutation
+ * chromosomes, regardless of these kind. This implementation of the genetic
+ * algorithm contemplates the elitism variant for the selection. The mutation
  * and cross are more chromosome-dependent that the algorithm-dependent,
- * therefore, chromosomes are instantiated for its class and evaluateds through
+ * therefore, chromosomes are instantiated for its class and evaluated through
  * the Fitness instance.
  *
  * @author kronenthaler
@@ -47,7 +47,7 @@ public class Engine {
 	 */
 	private Chromosome newpopulation[];
 	/**
-	 * The chrmosomes selected to crossing
+	 * The chromosomes selected to crossing
 	 */
 	private Chromosome toCross[];
 	/**
@@ -161,7 +161,7 @@ public class Engine {
 	}
 
 	/**
-	 * Cross population. Elitish style.
+	 * Cross population. Elitist style.
 	 */
 	private void cross() {
 		int a = 0, b = 0, pos = 0, j = 0, i = 0;
