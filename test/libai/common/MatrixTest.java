@@ -89,8 +89,8 @@ public class MatrixTest {
 
     @Test
     public void testMatrixRandom() {
-        Matrix a = Matrix.random(50, 100, true);
-        Matrix b = Matrix.random(50, 100, false);
+        Matrix a = Matrix.random(50, 100, true, null);
+        Matrix b = Matrix.random(50, 100, false, null);
         assertNotEquals(a, b);
         
         boolean hasNegativeA = false;
@@ -108,12 +108,43 @@ public class MatrixTest {
     }
 
     @Test
+    public void testMatrixRandom2() {
+        Random rand1 = new Random(0);
+        Random rand2 = new Random(0);
+        Matrix a = Matrix.random(50, 100, true,  rand1);
+        Matrix b = Matrix.random(50, 100, false, rand2);
+        assertNotEquals(a, b);
+
+        boolean hasNegativeA = false;
+        boolean hasNegativeB = false;
+
+        for (int i = 0; i < a.getRows(); i++) {
+            for (int j = 0; j < a.getColumns(); j++) {
+                hasNegativeA |= a.position(i, j) < 0;
+                hasNegativeB |= b.position(i, j) < 0;
+            }
+        }
+
+        assertTrue (hasNegativeA);
+        assertFalse(hasNegativeB);
+    }
+
+    @Test
+    public void testMatrixRandom3() {
+        Random rand = new Random(0);
+        Matrix a = Matrix.random(50, 100, true,  rand);
+        Matrix b = Matrix.random(50, 100, true, rand);
+        assertNotEquals(a, b);
+        a = Matrix.random(50, 100, true, new Random(0));
+        b = Matrix.random(50, 100, true, new Random(0));
+        assertEquals(a, b);
+    }
+
+    @Test
     public void testRandomIntInt() {
         Matrix a = Matrix.random(50, 100);
         Matrix b = Matrix.random(50, 100);
         assertNotEquals(a, b);
-        //If this test fails, please check if:
-        //seed = 0; is commented in line 41 of the Matrix class
     }
 
     @Test
@@ -577,13 +608,13 @@ public class MatrixTest {
     }
 
     @Test
-    public void testFillBoolean() {
+    public void testFillBooleanRandom() {
         Matrix a = new Matrix(5, 10);
         Matrix b = new Matrix(5, 10);
         assertEquals(a, b);
-        a.fill(true);
+        a.fill(true, null);
         assertNotEquals(a, b);
-        b.fill(true);
+        b.fill(true, null);
         assertNotEquals(a, b);
         
         boolean hasNegativeA = false;
@@ -595,15 +626,57 @@ public class MatrixTest {
                 hasNegativeB |= b.position(i, j) < 0;
             }
         }
-        
+
         assertTrue(hasNegativeA);
         assertTrue(hasNegativeB);
-        
+
         hasNegativeA = false;
         hasNegativeB = false;
-        a.fill(false);
-        b.fill(false);
+        a.fill(false, null);
+        b.fill(false, null);
         assertNotEquals(a, b);
+
+        for (int i = 0; i < a.getRows(); i++) {
+            for (int j = 0; j < a.getColumns(); j++) {
+                hasNegativeA |= a.position(i, j) < 0;
+                hasNegativeB |= b.position(i, j) < 0;
+            }
+        }
+
+        assertFalse(hasNegativeA);
+        assertFalse(hasNegativeB);
+    }
+
+    @Test
+    public void testFillBooleanRandom2() {
+        Random rand1 = new Random(0);
+        Random rand2 = new Random(0);
+        Matrix a = new Matrix(5, 10);
+        Matrix b = new Matrix(5, 10);
+        assertEquals(a, b);
+        a.fill(true, rand1);
+        assertNotEquals(a, b);
+        b.fill(true, rand2);
+        assertEquals(a, b);
+
+        boolean hasNegativeA = false;
+        boolean hasNegativeB = false;
+
+        for (int i = 0; i < a.getRows(); i++) {
+            for (int j = 0; j < a.getColumns(); j++) {
+                hasNegativeA |= a.position(i, j) < 0;
+                hasNegativeB |= b.position(i, j) < 0;
+            }
+        }
+
+        assertTrue(hasNegativeA);
+        assertTrue(hasNegativeB);
+
+        hasNegativeA = false;
+        hasNegativeB = false;
+        a.fill(false, rand1);
+        b.fill(false, rand2);
+        assertEquals(a, b);
         
         for (int i = 0; i < a.getRows(); i++) {
             for (int j = 0; j < a.getColumns(); j++) {
@@ -614,6 +687,29 @@ public class MatrixTest {
         
         assertFalse(hasNegativeA);
         assertFalse(hasNegativeB);
+    }
+
+    @Test
+    public void testFillBooleanRandom3() {
+        Random rand = new Random(0);
+        Matrix a = new Matrix(5, 10);
+        Matrix b = new Matrix(5, 10);
+        assertEquals(a, b);
+        a.fill(true, rand);
+        assertNotEquals(a, b);
+        b.fill(true, rand);
+        assertNotEquals(a, b);
+    }
+
+    @Test
+    public void testFillBooleanRandom4() {
+        Matrix a = new Matrix(5, 10);
+        Matrix b = new Matrix(5, 10);
+        assertEquals(a, b);
+        a.fill(true, null);
+        assertNotEquals(a, b);
+        b.fill(true);
+        assertNotEquals(a, b);
     }
 
     @Test
