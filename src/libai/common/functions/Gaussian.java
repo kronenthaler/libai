@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2009-2016 Ignacio Calderon <https://github.com/kronenthaler>
+ * Copyright (c) 2016 Federico Vera <https://github.com/dktcoding>
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,28 +24,32 @@
 package libai.common.functions;
 
 /**
- * Hyperbolic Tangent. F(x) = tanh(x). The first derivate of tanh(x) =
- * 1-(tanh(x)*tanh(x))
- *
- * @author kronenthaler
+ * Function Gaussian.
+ * <pre> 
+ * Gaussian(x)  = e^(-(x^2))
+ * Gaussian'(x) = -2 * x * e^(-(x^2))
+ * </pre>
+ * 
+ * @author Federico Vera {@literal <fedevera at unc.edu.ar>}
  */
-public class HyperbolicTangent implements Function {
+public class Gaussian implements Function {
 	private static final Function derivate = new Function() {
 		@Override
 		public double eval(double x) {
-			double a = Math.tanh(x);
-			return (1.0 - (a * a));
+			double g = Math.exp(-(x * x));
+			return -2. * x * g;
 		}
 
 		@Override
 		public Function getDerivate() {
-			return null;
+			String msg = "Second derivative not implemented for 'Gaussian(x)'";
+			throw new UnsupportedOperationException(msg);
 		}
 	};
 
 	@Override
 	public double eval(double x) {
-		return Math.tanh(x);
+		return Math.exp(-(x * x));
 	}
 
 	@Override

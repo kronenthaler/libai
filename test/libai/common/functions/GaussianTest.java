@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2009-2016 Ignacio Calderon <https://github.com/kronenthaler>
+ * Copyright (c) 2016 Federico Vera <https://github.com/dktcoding>
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,33 +23,42 @@
  */
 package libai.common.functions;
 
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
 /**
- * Hyperbolic Tangent. F(x) = tanh(x). The first derivate of tanh(x) =
- * 1-(tanh(x)*tanh(x))
  *
- * @author kronenthaler
+ * @author Federico Vera {@literal <fedevera at unc.edu.ar>}
  */
-public class HyperbolicTangent implements Function {
-	private static final Function derivate = new Function() {
-		@Override
-		public double eval(double x) {
-			double a = Math.tanh(x);
-			return (1.0 - (a * a));
-		}
+public class GaussianTest {
 
-		@Override
-		public Function getDerivate() {
-			return null;
+	@Test
+	public void testEval() {
+		Gaussian gauss = new Gaussian();
+		assertEquals(1, gauss.eval(0), 1e-12);
+		for (int i = 0; i < 100; i++) {
+			double x = Math.random();
+			assertEquals(gauss.eval(x), gauss.eval(-x), 1e-12);
+			assertEquals(-(x*x), Math.log(gauss.eval(x)), 1e-12);
 		}
-	};
-
-	@Override
-	public double eval(double x) {
-		return Math.tanh(x);
 	}
 
-	@Override
-	public Function getDerivate() {
-		return derivate;
+	@Test
+	public void testGetDerivate() {
+		Gaussian gauss = new Gaussian();
+		Function der = gauss.getDerivate();
+		assertNotNull(der);
+		for (int i = 0; i < 100; i++) {
+			double x = Math.random();
+			assertEquals(-der.eval(x), der.eval(-x), 1e-12);
+			assertEquals(-2 * x, der.eval(x) / gauss.eval(x), 1e-12);
+		}
 	}
+	
+	@Test(expected = UnsupportedOperationException.class)
+	public void testGetGetDerivative() {
+		new Gaussian().getDerivate().getDerivate();
+	}
+	
 }

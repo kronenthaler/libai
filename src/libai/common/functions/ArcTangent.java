@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2009-2016 Ignacio Calderon <https://github.com/kronenthaler>
+ * Copyright (c) 2016 Federico Vera <https://github.com/dktcoding>
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,28 +24,32 @@
 package libai.common.functions;
 
 /**
- * Hyperbolic Tangent. F(x) = tanh(x). The first derivate of tanh(x) =
- * 1-(tanh(x)*tanh(x))
- *
- * @author kronenthaler
+ * Function ArcTan.
+ * <pre> 
+ * ArcTan(x)  = tan^-1(x)
+ * 
+ * ArcTan'(x) = 1 / (x^2 + 1)
+ * </pre>
+ * 
+ * @author Federico Vera {@literal <fedevera at unc.edu.ar>}
  */
-public class HyperbolicTangent implements Function {
+public class ArcTangent implements Function {
 	private static final Function derivate = new Function() {
 		@Override
 		public double eval(double x) {
-			double a = Math.tanh(x);
-			return (1.0 - (a * a));
+			return 1. / (x * x + 1.);
 		}
 
 		@Override
 		public Function getDerivate() {
-			return null;
+			String msg = "Second derivative not implemented for 'ArcTan(x)'";
+			throw new UnsupportedOperationException(msg);
 		}
 	};
 
 	@Override
 	public double eval(double x) {
-		return Math.tanh(x);
+		return Math.atan(x);
 	}
 
 	@Override

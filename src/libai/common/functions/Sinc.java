@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2009-2016 Ignacio Calderon <https://github.com/kronenthaler>
+ * Copyright (c) 2016 Federico Vera <https://github.com/dktcoding>
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,28 +24,40 @@
 package libai.common.functions;
 
 /**
- * Hyperbolic Tangent. F(x) = tanh(x). The first derivate of tanh(x) =
- * 1-(tanh(x)*tanh(x))
- *
- * @author kronenthaler
+ * Function Sinc.
+ * <pre> 
+ * Sinc(x)  = {1         for x  = 0 
+ *             sin(x)/x  for x != 0}.
+ * 
+ * Sinc'(x) = {0                    for x  = 0
+ *             cos(x)/x-sin(x)/x^2  for x != 0}
+ * </pre>
+ * 
+ * @author Federico Vera {@literal <fedevera at unc.edu.ar>}
  */
-public class HyperbolicTangent implements Function {
+public class Sinc implements Function {
 	private static final Function derivate = new Function() {
 		@Override
 		public double eval(double x) {
-			double a = Math.tanh(x);
-			return (1.0 - (a * a));
+			if (x == 0) {
+				return 0;
+			}
+			return (Math.cos(x) / x) - (Math.sin(x) / (x * x));
 		}
 
 		@Override
 		public Function getDerivate() {
-			return null;
+			String msg = "Second derivative not implemented for 'Sinc(x)'";
+			throw new UnsupportedOperationException(msg);
 		}
 	};
 
 	@Override
 	public double eval(double x) {
-		return Math.tanh(x);
+		if (x == 0) {
+			return 1;
+		}
+		return Math.sin(x) / x;
 	}
 
 	@Override
