@@ -34,7 +34,7 @@ import libai.nn.NeuralNetwork;
  * Multi Layer Perceptron or MLP. MLP was the first algorithm proposed to train
  * multilayer neurons using the general delta rule. This implementation has the
  * classical backpropagation algorithm and the main variant the backpropagation
- * with momemtum. NOTE: The backpropagation is a very slow algorithm involves
+ * with momentum. NOTE: The backpropagation is a very slow algorithm involves
  * MANY matrix operation. I have planned to implement a batch algorithm or
  * Resilent Backpropagation (Rprop) to replace this algorithm. Meanwhile be
  * patient.
@@ -80,7 +80,7 @@ public class MLP extends NeuralNetwork {
 	 * <code>nperlayer</code>. The nperlayer[0] means the input layer. For each
 	 * layer the neurons appliss the output function
 	 * <code>funcs[i]</code>. These functions must be derivable. The parameter
-	 * <code>beta</code> means the momemtum influence. If beta &lt;= 0 the
+	 * <code>beta</code> means the momentum influence. If beta &lt;= 0 the
 	 * momentum has no influence. if beta &gt; 0 and &lt; 1 that's the
 	 * influence.
 	 *
@@ -135,7 +135,7 @@ public class MLP extends NeuralNetwork {
 	}
 
 	/**
-	 * Initialize the matrix and auxiliar buffers.
+	 * Initialize the matrix and auxiliary buffers.
 	 */
 	private void init() {
 		Yt[0] = new Matrix(1, nperlayer[0]);
@@ -165,11 +165,11 @@ public class MLP extends NeuralNetwork {
 	 * Train the network using the standard backpropagation algorithm. The
 	 * pattern is propagated from the input to the final layer (the output).
 	 * Then the error for the final layer is computed. The error is calculated
-	 * backwards to the first hidden layer, calculating the diferentials between
-	 * input and expected output (backpropagation). Finally, the weights and
-	 * biases are updated using the delta rule:<br/>
-	 * W[i] = W[i] + beta*(W[i]-Wprev[i]) - (1-beta)*alpha.d[i].Y[i-1]^t <br/>
-	 * B[i] = B[i] + beta*(B[i]-Bprev[i]) - (1-beta)*alpha.d[i]<br/>
+	 * backwards to the first hidden layer, calculating the differentials 
+	 * between input and expected output (backpropagation). Finally, the weights 
+	 * and biases are updated using the delta rule:<br>
+	 * W[i] = W[i] + beta*(W[i]-Wprev[i]) - (1-beta)*alpha.d[i].Y[i-1]^t <br>
+	 * B[i] = B[i] + beta*(B[i]-Bprev[i]) - (1-beta)*alpha.d[i]<br>
 	 *
 	 * @param patterns	The patterns to be learned.
 	 * @param answers The expected answers.

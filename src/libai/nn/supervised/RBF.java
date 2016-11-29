@@ -32,7 +32,7 @@ import libai.nn.NeuralNetwork;
 /**
  * Radial Basis Function or RBF. Is an hybrid neural network with 3 layers
  * (1-input, 1-hidden, 1-output). The hidden layers is trained using a
- * stochactic clustering algorithm: k-means. The final layer is trained using
+ * stochastic clustering algorithm: k-means. The final layer is trained using
  * the Adaline rule. The k-means algorithm is used to set up the position of the
  * "centers" of the radial basis functions, as this process is regardless of the
  * output and invariant over the input, could be used a highly efficient
@@ -70,7 +70,7 @@ public class RBF extends Adaline {
 	 * radial basis functions using k-means algorithm. After that the radius of
 	 * the function is calculated using n-nearest neighbors. When n = the number
 	 * of inputs. Then the output for the hidden layer are precalculated and
-	 * used as input for the Adaline trainning.
+	 * used as input for the Adaline training.
 	 *
 	 * @param patterns	The patterns to be learned.
 	 * @param answers The expected answers.
@@ -222,7 +222,7 @@ public class RBF extends Adaline {
 
 	/**
 	 * Calculate the distance from the pattern to each centroid and apply the
-	 * gaussian function to that distance left the result in
+	 * Gaussian function to that distance left the result in
 	 * <code>result</code>.
 	 *
 	 * @param pattern Pattern to evaluate

@@ -34,9 +34,9 @@ import libai.nn.NeuralNetwork;
 
 /**
  * Implementation of the SVM using the SMO algorithm. Based on the original
- * implementation of:<br/>
+ * implementation of:<br>
  * X. Jiang and H. Yu. SVM-JAVA: A Java implementation of the SMO (Sequential
- * Minimal Optimization) for training SVM.<br/>
+ * Minimal Optimization) for training SVM.<br>
  * Department of Computer Science and Engineering, Pohang University of Science
  * and Technology (POSTECH), http://iis.hwanjoyu.org/svm-java, 2008. The code
  * was adapted to the data structures and architecture of the libai. Some little

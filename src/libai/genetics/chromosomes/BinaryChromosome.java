@@ -27,11 +27,11 @@ import libai.genetics.Engine;
 import java.util.BitSet;
 
 /**
- * The binary form of the chormosome. This chromosome contains a sequence of
+ * The binary form of the chromosome. This chromosome contains a sequence of
  * bits. The mutation operation are supported by flipping a bit. And the cross
- * by masking the bits:<br/>
- * offspring1: (this & mask) | (otherparent & ~mask)<br/>
- * offspring2: (otherparent & mask) | (this & ~mask)<br/>
+ * by masking the bits:<br>
+ * offspring1: (this &amp; mask) | (otherparent &amp; ~mask)<br>
+ * offspring2: (otherparent &amp; mask) | (this &amp; ~mask)<br>
  *
  * @author kronenthaler
  */
@@ -67,7 +67,7 @@ public class BinaryChromosome extends Chromosome {
 
 	/**
 	 * Split the genes by <i>position</i> and swap lower portion of this with
-	 * the lower portion of b and viceversa to return 2 offsprings.
+	 * the lower portion of b and vice versa to return 2 offsprings.
 	 *
 	 * @param b chromosome to cross
 	 * @param position Position to split the chromosomes.
@@ -138,6 +138,8 @@ public class BinaryChromosome extends Chromosome {
 	 * as reference. If the chromosome is too large this value can be
 	 * overflowed.
 	 *
+	 * @param minValue {@code minValue}
+	 * @param maxValue {@code maxValue}
 	 * @return The double representation of the chromosome.
 	 */
 	public double decode(double minValue, double maxValue) {

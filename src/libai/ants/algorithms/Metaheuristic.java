@@ -161,7 +161,7 @@ abstract public class Metaheuristic implements Comparator<Ant> {
 	/**
 	 * Sets the number of nodes of the graph problem
 	 *
-	 * @param numberOfNodes
+	 * @param numberOfNodes {@code numberOfNodes}
 	 */
 	public void setNumberOfNodes(int numberOfNodes) {
 		this.numberOfNodes = numberOfNodes;
@@ -197,6 +197,7 @@ abstract public class Metaheuristic implements Comparator<Ant> {
 	 * Used by ants to decided the next node to visit.
 	 *
 	 * @param i source node
+	 * @param currentSolution {@code currentSolution}
 	 * @return destination node
 	 */
 	abstract public int decisionRule(int i, Vector<Integer> currentSolution);
@@ -206,7 +207,7 @@ abstract public class Metaheuristic implements Comparator<Ant> {
 	 * calls to other functions: pheromonesUpdate,pheromonesEvaporation..
 	 * according to some ACO algorithm specific logic
 	 *
-	 * @throws AntFrameworkException
+	 * @throws AntFrameworkException AntFrameworkException
 	 */
 	abstract public void solve() throws AntFrameworkException;
 
@@ -216,7 +217,7 @@ abstract public class Metaheuristic implements Comparator<Ant> {
 	 * some other parameter do not exists but it is possible to set a default
 	 * value, here is the place to do it.
 	 *
-	 * @throws Exception
+	 * @throws Exception Exception
 	 */
 	abstract public void checkParameters() throws Exception;
 
@@ -240,6 +241,7 @@ abstract public class Metaheuristic implements Comparator<Ant> {
 	 *
 	 * @param i current node
 	 * @param currentSolution ant's current solutin
+	 * @return list of possible nodes to visit
 	 */
 	abstract public Vector<Integer> constrains(int i, Vector<Integer> currentSolution);
 

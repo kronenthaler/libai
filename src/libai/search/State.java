@@ -32,16 +32,19 @@ import java.util.*;
 public abstract class State implements Comparable<State> {
 	/**
 	 * Get the cost of the current state
+	 * @return cost of the current state
 	 */
 	public abstract double getCost();
 
 	/**
 	 * Get the heuristic cost of the current state
+	 * @return heuristic cost of the current state
 	 */
 	public abstract double getHeuristicCost();
 
 	/**
 	 * Returns a list with all the possible candidates from this state
+	 * @return list with all the possible candidates from this state
 	 */
 	public abstract ArrayList<State> getCandidates();
 
@@ -58,6 +61,7 @@ public abstract class State implements Comparable<State> {
 
 	/**
 	 * Determines if two states are equals or equivalents
+	 * @param o {@code o}
 	 */
 	public boolean equals(Object o) {
 		return compareTo((State) o) == 0;
@@ -65,6 +69,8 @@ public abstract class State implements Comparable<State> {
 
 	/**
 	 * Determines if the current state is a solution or not
+	 * @return {@code true} if the current state is a solution and 
+	 * {@code false otherwise}
 	 */
 	public abstract boolean isSolution();
 }
