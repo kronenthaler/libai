@@ -45,7 +45,7 @@ public interface FuzzySet {
 	public double eval(double s);
 
 	/**
-	 * Set of values where = {x e X | u(x) > 0}
+	 * Set of values where = {x e X | u(x) &gt; 0}
 	 *
 	 * @return The set of values where the membership is greater than zero.
 	 */

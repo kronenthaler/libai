@@ -74,8 +74,8 @@ public class Competitive extends NeuralNetwork {
 	/**
 	 * Train the network using "the winner takes all". For each neuron the
 	 * Euclidean distance between the pattern and the neuron is calculated. The
-	 * position with the lowest distance is updated with the rule:<br/>
-	 * Ww = Ww + alpha.(pattern - Ww)<br/>
+	 * position with the lowest distance is updated with the rule:<br>
+	 * Ww = Ww + alpha.(pattern - Ww)<br>
 	 *
 	 * @param patterns	The patterns to be learned.
 	 * @param answers The expected answers.

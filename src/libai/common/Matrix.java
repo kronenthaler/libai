@@ -470,7 +470,7 @@ public final class Matrix implements Serializable {
 	 }
 	 */
 	/**
-	 * Print this matrix in the OpenOffice's formula format. Useful for copy &
+	 * Print this matrix in the OpenOffice's formula format. Useful for copy &amp;
 	 * paste in OO documents.
 	 *
 	 * @param out Stream to write on.

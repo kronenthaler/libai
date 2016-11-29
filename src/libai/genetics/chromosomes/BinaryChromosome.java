@@ -29,9 +29,9 @@ import java.util.BitSet;
 /**
  * The binary form of the chormosome. This chromosome contains a sequence of
  * bits. The mutation operation are supported by flipping a bit. And the cross
- * by masking the bits:<br/>
- * offspring1: (this & mask) | (otherparent & ~mask)<br/>
- * offspring2: (otherparent & mask) | (this & ~mask)<br/>
+ * by masking the bits:<br>
+ * offspring1: (this &amp; mask) | (otherparent &amp; ~mask)<br>
+ * offspring2: (otherparent &amp; mask) | (this &amp; ~mask)<br>
  *
  * @author kronenthaler
  */

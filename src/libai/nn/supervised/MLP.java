@@ -167,9 +167,9 @@ public class MLP extends NeuralNetwork {
 	 * Then the error for the final layer is computed. The error is calculated
 	 * backwards to the first hidden layer, calculating the diferentials between
 	 * input and expected output (backpropagation). Finally, the weights and
-	 * biases are updated using the delta rule:<br/>
-	 * W[i] = W[i] + beta*(W[i]-Wprev[i]) - (1-beta)*alpha.d[i].Y[i-1]^t <br/>
-	 * B[i] = B[i] + beta*(B[i]-Bprev[i]) - (1-beta)*alpha.d[i]<br/>
+	 * biases are updated using the delta rule:<br>
+	 * W[i] = W[i] + beta*(W[i]-Wprev[i]) - (1-beta)*alpha.d[i].Y[i-1]^t <br>
+	 * B[i] = B[i] + beta*(B[i]-Bprev[i]) - (1-beta)*alpha.d[i]<br>
 	 *
 	 * @param patterns	The patterns to be learned.
 	 * @param answers The expected answers.

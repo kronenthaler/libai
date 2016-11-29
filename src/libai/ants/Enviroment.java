@@ -174,7 +174,7 @@ public class Enviroment {
 	 * Sets both the number of ants and the array of ants
 	 *
 	 * @param numberOfAnts number of ants
-	 * @throws AntFrameworkException if number of ants is <= 0
+	 * @throws AntFrameworkException if number of ants is &lt;= 0
 	 */
 	public void setAnts(int numberOfAnts) throws AntFrameworkException {
 		this.setNumberOfAnts(numberOfAnts);
