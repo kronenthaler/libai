@@ -24,15 +24,15 @@
 package libai.common.functions;
 
 /**
- * Function Gauss.
+ * Function Gaussian.
  * <pre> 
- * Gauss(x)  = e^(-(x^2))
- * Gauss'(x) = -2 * x * e^(-(x^2))
+ * Gaussian(x)  = e^(-(x^2))
+ * Gaussian'(x) = -2 * x * e^(-(x^2))
  * </pre>
  * 
  * @author Federico Vera {@literal <fedevera at unc.edu.ar>}
  */
-public class Gauss implements Function {
+public class Gaussian implements Function {
 	private static Function derivate;
 
 	@Override
@@ -46,13 +46,13 @@ public class Gauss implements Function {
 			derivate = new Function() {
 				@Override
 				public double eval(double x) {
-					double g = Gauss.this.eval(x);
+					double g = Gaussian.this.eval(x);
 					return -2. * x * g;
 				}
 
 				@Override
 				public Function getDerivate() {
-					String msg = "Second derivative not implemented for 'Gauss(x)'";
+					String msg = "Second derivative not implemented for 'Gaussian(x)'";
 					throw new UnsupportedOperationException(msg);
 				}
 			};

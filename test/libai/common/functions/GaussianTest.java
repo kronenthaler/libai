@@ -31,11 +31,11 @@ import static org.junit.Assert.*;
  *
  * @author Federico Vera {@literal <fedevera at unc.edu.ar>}
  */
-public class GaussTest {
+public class GaussianTest {
 
 	@Test
 	public void testEval() {
-		Gauss gauss = new Gauss();
+		Gaussian gauss = new Gaussian();
 		assertEquals(1, gauss.eval(0), 1e-12);
 		for (int i = 0; i < 100; i++) {
 			double x = Math.random();
@@ -46,7 +46,7 @@ public class GaussTest {
 
 	@Test
 	public void testGetDerivate() {
-		Gauss gauss = new Gauss();
+		Gaussian gauss = new Gaussian();
 		Function der = gauss.getDerivate();
 		assertNotNull(der);
 		for (int i = 0; i < 100; i++) {
@@ -58,7 +58,7 @@ public class GaussTest {
 	
 	@Test(expected = UnsupportedOperationException.class)
 	public void testGetGetDerivative() {
-		new Gauss().getDerivate().getDerivate();
+		new Gaussian().getDerivate().getDerivate();
 	}
 	
 }
