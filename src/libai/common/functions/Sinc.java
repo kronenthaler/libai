@@ -55,7 +55,7 @@ public class Sinc implements Function {
 					if (x == 0) {
 						return 0;
 					}
-					return Math.cos(x) / x - Math.sin(x) / x / x;
+					return (Math.cos(x) / x) - (Math.sin(x) / (x * x));
 				}
 
 				@Override
