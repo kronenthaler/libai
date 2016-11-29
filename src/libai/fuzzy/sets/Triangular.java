@@ -29,15 +29,15 @@ import java.util.ArrayList;
 /**
  * Fuzzy set representing a triangular function. Only one point on the function
  * can take the max value of 1. The triangular function can take 3 variations:
- * <br/>
+ * <br>
  * <ul>
  * <li>right triangle to the left. a = b != c.</li>
  * <li>centered triangle a != b != c.</li>
  * <li>right triangle to the right a != b = c.</li>
  * </ul>
  *
- * In the three cases, the support of the set is the interval [a,c].<br/>
- * The kernel is always the single value b.<br/>
+ * In the three cases, the support of the set is the interval [a,c].<br>
+ * The kernel is always the single value b.<br>
  *
  * @author kronenthaler
  */

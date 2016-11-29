@@ -64,8 +64,8 @@ public class Perceptron extends NeuralNetwork {
 	}
 
 	/**
-	 * Train the perceptron using the standard update rule: <br/>
-	 * W = W + alpha.e.pattern^t<br/>
+	 * Train the perceptron using the standard update rule: <br>
+	 * W = W + alpha.e.pattern^t<br>
 	 * b = b + alpha.e
 	 *
 	 * @param patterns	The patterns to be learned.

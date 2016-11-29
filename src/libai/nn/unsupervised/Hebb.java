@@ -35,7 +35,7 @@ import libai.nn.NeuralNetwork;
  * autoassociative network consists in to learn the same input pattern as output
  * pattern. This networks just is able to learn binary patterns because its
  * output function (sign). The Hebbian networks uses the Hebb's rule for
- * trainning. The Hebb's rule is one of the most important training rules in
+ * training. The Hebb's rule is one of the most important training rules in
  * unsupervised networks. Other algorithms like Kohonen uses this rule as base.
  *
  * @author kronenthaler

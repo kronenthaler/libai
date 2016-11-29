@@ -119,6 +119,8 @@ public class C45 implements Comparable<C45> {
 
     /**
      * Return an unpruned tree from the given dataset.
+     * @param ds {@code ds}
+     * @return unpruned tree from the given dataset
      */
     public static C45 getInstance(DataSet ds) {
         return new C45().train(ds);
@@ -127,6 +129,9 @@ public class C45 implements Comparable<C45> {
     /**
      * Return a pruned tree from the given dataset using the standard confidence
      * of 25%
+     * @param ds {@code ds}
+     * @param type {@code type}
+     * @return pruned tree from the given dataset using the standard confidence
      */
     public static C45 getInstancePrune(DataSet ds, int type) {
         return new C45().train(ds).prune(ds, type);
@@ -135,6 +140,9 @@ public class C45 implements Comparable<C45> {
     /**
      * Return a pruned tree from the given dataset using the specified
      * confidence.
+     * @param ds {@code ds}
+     * @param confidence {@code confidence}
+     * @return pruned tree from the given dataset using the specified
      */
     public static C45 getInstancePrune(DataSet ds, double confidence) {
         C45 ret = new C45();
@@ -615,6 +623,8 @@ public class C45 implements Comparable<C45> {
     //IO functions
     /**
      * Load a new C45 tree from the XML node root.
+     * @param root {@code root}
+     * @return new C45 tree from the XML node root
      */
     protected C45 load(Node root) {
         if (root.getNodeName().equals("node")) {

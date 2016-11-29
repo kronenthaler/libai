@@ -28,15 +28,15 @@ import java.util.ArrayList;
 
 /**
  * Fuzzy set representing a trapezoid function. The trapezoid function can take
- * 3 variations: <br/>
+ * 3 variations: <br>
  * <ul>
  * <li>right trapezoid to the left. a = b != c != d.</li>
  * <li>centered trapezoid a != b != c != d.</li>
  * <li>right trapezoid to the right a != b != c = d.</li>
  * </ul>
  *
- * In the three cases, the support of the set is the interval [a,d].<br/>
- * The kernel is always the interval [b,c].<br/>
+ * In the three cases, the support of the set is the interval [a,d].<br>
+ * The kernel is always the interval [b,c].<br>
  *
  * @author kronenthaler
  */

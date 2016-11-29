@@ -32,7 +32,7 @@ import libai.nn.NeuralNetwork;
 /**
  * Competitive Learning is an unsupervised network where "the winner takes all".
  * A pattern is presented to each neuron, the closest neuron wins the right to
- * be updated. The update makes this neuron fitest for that pattern in the
+ * be updated. The update makes this neuron fittest for that pattern in the
  * future. Finally, the network learns a set of descriptive patterns or
  * centroids (if is compared with a clustering algorithm). In general, the
  * output for that network will be a binary codified class, when only one bit on
@@ -74,8 +74,8 @@ public class Competitive extends NeuralNetwork {
 	/**
 	 * Train the network using "the winner takes all". For each neuron the
 	 * Euclidean distance between the pattern and the neuron is calculated. The
-	 * position with the lowest distance is updated with the rule:<br/>
-	 * Ww = Ww + alpha.(pattern - Ww)<br/>
+	 * position with the lowest distance is updated with the rule:<br>
+	 * Ww = Ww + alpha.(pattern - Ww)<br>
 	 *
 	 * @param patterns	The patterns to be learned.
 	 * @param answers The expected answers.
@@ -174,7 +174,7 @@ public class Competitive extends NeuralNetwork {
 
 	/**
 	 * Calculate the error using the average distance between the closest
-	 * neuron. Less distance means less error and viceversa.
+	 * neuron. Less distance means less error and vice versa.
 	 *
 	 * @param patterns The array with the patterns to test
 	 * @param answers The array with the expected answers for the patterns.
