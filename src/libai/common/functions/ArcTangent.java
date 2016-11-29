@@ -34,7 +34,18 @@ package libai.common.functions;
  * @author Federico Vera {@literal <fedevera at unc.edu.ar>}
  */
 public class ArcTangent implements Function {
-	private static Function derivate;
+	private static final Function derivate = new Function() {
+		@Override
+		public double eval(double x) {
+			return 1. / (x * x + 1.);
+		}
+
+		@Override
+		public Function getDerivate() {
+			String msg = "Second derivative not implemented for 'ArcTan(x)'";
+			throw new UnsupportedOperationException(msg);
+		}
+	};
 
 	@Override
 	public double eval(double x) {
@@ -43,21 +54,6 @@ public class ArcTangent implements Function {
 
 	@Override
 	public Function getDerivate() {
-		if (derivate == null) {
-			derivate = new Function() {
-				@Override
-				public double eval(double x) {
-					return 1. / (x * x + 1.);
-				}
-
-				@Override
-				public Function getDerivate() {
-					String msg = "Second derivative not implemented for 'ArcTan(x)'";
-					throw new UnsupportedOperationException(msg);
-				}
-			};
-		}
-
 		return derivate;
 	}
 }

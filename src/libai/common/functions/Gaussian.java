@@ -33,7 +33,19 @@ package libai.common.functions;
  * @author Federico Vera {@literal <fedevera at unc.edu.ar>}
  */
 public class Gaussian implements Function {
-	private static Function derivate;
+	private static final Function derivate = new Function() {
+		@Override
+		public double eval(double x) {
+			double g = Math.exp(-(x * x));
+			return -2. * x * g;
+		}
+
+		@Override
+		public Function getDerivate() {
+			String msg = "Second derivative not implemented for 'Gaussian(x)'";
+			throw new UnsupportedOperationException(msg);
+		}
+	};
 
 	@Override
 	public double eval(double x) {
@@ -42,22 +54,6 @@ public class Gaussian implements Function {
 
 	@Override
 	public Function getDerivate() {
-		if (derivate == null) {
-			derivate = new Function() {
-				@Override
-				public double eval(double x) {
-					double g = Gaussian.this.eval(x);
-					return -2. * x * g;
-				}
-
-				@Override
-				public Function getDerivate() {
-					String msg = "Second derivative not implemented for 'Gaussian(x)'";
-					throw new UnsupportedOperationException(msg);
-				}
-			};
-		}
-
 		return derivate;
 	}
 }

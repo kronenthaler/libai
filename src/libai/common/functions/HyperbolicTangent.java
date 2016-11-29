@@ -30,26 +30,26 @@ package libai.common.functions;
  * @author kronenthaler
  */
 public class HyperbolicTangent implements Function {
-	private static Function derivate;
+	private static final Function derivate = new Function() {
+		@Override
+		public double eval(double x) {
+			double a = Math.tanh(x);
+			return (1.0 - (a * a));
+		}
 
+		@Override
+		public Function getDerivate() {
+			return null;
+		}
+	};
+
+	@Override
 	public double eval(double x) {
 		return Math.tanh(x);
 	}
 
+	@Override
 	public Function getDerivate() {
-		if (derivate == null) {
-			derivate = new Function() {
-				public double eval(double x) {
-					double a = Math.tanh(x);
-					return (1.0 - (a * a));
-				}
-
-				public Function getDerivate() {
-					return null;
-				}
-			};
-		}
-
 		return derivate;
 	}
 }

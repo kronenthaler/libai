@@ -36,7 +36,21 @@ package libai.common.functions;
  * @author Federico Vera {@literal <fedevera at unc.edu.ar>}
  */
 public class Sinc implements Function {
-	private static Function derivate;
+	private static final Function derivate = new Function() {
+		@Override
+		public double eval(double x) {
+			if (x == 0) {
+				return 0;
+			}
+			return (Math.cos(x) / x) - (Math.sin(x) / (x * x));
+		}
+
+		@Override
+		public Function getDerivate() {
+			String msg = "Second derivative not implemented for 'Sinc(x)'";
+			throw new UnsupportedOperationException(msg);
+		}
+	};
 
 	@Override
 	public double eval(double x) {
@@ -48,24 +62,6 @@ public class Sinc implements Function {
 
 	@Override
 	public Function getDerivate() {
-		if (derivate == null) {
-			derivate = new Function() {
-				@Override
-				public double eval(double x) {
-					if (x == 0) {
-						return 0;
-					}
-					return (Math.cos(x) / x) - (Math.sin(x) / (x * x));
-				}
-
-				@Override
-				public Function getDerivate() {
-					String msg = "Second derivative not implemented for 'Sinc(x)'";
-					throw new UnsupportedOperationException(msg);
-				}
-			};
-		}
-
 		return derivate;
 	}
 }
