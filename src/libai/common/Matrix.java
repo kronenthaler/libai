@@ -576,15 +576,16 @@ public final class Matrix implements Serializable {
 	 * and another bit 
 	 * <a href="http://octave.org/doxygen/4.0/de/d2d/ls-oct-binary_8cc_source.html"> here</a>
 	 * and yet another bit
-	 * <a href="https://lists.gnu.org/archive/html/help-octave/1995-03/msg00056.html">here</a></p> 
+     * <a href="https://lists.gnu.org/archive/html/help-octave/1995-03/msg00056.html">here</a></p> 
 	 * <p>
 	 * About this implementation:<ul>
-	 * <li>GNU Octave supports different matrix types (diagonal matrix, sparse matrix, etc), this
-	 * method will always output a full/dense matrix format. You will be able to read it with 
-	 * GNU Octave, but there's a chance that if you <i>re-save</i> the matrix using octave the file 
-	 * won't be the same, since {@code libai} won't support the special cases.</li>
-	 * <li>This method can be used to concatenate matrices in a single file, as long as only the 
-	 * first one includes a header: <pre>
+	 * <li>GNU Octave supports different matrix types (diagonal matrix, sparse 
+	 * matrix, etc), this method will always output a full/dense matrix format. 
+	 * You will be able to read it with GNU Octave, but there's a chance that if 
+	 * you <i>re-save</i> the matrix using GNU Octave the file won't be the same, 
+	 * since {@code libai} won't support the special cases.</li>
+	 * <li>This method can be used to concatenate matrices in a single file, 
+	 * as long as only the first one includes a header: <pre>
 	 *         Matrix a, b, c; //Init your matrices
 	 *         try (OutputStream os = FileOutputStream("myMatrices.mat")) {
 	 *             a.saveAsOctaveBin(os, "a", true); //&lt;- Include header
@@ -594,19 +595,19 @@ public final class Matrix implements Serializable {
 	 *             //Handle exception
 	 *         }
 	 * </pre></li>
-	 * <li>Even though Java's default endianness is {@link ByteOrder#BIG_ENDIAN}, this matrices are
-	 * saved with {@link ByteOrder#LITTLE_ENDIAN}.</li>
+	 * <li>Even though Java's default endianness is {@link ByteOrder#BIG_ENDIAN}, 
+	 * this matrices are saved with {@link ByteOrder#LITTLE_ENDIAN}.</li>
 	 * <li>This matrices will NOT be Matlab&reg; compatible (never).</li>
 	 * </p>
 	 * @param os The {@link OutputStream} in which to save this {@code Matrix}
-	 * @param name The variable name used for this {@code Matrix}, required by GNU Octave's 
-	 * {@code load()}.
-	 * @param icludeHeader {@code true} if this is the first (or only) {@code Matrix} saved on the 
-	 * {@link OutputStream} and {@code false} in all the other cases.
+	 * @param name The variable name used for this {@code Matrix}, required by 
+	 * GNU Octave's {@code load()}.
+	 * @param includeHeader {@code true} if this is the first (or only) {@code Matrix} 
+	 * saved on the {@link OutputStream} and {@code false} in all the other cases.
 	 * @throws NullPointerException if either {@code os} or {@code name} are {@code null} 
 	 * @throws IOException  if an I/O error occurs 
 	 */
-	public void saveAsOctaveBin(OutputStream os, String name, boolean icludeHeader) throws IOException {
+	public void saveAsOctaveBin(OutputStream os, String name, boolean includeHeader) throws IOException {
 		if (os == null) {
 			throw new NullPointerException("OutputStream must be not null");
 		}
@@ -614,7 +615,7 @@ public final class Matrix implements Serializable {
 			throw new NullPointerException("A value must be specified for the variable name");
 		}
 		
-		if (icludeHeader){
+		if (includeHeader){
 			ByteBuffer header = ByteBuffer.allocate(11); // Always 11 bytes
 			header.order(ByteOrder.LITTLE_ENDIAN);
 			header.put("Octave-1-L".getBytes(StandardCharsets.ISO_8859_1)); // Magic number

@@ -69,8 +69,8 @@ public class SaveAsOctaveTest {
         assertEquals("10", eval("load " + tmp + "b.mat; columns(b)"));
         assertEquals("10", eval("load " + tmp + "c.mat; rows(c)"));
         assertEquals("10", eval("load " + tmp + "c.mat; columns(c)"));
-        //Octave usually round numbers when stdouting, this is the cleanest way I could came up to
-        //test if values were correctly written/read...
+        //Octave usually rounds numbers when stdouting, this is the cleanest way
+        //I could came up to test if values were correctly written/read...
         assertEquals("0" , eval(
                 "load " + tmp + "a.mat;" +
                 "load " + tmp + "b.mat;" +
@@ -108,8 +108,8 @@ public class SaveAsOctaveTest {
         assertEquals("10", eval("load " + tmp + "foo.mat; columns(b)"));
         assertEquals("10", eval("load " + tmp + "foo.mat; rows(c)"));
         assertEquals("20", eval("load " + tmp + "foo.mat; columns(c)"));
-        //Octave usually round numbers when stdouting, this is the cleanest way I could came up to
-        //test if values were correctly written/read...
+        //Octave usually rounds numbers when stdouting, this is the cleanest way
+        //I could came up to test if values were correctly written/read...
         assertEquals("0" , eval("load " + tmp + "foo.mat; sum((a + b' != c)(:))"));
         
         new File(tmp + "foo.mat").delete();
