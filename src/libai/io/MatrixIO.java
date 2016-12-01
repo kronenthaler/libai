@@ -66,8 +66,7 @@ public class MatrixIO {
          * <a href="https://lists.gnu.org/archive/html/help-octave/1995-03/msg00056.html">here</a>
          * </p><p>About this implementation:<ul>
          * <li>GNU Octave supports different matrix types (diagonal matrix, sparse 
-         * matrix, etc), this method will always output a full/dens
-                    e matrix format. 
+         * matrix, etc), this method will always output a full/dense matrix format. 
          * You will be able to read it with GNU Octave, but there's a chance that if 
          * you <i>re-save</i> the matrix using GNU Octave the file won't be the same, 
          * since {@code libai} won't support the special cases.</li>
@@ -95,8 +94,8 @@ public class MatrixIO {
     public static void write(OutputStream output, 
                              Matrix m, Target t) throws IllegalArgumentException, IOException {
         if (m == null) {
-			throw new IllegalArgumentException("The matrix can't be null");
-		}
+            throw new IllegalArgumentException("The matrix can't be null");
+        }
         
         HashMap<String, Matrix> map = new HashMap<>(1);
         map.put("a", m);
@@ -124,14 +123,14 @@ public class MatrixIO {
                              Map<String, Matrix> m,
                              Target t) throws IllegalArgumentException, IOException {
         if (output == null) {
-			throw new IllegalArgumentException("OutputStream can't be null");
-		}
-		if (m == null) {
-			throw new IllegalArgumentException("The matrix map can't be null");
-		}
-		if (m.isEmpty()) {
+            throw new IllegalArgumentException("OutputStream can't be null");
+        }
+        if (m == null) {
+            throw new IllegalArgumentException("The matrix map can't be null");
+        }
+        if (m.isEmpty()) {
             return;
-		}
+        }
         
         t = t == null ? Target.SERIAL : t;
         
