@@ -24,10 +24,18 @@
 package libai.common;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+import libai.io.MatrixIO;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -37,10 +45,111 @@ import static org.junit.Assume.*;
  *
  * @author Federico Vera {@literal <dktcoding [at] gmail>}
  */
-public class SaveAsOctaveTest {
+public class MatrixIOTest {
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testNull1() throws IOException {
+        MatrixIO.write(null, new Matrix(1, 1), MatrixIO.Target.SERIAL);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testNull2() throws IOException {
+        MatrixIO.write(null, (Matrix)null, MatrixIO.Target.SERIAL);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testNull3() throws IOException {
+        MatrixIO.write(new ByteArrayOutputStream(), (Matrix)null, MatrixIO.Target.SERIAL);
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void testNull4() throws IOException {
+        MatrixIO.write(new ByteArrayOutputStream(), (Map<String,Matrix>)null, MatrixIO.Target.SERIAL);
+    }
     
     @Test
-    public void testSaveAsOctaveBin() {
+    public void testWriteTargetSerial() throws Exception {
+        Matrix a = Matrix.random(10, 20);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(512);
+        MatrixIO.write(baos, a, MatrixIO.Target.SERIAL);
+        
+        try (ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+             ObjectInputStream ois = new ObjectInputStream(bais)) {
+            Matrix b = (Matrix)ois.readObject();
+            assertEquals(a, b);
+        }
+    }
+    
+    @Test
+    public void testWriteTargetSerial2() throws Exception {
+        Matrix a = Matrix.random(10, 20);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(512);
+        MatrixIO.write(baos, a, null);
+        
+        try (ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+             ObjectInputStream ois = new ObjectInputStream(bais)) {
+            Matrix b = (Matrix)ois.readObject();
+            assertEquals(a, b);
+        }
+    }
+    
+    @Test
+    public void testWriteTargetSerial4() throws Exception {
+        Matrix a = Matrix.random(15, 20);
+        Matrix b = Matrix.random(25, 20);
+        Map<String, Matrix> data = new HashMap<>(2);
+        data.put("a", a);
+        data.put("b", b);
+        
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
+        MatrixIO.write(baos, data, null);
+        
+        try (ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+             ObjectInputStream ois = new ObjectInputStream(bais)) {
+            Map<String, Matrix> read = (Map<String, Matrix>)ois.readObject();
+            assertEquals(a, read.get("a"));
+            assertEquals(b, read.get("b"));
+        }
+    }
+    
+    @Test
+    public void testWriteTargetCSV() throws Exception {
+        Matrix a = new Matrix(2, 2, true);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(512);
+        MatrixIO.write(baos, a, MatrixIO.Target.CSV);
+        assertEquals("1.0,0.0\n0.0,1.0", new String(baos.toByteArray(), StandardCharsets.UTF_8));
+    }
+    
+    @Test
+    public void testWriteTargetCSV2() throws Exception {
+        Map<String, Matrix> data = new HashMap<>(2);
+        data.put("a", new Matrix(2, 2, true));
+        data.put("b", new Matrix(2, 2, new double[]{0,1,1,0}));
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(512);
+        MatrixIO.write(baos, data, MatrixIO.Target.CSV);
+        assertEquals("1.0,0.0\n0.0,1.0\n0.0,1.0\n1.0,0.0", new String(baos.toByteArray(), StandardCharsets.UTF_8));
+    }
+    
+    @Test
+    public void testWriteTargetTSV() throws Exception {
+        Matrix a = new Matrix(2, 2, true);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(512);
+        MatrixIO.write(baos, a, MatrixIO.Target.TSV);
+        assertEquals("1.0\t0.0\n0.0\t1.0", new String(baos.toByteArray(), StandardCharsets.UTF_8));
+    }
+    
+    @Test
+    public void testWriteTargetTSV2() throws Exception {
+        Map<String, Matrix> data = new HashMap<>(2);
+        data.put("a", new Matrix(2,2,true));
+        data.put("b", new Matrix(2, 2, new double[]{0,1,1,0}));
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(512);
+        MatrixIO.write(baos, data, MatrixIO.Target.TSV);
+        assertEquals("1.0\t0.0\n0.0\t1.0\n0.0\t1.0\n1.0\t0.0", new String(baos.toByteArray(), StandardCharsets.UTF_8));
+    }
+    
+    @Test
+    public void testWriteTargetOctave() {
         assumeTrue("Can't use temp dir...", checkTemp());
         assumeTrue("Can't find Octave...", checkOctaveInstall());
         
@@ -52,15 +161,19 @@ public class SaveAsOctaveTest {
         a.multiply(b, c);
         
         try (OutputStream os = new FileOutputStream(tmp + "a.mat")) {
-            a.saveAsOctaveBin(os, "a", true);
+            MatrixIO.write(os, a, MatrixIO.Target.OCTAVE);
         } catch (Exception e) {}
         
         try (OutputStream os = new FileOutputStream(tmp + "b.mat")) {
-            b.saveAsOctaveBin(os, "b", true);
+            Map<String, Matrix> mat = new HashMap<>(1);
+            mat.put("b", b);
+            MatrixIO.write(os, mat, MatrixIO.Target.OCTAVE);
         } catch (Exception e) {}
         
         try (OutputStream os = new FileOutputStream(tmp + "c.mat")) {
-            c.saveAsOctaveBin(os, "c", true);
+            Map<String, Matrix> mat = new HashMap<>(1);
+            mat.put("c", c);
+            MatrixIO.write(os, mat, MatrixIO.Target.OCTAVE);
         } catch (Exception e) {}
         
         assertEquals("10", eval("load " + tmp + "a.mat; rows(a)"));
@@ -84,7 +197,7 @@ public class SaveAsOctaveTest {
     }
     
     @Test
-    public void testSaveAsOctaveBin2() {
+    public void testWriteTargetOctave2() {
         assumeTrue("Can't use temp dir...", checkTemp());
         assumeTrue("Can't find Octave...", checkOctaveInstall());
         
@@ -97,9 +210,11 @@ public class SaveAsOctaveTest {
         a.add(b.transpose(), c); // c = a + b'
         
         try (OutputStream os = new FileOutputStream(matFile)) {
-            a.saveAsOctaveBin(os, "a", true);
-            b.saveAsOctaveBin(os, "b", false);
-            c.saveAsOctaveBin(os, "c", false);
+            Map<String, Matrix> mat = new HashMap<>(3);
+            mat.put("a", a);
+            mat.put("b", b);
+            mat.put("c", c);
+            MatrixIO.write(os, mat, MatrixIO.Target.OCTAVE);
         } catch (Exception e) {}
         
         assertEquals("10", eval("load " + tmp + "foo.mat; rows(a)"));
