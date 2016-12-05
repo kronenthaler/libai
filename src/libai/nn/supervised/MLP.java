@@ -45,18 +45,17 @@ public class MLP extends NeuralNetwork {
 	public static final int STANDARD_BACKPROPAGATION = 0;
 	public static final int MOMEMTUM_BACKPROPAGATION = 1;
 	public static final int RESILENT_BACKPROPAGATION = 2;
-	private Matrix W[], b[],
-			Y[], d[], u[],
-			Wt[], Yt[],
-			M[];
-	private int nperlayer[]; //number of neurons per layer, including the input layer
-	private int layers;
-	private Function[] func;
+	
+	private final Matrix W[], b[],
+						 Y[], d[], u[],
+						 Wt[], Yt[],
+						 M[];
+	
+	private final int nperlayer[]; //number of neurons per layer, including the input layer
+	private final int layers;
+	private final Function[] func;
 	private double params[];	//momentum term should be in [0,1], if is 0 there is not momentum term.
 	private int trainingType = STANDARD_BACKPROPAGATION;
-
-	public MLP() {
-	}
 
 	/**
 	 * Constructor. Creates a MLP with nperlayer.length layers. The number of
