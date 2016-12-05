@@ -23,11 +23,9 @@
  */
 package libai.nn.supervised;
 
+import java.io.*;
 import libai.common.Matrix;
 import libai.common.functions.Function;
-import java.io.*;
-import java.util.*;
-
 import libai.nn.NeuralNetwork;
 
 /**
@@ -200,9 +198,8 @@ public class MLP extends NeuralNetwork {
 
 	private void standardBP(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 		int[] sort = new int[length];
-		double error = error(patterns, answers, offset, length), prevError = error;
-		Matrix temp2 = new Matrix(answers[0].getRows(), answers[0].getColumns()),
-				e = new Matrix(answers[0].getRows(), answers[0].getColumns());
+		double error = error(patterns, answers, offset, length);
+		Matrix e = new Matrix(answers[0].getRows(), answers[0].getColumns());
 
 		for (int i = 0; i < length; i++) {
 			sort[i] = i;
@@ -248,7 +245,6 @@ public class MLP extends NeuralNetwork {
 			}
 
 			error /= length;
-			prevError = error;
 
 			if (plotter != null)
 				plotter.setError(epochs, error);
@@ -259,9 +255,8 @@ public class MLP extends NeuralNetwork {
 
 	private void momemtumBP(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 		int[] sort = new int[length];
-		double error = error(patterns, answers, offset, length), prevError = error;
-		Matrix temp2 = new Matrix(answers[0].getRows(), answers[0].getColumns()),
-				e = new Matrix(answers[0].getRows(), answers[0].getColumns());
+		double error = error(patterns, answers, offset, length);
+		Matrix e = new Matrix(answers[0].getRows(), answers[0].getColumns());
 		Matrix temp3;
 		double beta = params[0];
 
@@ -333,7 +328,6 @@ public class MLP extends NeuralNetwork {
 			}
 
 			error /= length;
-			prevError = error;
 
 			if (plotter != null)
 				plotter.setError(epochs, error);
@@ -344,7 +338,7 @@ public class MLP extends NeuralNetwork {
 
 	private void resilentBP(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 		int[] sort = new int[length];
-		double error = error(patterns, answers, offset, length), prevError = error;
+		double error = error(patterns, answers, offset, length);
 		Matrix e = new Matrix(answers[0].getRows(), answers[0].getColumns());
 
 		double Nplus = 1.2,
@@ -453,7 +447,6 @@ public class MLP extends NeuralNetwork {
 			}
 
 			error /= length;
-			prevError = error;
 
 			if (plotter != null)
 				plotter.setError(epochs, error);
