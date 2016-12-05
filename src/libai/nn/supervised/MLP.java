@@ -23,7 +23,8 @@
  */
 package libai.nn.supervised;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
 import libai.common.Matrix;
 import libai.common.functions.Function;
 import libai.nn.NeuralNetwork;
@@ -477,12 +478,17 @@ public class MLP extends NeuralNetwork {
 			Y[layers - 1].copy(result);
 	}
 
+	/**
+	 * Deserializes an {@code MLP}
+	 * 
+	 * @param path Path to file
+	 * @return Restored {@code MLP instance}
+	 * @see NeuralNetwork#save(java.lang.String) 
+	 */
 	public static MLP open(String path) {
-		try {
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream(path));
-			MLP p = (MLP) in.readObject();
-			in.close();
-			return p;
+		try (FileInputStream fis = new FileInputStream(path);
+			 ObjectInputStream in = new ObjectInputStream(fis)){
+			return (MLP) in.readObject();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
