@@ -24,11 +24,11 @@
 package libai.common;
 
 import libai.common.functions.Function;
-import java.util.*;
-import java.io.*;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.charset.StandardCharsets;
+import java.io.PrintStream;
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Locale;
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -246,37 +246,55 @@ public final class Matrix implements Serializable {
 	}
 
 	/**
-	 * Fill the matrix with random values. Alias for fill(true).
+	 * Fill the matrix with random values between (-1, 1). Alias for 
+	 * {@code fill(true)}.
+	 * @see Matrix#fill(boolean) 
+	 * @see Matrix#fill(boolean, java.util.Random) 
 	 */
 	public void fill() {
 		fill(true);
 	}
 
 	/**
-	 * Fill the matrix with random values. If the fill must be positive call
-	 * with false.
+	 * Fill the matrix with random values between [0, 1) if {@code signed} is
+	 * {@code is false}, and (-1, 1) if {@code true}. 
 	 *
-	 * @param signed if allow signed values or not
+	 * @param signed {@code false} if all the numbers should be positive, 
+	 * {@code false} otherwise
+	 * @see Matrix#fill(boolean, java.util.Random) 
 	 */
 	public void fill(boolean signed) {
         fill(signed, null);
 	}
 
 	/**
-	 * Fill the matrix with random values. If the fill must be positive call
-	 * with false.
+	 * Fill the matrix with random values between [0, 1) if {@code signed} is
+	 * {@code is false}, and (-1, 1) if {@code true}. 
+	 * <p>This method is based only in {@link Random#nextDouble()}, so in 
+	 * case other intervals are needed the only thing that's needed is a
+	 * custom implementation of {@code nextDouble()}, for instance:</p><pre>
+	 * 
+	 *     Random myRand = new Random(){
+	 *         public double nextDouble() {
+	 *             return super.nextDouble() / 1000.;
+	 *         }
+	 *     }
+	 * </pre>
 	 *
-	 * @param signed if allow signed values or not
-	 * @param r The {@link Random} object used to fill the matrix, if {@code null} it will fallback
-	 * to {@link ThreadLocalRandom#current()}
+	 * @param signed {@code false} if all the numbers should be positive, 
+	 * {@code false} otherwise
+	 * @param r The {@link Random} object used to fill the matrix, if 
+	 * {@code null} it will fallback to {@link ThreadLocalRandom#current()}
 	 */
 	public void fill(boolean signed, Random r) {
 		if (r == null) r = ThreadLocalRandom.current();
-
+		
 		for (int i = 0, n = rows * cols; i < n; i++) {
-			matrix[i] = r.nextDouble() * 0.01 * (double) Math.pow(-1, r.nextInt(2));
-			if (!signed)
-				matrix[i] = Math.abs(matrix[i]);
+			matrix[i] = r.nextDouble();
+			
+			if (signed) {
+				matrix[i] *= Math.pow(-1, r.nextInt(2));
+			}
 		}
 	}
 
