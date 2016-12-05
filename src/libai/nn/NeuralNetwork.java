@@ -28,7 +28,6 @@ import libai.common.Matrix;
 import libai.common.Plotter;
 import java.io.*;
 import java.util.Random;
-import javax.swing.JProgressBar;
 
 /**
  * Neural network abstraction. Provides the methods to train, simulate and
