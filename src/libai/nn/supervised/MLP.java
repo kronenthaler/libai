@@ -23,11 +23,10 @@
  */
 package libai.nn.supervised;
 
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
 import libai.common.Matrix;
 import libai.common.functions.Function;
-import java.io.*;
-import java.util.*;
-
 import libai.nn.NeuralNetwork;
 
 /**
@@ -45,26 +44,24 @@ public class MLP extends NeuralNetwork {
 	public static final int STANDARD_BACKPROPAGATION = 0;
 	public static final int MOMEMTUM_BACKPROPAGATION = 1;
 	public static final int RESILENT_BACKPROPAGATION = 2;
-	private Matrix W[], b[],
-			Y[], d[], u[],
-			Wt[], Yt[],
-			M[];
-	private int nperlayer[]; //number of neurons per layer, including the input layer
-	private int layers;
-	private Function[] func;
+	
+	private final Matrix W[], b[],
+						 Y[], d[], u[],
+						 Wt[], Yt[],
+						 M[];
+	
+	private final int nperlayer[]; //number of neurons per layer, including the input layer
+	private final int layers;
+	private final Function[] func;
 	private double params[];	//momentum term should be in [0,1], if is 0 there is not momentum term.
 	private int trainingType = STANDARD_BACKPROPAGATION;
 
-	public MLP() {
-	}
-
 	/**
-	 * Constructor. Creates a MLP with nperlayer.length layers. The number of
-	 * neurons per layer is defined in
-	 * <code>nperlayer</code>. The nperlayer[0] means the input layer. For each
-	 * layer the neurons applies the output function
-	 * <code>funcs[i]</code>. These functions must be derivable. The training
-	 * algorithm is standard backpropagation.
+	 * Constructor. Creates a MLP with {@code nperlayer.length} layers. The 
+	 * number of neurons per layer is defined in {@code nperlayer}. 
+	 * The {@code nperlayer[0]} means the input layer. For each layer {@code i}
+	 * the neurons applies the output function {@code funcs[i]}. These functions
+	 * must be derivable. The training algorithm is standard backpropagation.
 	 *
 	 * @param nperlayer Number of neurons per layer including the input layer.
 	 * @param funcs Function to apply per layer. The function[0] could be null.
@@ -75,14 +72,13 @@ public class MLP extends NeuralNetwork {
 	}
 
 	/**
-	 * Constructor. Creates a MLP with nperlayer.length layers. The number of
-	 * neurons per layer is defined in
-	 * <code>nperlayer</code>. The nperlayer[0] means the input layer. For each
-	 * layer the neurons appliss the output function
-	 * <code>funcs[i]</code>. These functions must be derivable. The parameter
-	 * <code>beta</code> means the momentum influence. If beta &lt;= 0 the
-	 * momentum has no influence. if beta &gt; 0 and &lt; 1 that's the
-	 * influence.
+	 * Constructor. Creates a MLP with {@code nperlayer.length} layers. The 
+	 * number of neurons per layer is defined in {@code nperlayer}. The 
+	 * {@code nperlayer[0]} means the input layer. For each layer the neurons 
+	 * applies the output function {@code funcs[i]}. These functions must be 
+	 * derivable. The parameter {@code beta} means the momentum influence. 
+	 * If beta &lt;= 0 the momentum has no influence, if beta &gt; 0 and &lt; 1 
+	 * that's the influence.
 	 *
 	 * @param nperlayer Number of neurons per layer including the input layer.
 	 * @param funcs Function to apply per layer. The function[0] could be null.
@@ -117,10 +113,11 @@ public class MLP extends NeuralNetwork {
 	 * like momentum constant, those parameters must be pass as an array of
 	 * values.
 	 *
-	 * @param _trainingType The training algorithm to use,
-	 * STANDARD_BACKPROPAGATION, MOMENTUM_BACKPROPAGATION or
-	 * RESILENT_BACKPROPAGATION.
-	 * @param params The set of parameters for the algorithm selected.
+	 * @param _trainingType The training algorithm to use
+	 * @param params The set of parameters for the selected algorithm.
+	 * @see MLP#STANDARD_BACKPROPAGATION
+	 * @see MLP#MOMEMTUM_BACKPROPAGATION
+	 * @see MLP#RESILENT_BACKPROPAGATION
 	 */
 	public void setTrainingType(int _trainingType, double... params) {
 		trainingType = _trainingType;
@@ -201,9 +198,8 @@ public class MLP extends NeuralNetwork {
 
 	private void standardBP(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 		int[] sort = new int[length];
-		double error = error(patterns, answers, offset, length), prevError = error;
-		Matrix temp2 = new Matrix(answers[0].getRows(), answers[0].getColumns()),
-				e = new Matrix(answers[0].getRows(), answers[0].getColumns());
+		double error = error(patterns, answers, offset, length);
+		Matrix e = new Matrix(answers[0].getRows(), answers[0].getColumns());
 
 		for (int i = 0; i < length; i++) {
 			sort[i] = i;
@@ -249,7 +245,6 @@ public class MLP extends NeuralNetwork {
 			}
 
 			error /= length;
-			prevError = error;
 
 			if (plotter != null)
 				plotter.setError(epochs, error);
@@ -260,9 +255,8 @@ public class MLP extends NeuralNetwork {
 
 	private void momemtumBP(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 		int[] sort = new int[length];
-		double error = error(patterns, answers, offset, length), prevError = error;
-		Matrix temp2 = new Matrix(answers[0].getRows(), answers[0].getColumns()),
-				e = new Matrix(answers[0].getRows(), answers[0].getColumns());
+		double error = error(patterns, answers, offset, length);
+		Matrix e = new Matrix(answers[0].getRows(), answers[0].getColumns());
 		Matrix temp3;
 		double beta = params[0];
 
@@ -334,7 +328,6 @@ public class MLP extends NeuralNetwork {
 			}
 
 			error /= length;
-			prevError = error;
 
 			if (plotter != null)
 				plotter.setError(epochs, error);
@@ -345,7 +338,7 @@ public class MLP extends NeuralNetwork {
 
 	private void resilentBP(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 		int[] sort = new int[length];
-		double error = error(patterns, answers, offset, length), prevError = error;
+		double error = error(patterns, answers, offset, length);
 		Matrix e = new Matrix(answers[0].getRows(), answers[0].getColumns());
 
 		double Nplus = 1.2,
@@ -454,7 +447,6 @@ public class MLP extends NeuralNetwork {
 			}
 
 			error /= length;
-			prevError = error;
 
 			if (plotter != null)
 				plotter.setError(epochs, error);
@@ -485,12 +477,17 @@ public class MLP extends NeuralNetwork {
 			Y[layers - 1].copy(result);
 	}
 
+	/**
+	 * Deserializes an {@code MLP}
+	 * 
+	 * @param path Path to file
+	 * @return Restored {@code MLP instance}
+	 * @see NeuralNetwork#save(java.lang.String) 
+	 */
 	public static MLP open(String path) {
-		try {
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream(path));
-			MLP p = (MLP) in.readObject();
-			in.close();
-			return p;
+		try (FileInputStream fis = new FileInputStream(path);
+			 ObjectInputStream in = new ObjectInputStream(fis)){
+			return (MLP) in.readObject();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

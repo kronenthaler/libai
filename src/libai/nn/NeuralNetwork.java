@@ -28,7 +28,6 @@ import libai.common.Matrix;
 import libai.common.Plotter;
 import java.io.*;
 import java.util.Random;
-import javax.swing.JProgressBar;
 
 /**
  * Neural network abstraction. Provides the methods to train, simulate and
@@ -85,18 +84,16 @@ public abstract class NeuralNetwork implements Serializable {
 	public abstract void simulate(Matrix pattern, Matrix result);
 
 	/**
-	 * Save the neural network to the file in the
-	 * <code>path</code>
+	 * Save the neural network to the file in the given {@code path}
 	 *
 	 * @param path	The path for the output file.
-	 * @return <code>true</code> if the file can be created and written, 
-	 * <code>false</code> otherwise.
+	 * @return {@code true} if the file can be created and written, 
+	 * {@code false} otherwise.
 	 */
 	public boolean save(String path) {
-		try {
-			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(path));
-			out.writeObject(this);
-			out.close();
+		try (FileOutputStream fos = new FileOutputStream(path);
+		     ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+			oos.writeObject(this);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;
