@@ -57,12 +57,11 @@ public class MLP extends NeuralNetwork {
 	private int trainingType = STANDARD_BACKPROPAGATION;
 
 	/**
-	 * Constructor. Creates a MLP with nperlayer.length layers. The number of
-	 * neurons per layer is defined in
-	 * <code>nperlayer</code>. The nperlayer[0] means the input layer. For each
-	 * layer the neurons applies the output function
-	 * <code>funcs[i]</code>. These functions must be derivable. The training
-	 * algorithm is standard backpropagation.
+	 * Constructor. Creates a MLP with {@code nperlayer.length} layers. The 
+	 * number of neurons per layer is defined in {@code nperlayer}. 
+	 * The {@code nperlayer[0]} means the input layer. For each layer {@code i}
+	 * the neurons applies the output function {@code funcs[i]}. These functions
+	 * must be derivable. The training algorithm is standard backpropagation.
 	 *
 	 * @param nperlayer Number of neurons per layer including the input layer.
 	 * @param funcs Function to apply per layer. The function[0] could be null.
@@ -73,14 +72,13 @@ public class MLP extends NeuralNetwork {
 	}
 
 	/**
-	 * Constructor. Creates a MLP with nperlayer.length layers. The number of
-	 * neurons per layer is defined in
-	 * <code>nperlayer</code>. The nperlayer[0] means the input layer. For each
-	 * layer the neurons appliss the output function
-	 * <code>funcs[i]</code>. These functions must be derivable. The parameter
-	 * <code>beta</code> means the momentum influence. If beta &lt;= 0 the
-	 * momentum has no influence. if beta &gt; 0 and &lt; 1 that's the
-	 * influence.
+	 * Constructor. Creates a MLP with {@code nperlayer.length} layers. The 
+	 * number of neurons per layer is defined in {@code nperlayer}. The 
+	 * {@code nperlayer[0]} means the input layer. For each layer the neurons 
+	 * applies the output function {@code funcs[i]}. These functions must be 
+	 * derivable. The parameter {@code beta} means the momentum influence. 
+	 * If beta &lt;= 0 the momentum has no influence, if beta &gt; 0 and &lt; 1 
+	 * that's the influence.
 	 *
 	 * @param nperlayer Number of neurons per layer including the input layer.
 	 * @param funcs Function to apply per layer. The function[0] could be null.
@@ -115,10 +113,11 @@ public class MLP extends NeuralNetwork {
 	 * like momentum constant, those parameters must be pass as an array of
 	 * values.
 	 *
-	 * @param _trainingType The training algorithm to use,
-	 * STANDARD_BACKPROPAGATION, MOMENTUM_BACKPROPAGATION or
-	 * RESILENT_BACKPROPAGATION.
-	 * @param params The set of parameters for the algorithm selected.
+	 * @param _trainingType The training algorithm to use
+	 * @param params The set of parameters for the selected algorithm.
+	 * @see MLP#STANDARD_BACKPROPAGATION
+	 * @see MLP#MOMEMTUM_BACKPROPAGATION
+	 * @see MLP#RESILENT_BACKPROPAGATION
 	 */
 	public void setTrainingType(int _trainingType, double... params) {
 		trainingType = _trainingType;
