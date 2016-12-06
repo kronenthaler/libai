@@ -199,7 +199,7 @@ public class Competitive extends NeuralNetwork {
 			acum += d;
 		}
 
-		return acum / (double) length;
+		return acum / length;
 	}
 
 	/**

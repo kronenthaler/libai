@@ -63,7 +63,7 @@ public class NaiveBayes {
 			params.put(c, new Object[attributeCount]);
 			for (int j = 0; j < attributeCount; j++) {
 				if (j == outputIndex) {
-					params.get(c)[j] = (Integer) 0;
+					params.get(c)[j] = 0;
 				} else if (metadata.isCategorical(j)) {
 					params.get(c)[j] = new HashMap<>(); //value, count
 				} else {
@@ -113,9 +113,9 @@ public class NaiveBayes {
 					double mean = acum.first;
 					double length = (double) ((Integer) data[outputIndex]);
 
-					sd = (sd - ((mean * mean) / (double) length));
-					acum.second = sd / (double) (length - 1);
-					acum.first = mean / (double) length;
+					sd = (sd - ((mean * mean) / length));
+					acum.second = sd / (length - 1);
+					acum.first = mean / length;
 				}
 			}
 		}

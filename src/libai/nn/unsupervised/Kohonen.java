@@ -147,11 +147,11 @@ public class Kohonen extends NeuralNetwork {
 
 			//update neighborhood's ratio.
 			if (neighborhood >= 0.5)
-				neighborhood = lamda * Math.exp(-(float) curr_epoch / (float) epochs);
+				neighborhood = lamda * Math.exp(-(float) curr_epoch / epochs);
 
 			//update alpha
 			if (alpha1 > 0.001)
-				alpha1 = alpha * Math.exp(-(float) curr_epoch / (float) epochs);
+				alpha1 = alpha * Math.exp(-(float) curr_epoch / epochs);
 
 			if (progress != null)
 				progress.setValue(curr_epoch);

@@ -162,7 +162,7 @@ public abstract class NeuralNetwork implements Serializable {
 				error += Math.pow(answers[i + offset].position(j, 0) - Y.position(j, 0), 2);
 		}
 
-		return error / (double) length;
+		return error / length;
 	}
 
 	/**

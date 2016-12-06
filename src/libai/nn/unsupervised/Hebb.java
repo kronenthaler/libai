@@ -181,7 +181,7 @@ public class Hebb extends NeuralNetwork {
 				error += Math.pow(Y.position(j, 0) - X.position(j, 0), 2);//0-1=1, 0-0=0, 1-1=0, 1-0=1
 		}
 
-		return error / (double) (length * patterns[0].getRows());
+		return error / (length * patterns[0].getRows());
 	}
 
 	/**
