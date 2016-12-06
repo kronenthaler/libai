@@ -556,13 +556,25 @@ public final class Matrix implements Serializable {
 	 */
 	@Override
 	public boolean equals(Object b1) {
+		if (this == b1) {
+		    return true;
+		}
+		if (b1 == null) {
+		    return false;
+		}
+		if (getClass() != b1.getClass()) {
+		    return false;
+		}
+        
 		Matrix b = (Matrix) b1;
 		if (rows != b.rows || cols != b.cols)
 			return false;
 
-		for (int i = 0, n = rows * cols; i < n; i++)
-			if (Math.abs(matrix[i] - b.matrix[i]) > 1.e-7) //'equals'
+		for (int i = 0, n = rows * cols; i < n; i++) {
+			if (Math.abs(matrix[i] - b.matrix[i]) > 1.e-7) { //'equals'
 				return false;
+			}
+		}
 		return true;
 	}
 
