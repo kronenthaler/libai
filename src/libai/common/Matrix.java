@@ -578,6 +578,15 @@ public final class Matrix implements Serializable {
 		return true;
 	}
 
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 73 * hash + Arrays.hashCode(this.matrix);
+		hash = 73 * hash + this.rows;
+		hash = 73 * hash + this.cols;
+		return hash;
+	}
+
 	/**
 	 * Return the string representation of this matrix. Useful to write on a
 	 * file or for debugging.
