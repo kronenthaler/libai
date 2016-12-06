@@ -23,10 +23,10 @@
  */
 package libai.nn.unsupervised;
 
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
 import libai.common.Matrix;
 import libai.common.functions.Sign;
-import java.io.*;
-import java.util.*;
 
 import libai.nn.NeuralNetwork;
 

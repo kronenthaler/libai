@@ -23,8 +23,8 @@
  */
 package libai.genetics.chromosomes;
 
-import libai.genetics.Engine;
 import java.util.BitSet;
+import libai.genetics.Engine;
 
 /**
  * The binary form of the chromosome. This chromosome contains a sequence of

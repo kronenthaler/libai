@@ -23,9 +23,9 @@
  */
 package libai.nn.supervised;
 
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
 import libai.common.Matrix;
-import java.io.*;
-import java.util.*;
 
 import libai.nn.unsupervised.Competitive;
 

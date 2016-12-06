@@ -24,8 +24,6 @@
 package libai.genetics.chromosomes;
 
 import libai.genetics.Engine;
-import libai.genetics.chromosomes.Chromosome;
-import java.util.Random;
 
 /**
  * Implementation of a permutation chromosome.
