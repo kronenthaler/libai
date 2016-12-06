@@ -76,8 +76,8 @@ public class TextFileDataSet implements DataSet {
 
     public TextFileDataSet(File dataSource, int output) {
         this(output);
-        try {
-            BufferedReader in = new BufferedReader(new FileReader(dataSource));
+        try (FileReader fr = new FileReader(dataSource);
+             BufferedReader in = new BufferedReader(fr)){
             while (true) {
                 String line = in.readLine();
                 if (line == null)
@@ -93,7 +93,6 @@ public class TextFileDataSet implements DataSet {
                 }
                 data.add(record);
             }
-            in.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

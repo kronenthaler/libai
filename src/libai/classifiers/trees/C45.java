@@ -650,8 +650,8 @@ public class C45 implements Comparable<C45> {
     }
 
     public boolean save(File path) {
-        try {
-            PrintStream out = new PrintStream(new FileOutputStream(path));
+		try (FileOutputStream fos = new FileOutputStream(path);
+			 PrintStream out = new PrintStream(fos)){
             out.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
             out.println("<" + getClass().getSimpleName() + ">");
             save(out, "\t");

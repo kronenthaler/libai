@@ -198,8 +198,8 @@ public class NaiveBayes {
 
 	//IO functions
 	public boolean save(File path) {
-		try {
-			PrintStream out = new PrintStream(new FileOutputStream(path));
+		try (FileOutputStream fos = new FileOutputStream(path);
+			 PrintStream out = new PrintStream(fos)){
 			out.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
 			out.println("<" + getClass().getSimpleName() + " "
 					+ "outputIndex=\""+outputIndex+"\" "
@@ -207,7 +207,6 @@ public class NaiveBayes {
 					+ "attributes=\""+metadata.getAttributeCount()+"\">");
 			save(out, "\t");
 			out.println("</" + getClass().getSimpleName() + ">");
-			out.close();
 			//safe format into a XML file.
 			return true;
 		} catch (Exception e) {
