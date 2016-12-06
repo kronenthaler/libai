@@ -153,7 +153,7 @@ public class MatrixIO {
     }
     
     private static void writeText(OutputStream output, Map<String, Matrix> m, String sep) throws IOException {
-        PrintStream ps = new PrintStream(output);
+        PrintStream ps = new PrintStream(output, false, "US-ASCII");
         int k = 0;
         for (Matrix matrix : m.values()) {
             for (int i = 0, r = matrix.getRows(); i < r;i++) {
