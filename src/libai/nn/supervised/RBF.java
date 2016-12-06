@@ -195,7 +195,7 @@ public class RBF extends Adaline {
 
 					exit = false;
 				} else {
-					aux1.multiply(1.0 / total, aux);
+					aux1.multiply(1.0 / (double) total, aux);
 
 					if (!(aux.equals(ctemp[i]))) {
 						aux.copy(ctemp[i]);
