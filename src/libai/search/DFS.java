@@ -32,8 +32,8 @@ import java.util.*;
 public class DFS implements Search {
 	@Override
 	public State search(State init) {
-		HashMap<State, Boolean> visited = new HashMap<State, Boolean>();
-		Stack<State> q = new Stack<State>();
+		HashMap<State, Boolean> visited = new HashMap<>();
+		Stack<State> q = new Stack<>();
 		q.add(init);
 		visited.put(init, true);
 

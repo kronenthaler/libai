@@ -53,11 +53,11 @@ public class Triangular implements FuzzySet {
 		c = new Variable(_c);
 		DELTA = delta;
 
-		kernel = new ArrayList<Double>();
+		kernel = new ArrayList<>();
 		kernel.add(b.getValue()); //middle point
 
 		if (delta > 0) {
-			support = new ArrayList<Double>();
+			support = new ArrayList<>();
 			for (double i = Math.min(_a, Math.min(_b, _c)), max = Math.max(_a, Math.max(_b, _c)); i <= max; i += DELTA)
 				support.add(i);
 		}

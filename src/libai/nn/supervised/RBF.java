@@ -96,7 +96,7 @@ public class RBF extends Adaline {
 		//calculate sigmas. p-closest neightbors, p is the input dimension
 		PriorityQueue<Double>[] neighbors = new PriorityQueue[nperlayer[1]];
 		for (int i = 0; i < nperlayer[1]; i++)
-			neighbors[i] = new PriorityQueue<Double>();
+			neighbors[i] = new PriorityQueue<>();
 
 		for (int i = 0; i < nperlayer[1] - 1; i++) {
 			for (int j = i + 1; j < nperlayer[1]; j++) {
@@ -156,7 +156,7 @@ public class RBF extends Adaline {
 			ctemp[i] = new Matrix(patterns[0].getRows(), patterns[0].getColumns());
 			int index = rand.nextInt(length) + offset;//abs((int)(ctemp[i].random(&xzxzx)*npatterns));;
 			patterns[index].copy(ctemp[i]);
-			partitions[i] = new ArrayList<Integer>();
+			partitions[i] = new ArrayList<>();
 		}
 		int iter = 0;
 		while (true) {

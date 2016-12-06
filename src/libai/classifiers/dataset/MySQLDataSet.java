@@ -40,7 +40,7 @@ public class MySQLDataSet implements DataSet {
     private int orderBy;
     private Connection connection;
     private ResultSetMetaData rsMetaData;
-    private Set<Attribute> classes = new HashSet<Attribute>();
+    private Set<Attribute> classes = new HashSet<>();
     private HashMap<Triplet<Integer, Integer, Integer>, HashMap<Attribute, Integer>> cacheFrequencies;
     private HashMap<Triplet<Integer, Integer, Integer>, HashMap<Double, HashMap<Attribute, Integer>>> cacheAccumulatedFrequencies;
 
@@ -84,8 +84,8 @@ public class MySQLDataSet implements DataSet {
     private MySQLDataSet(int output) {
         outputIndex = output;
         orderBy = output;
-        cacheFrequencies = new HashMap<Triplet<Integer, Integer, Integer>, HashMap<Attribute, Integer>>();
-        cacheAccumulatedFrequencies = new HashMap<Triplet<Integer, Integer, Integer>, HashMap<Double, HashMap<Attribute, Integer>>>();
+        cacheFrequencies = new HashMap<>();
+        cacheAccumulatedFrequencies = new HashMap<>();
     }
 
     private MySQLDataSet(MySQLDataSet parent, int lo, int hi) {
@@ -300,7 +300,7 @@ public class MySQLDataSet implements DataSet {
                 try {
                     if (rs.next()) {
                         size--;
-                        List<Attribute> record = new ArrayList<Attribute>();
+                        List<Attribute> record = new ArrayList<>();
                         for (int i = 0; i < metadata.getAttributeCount(); i++) {
                             String fieldName = metadata.getAttributeName(i);
                             record.add(Attribute.getInstance(rs.getString(fieldName), fieldName));
@@ -361,14 +361,14 @@ public class MySQLDataSet implements DataSet {
 
     @Override
     public HashMap<Attribute, Integer> getFrequencies(int lo, int hi, int fieldIndex) {
-        Triplet<Integer, Integer, Integer> key = new Triplet<Integer, Integer, Integer>(lo, hi, fieldIndex);
+        Triplet<Integer, Integer, Integer> key = new Triplet<>(lo, hi, fieldIndex);
         if (cacheFrequencies.get(key) != null)
             return cacheFrequencies.get(key);
 
         if (!metadata.isCategorical(fieldIndex))
             throw new IllegalArgumentException("The attribute must be discrete");
 
-        HashMap<Attribute, Integer> freq = new HashMap<Attribute, Integer>();
+        HashMap<Attribute, Integer> freq = new HashMap<>();
 
         String fieldName = metadata.getAttributeName(fieldIndex);
         String query = String.format("SELECT `%s`, count(*) as count FROM (SELECT `%s` FROM `%s` ORDER BY `%s`,`%s` LIMIT %d,%d) as tmp GROUP BY `%s`",

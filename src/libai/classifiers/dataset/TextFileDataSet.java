@@ -35,8 +35,8 @@ import libai.common.*;
  * @author kronenthaler
  */
 public class TextFileDataSet implements DataSet {
-    private List<List<Attribute>> data = new ArrayList<List<Attribute>>();
-    private Set<Attribute> classes = new HashSet<Attribute>();
+    private List<List<Attribute>> data = new ArrayList<>();
+    private Set<Attribute> classes = new HashSet<>();
     private int outputIndex;
     private int orderBy;
     private HashMap<Triplet<Integer, Integer, Integer>, HashMap<Attribute, Integer>> cache;
@@ -66,7 +66,7 @@ public class TextFileDataSet implements DataSet {
     TextFileDataSet(int output) {
         outputIndex = output;
         orderBy = outputIndex;
-        cache = new HashMap<Triplet<Integer, Integer, Integer>, HashMap<Attribute, Integer>>();
+        cache = new HashMap<>();
     }
 
     private TextFileDataSet(TextFileDataSet parent, int lo, int hi) {
@@ -83,7 +83,7 @@ public class TextFileDataSet implements DataSet {
                 if (line == null)
                     break;
                 String[] tokens = line.split(",");
-                ArrayList<Attribute> record = new ArrayList<Attribute>();
+                ArrayList<Attribute> record = new ArrayList<>();
                 for (int i = 0; i < tokens.length; i++) {
                     String token = tokens[i];
                     Attribute attr = Attribute.getInstance(token, metadata.getAttributeName(i));
@@ -146,7 +146,7 @@ public class TextFileDataSet implements DataSet {
 
         Iterable<List<Attribute>> sortedData = sortOver(outputIndex);
         Attribute prev = null;
-        List<List<Attribute>> buffer = new ArrayList<List<Attribute>>();
+        List<List<Attribute>> buffer = new ArrayList<>();
         for (List<Attribute> record : sortedData) {
             if ((prev != null && prev.compareTo(record.get(outputIndex)) != 0)) {
                 Collections.shuffle(buffer);
@@ -195,7 +195,7 @@ public class TextFileDataSet implements DataSet {
 
     @Override
     public Attribute allTheSame() {
-        HashMap<String, Integer> freq = new HashMap<String, Integer>();
+        HashMap<String, Integer> freq = new HashMap<>();
 
         for (int i = 0; i < data.size(); i++) {
             for (int j = 0, n = metadata.getAttributeCount(); j < n; j++) {
@@ -227,7 +227,7 @@ public class TextFileDataSet implements DataSet {
 
     @Override
     public HashMap<Attribute, Integer> getFrequencies(int lo, int hi, int fieldIndex) {
-        Triplet<Integer, Integer, Integer> key = new Triplet<Integer, Integer, Integer>(lo, hi, fieldIndex);
+        Triplet<Integer, Integer, Integer> key = new Triplet<>(lo, hi, fieldIndex);
 
         if (cache.get(key) != null)
             return cache.get(key);
@@ -235,7 +235,7 @@ public class TextFileDataSet implements DataSet {
         if (!metadata.isCategorical(fieldIndex))
             throw new IllegalArgumentException("The attribute must be discrete");
 
-        HashMap<Attribute, Integer> freq = new HashMap<Attribute, Integer>();
+        HashMap<Attribute, Integer> freq = new HashMap<>();
         for (int i = lo; i < hi; i++) {
             List<Attribute> record = data.get(i);
             Attribute v = record.get(fieldIndex);

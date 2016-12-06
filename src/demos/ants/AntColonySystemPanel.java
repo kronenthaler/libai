@@ -222,7 +222,7 @@ public class AntColonySystemPanel extends javax.swing.JPanel {
 		@Override
 		public Vector<Integer> constrains(int i, Vector<Integer> currentSolution) {
 			int cols = this.Graph.getM().getColumns();
-			Vector<Integer> adjacents = new Vector<Integer>();
+			Vector<Integer> adjacents = new Vector<>();
 			//Calculate adjancent nodes
 			for (int j = 0; j < cols; j++) {
 				if (this.Graph.getM().position(i, j) < Integer.MAX_VALUE) {
@@ -240,7 +240,7 @@ public class AntColonySystemPanel extends javax.swing.JPanel {
 
 			for (int i = 0; i < rows; i++) {
 				cont = 0;
-				Vector<Node> nodes = new Vector<Node>();
+				Vector<Node> nodes = new Vector<>();
 				for (int j = 0; j < cols; j++) {
 					if ((G.position(i, j) < Integer.MAX_VALUE)) {
 						Node nodeTmp = new Node(j, G.position(i, j), 1 / G.position(i, j));

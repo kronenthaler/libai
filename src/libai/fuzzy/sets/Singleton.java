@@ -38,7 +38,7 @@ public class Singleton implements FuzzySet {
 
 	public Singleton(Variable _p) {
 		p = _p;
-		support = new ArrayList<Double>();
+		support = new ArrayList<>();
 		support.add(p.getValue());
 	}
 

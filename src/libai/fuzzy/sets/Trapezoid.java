@@ -58,8 +58,8 @@ public class Trapezoid implements FuzzySet {
 
 		DELTA = delta;
 
-		kernel = new ArrayList<Double>();
-		support = new ArrayList<Double>();
+		kernel = new ArrayList<>();
+		support = new ArrayList<>();
 
 		if (DELTA > 0) {
 			for (double i = _a, max = _d; i <= max; i += DELTA) {

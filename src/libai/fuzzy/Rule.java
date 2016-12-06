@@ -57,7 +57,7 @@ public class Rule {
 	 */
 	public Rule(Condition _cond, FuzzySet... acts) {
 		cond = _cond;
-		actions = new ArrayList<FuzzySet>();
+		actions = new ArrayList<>();
 		for (FuzzySet a : acts)
 			actions.add(a);
 	}
@@ -76,11 +76,11 @@ public class Rule {
 		double tau = cond.eval();
 		int i = 0;
 		for (FuzzySet set : actions) {
-			ret[i] = new ArrayList<Pair<Double, Double>>();
+			ret[i] = new ArrayList<>();
 			ArrayList<Double> support = set.getSupport();
 
 			for (Double d : support)
-				ret[i].add(new Pair<Double, Double>(d, set.eval(d) * tau));
+				ret[i].add(new Pair<>(d, set.eval(d) * tau));
 
 			i++;
 		}

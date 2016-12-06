@@ -34,7 +34,7 @@ public class SimplePlotter extends Canvas implements Plotter{
 	private int pixels = 3;
 
 	public SimplePlotter() {
-		errors = new ArrayList<Pair<Integer, Double>>();
+		errors = new ArrayList<>();
 		min = Double.MAX_VALUE;
 		max = Double.MIN_VALUE;
 	}
@@ -86,7 +86,7 @@ public class SimplePlotter extends Canvas implements Plotter{
 
 	@Override
 	public void setError(int epoch, double error) {
-		errors.add(new Pair<Integer, Double>(epoch, error));
+		errors.add(new Pair<>(epoch, error));
 		min = Math.min(min, error);
 		max = Math.max(max, error);
 

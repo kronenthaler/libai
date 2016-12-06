@@ -53,15 +53,15 @@ abstract public class Metaheuristic implements Comparator<Ant> {
 	/**
 	 * Hashtable that holds the parameters
 	 */
-	protected Hashtable<Integer, Double> Parameters = new Hashtable<Integer, Double>();
+	protected Hashtable<Integer, Double> Parameters = new Hashtable<>();
 	/**
 	 * Vector that holds the global best solution found
 	 */
-	protected Vector<Integer> bestSolution = new Vector<Integer>();
+	protected Vector<Integer> bestSolution = new Vector<>();
 	/**
 	 * Vector that holds the candidate list
 	 */
-	protected Hashtable<Integer, Vector<Node>> candidates = new Hashtable<Integer, Vector<Node>>();
+	protected Hashtable<Integer, Vector<Node>> candidates = new Hashtable<>();
 	/**
 	 * current iteration number
 	 */
