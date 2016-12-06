@@ -65,6 +65,7 @@ public class Node implements Comparable<Node> {
 	 *
 	 * @param n another node object
 	 */
+	@Override
 	public int compareTo(Node n) {
 		if (this.distance == n.distance) {
 			return 0;

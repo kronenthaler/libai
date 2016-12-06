@@ -100,6 +100,7 @@ public class CompetitivePanel extends javax.swing.JPanel {
 	private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 		jTextPane1.setText("");
 		new Thread(new Runnable() {
+			@Override
 			public void run() {
 				int n = 6;
 				int m = 2;

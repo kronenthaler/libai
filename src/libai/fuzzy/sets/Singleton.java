@@ -42,22 +42,27 @@ public class Singleton implements FuzzySet {
 		support.add(p.getValue());
 	}
 
+	@Override
 	public double eval(Variable s) {
 		return eval(s.getValue());
 	}
 
+	@Override
 	public double eval(double s) {
 		return s == p.getValue() ? 1.0 : 0.0;
 	}
 
+	@Override
 	public ArrayList<Double> getSupport() {
 		return support;
 	}
 
+	@Override
 	public ArrayList<Double> getKernel() {
 		return support;
 	}
 
+	@Override
 	public String toString() {
 		return "Singleton(" + p + ")";
 	}

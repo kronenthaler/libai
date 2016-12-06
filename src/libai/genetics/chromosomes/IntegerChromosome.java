@@ -72,6 +72,7 @@ public class IntegerChromosome extends Chromosome {
 	 * @param position Omitted.
 	 * @return A two position array with the new offsprings.
 	 */
+	@Override
 	public Chromosome[] cross(Chromosome b, int position) {
 		/*int[] aux=new int[genes.length];
 		 System.arraycopy(genes,0,aux,0,position);
@@ -142,6 +143,7 @@ public class IntegerChromosome extends Chromosome {
 	 * @param pm Mutation probability.
 	 * @return The new mutated chromosome.
 	 */
+	@Override
 	public Chromosome mutate(double pm) {
 		int ret[] = new int[genes.length];
 		System.arraycopy(genes, 0, ret, 0, ret.length);
@@ -178,6 +180,7 @@ public class IntegerChromosome extends Chromosome {
 	 *
 	 * @return A identical chromosome of this.
 	 */
+	@Override
 	public Chromosome getCopy() {
 		return new IntegerChromosome(this);
 	}
@@ -189,6 +192,7 @@ public class IntegerChromosome extends Chromosome {
 	 * @param length The length of the new chromosome.
 	 * @return A new instance of length <code>length</code>
 	 */
+	@Override
 	public Chromosome getInstance(int length) {
 		return new IntegerChromosome(length);
 	}
@@ -200,6 +204,7 @@ public class IntegerChromosome extends Chromosome {
 		return genes;
 	}
 
+	@Override
 	public String toString() {
 		String ret = "";
 		for (int i = 0; i < genes.length; ret += genes[i++] + " ");

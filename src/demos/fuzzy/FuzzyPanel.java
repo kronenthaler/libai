@@ -207,6 +207,7 @@ public class FuzzyPanel extends javax.swing.JPanel {
 		} else {
 			jButton1.setText("Stop");
 			new Thread(new Runnable() {
+				@Override
 				public void run() {
 					while (!exit) {
 						engine.start();

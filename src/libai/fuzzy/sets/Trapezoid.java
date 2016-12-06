@@ -70,10 +70,12 @@ public class Trapezoid implements FuzzySet {
 		}
 	}
 
+	@Override
 	public double eval(Variable s) {
 		return eval(s.getValue());
 	}
 
+	@Override
 	public double eval(double s) {
 		if (s < a.getValue() || s > d.getValue())
 			return 0;
@@ -86,14 +88,17 @@ public class Trapezoid implements FuzzySet {
 		return (d.getValue() - s) / (d.getValue() - c.getValue());
 	}
 
+	@Override
 	public ArrayList<Double> getSupport() {
 		return support;
 	}
 
+	@Override
 	public ArrayList<Double> getKernel() {
 		return kernel;
 	}
 
+	@Override
 	public String toString() {
 		return "Trapezoid(" + a + "," + b + "," + c + "," + d + ")";
 	}

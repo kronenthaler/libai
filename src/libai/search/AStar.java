@@ -31,6 +31,7 @@ import java.util.*;
  * @author kronenthaler
  */
 public class AStar implements Search {
+	@Override
 	public State search(State init) {
 		PriorityQueue<State> opened = new PriorityQueue<State>();
 		HashMap<State, State> openedMirror = new HashMap<State, State>();

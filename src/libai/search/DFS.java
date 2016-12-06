@@ -30,6 +30,7 @@ import java.util.*;
  * @author kronenthaler
  */
 public class DFS implements Search {
+	@Override
 	public State search(State init) {
 		HashMap<State, Boolean> visited = new HashMap<State, Boolean>();
 		Stack<State> q = new Stack<State>();

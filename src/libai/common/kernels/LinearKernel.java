@@ -31,10 +31,12 @@ import libai.common.Matrix;
  * @author kronenthaler
  */
 public class LinearKernel implements Kernel {
+	@Override
 	public double eval(Matrix A, Matrix B) {
 		return A.dotProduct(B);
 	}
 
+	@Override
 	public double eval(double dotProduct) {
 		return dotProduct;
 	}

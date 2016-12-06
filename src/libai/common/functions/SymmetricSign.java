@@ -30,10 +30,12 @@ package libai.common.functions;
  * @author kronenthaler
  */
 public class SymmetricSign implements Function {
+	@Override
 	public double eval(double x) {
 		return x < 0 ? -1 : 1;
 	}
 
+	@Override
 	public Function getDerivate() {
 		return null;
 	}

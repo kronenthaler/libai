@@ -37,6 +37,7 @@ public class GaussianKernel implements Kernel {
 		sigma = _sigma * _sigma * 2;
 	}
 
+	@Override
 	public double eval(Matrix A, Matrix B) {
 		double AB = A.dotProduct(B);
 		double AA = A.dotProduct(A);
@@ -46,6 +47,7 @@ public class GaussianKernel implements Kernel {
 		return Math.exp((-s / sigma));
 	}
 
+	@Override
 	public double eval(double dotProduct) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}

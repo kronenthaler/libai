@@ -30,10 +30,12 @@ package libai.common.functions;
  * @author kronenthaler
  */
 public class Sign implements Function {
+	@Override
 	public double eval(double x) {
 		return x > 0 ? 1 : 0;
 	}
 
+	@Override
 	public Function getDerivate() {
 		return null;
 	}

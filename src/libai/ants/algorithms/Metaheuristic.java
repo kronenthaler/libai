@@ -306,6 +306,7 @@ abstract public class Metaheuristic implements Comparator<Ant> {
 	 * @return 0 if solution of ant_1 = solution of ant_2, 1 if solution of
 	 * ant_1 greater than solution of ant_2 and -1 otherwise
 	 */
+	@Override
 	public int compare(Ant o1, Ant o2) {
 		//compare solutions
 		Vector<Integer> sol1 = o1.getSolution(), sol2 = o2.getSolution();

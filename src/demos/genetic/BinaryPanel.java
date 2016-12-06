@@ -98,6 +98,7 @@ public class BinaryPanel extends javax.swing.JPanel implements Fitness {
 		jTextPane1.setText("");
 		final Fitness me = this;
 		new Thread(new Runnable() {
+			@Override
 			public void run() {
 				int MaxVal = 1;
 				int MinVal = 0;
@@ -121,15 +122,18 @@ public class BinaryPanel extends javax.swing.JPanel implements Fitness {
     private javax.swing.JTextPane jTextPane1;
     // End of variables declaration//GEN-END:variables
 
+	@Override
 	public double fitness(Chromosome c) {
 		double x = ((BinaryChromosome) c).decode(0, 1);
 		return Math.abs(Math.exp(-x) - x); //=>0 si son iguales,
 	}
 
+	@Override
 	public boolean isBetter(double fitness, double best) {
 		return fitness < best;
 	}
 
+	@Override
 	public double theWorst() {
 		return Double.MAX_VALUE;
 	}

@@ -202,6 +202,7 @@ public class DFSPanel extends javax.swing.JPanel {
 			return table.compareTo(((Node) o).table);
 		}
 
+		@Override
 		public String toString() {
 			return table;
 		}

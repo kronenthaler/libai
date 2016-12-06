@@ -67,10 +67,12 @@ public class Triangular implements FuzzySet {
 		this(_a, _b, _c, .5);
 	}
 
+	@Override
 	public double eval(Variable s) {
 		return eval(s.getValue());
 	}
 
+	@Override
 	public double eval(double s) {
 		if (s <= a.getValue() || s >= c.getValue())
 			return 0;
@@ -83,14 +85,17 @@ public class Triangular implements FuzzySet {
 		return (c.getValue() - s) / (c.getValue() - b.getValue());
 	}
 
+	@Override
 	public ArrayList<Double> getSupport() {
 		return support;
 	}
 
+	@Override
 	public ArrayList<Double> getKernel() {
 		return kernel;
 	}
 
+	@Override
 	public String toString() {
 		return "Triangle(" + a + "," + b + "," + c + ")";
 	}

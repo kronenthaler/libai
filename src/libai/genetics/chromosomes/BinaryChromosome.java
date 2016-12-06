@@ -73,6 +73,7 @@ public class BinaryChromosome extends Chromosome {
 	 * @param position Position to split the chromosomes.
 	 * @return A two position array with the new offsprings.
 	 */
+	@Override
 	public Chromosome[] cross(Chromosome b, int position) {
 		BitSet aux = null;
 
@@ -96,6 +97,7 @@ public class BinaryChromosome extends Chromosome {
 	 * @param pm Mutation probability.
 	 * @return The new mutated chromosome.
 	 */
+	@Override
 	public Chromosome mutate(double pm) {
 		BitSet ret = genes.get(0, length);
 		for (int i = 0, n = length; i < n; i++) {
@@ -151,6 +153,7 @@ public class BinaryChromosome extends Chromosome {
 	 *
 	 * @return A identical chromosome of this.
 	 */
+	@Override
 	public Chromosome getCopy() {
 		return new BinaryChromosome(this);
 	}

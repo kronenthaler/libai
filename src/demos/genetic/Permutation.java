@@ -98,6 +98,7 @@ public class Permutation extends javax.swing.JPanel implements Fitness {
 		jTextPane1.setText("");
 		final Fitness me = this;
 		new Thread(new Runnable() {
+			@Override
 			public void run() {
 				Engine engine = new Engine(IntegerChromosome.class, 200, 10, 0.6, 0.01, me);
 				engine.setProgressBar(jProgressBar1);
@@ -119,6 +120,7 @@ public class Permutation extends javax.swing.JPanel implements Fitness {
     private javax.swing.JTextPane jTextPane1;
     // End of variables declaration//GEN-END:variables
 
+	@Override
 	public double fitness(Chromosome c1) {
 		IntegerChromosome c = (IntegerChromosome) c1;
 		int g[] = c.getGenes();
@@ -130,10 +132,12 @@ public class Permutation extends javax.swing.JPanel implements Fitness {
 		return count;
 	}
 
+	@Override
 	public boolean isBetter(double fitness, double best) {
 		return fitness < best;
 	}
 
+	@Override
 	public double theWorst() {
 		return Double.MAX_VALUE;
 	}

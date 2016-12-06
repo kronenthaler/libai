@@ -70,6 +70,7 @@ public class Variable implements Comparable<Variable> {
 	 * @return -1 if this is less than o, 0 if they are equal, 1 if this is
 	 * grater than o
 	 */
+	@Override
 	public int compareTo(Variable o) {
 		return (int) (value - o.value);
 	}
