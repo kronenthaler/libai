@@ -101,15 +101,15 @@ public class Examples extends javax.swing.JFrame {
 
         treesPanel1.setEnabled(false);
 
-        org.jdesktop.layout.GroupLayout treesPanel1Layout = new org.jdesktop.layout.GroupLayout(treesPanel1);
+        javax.swing.GroupLayout treesPanel1Layout = new javax.swing.GroupLayout(treesPanel1);
         treesPanel1.setLayout(treesPanel1Layout);
         treesPanel1Layout.setHorizontalGroup(
-            treesPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 634, Short.MAX_VALUE)
+            treesPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 634, Short.MAX_VALUE)
         );
         treesPanel1Layout.setVerticalGroup(
-            treesPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 491, Short.MAX_VALUE)
+            treesPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 491, Short.MAX_VALUE)
         );
 
         jTabbedPane2.addTab("Decision Trees", treesPanel1);
@@ -123,15 +123,15 @@ public class Examples extends javax.swing.JFrame {
 
         jTabbedPane2.addTab("Ants", jTabbedPane5);
 
-        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jTabbedPane2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 639, Short.MAX_VALUE)
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jTabbedPane2)
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jTabbedPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 518, Short.MAX_VALUE)
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jTabbedPane2)
         );
 
         pack();
