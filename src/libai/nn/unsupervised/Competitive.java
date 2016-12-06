@@ -89,7 +89,6 @@ public class Competitive extends NeuralNetwork {
 	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 		int[] sort = new int[length]; // [0,length)
 		double error = 0;
-		Random rand = new Random();
 
 		Matrix r = new Matrix(1, ins);
 		Matrix row = new Matrix(1, ins);

@@ -90,10 +90,8 @@ public class Hebb extends NeuralNetwork {
 	 */
 	@Override
 	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
-		Random rand = new Random();
 		int[] sort = new int[length];
 		Matrix Y = new Matrix(W.getRows(), 1);
-		Matrix temp = new Matrix(W.getRows(), W.getColumns());
 
 		Matrix[] patternsT = new Matrix[length];
 		for (int i = 0; i < length; i++) {

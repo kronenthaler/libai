@@ -78,7 +78,7 @@ public class Perceptron extends NeuralNetwork {
 	@Override
 	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 		int[] sort = new int[length]; // [0,length)
-		double error = 1, prevError = error(patterns, answers, offset, length);
+		double error = 1;
 		Matrix Y = new Matrix(outs, 1);
 		Matrix E = new Matrix(outs, 1);
 		Matrix aux = new Matrix(outs, ins);
@@ -116,7 +116,6 @@ public class Perceptron extends NeuralNetwork {
 				b.add(E, b);  //b+(alpha*e)
 			}
 
-			prevError = error;
 			if (plotter != null)
 				plotter.setError(epochs, error);
 			if (progress != null)

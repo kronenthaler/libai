@@ -110,7 +110,6 @@ public class Kohonen extends NeuralNetwork {
 		double lamda = neighborhood;
 		double alpha1 = alpha;
 
-		Random rand = new Random();
 		int[] sort = new int[length];
 		for (int i = 0; i < length; sort[i] = i++);
 
