@@ -392,7 +392,7 @@ public class MySQLDataSet implements DataSet {
 	@Override
     public String toString() {
         Iterable<List<Attribute>> r = sortOver(orderBy);
-        StringBuffer str = new StringBuffer();
+        StringBuilder str = new StringBuilder();
         for (List<Attribute> l : r)
             str.append(l.toString()).append("\n");
         return str.toString();

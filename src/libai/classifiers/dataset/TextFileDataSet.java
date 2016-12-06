@@ -176,7 +176,7 @@ public class TextFileDataSet implements DataSet {
 
     @Override
     public String toString() {
-        StringBuffer str = new StringBuffer();
+        StringBuilder str = new StringBuilder();
         for (List<Attribute> r : sortOver(orderBy))
             str.append(r.toString()).append('\n');
         return str.toString();
