@@ -111,12 +111,17 @@ public class Hopfield extends NeuralNetwork {
 		}
 	}
 
+	/**
+	 * Deserializes an {@code Hopfield}
+	 * 
+	 * @param path Path to file
+	 * @return Restored {@code Hopfield instance}
+	 * @see NeuralNetwork#save(java.lang.String) 
+	 */
 	public static Hopfield open(String path) {
-		try {
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream(path));
-			Hopfield p = (Hopfield) in.readObject();
-			in.close();
-			return p;
+		try (FileInputStream fis = new FileInputStream(path);
+			 ObjectInputStream in = new ObjectInputStream(fis)) {
+			return (Hopfield)in.readObject();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

@@ -235,12 +235,17 @@ public class RBF extends Adaline {
 		}
 	}
 
+	/**
+	 * Deserializes an {@code RBF}
+	 * 
+	 * @param path Path to file
+	 * @return Restored {@code RBF instance}
+	 * @see NeuralNetwork#save(java.lang.String) 
+	 */
 	public static RBF open(String path) {
-		try {
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream(path));
-			RBF p = (RBF) in.readObject();
-			in.close();
-			return p;
+		try (FileInputStream fis = new FileInputStream(path);
+			 ObjectInputStream in = new ObjectInputStream(fis)) {
+			return (RBF) in.readObject();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

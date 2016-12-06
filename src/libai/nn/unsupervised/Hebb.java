@@ -186,12 +186,17 @@ public class Hebb extends NeuralNetwork {
 		return error / (double) (length * patterns[0].getRows());
 	}
 
+	/**
+	 * Deserializes an {@code Hebb}
+	 * 
+	 * @param path Path to file
+	 * @return Restored {@code Hebb instance}
+	 * @see NeuralNetwork#save(java.lang.String) 
+	 */
 	public static Hebb open(String path) {
-		try {
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream(path));
-			Hebb p = (Hebb) in.readObject();
-			in.close();
-			return p;
+		try (FileInputStream fis = new FileInputStream(path);
+			 ObjectInputStream in = new ObjectInputStream(fis)) {
+			return (Hebb)in.readObject();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

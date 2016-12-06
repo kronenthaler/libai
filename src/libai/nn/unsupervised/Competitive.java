@@ -203,12 +203,17 @@ public class Competitive extends NeuralNetwork {
 		return acum / (double) length;
 	}
 
+	/**
+	 * Deserializes an {@code Competitive}
+	 * 
+	 * @param path Path to file
+	 * @return Restored {@code Competitive instance}
+	 * @see NeuralNetwork#save(java.lang.String) 
+	 */
 	public static Competitive open(String path) {
-		try {
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream(path));
-			Competitive p = (Competitive) in.readObject();
-			in.close();
-			return p;
+		try (FileInputStream fis = new FileInputStream(path);
+			 ObjectInputStream in = new ObjectInputStream(fis)) {
+			return (Competitive)in.readObject();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

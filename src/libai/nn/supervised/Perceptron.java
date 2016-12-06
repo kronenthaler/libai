@@ -23,11 +23,10 @@
  */
 package libai.nn.supervised;
 
-import libai.nn.NeuralNetwork;
+import java.io.*;
 import libai.common.Matrix;
 import libai.common.functions.Sign;
-import java.io.*;
-import java.util.*;
+import libai.nn.NeuralNetwork;
 
 
 /**
@@ -148,12 +147,17 @@ public class Perceptron extends NeuralNetwork {
 		result.apply(signum, result);	//thresholding
 	}
 
+	/**
+	 * Deserializes an {@code Perceptron}
+	 * 
+	 * @param path Path to file
+	 * @return Restored {@code Perceptron instance}
+	 * @see NeuralNetwork#save(java.lang.String) 
+	 */
 	public static Perceptron open(String path) {
-		try {
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream(path));
-			Perceptron p = (Perceptron) in.readObject();
-			in.close();
-			return p;
+		try (FileInputStream fis = new FileInputStream(path);
+			 ObjectInputStream in = new ObjectInputStream(fis)) {
+			return (Perceptron) in.readObject();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
