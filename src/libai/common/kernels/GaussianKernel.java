@@ -31,6 +31,8 @@ import libai.common.Matrix;
  * @author kronenthaler
  */
 public class GaussianKernel implements Kernel {
+	private static final long serialVersionUID = 7002651958563140173L;
+	
 	private double sigma;
 
 	public GaussianKernel(double _sigma) {

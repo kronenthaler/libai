@@ -42,6 +42,8 @@ import libai.nn.NeuralNetwork;
  * @author kronenthaler
  */
 public class Kohonen extends NeuralNetwork {
+	private static final long serialVersionUID = 8918172607912802829L;
+	
 	private Matrix W[];					//array of weights ijk, with k positions.
 	private int[][] map;				//map of the outputs
 	private int[] nperlayer;			//array of 3 positions, {#inputs,#rows,#columns}

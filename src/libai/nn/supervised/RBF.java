@@ -42,6 +42,8 @@ import libai.nn.NeuralNetwork;
  * @author kronenthaler
  */
 public class RBF extends Adaline {
+	private static final long serialVersionUID = 6772562276994202439L;
+	
 	private Matrix c[];
 	protected int nperlayer[];//{#inputs,#Neurons,#outputs}
 	protected double[] sigma;

@@ -33,6 +33,8 @@ package libai.common.functions;
  * @author Federico Vera {@literal <fedevera at unc.edu.ar>}
  */
 public class Gaussian implements Function {
+	private static final long serialVersionUID = 8592095509162668948L;
+	
 	private static final Function derivate = new Function() {
 		@Override
 		public double eval(double x) {

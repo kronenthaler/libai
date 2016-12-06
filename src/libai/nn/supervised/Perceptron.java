@@ -37,6 +37,8 @@ import libai.nn.NeuralNetwork;
  * @author kronenthaler
  */
 public class Perceptron extends NeuralNetwork {
+	private static final long serialVersionUID = 2795822735956649552L;
+	
 	protected Matrix W, b;
 	protected int ins, outs;
 	protected static Sign signum = new Sign();

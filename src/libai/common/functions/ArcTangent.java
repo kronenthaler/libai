@@ -34,6 +34,8 @@ package libai.common.functions;
  * @author Federico Vera {@literal <fedevera at unc.edu.ar>}
  */
 public class ArcTangent implements Function {
+	private static final long serialVersionUID = 1967026062364806506L;
+	
 	private static final Function derivate = new Function() {
 		@Override
 		public double eval(double x) {

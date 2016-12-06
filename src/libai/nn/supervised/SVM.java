@@ -44,6 +44,8 @@ import libai.nn.NeuralNetwork;
  * @author kronenthaler
  */
 public class SVM extends NeuralNetwork {
+	private static final long serialVersionUID = 5875835056527034341L;
+	
     private Kernel kernel = new GaussianKernel(2.0);	//the default kernel type is a gaussian function
     private Matrix[] densePoints;			//array with the patterns lo learn or learned...s
     private int target[];					//expected answers

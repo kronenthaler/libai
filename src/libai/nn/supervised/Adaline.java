@@ -36,6 +36,8 @@ import libai.common.Matrix;
  * @author kronenthaler
  */
 public class Adaline extends Perceptron {
+	private static final long serialVersionUID = 6108456796562627466L;
+	
 	public Adaline() {
 	}
 

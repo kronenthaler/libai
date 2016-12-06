@@ -40,6 +40,8 @@ import libai.common.functions.SymmetricSign;
  * @author kronenthaler
  */
 public class Hopfield extends NeuralNetwork {
+	private static final long serialVersionUID = 9081060788269921587L;
+	
 	protected Matrix W;
 	protected static SymmetricSign ssign = new SymmetricSign();
 	/**

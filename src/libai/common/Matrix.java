@@ -39,6 +39,8 @@ import java.util.concurrent.ThreadLocalRandom;
  * @author kronenthaler
  */
 public final class Matrix implements Serializable {
+	private static final long serialVersionUID = 4152602945322905714L;
+	
 	/**
 	 * Matrix's data, stored for row in a sequential array.
 	 */

@@ -40,6 +40,8 @@ import libai.nn.unsupervised.Competitive;
  * @author kronenthaler
  */
 public class LVQ extends Competitive {
+	private static final long serialVersionUID = 6603129562167746698L;
+	
 	protected Matrix W2;
 	protected int subclasses;
 

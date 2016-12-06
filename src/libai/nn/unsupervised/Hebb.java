@@ -41,6 +41,8 @@ import libai.nn.NeuralNetwork;
  * @author kronenthaler
  */
 public class Hebb extends NeuralNetwork {
+	private static final long serialVersionUID = 7754681003525186940L;
+	
 	protected double phi;
 	protected Matrix W;
 	protected static Sign sign = new Sign();

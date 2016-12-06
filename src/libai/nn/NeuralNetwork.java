@@ -39,6 +39,8 @@ import libai.common.ProgressDisplay;
  * @author kronenthaler
  */
 public abstract class NeuralNetwork implements Serializable {
+	private static final long serialVersionUID = 2851521924022998819L;
+	
 	protected transient Plotter plotter;
 	protected transient ProgressDisplay progress;
 

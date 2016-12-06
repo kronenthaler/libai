@@ -48,6 +48,8 @@ import libai.nn.NeuralNetwork;
  * @author kronenthaler
  */
 public class Competitive extends NeuralNetwork {
+	private static final long serialVersionUID = 3792932568798202152L;
+	
 	protected Matrix W;
 	protected int ins, outs;
 	protected int winner;
