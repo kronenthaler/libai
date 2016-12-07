@@ -90,22 +90,26 @@ public class PerceptronTest {
 	@Test
 	public void testIO() {
         assumeTrue("Can't use temp dir...", MatrixIOTest.checkTemp());
-		Perceptron p = new Perceptron(2, 1);
+		Perceptron p = new Perceptron(2, 2);
 		Matrix[] ins = new Matrix[4];
 		ins[0] = new Matrix(2, 1, new double[]{0, 0});
 		ins[1] = new Matrix(2, 1, new double[]{0, 1});
 		ins[2] = new Matrix(2, 1, new double[]{1, 0});
 		ins[3] = new Matrix(2, 1, new double[]{1, 1});
 		Matrix[] out = new Matrix[4];
-		out[0] = new Matrix(1, 1, new double[]{1});
-		out[1] = new Matrix(1, 1, new double[]{1});
-		out[2] = new Matrix(1, 1, new double[]{1});
-		out[3] = new Matrix(1, 1, new double[]{0});
+		out[0] = new Matrix(2, 1, new double[]{1, 0});
+		out[1] = new Matrix(2, 1, new double[]{1, 0});
+		out[2] = new Matrix(2, 1, new double[]{1, 0});
+		out[3] = new Matrix(2, 1, new double[]{0, 1});
 		p.train(ins, out, 0.1, 1000);
 		assertEquals(1, p.simulate(ins[0]).position(0, 0), 0);
 		assertEquals(1, p.simulate(ins[1]).position(0, 0), 0);
 		assertEquals(1, p.simulate(ins[2]).position(0, 0), 0);
 		assertEquals(0, p.simulate(ins[3]).position(0, 0), 0);
+		assertEquals(0, p.simulate(ins[0]).position(1, 0), 0);
+		assertEquals(0, p.simulate(ins[1]).position(1, 0), 0);
+		assertEquals(0, p.simulate(ins[2]).position(1, 0), 0);
+		assertEquals(1, p.simulate(ins[3]).position(1, 0), 0);
 		
 		String foo = System.getProperty("java.io.tmpdir")
 				   + File.separator + "perceptron.tmp";
