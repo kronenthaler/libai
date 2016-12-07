@@ -103,7 +103,7 @@ public class AdalineTest {
 		assertEquals(0, round(ada.simulate(ins[3]).position(0, 0)));
 		
 		String foo = System.getProperty("java.io.tmpdir")
-				   + File.separator + "perceptron.tmp";
+				   + File.separator + "adaline.tmp";
 		new File(foo).deleteOnExit();
 		
 		assertTrue(ada.save(foo));
