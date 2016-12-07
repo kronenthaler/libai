@@ -83,7 +83,7 @@ public class AdalineTest {
 	
 	@Test
 	public void testIO() {
-		assumeTrue(MatrixIOTest.checkTemp());
+        assumeTrue("Can't use temp dir...", MatrixIOTest.checkTemp());
 		Adaline ada = new Adaline(2, 1);
 		Matrix[] ins = new Matrix[4];
 		ins[0] = new Matrix(2, 1, new double[]{0, 0});

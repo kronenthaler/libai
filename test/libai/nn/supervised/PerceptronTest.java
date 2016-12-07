@@ -89,7 +89,7 @@ public class PerceptronTest {
 	
 	@Test
 	public void testIO() {
-		assumeTrue(MatrixIOTest.checkTemp());
+        assumeTrue("Can't use temp dir...", MatrixIOTest.checkTemp());
 		Perceptron p = new Perceptron(2, 1);
 		Matrix[] ins = new Matrix[4];
 		ins[0] = new Matrix(2, 1, new double[]{0, 0});
