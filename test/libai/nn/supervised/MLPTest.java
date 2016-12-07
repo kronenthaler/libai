@@ -24,17 +24,18 @@
 package libai.nn.supervised;
 
 import java.io.File;
-import static java.lang.Math.round;
 import libai.common.Matrix;
 import libai.common.MatrixIOTest;
 import libai.common.functions.Function;
 import libai.common.functions.Identity;
 import libai.common.functions.Sigmoid;
 import org.junit.Test;
-import static org.junit.Assert.*;
-import static org.junit.Assume.*;
 import libai.common.functions.HyperbolicTangent;
 import libai.common.functions.Sinc;
+
+import static java.lang.Math.round;
+import static org.junit.Assert.*;
+import static org.junit.Assume.*;
 
 /**
  *
@@ -129,7 +130,7 @@ public class MLPTest {
 		out[0] = new Matrix(1, 1, new double[]{1});
 		out[1] = new Matrix(1, 1, new double[]{0});
 		out[2] = new Matrix(1, 1, new double[]{0});
-		out[3] = new Matrix(1, 1, new double[]{1});
+		out[3] = new Matrix(1, 1, new double[]{0});
 		mlp.train(ins, out, 0.01, 1000000, 0, 4, 0.01);
 		assumeTrue("MLP didn't converge, try again", 0.01 > mlp.error(ins, out));
 		Matrix res = new Matrix(1, 1);
@@ -140,7 +141,7 @@ public class MLPTest {
 		mlp.simulate(ins[2], res);
 		assertEquals(0, round(res.position(0, 0)));
 		mlp.simulate(ins[3], res);
-		assertEquals(1, round(res.position(0, 0)));
+		assertEquals(0, round(res.position(0, 0)));
 	}
 	
 	@Test
@@ -189,4 +190,50 @@ public class MLPTest {
 		assertEquals(mlp.simulate(ins[3]), mlp2.simulate(ins[3]));
 	}
 
+	@Test
+	public void testDemo() {
+		int n = 40;
+		int m = 1;
+		int l = 1;
+		int test = 12;
+		Matrix[] p = new Matrix[n + test];
+		Matrix[] t = new Matrix[n + test];
+		double delta = 0.1;
+		double x = 0;
+		for (int i = 0; i < n; i++, x += delta) {
+			p[i] = new Matrix(m, 1);
+			t[i] = new Matrix(l, 1);
+
+			p[i].position(0, 0, x);
+			t[i].position(0, 0, f(x));
+		}
+
+		delta = 0.33;
+		x = 0;
+		for (int i = n; i < n + test && x < 4; i++, x += delta) {
+			p[i] = new Matrix(m, 1);
+			t[i] = new Matrix(l, 1);
+
+			p[i].position(0, 0, x);
+			t[i].position(0, 0, f(x));
+		}
+
+		int nperlayer[] = {m, 4, l};
+		MLP net = new MLP(nperlayer, new Function[]{new Identity(), new Sigmoid(), new Identity()});
+
+		net.train(p, t, 0.2, 50000, 0, n);
+
+		assertTrue(1e-3 > net.error(p, t, 0, n));
+		assertTrue(1e-3 > net.error(p, t, n, test));
+		
+		for (int i = n; i < p.length; i++) {
+			double res = net.simulate(p[i]).position(0, 0);
+			assertEquals(t[i].position(0, 0), res, 0.1);
+		}
+	}
+	
+	private double f(double x) {
+		return Math.sin(x) + Math.cos(x);
+	}
+	
 }
