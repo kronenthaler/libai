@@ -3,7 +3,7 @@
  *
  * Copyright (c) 2016 Federico Vera <https://github.com/dktcoding>
  * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * Permission is hereby granted, free of charge, to any person obtaining ada copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -39,7 +39,7 @@ public class AdalineTest {
 	
 	@Test
 	public void testTrainOr() {
-		Adaline p = new Adaline(2, 1);
+		Adaline ada = new Adaline(2, 1);
 		Matrix[] ins = new Matrix[4];
 		ins[0] = new Matrix(2, 1, new double[]{0, 0});
 		ins[1] = new Matrix(2, 1, new double[]{0, 1});
@@ -50,23 +50,23 @@ public class AdalineTest {
 		out[1] = new Matrix(1, 1, new double[]{1});
 		out[2] = new Matrix(1, 1, new double[]{1});
 		out[3] = new Matrix(1, 1, new double[]{1});
-		p.train(ins, out, 0.1, 1000);
-		assertTrue(0.1 > p.error(ins, out));
+		ada.train(ins, out, 0.1, 1000);
+		assertTrue(0.1 > ada.error(ins, out));
 		Matrix res = new Matrix(1, 1);
-		p.simulate(ins[0], res);
+		ada.simulate(ins[0], res);
 		assertEquals(0, round(res.position(0, 0)));
-		p.simulate(ins[1], res);
+		ada.simulate(ins[1], res);
 		assertEquals(1, round(res.position(0, 0)));
-		p.simulate(ins[2], res);
+		ada.simulate(ins[2], res);
 		assertEquals(1, round(res.position(0, 0)));
-		p.simulate(ins[3], res);
+		ada.simulate(ins[3], res);
 		assertEquals(1, round(res.position(0, 0)));
 	}
 
 	@Test
 	public void testTrainAnd() {
 		// Trains an Or and tests simulate(Matrix, Matrix)
-		Adaline p = new Adaline(2, 1);
+		Adaline ada = new Adaline(2, 1);
 		Matrix[] ins = new Matrix[4];
 		ins[0] = new Matrix(2, 1, new double[]{0, 0});
 		ins[1] = new Matrix(2, 1, new double[]{0, 1});
@@ -77,14 +77,14 @@ public class AdalineTest {
 		out[1] = new Matrix(1, 1, new double[]{0});
 		out[2] = new Matrix(1, 1, new double[]{0});
 		out[3] = new Matrix(1, 1, new double[]{1});
-		p.train(ins, out, 0.1, 1000);
-		assertTrue(0.1 > p.error(ins, out));
+		ada.train(ins, out, 0.1, 1000);
+		assertTrue(0.1 > ada.error(ins, out));
 	}
 	
 	@Test
 	public void testIO() {
 		assumeTrue(MatrixIOTest.checkTemp());
-		Adaline p = new Adaline(2, 1);
+		Adaline ada = new Adaline(2, 1);
 		Matrix[] ins = new Matrix[4];
 		ins[0] = new Matrix(2, 1, new double[]{0, 0});
 		ins[1] = new Matrix(2, 1, new double[]{0, 1});
@@ -95,26 +95,26 @@ public class AdalineTest {
 		out[1] = new Matrix(1, 1, new double[]{1});
 		out[2] = new Matrix(1, 1, new double[]{1});
 		out[3] = new Matrix(1, 1, new double[]{0});
-		p.train(ins, out, 0.1, 1000);
-		assertTrue(0.1 > p.error(ins, out));
-		assertEquals(1, round(p.simulate(ins[0]).position(0, 0)));
-		assertEquals(1, round(p.simulate(ins[1]).position(0, 0)));
-		assertEquals(1, round(p.simulate(ins[2]).position(0, 0)));
-		assertEquals(0, round(p.simulate(ins[3]).position(0, 0)));
+		ada.train(ins, out, 0.1, 1000);
+		assertTrue(0.1 > ada.error(ins, out));
+		assertEquals(1, round(ada.simulate(ins[0]).position(0, 0)));
+		assertEquals(1, round(ada.simulate(ins[1]).position(0, 0)));
+		assertEquals(1, round(ada.simulate(ins[2]).position(0, 0)));
+		assertEquals(0, round(ada.simulate(ins[3]).position(0, 0)));
 		
 		String foo = System.getProperty("java.io.tmpdir")
 				   + File.separator + "perceptron.tmp";
 		new File(foo).deleteOnExit();
 		
-		assertTrue(p.save(foo));
-		Adaline p2 = Adaline.open(foo);
-		assertNotNull(p2);
-		assertTrue(p != p2);
+		assertTrue(ada.save(foo));
+		Adaline a2 = Adaline.open(foo);
+		assertNotNull(a2);
+		assertTrue(ada != a2);
 		
-		assertEquals(p.simulate(ins[0]), p2.simulate(ins[0]));
-		assertEquals(p.simulate(ins[1]), p2.simulate(ins[1]));
-		assertEquals(p.simulate(ins[2]), p2.simulate(ins[2]));
-		assertEquals(p.simulate(ins[3]), p2.simulate(ins[3]));
+		assertEquals(ada.simulate(ins[0]), a2.simulate(ins[0]));
+		assertEquals(ada.simulate(ins[1]), a2.simulate(ins[1]));
+		assertEquals(ada.simulate(ins[2]), a2.simulate(ins[2]));
+		assertEquals(ada.simulate(ins[3]), a2.simulate(ins[3]));
 	}
 
 }
