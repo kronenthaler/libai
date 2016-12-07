@@ -30,6 +30,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.junit.Assume.*;
 import static java.lang.Math.*;
+import libai.nn.NeuralNetwork;
 
 /**
  *
@@ -115,6 +116,35 @@ public class AdalineTest {
 		assertEquals(ada.simulate(ins[1]), a2.simulate(ins[1]));
 		assertEquals(ada.simulate(ins[2]), a2.simulate(ins[2]));
 		assertEquals(ada.simulate(ins[3]), a2.simulate(ins[3]));
+	}
+	
+	@Test
+	public void testDemo() {
+		int n = 40;
+		int t = 10;
+
+		Matrix[] patterns = new Matrix[n + t];
+		Matrix[] ans = new Matrix[n + t];
+
+		for (int i = 0; i < n; i++) {
+			patterns[i] = new Matrix(1, 1, new double[]{i + 1});
+			ans[i] = new Matrix(1, 1, new double[]{(2 * (i + 1)) + 3});
+		}
+
+		for (int i = n; i < n + t; i++) {
+			patterns[i] = new Matrix(1, 1, new double[]{i + 1.33});
+			ans[i] = new Matrix(1, 1, new double[]{(2 * (i + 1.33)) + 3});
+		}
+
+		NeuralNetwork net = new Adaline(1, 1);
+		net.train(patterns, ans, 0.001, 1000, 0, n);
+		
+		assertTrue(1e-5 > net.error(patterns, ans, 0, n));
+		assertTrue(1e-3 > net.error(patterns, ans, n, t));
+		for (int i = n; i < patterns.length; i++) {
+			double res = net.simulate(patterns[i]).position(0, 0);
+			assertEquals(ans[i].position(0, 0), res, 1e-2);
+		}
 	}
 
 }
