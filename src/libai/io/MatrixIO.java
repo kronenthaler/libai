@@ -64,7 +64,7 @@ public class MatrixIO {
          * <a href="http://octave.org/doxygen/4.0/de/d2d/ls-oct-binary_8cc_source.html"> here</a>
          * and yet another bit
          * <a href="https://lists.gnu.org/archive/html/help-octave/1995-03/msg00056.html">here</a>
-         * </p><p>About this implementation:<ul>
+         * </p><p>About this implementation:</p><ul>
          * <li>GNU Octave supports different matrix types (diagonal matrix, sparse 
          * matrix, etc), this method will always output a full/dense matrix format. 
          * You will be able to read it with GNU Octave, but there's a chance that if 
@@ -74,7 +74,7 @@ public class MatrixIO {
          * this matrices are saved with {@link ByteOrder#LITTLE_ENDIAN}.</li>
          * <li>This matrices will NOT be Matlab&reg; compatible (never).</li>
          * <li>Files will not be {@code gzipped} since not all versions of GNU Octave 
-         * support it</li></ul></p>
+         * support it</li></ul>
          */
         OCTAVE
     }
