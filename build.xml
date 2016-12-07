@@ -9,21 +9,10 @@
     <property name="main.src.dir"   value="src"/>
     <property name="test.build.dir" value="build/test"/>
     <property name="test.src.dir"   value="test"/>
+    <property name="doc.dir"        value="doc"/>
+    <property name="jar.dir"        value="dist"/>
+    <property name="proj.ver"       value="0.1"/>
 
-	<target name="release" depends="jar">
-		<mkdir dir="temp"/>
-		<copy src="src/" dest="temp/src" />
-		<copy src="lib/" dest="temp/lib" />
-		<zip zipfile="release/libai-x.x.zip">
-			<fileset dir="release" includes="*.jar"/>
-			<fileset dir="docs/"/>
-			<fileset dir="dist/"/>
-			<fileset dir="temp/"/>
-			<!--fileset file="*.txt" /-->
-		</zip>
-		<delete dir="temp"/>
-	</target>
-    
     <path id="classpath.test">
         <pathelement location="lib/junit-4.12.jar"/>
         <pathelement location="lib/hamcrest-core-1.3.jar"/>
@@ -53,5 +42,27 @@
                 <fileset dir="${test.src.dir}" includes="**/*Test.java" />
             </batchtest>
         </junit>
+    </target>
+
+    <target name="jar" depends="compile">
+        <mkdir dir="${jar.dir}"/>
+        <jar destfile="${jar.dir}/${ant.project.name}-${proj.ver}.jar" basedir="${main.build.dir}"></jar>
+    </target>
+
+    <target name="doc" depends="" description="generate documentation">
+        <javadoc sourcepath="${main.src.dir}" destdir="${doc.dir}"/>
+    </target>
+
+    <target description="bundle sources in a jar" name="package-sources">
+        <mkdir dir="${jar.dir}"/>
+        <jar basedir="${main.src.dir}" destfile="${jar.dir}/${ant.project.name}-${proj.ver}-sources.jar"/>
+    </target>
+
+    <target description="bundle docs in a jar" depends="doc" name="package-docs">
+        <mkdir dir="${jar.dir}"/>
+        <jar basedir="${doc.dir}" destfile="${jar.dir}/${ant.project.name}-${proj.ver}-docs.jar"/>
+    </target>
+
+    <target description="packages everything" depends="jar,package-docs,package-sources" name="build-all">
     </target>
 </project>
