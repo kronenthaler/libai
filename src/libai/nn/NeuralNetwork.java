@@ -158,7 +158,7 @@ public abstract class NeuralNetwork implements Serializable {
 	 */
 	public double error(Matrix[] patterns, Matrix[] answers, int offset, int length) {
 		double error = 0.0;
-		Matrix Y = new Matrix(answers[0].getRows(), 1);
+		Matrix Y = new Matrix(answers[offset].getRows(), 1);
 
 		for (int i = 0, n = Y.getRows(); i < length; i++) {
 			simulate(patterns[i + offset], Y);	//inner product
