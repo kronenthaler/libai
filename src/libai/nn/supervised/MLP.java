@@ -204,7 +204,7 @@ public class MLP extends NeuralNetwork {
 		Matrix e = new Matrix(answers[offset].getRows(), answers[offset].getColumns());
 
 		for (int i = 0; i < length; i++) {
-			sort[i] = i;
+			sort[i] = i + offset;
 		}
 
 		while (error > minerror && epochs-- > 0) {
@@ -214,10 +214,10 @@ public class MLP extends NeuralNetwork {
 			error = 0;
 			for (int i = 0; i < length; i++) {
 				//Y[i]=Fi(<W[i],Y[i-1]>+b)
-				simulate(patterns[sort[i] + offset]);
+				simulate(patterns[sort[i]]);
 
 				//e=-2(t-Y[n-1])
-				answers[sort[i] + offset].subtract(Y[layers - 1], e);
+				answers[sort[i]].subtract(Y[layers - 1], e);
 
 				//calculate the error
 				for (int m = 0; m < nperlayer[layers - 1]; m++)
@@ -263,7 +263,7 @@ public class MLP extends NeuralNetwork {
 		double beta = params[0];
 
 		for (int i = 0; i < length; i++) {
-			sort[i] = i;
+			sort[i] = i + offset;
 		}
 
 		Matrix Wprev[] = new Matrix[layers];
@@ -282,10 +282,10 @@ public class MLP extends NeuralNetwork {
 			error = 0;
 			for (int i = 0; i < length; i++) {
 				//Y[i]=Fi(<W[i],Y[i-1]>+b)
-				simulate(patterns[sort[i] + offset]);
+				simulate(patterns[sort[i]]);
 
 				//e=-2(t-Y[n-1])
-				answers[sort[i] + offset].subtract(Y[layers - 1], e);
+				answers[sort[i]].subtract(Y[layers - 1], e);
 
 				//calculate the error
 				for (int m = 0; m < nperlayer[layers - 1]; m++)
@@ -350,7 +350,7 @@ public class MLP extends NeuralNetwork {
 				InitialUpdate = 0.1;
 
 		for (int i = 0; i < length; i++) {
-			sort[i] = i;
+			sort[i] = i + offset;
 		}
 
 		Matrix dacum[] = new Matrix[layers];
@@ -377,10 +377,10 @@ public class MLP extends NeuralNetwork {
 			error = 0;
 			for (int i = 0; i < length; i++) {
 				//Y[i]=Fi(<W[i],Y[i-1]>+b)
-				simulate(patterns[sort[i] + offset]);
+				simulate(patterns[sort[i]]);
 
 				//e=-2(t-Y[n-1])
-				answers[sort[i] + offset].subtract(Y[layers - 1], e);
+				answers[sort[i]].subtract(Y[layers - 1], e);
 
 				//calculate the error
 				for (int m = 0; m < nperlayer[layers - 1]; m++)
