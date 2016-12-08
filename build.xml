@@ -46,7 +46,11 @@
 
     <target name="jar" depends="compile">
         <mkdir dir="${jar.dir}"/>
-        <jar destfile="${jar.dir}/${ant.project.name}-${proj.ver}.jar" basedir="${main.build.dir}"></jar>
+        <jar destfile="${jar.dir}/${ant.project.name}-${proj.ver}.jar" basedir="${main.build.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="Examples" />
+            </manifest>
+        </jar>
     </target>
 
     <target name="doc" depends="" description="generate documentation">
