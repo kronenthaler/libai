@@ -9,7 +9,7 @@
     <property name="main.src.dir"   value="src"/>
     <property name="test.build.dir" value="build/test"/>
     <property name="test.src.dir"   value="test"/>
-    <property name="doc.dir"        value="doc"/>
+    <property name="doc.dir"        value="docs"/>
     <property name="jar.dir"        value="dist"/>
     <property name="proj.ver"       value="0.1"/>
 
