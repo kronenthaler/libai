@@ -122,6 +122,7 @@ public class MMASPanel extends javax.swing.JPanel {
 			jProgressBar1.setValue(0);
 
 			new Thread(new Runnable() {
+				@Override
 				public void run() {
 					while (as.getCurrentIterationNumber() < jProgressBar1.getMaximum()) {
 						jProgressBar1.setValue(as.getCurrentIterationNumber());
@@ -212,6 +213,7 @@ public class MMASPanel extends javax.swing.JPanel {
 			this.setE(Env);
 		}
 
+		@Override
 		public double heuristicInfo(double number) {
 			return 1 / number;
 		}
@@ -226,9 +228,10 @@ public class MMASPanel extends javax.swing.JPanel {
 			}
 		}
 
+		@Override
 		public Vector<Integer> constrains(int i, Vector<Integer> currentSolution) {
 			int cols = this.Graph.getM().getColumns();
-			Vector<Integer> adjacents = new Vector<Integer>();
+			Vector<Integer> adjacents = new Vector<>();
 			//Calculate adjancent nodes
 			for (int j = 0; j < cols; j++) {
 				if (this.Graph.getM().position(i, j) < Integer.MAX_VALUE) {

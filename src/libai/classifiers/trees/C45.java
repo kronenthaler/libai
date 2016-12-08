@@ -50,7 +50,7 @@ public class C45 implements Comparable<C45> {
     //Laplace's error pruning
     protected int mostCommonLeafFreq = Integer.MIN_VALUE;
     protected int samplesCount; //how many samples pass for this node in the pruning process.
-    protected HashMap<Attribute, Integer> samplesFreq = new HashMap<Attribute, Integer>(); //used to the pruning process.
+    protected HashMap<Attribute, Integer> samplesFreq = new HashMap<>(); //used to the pruning process.
     //Quinlan's prunning using confidence
     protected double confidence = 0.25;
     protected double z;
@@ -211,7 +211,7 @@ public class C45 implements Comparable<C45> {
     }
 
     public C45 train(DataSet ds) {
-        HashSet<Integer> visited = new HashSet<Integer>();
+        HashSet<Integer> visited = new HashSet<>();
         visited.add(ds.getOutputIndex());
         return train(ds, visited, "");
     }
@@ -255,7 +255,7 @@ public class C45 implements Comparable<C45> {
         }
 
         Iterable<List<Attribute>> sortedRecords = ds.sortOver(index);
-        ArrayList<Pair<Attribute, C45>> children = new ArrayList<Pair<Attribute, C45>>();
+        ArrayList<Pair<Attribute, C45>> children = new ArrayList<>();
         if (metadata.isCategorical(index)) {
             visited.add(index); //mark as ready, avoid revisiting a nominal attribute.
 
@@ -278,8 +278,7 @@ public class C45 implements Comparable<C45> {
                 i++;
                 
                 DataSet section = ds.getSubset(nlo, i);
-                children.add(new Pair<Attribute, C45>(prev,
-                        train(section, visited, deep + "\t")));
+                children.add(new Pair<>(prev, train(section, visited, deep + "\t")));
                 section.close();
                 
                 prev = current;
@@ -291,10 +290,10 @@ public class C45 implements Comparable<C45> {
             String fieldName = ds.getMetaData().getAttributeName(index);
 
             C45 left = train(l, visited, deep + "\t");
-            children.add(new Pair<Attribute, C45>(Attribute.getInstance(splitValue, fieldName), left));
+            children.add(new Pair<>(Attribute.getInstance(splitValue, fieldName), left));
 
             C45 right = train(r, visited, deep + "\t");
-            children.add(new Pair<Attribute, C45>(Attribute.getInstance(splitValue, fieldName), right));
+            children.add(new Pair<>(Attribute.getInstance(splitValue, fieldName), right));
             
             l.close();
             r.close();
@@ -470,7 +469,7 @@ public class C45 implements Comparable<C45> {
         DataSet aux = ds.getSubset(lo, hi);
 
         List<Attribute> prev = null;
-        HashMap<Double, HashMap<Attribute, Integer>> freqAcum = new HashMap<Double, HashMap<Attribute, Integer>>();
+        HashMap<Double, HashMap<Attribute, Integer>> freqAcum = new HashMap<>();
 
         for (List<Attribute> record : records) {
             double va = ((ContinuousAttribute) record.get(fieldIndex)).getValue();
@@ -639,7 +638,7 @@ public class C45 implements Comparable<C45> {
                         if ((current = aux.item(i)).getNodeName().equals("leaf")
                                 || current.getNodeName().equals("node"))
                             break;
-                    childs[currentChild++] = new Pair<Attribute, C45>(att, load(current));
+                    childs[currentChild++] = new Pair<>(att, load(current));
                 }
             }
             return new C45(childs);
@@ -651,8 +650,8 @@ public class C45 implements Comparable<C45> {
     }
 
     public boolean save(File path) {
-        try {
-            PrintStream out = new PrintStream(new FileOutputStream(path));
+		try (FileOutputStream fos = new FileOutputStream(path);
+			 PrintStream out = new PrintStream(fos)){
             out.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
             out.println("<" + getClass().getSimpleName() + ">");
             save(out, "\t");

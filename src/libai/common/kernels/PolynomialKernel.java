@@ -30,6 +30,8 @@ import libai.common.Matrix;
  * @author kronenthaler
  */
 public class PolynomialKernel implements Kernel {
+	private static final long serialVersionUID = 5132845207274843125L;
+	
 	private double a, b;
 
 	public PolynomialKernel(double _a, double _b) {
@@ -37,10 +39,12 @@ public class PolynomialKernel implements Kernel {
 		b = _b;
 	}
 
+	@Override
 	public double eval(Matrix A, Matrix B) {
 		return Math.pow(A.dotProduct(B) - a, b);
 	}
 
+	@Override
 	public double eval(double dotProduct) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}

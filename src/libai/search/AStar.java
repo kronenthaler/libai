@@ -31,10 +31,11 @@ import java.util.*;
  * @author kronenthaler
  */
 public class AStar implements Search {
+	@Override
 	public State search(State init) {
-		PriorityQueue<State> opened = new PriorityQueue<State>();
-		HashMap<State, State> openedMirror = new HashMap<State, State>();
-		HashMap<State, State> closed = new HashMap<State, State>();
+		PriorityQueue<State> opened = new PriorityQueue<>();
+		HashMap<State, State> openedMirror = new HashMap<>();
+		HashMap<State, State> closed = new HashMap<>();
 
 		opened.add(init);
 		openedMirror.put(init, init);

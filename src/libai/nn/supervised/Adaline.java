@@ -36,6 +36,8 @@ import libai.common.Matrix;
  * @author kronenthaler
  */
 public class Adaline extends Perceptron {
+	private static final long serialVersionUID = 6108456796562627466L;
+	
 	public Adaline() {
 	}
 
@@ -80,12 +82,17 @@ public class Adaline extends Perceptron {
 		result.add(b, result);		//bias
 	}
 
+	/**
+	 * Deserializes an {@code Adaline}
+	 * 
+	 * @param path Path to file
+	 * @return Restored {@code Adaline instance}
+	 * @see NeuralNetwork#save(java.lang.String) 
+	 */
 	public static Adaline open(String path) {
-		try {
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream(path));
-			Adaline p = (Adaline) in.readObject();
-			in.close();
-			return p;
+		try (FileInputStream fis = new FileInputStream(path);
+			 ObjectInputStream in = new ObjectInputStream(fis)) {
+			return (Adaline) in.readObject();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

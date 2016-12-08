@@ -23,10 +23,10 @@
  */
 package libai.nn.unsupervised;
 
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
 import libai.common.Matrix;
 import libai.common.functions.Sign;
-import java.io.*;
-import java.util.*;
 
 import libai.nn.NeuralNetwork;
 
@@ -41,6 +41,8 @@ import libai.nn.NeuralNetwork;
  * @author kronenthaler
  */
 public class Hebb extends NeuralNetwork {
+	private static final long serialVersionUID = 7754681003525186940L;
+	
 	protected double phi;
 	protected Matrix W;
 	protected static Sign sign = new Sign();
@@ -90,10 +92,8 @@ public class Hebb extends NeuralNetwork {
 	 */
 	@Override
 	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
-		Random rand = new Random();
 		int[] sort = new int[length];
 		Matrix Y = new Matrix(W.getRows(), 1);
-		Matrix temp = new Matrix(W.getRows(), W.getColumns());
 
 		Matrix[] patternsT = new Matrix[length];
 		for (int i = 0; i < length; i++) {
@@ -186,12 +186,17 @@ public class Hebb extends NeuralNetwork {
 		return error / (double) (length * patterns[0].getRows());
 	}
 
+	/**
+	 * Deserializes an {@code Hebb}
+	 * 
+	 * @param path Path to file
+	 * @return Restored {@code Hebb instance}
+	 * @see NeuralNetwork#save(java.lang.String) 
+	 */
 	public static Hebb open(String path) {
-		try {
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream(path));
-			Hebb p = (Hebb) in.readObject();
-			in.close();
-			return p;
+		try (FileInputStream fis = new FileInputStream(path);
+			 ObjectInputStream in = new ObjectInputStream(fis)) {
+			return (Hebb)in.readObject();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

@@ -23,17 +23,18 @@
  */
 package libai.search;
 
-import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *
  * @author kronenthaler
  */
 public class BFS implements Search {
+	@Override
 	public State search(State init) {
-		HashMap<State, Boolean> visited = new HashMap<State, Boolean>();
-		ArrayList<State> q = new ArrayList<State>();
+		HashMap<State, Boolean> visited = new HashMap<>();
+		ArrayList<State> q = new ArrayList<>();
 		q.add(init);
 		visited.put(init, true);
 

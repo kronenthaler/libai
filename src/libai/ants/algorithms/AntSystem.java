@@ -69,6 +69,7 @@ public abstract class AntSystem extends Metaheuristic {
 	}
 
 	/* Standard methods*/
+	@Override
 	public void checkParameters() throws AntFrameworkException {
 		/* check obligatory parameters */
 		if (!this.Parameters.containsKey(AntSystem.initialNode)) {
@@ -96,6 +97,7 @@ public abstract class AntSystem extends Metaheuristic {
 
 	}
 
+	@Override
 	public void solve() throws AntFrameworkException {
 		/* Check parameters to ensure that we have all we need before proceding */
 		checkParameters();
@@ -167,9 +169,11 @@ public abstract class AntSystem extends Metaheuristic {
 		}
 	}
 
+	@Override
 	public void daemonActions() {
 	}
 
+	@Override
 	public void pheromonesUpdate() {
 		double deltaTau_ij;
 
@@ -187,10 +191,12 @@ public abstract class AntSystem extends Metaheuristic {
 		}
 	}
 
+	@Override
 	public void pheromonesEvaporation() {
 		this.Pheromones.multiply(this.Parameters.get(AntSystem.pheromonesEvaporationRate), this.Pheromones);
 	}
 
+	@Override
 	public int decisionRule(int i, Vector<Integer> currentSolution) {
 		/* counter of the number of times a node have been triying to selected a next node and maximun number of tries allowed*/
 		int counter = 0, allowedNumberOfTries = 2 * this.getNumberOfNodes();
@@ -228,6 +234,7 @@ public abstract class AntSystem extends Metaheuristic {
 		} while (true);
 	}
 
+	@Override
 	public final void candidateList(int max) {
 	}
 

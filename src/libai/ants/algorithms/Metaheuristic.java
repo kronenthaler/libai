@@ -53,15 +53,15 @@ abstract public class Metaheuristic implements Comparator<Ant> {
 	/**
 	 * Hashtable that holds the parameters
 	 */
-	protected Hashtable<Integer, Double> Parameters = new Hashtable<Integer, Double>();
+	protected Hashtable<Integer, Double> Parameters = new Hashtable<>();
 	/**
 	 * Vector that holds the global best solution found
 	 */
-	protected Vector<Integer> bestSolution = new Vector<Integer>();
+	protected Vector<Integer> bestSolution = new Vector<>();
 	/**
 	 * Vector that holds the candidate list
 	 */
-	protected Hashtable<Integer, Vector<Node>> candidates = new Hashtable<Integer, Vector<Node>>();
+	protected Hashtable<Integer, Vector<Node>> candidates = new Hashtable<>();
 	/**
 	 * current iteration number
 	 */
@@ -306,6 +306,7 @@ abstract public class Metaheuristic implements Comparator<Ant> {
 	 * @return 0 if solution of ant_1 = solution of ant_2, 1 if solution of
 	 * ant_1 greater than solution of ant_2 and -1 otherwise
 	 */
+	@Override
 	public int compare(Ant o1, Ant o2) {
 		//compare solutions
 		Vector<Integer> sol1 = o1.getSolution(), sol2 = o2.getSolution();

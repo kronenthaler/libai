@@ -50,7 +50,7 @@ public class NaiveBayes {
 		totalCount = ds.getItemsCount();
         metadata = ds.getMetaData();
 		
-		params = new HashMap<Attribute, Object[]>();
+		params = new HashMap<>();
 		initialize(ds);
 		precalculate(ds);
 
@@ -65,9 +65,9 @@ public class NaiveBayes {
 				if (j == outputIndex) {
 					params.get(c)[j] = (Integer) 0;
 				} else if (metadata.isCategorical(j)) {
-					params.get(c)[j] = new HashMap<String, Integer>(); //value, count
+					params.get(c)[j] = new HashMap<>(); //value, count
 				} else {
-					params.get(c)[j] = new Pair<Double, Double>(0.0, 0.0);//mean, sd
+					params.get(c)[j] = new Pair<>(0.0, 0.0);//mean, sd
 				}
 			}
 		}
@@ -198,8 +198,8 @@ public class NaiveBayes {
 
 	//IO functions
 	public boolean save(File path) {
-		try {
-			PrintStream out = new PrintStream(new FileOutputStream(path));
+		try (FileOutputStream fos = new FileOutputStream(path);
+			 PrintStream out = new PrintStream(fos)){
 			out.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
 			out.println("<" + getClass().getSimpleName() + " "
 					+ "outputIndex=\""+outputIndex+"\" "
@@ -207,7 +207,6 @@ public class NaiveBayes {
 					+ "attributes=\""+metadata.getAttributeCount()+"\">");
 			save(out, "\t");
 			out.println("</" + getClass().getSimpleName() + ">");
-			out.close();
 			//safe format into a XML file.
 			return true;
 		} catch (Exception e) {
@@ -244,7 +243,7 @@ public class NaiveBayes {
 	private NaiveBayes load(Node root) {
 		outputIndex = Integer.parseInt(root.getAttributes().getNamedItem("outputIndex").getTextContent());
 		totalCount = Integer.parseInt(root.getAttributes().getNamedItem("totalCount").getTextContent());
-		params = new HashMap<Attribute, Object[]>();
+		params = new HashMap<>();
         int attributeCount = Integer.parseInt(root.getAttributes().getNamedItem("attributes").getTextContent());
 		
 		NodeList children = root.getChildNodes();
@@ -275,7 +274,7 @@ public class NaiveBayes {
 	
 	private Object getParams(Node root){
 		NodeList children = root.getChildNodes();
-		HashMap<String,Integer> freq = new HashMap<String,Integer>();
+		HashMap<String,Integer> freq = new HashMap<>();
 		for(int i=0;i<children.getLength();i++){
 			Node current = children.item(i);
 			if(current.getNodeName().equals("count"))
@@ -283,7 +282,7 @@ public class NaiveBayes {
 			else if(current.getNodeName().equals("stats")){
 				double mean = Double.parseDouble(current.getAttributes().getNamedItem("mean").getTextContent());
 				double sd = Double.parseDouble(current.getAttributes().getNamedItem("sd").getTextContent());
-				return new Pair<Double,Double>(mean,sd);
+				return new Pair<>(mean,sd);
 			}else if(current.getNodeName().equals("item")){
 				int count = Integer.parseInt(current.getAttributes().getNamedItem("count").getTextContent());
 				String key = current.getTextContent();

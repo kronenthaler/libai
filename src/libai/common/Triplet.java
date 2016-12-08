@@ -64,6 +64,7 @@ public final class Triplet <V extends Comparable, K extends Comparable, Z extend
 		return b;
 	}
 	
+	@Override
 	public boolean equals(Object o){
 		if (o == null || !(o instanceof Triplet)) 
 			return false;
@@ -74,6 +75,7 @@ public final class Triplet <V extends Comparable, K extends Comparable, Z extend
 				&& third.equals(b.third);
 	}
 
+	@Override
 	public String toString() {
 		return "(" + first + "," + second + "," + third + ")";
 	}

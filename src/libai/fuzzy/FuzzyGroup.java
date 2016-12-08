@@ -57,7 +57,7 @@ public class FuzzyGroup {
 	 */
 	public FuzzyGroup(FuzzySet... mems) {
 		v = new Variable(0);
-		members = new HashSet<FuzzySet>();
+		members = new HashSet<>();
 
 		for (FuzzySet m : mems)
 			members.add(m);

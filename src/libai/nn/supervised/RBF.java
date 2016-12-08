@@ -42,6 +42,8 @@ import libai.nn.NeuralNetwork;
  * @author kronenthaler
  */
 public class RBF extends Adaline {
+	private static final long serialVersionUID = 6772562276994202439L;
+	
 	private Matrix c[];
 	protected int nperlayer[];//{#inputs,#Neurons,#outputs}
 	protected double[] sigma;
@@ -96,7 +98,7 @@ public class RBF extends Adaline {
 		//calculate sigmas. p-closest neightbors, p is the input dimension
 		PriorityQueue<Double>[] neighbors = new PriorityQueue[nperlayer[1]];
 		for (int i = 0; i < nperlayer[1]; i++)
-			neighbors[i] = new PriorityQueue<Double>();
+			neighbors[i] = new PriorityQueue<>();
 
 		for (int i = 0; i < nperlayer[1] - 1; i++) {
 			for (int j = i + 1; j < nperlayer[1]; j++) {
@@ -156,7 +158,7 @@ public class RBF extends Adaline {
 			ctemp[i] = new Matrix(patterns[0].getRows(), patterns[0].getColumns());
 			int index = rand.nextInt(length) + offset;//abs((int)(ctemp[i].random(&xzxzx)*npatterns));;
 			patterns[index].copy(ctemp[i]);
-			partitions[i] = new ArrayList<Integer>();
+			partitions[i] = new ArrayList<>();
 		}
 		int iter = 0;
 		while (true) {
@@ -235,12 +237,17 @@ public class RBF extends Adaline {
 		}
 	}
 
+	/**
+	 * Deserializes an {@code RBF}
+	 * 
+	 * @param path Path to file
+	 * @return Restored {@code RBF instance}
+	 * @see NeuralNetwork#save(java.lang.String) 
+	 */
 	public static RBF open(String path) {
-		try {
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream(path));
-			RBF p = (RBF) in.readObject();
-			in.close();
-			return p;
+		try (FileInputStream fis = new FileInputStream(path);
+			 ObjectInputStream in = new ObjectInputStream(fis)) {
+			return (RBF) in.readObject();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

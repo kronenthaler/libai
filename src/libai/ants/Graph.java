@@ -57,10 +57,12 @@ public class Graph {
 	 */
 	public Graph(String fileSource) throws Exception {
 		this.setFileSource(fileSource);
-		ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileSource));
-		Matrix m = (Matrix) in.readObject();
-		in.close();
-		this.setM(m);
+		
+		try (FileInputStream fis = new FileInputStream(fileSource);
+			 ObjectInputStream ois = new ObjectInputStream(fis)) {
+			Matrix m = (Matrix) ois.readObject();
+			this.setM(m);
+		}	
 	}
 
 	/**
@@ -113,8 +115,9 @@ public class Graph {
 	}
 
 	public void save(String path) throws IOException {
-		ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(path));
-		out.writeObject(M);
-		out.close();
+		try (FileOutputStream fos = new FileOutputStream(path);
+			 ObjectOutputStream out = new ObjectOutputStream(fos)) {
+			out.writeObject(M);
+		}
 	}
 }

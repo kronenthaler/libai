@@ -23,11 +23,10 @@
  */
 package libai.nn.supervised;
 
-import libai.nn.NeuralNetwork;
+import java.io.*;
 import libai.common.Matrix;
 import libai.common.functions.Sign;
-import java.io.*;
-import java.util.*;
+import libai.nn.NeuralNetwork;
 
 
 /**
@@ -38,6 +37,8 @@ import java.util.*;
  * @author kronenthaler
  */
 public class Perceptron extends NeuralNetwork {
+	private static final long serialVersionUID = 2795822735956649552L;
+	
 	protected Matrix W, b;
 	protected int ins, outs;
 	protected static Sign signum = new Sign();
@@ -79,7 +80,7 @@ public class Perceptron extends NeuralNetwork {
 	@Override
 	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 		int[] sort = new int[length]; // [0,length)
-		double error = 1, prevError = error(patterns, answers, offset, length);
+		double error = 1;
 		Matrix Y = new Matrix(outs, 1);
 		Matrix E = new Matrix(outs, 1);
 		Matrix aux = new Matrix(outs, ins);
@@ -117,7 +118,6 @@ public class Perceptron extends NeuralNetwork {
 				b.add(E, b);  //b+(alpha*e)
 			}
 
-			prevError = error;
 			if (plotter != null)
 				plotter.setError(epochs, error);
 			if (progress != null)
@@ -148,12 +148,17 @@ public class Perceptron extends NeuralNetwork {
 		result.apply(signum, result);	//thresholding
 	}
 
+	/**
+	 * Deserializes an {@code Perceptron}
+	 * 
+	 * @param path Path to file
+	 * @return Restored {@code Perceptron instance}
+	 * @see NeuralNetwork#save(java.lang.String) 
+	 */
 	public static Perceptron open(String path) {
-		try {
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream(path));
-			Perceptron p = (Perceptron) in.readObject();
-			in.close();
-			return p;
+		try (FileInputStream fis = new FileInputStream(path);
+			 ObjectInputStream in = new ObjectInputStream(fis)) {
+			return (Perceptron) in.readObject();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

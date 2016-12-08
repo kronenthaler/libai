@@ -177,7 +177,7 @@ public class DFSPanel extends javax.swing.JPanel {
 		@Override
 		public ArrayList<State> getCandidates() {
 			//do until 4 moves.
-			ArrayList<State> candidates = new ArrayList<State>();
+			ArrayList<State> candidates = new ArrayList<>();
 			int row = point / 3;
 			int col = point % 3;
 			for (int i = 0; i < 4; i++) {
@@ -202,6 +202,7 @@ public class DFSPanel extends javax.swing.JPanel {
 			return table.compareTo(((Node) o).table);
 		}
 
+		@Override
 		public String toString() {
 			return table;
 		}

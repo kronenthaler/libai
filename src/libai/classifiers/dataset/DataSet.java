@@ -25,7 +25,6 @@ package libai.classifiers.dataset;
 
 import java.util.*;
 import libai.classifiers.Attribute;
-import libai.classifiers.Attribute;
 
 /**
  * DataSet is a container compound by examples. Each example (or DataRecord) is

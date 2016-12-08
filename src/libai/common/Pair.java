@@ -58,10 +58,12 @@ public final class Pair<V extends Comparable, K extends Comparable> implements C
 	 * @return -1 if this is less than o, 0 if are equals, 1 if this is greater
 	 * than o.
 	 */
+	@Override
 	public int compareTo(Pair o) {
 		return first.compareTo(o.first);
 	}
 
+	@Override
 	public String toString() {
 		return "(" + first + "," + second + ")";
 	}

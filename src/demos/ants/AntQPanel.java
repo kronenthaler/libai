@@ -124,6 +124,7 @@ public class AntQPanel extends javax.swing.JPanel {
 			jProgressBar1.setValue(0);
 
 			new Thread(new Runnable() {
+				@Override
 				public void run() {
 					while (as.getCurrentIterationNumber() < jProgressBar1.getMaximum()) {
 						jProgressBar1.setValue(as.getCurrentIterationNumber());
@@ -223,9 +224,10 @@ public class AntQPanel extends javax.swing.JPanel {
 			this.setE(Env);
 		}
 
+		@Override
 		public Vector<Integer> constrains(int i, Vector<Integer> currentSolution) {
 			int cols = this.Graph.getM().getColumns();
-			Vector<Integer> adjacents = new Vector<Integer>();
+			Vector<Integer> adjacents = new Vector<>();
 			//Calculate adjancent nodes
 			for (int j = 0; j < cols; j++) {
 				if (this.Graph.getM().position(i, j) < Integer.MAX_VALUE) {
@@ -236,13 +238,14 @@ public class AntQPanel extends javax.swing.JPanel {
 			return adjacents;
 		}
 
+		@Override
 		public void candidateList(int max) {
 			Matrix G = this.Graph.getM();
 			int rows = G.getRows(), cols = G.getColumns(), cont;
 
 			for (int i = 0; i < rows; i++) {
 				cont = 0;
-				Vector<Node> nodes = new Vector<Node>();
+				Vector<Node> nodes = new Vector<>();
 				for (int j = 0; j < cols; j++) {
 					if ((G.position(i, j) < Integer.MAX_VALUE)) {
 						Node nodeTmp = new Node(j, G.position(i, j), 1 / G.position(i, j));
@@ -260,6 +263,7 @@ public class AntQPanel extends javax.swing.JPanel {
 			}
 		}
 
+		@Override
 		public double heuristicInfo(double number) {
 			return 1 / number;
 		}

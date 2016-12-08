@@ -23,13 +23,12 @@
  */
 package libai.nn.supervised;
 
-import libai.common.kernels.GaussianKernel;
-import libai.common.Matrix;
-import libai.common.kernels.Kernel;
-import libai.common.functions.SymmetricSign;
 import java.io.*;
 import java.util.*;
-
+import libai.common.Matrix;
+import libai.common.functions.SymmetricSign;
+import libai.common.kernels.GaussianKernel;
+import libai.common.kernels.Kernel;
 import libai.nn.NeuralNetwork;
 
 /**
@@ -45,6 +44,8 @@ import libai.nn.NeuralNetwork;
  * @author kronenthaler
  */
 public class SVM extends NeuralNetwork {
+	private static final long serialVersionUID = 5875835056527034341L;
+	
     private Kernel kernel = new GaussianKernel(2.0);	//the default kernel type is a gaussian function
     private Matrix[] densePoints;			//array with the patterns lo learn or learned...s
     private int target[];					//expected answers
@@ -176,17 +177,22 @@ public class SVM extends NeuralNetwork {
         result.position(0, 0, ssign.eval(learnedFunc(pattern)));
     }
 
-    public static SVM open(String path) {
-        try {
-            ObjectInputStream in = new ObjectInputStream(new FileInputStream(path));
-            SVM p = (SVM) in.readObject();
-            in.close();
-            return p;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
+	/**
+	 * Deserializes an {@code SVM}
+	 * 
+	 * @param path Path to file
+	 * @return Restored {@code SVM instance}
+	 * @see NeuralNetwork#save(java.lang.String) 
+	 */
+	public static SVM open(String path) {
+		try (FileInputStream fis = new FileInputStream(path);
+			 ObjectInputStream in = new ObjectInputStream(fis)) {
+			return (SVM) in.readObject();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
     @Override
     public double error(Matrix[] patterns, Matrix[] answers, int offset, int length) {

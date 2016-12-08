@@ -23,9 +23,9 @@
  */
 package libai.nn.supervised;
 
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
 import libai.common.Matrix;
-import java.io.*;
-import java.util.*;
 
 import libai.nn.unsupervised.Competitive;
 
@@ -40,6 +40,8 @@ import libai.nn.unsupervised.Competitive;
  * @author kronenthaler
  */
 public class LVQ extends Competitive {
+	private static final long serialVersionUID = 6603129562167746698L;
+	
 	protected Matrix W2;
 	protected int subclasses;
 
@@ -179,12 +181,17 @@ public class LVQ extends Competitive {
 		return (length - correct) / (double) length;
 	}
 
+	/**
+	 * Deserializes an {@code LVQ}
+	 * 
+	 * @param path Path to file
+	 * @return Restored {@code LVQ instance}
+	 * @see NeuralNetwork#save(java.lang.String) 
+	 */
 	public static LVQ open(String path) {
-		try {
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream(path));
-			LVQ p = (LVQ) in.readObject();
-			in.close();
-			return p;
+		try (FileInputStream fis = new FileInputStream(path);
+			 ObjectInputStream in = new ObjectInputStream(fis)) {
+			return (LVQ) in.readObject();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

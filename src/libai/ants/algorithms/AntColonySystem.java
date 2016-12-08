@@ -88,6 +88,7 @@ public abstract class AntColonySystem extends Metaheuristic {
 	protected AntColonySystem() {
 	}
 
+	@Override
 	public void checkParameters() throws AntFrameworkException {
 		/* check mandatory parameters */
 		if (!this.Parameters.containsKey(AntColonySystem.initialNode)) {
@@ -125,9 +126,11 @@ public abstract class AntColonySystem extends Metaheuristic {
 		}
 	}
 
+	@Override
 	public void daemonActions() {
 	}
 
+	@Override
 	public void solve() throws AntFrameworkException {
 		/* Check parameters to ensure that we have all we need before proceding */
 		checkParameters();
@@ -223,6 +226,7 @@ public abstract class AntColonySystem extends Metaheuristic {
 		this.Pheromones.position(i, j, ((1 - localRo2) * this.Pheromones.position(i, j)) + (localRo2 * localTau0));
 	}
 
+	@Override
 	public void pheromonesUpdate() {
 		/* Update pheromones only on the best tour so far */
 		//System.out.println("pheromonesUpdate of the best tour = "+this.bestSolution );
@@ -234,10 +238,12 @@ public abstract class AntColonySystem extends Metaheuristic {
 		}
 	}
 
+	@Override
 	public final void pheromonesEvaporation() {
 		this.Pheromones.multiply(1 - this.Parameters.get(AntColonySystem.ro_1), this.Pheromones);
 	}
 
+	@Override
 	public int decisionRule(int i, Vector<Integer> currentSolution) {
 		double localR_0 = this.Parameters.get(AntColonySystem.r_0);
 		int nodeJ = -1;

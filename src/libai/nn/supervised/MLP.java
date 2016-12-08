@@ -41,6 +41,8 @@ import libai.nn.NeuralNetwork;
  * @author kronenthaler
  */
 public class MLP extends NeuralNetwork {
+	private static final long serialVersionUID = 3155220303024711102L;
+	
 	public static final int STANDARD_BACKPROPAGATION = 0;
 	public static final int MOMEMTUM_BACKPROPAGATION = 1;
 	public static final int RESILENT_BACKPROPAGATION = 2;

@@ -78,6 +78,7 @@ abstract public class MMAS extends Metaheuristic {
 	protected MMAS() {
 	}
 
+	@Override
 	public void checkParameters() throws AntFrameworkException {
 		/* check obligatory parameters */
 		if (!this.Parameters.containsKey(MMAS.initialNode)) {
@@ -135,6 +136,7 @@ abstract public class MMAS extends Metaheuristic {
 		return false;
 	}
 
+	@Override
 	public int decisionRule(int i, Vector<Integer> currentSolution) {
 		/* counter of the number of times a node have been triying to selected a next node and maximun number of tries allowed*/
 		int counter = 0, allowedNumberOfTries = 2 * this.getNumberOfNodes();
@@ -172,6 +174,7 @@ abstract public class MMAS extends Metaheuristic {
 		} while (true);
 	}
 
+	@Override
 	public void pheromonesUpdate() {
 		/* Update pheromones only on the best tour so far */
 		//System.out.println("pheromonesUpdate of the best tour = "+this.bestSolution );
@@ -183,10 +186,12 @@ abstract public class MMAS extends Metaheuristic {
 		}
 	}
 
+	@Override
 	public final void pheromonesEvaporation() {
 		this.Pheromones.multiply(this.Parameters.get(MMAS.pheromonesEvaporationRate), this.Pheromones);
 	}
 
+	@Override
 	public void solve() throws AntFrameworkException {
 		/* Check parameters to ensure that we have all we need before proceding */
 		this.checkParameters();
@@ -285,9 +290,11 @@ abstract public class MMAS extends Metaheuristic {
 		}
 	}
 
+	@Override
 	public void daemonActions() {
 	}
 
+	@Override
 	public final void candidateList(int i) {
 	}
 }

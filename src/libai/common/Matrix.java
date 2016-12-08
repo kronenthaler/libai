@@ -39,6 +39,8 @@ import java.util.concurrent.ThreadLocalRandom;
  * @author kronenthaler
  */
 public final class Matrix implements Serializable {
+	private static final long serialVersionUID = 4152602945322905714L;
+	
 	/**
 	 * Matrix's data, stored for row in a sequential array.
 	 */
@@ -556,14 +558,35 @@ public final class Matrix implements Serializable {
 	 */
 	@Override
 	public boolean equals(Object b1) {
+		if (this == b1) {
+		    return true;
+		}
+		if (b1 == null) {
+		    return false;
+		}
+		if (getClass() != b1.getClass()) {
+		    return false;
+		}
+        
 		Matrix b = (Matrix) b1;
 		if (rows != b.rows || cols != b.cols)
 			return false;
 
-		for (int i = 0, n = rows * cols; i < n; i++)
-			if (Math.abs(matrix[i] - b.matrix[i]) > 1.e-7) //'equals'
+		for (int i = 0, n = rows * cols; i < n; i++) {
+			if (Math.abs(matrix[i] - b.matrix[i]) > 1.e-7) { //'equals'
 				return false;
+			}
+		}
 		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 73 * hash + Arrays.hashCode(this.matrix);
+		hash = 73 * hash + this.rows;
+		hash = 73 * hash + this.cols;
+		return hash;
 	}
 
 	/**

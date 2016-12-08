@@ -30,6 +30,8 @@ package libai.common.functions;
  * @author kronenthaler
  */
 public class HyperbolicTangent implements Function {
+	private static final long serialVersionUID = 452564541626561512L;
+	
 	private static final Function derivate = new Function() {
 		@Override
 		public double eval(double x) {

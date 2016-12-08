@@ -42,6 +42,8 @@ import libai.nn.NeuralNetwork;
  * @author kronenthaler
  */
 public class Kohonen extends NeuralNetwork {
+	private static final long serialVersionUID = 8918172607912802829L;
+	
 	private Matrix W[];					//array of weights ijk, with k positions.
 	private int[][] map;				//map of the outputs
 	private int[] nperlayer;			//array of 3 positions, {#inputs,#rows,#columns}
@@ -110,7 +112,6 @@ public class Kohonen extends NeuralNetwork {
 		double lamda = neighborhood;
 		double alpha1 = alpha;
 
-		Random rand = new Random();
 		int[] sort = new int[length];
 		for (int i = 0; i < length; sort[i] = i++);
 
@@ -212,8 +213,8 @@ public class Kohonen extends NeuralNetwork {
 			//take the euclidean distance to the nearest neuron in the expected cluster.
 			boolean[][] visited = new boolean[map.length][map[0].length];
 
-			ArrayList<Pair<Integer, Integer>> q = new ArrayList<Pair<Integer, Integer>>();
-			q.add(new Pair<Integer, Integer>(x, y));
+			ArrayList<Pair<Integer, Integer>> q = new ArrayList<>();
+			q.add(new Pair<>(x, y));
 			visited[x][y] = true;
 
 			while (!q.isEmpty()) {
@@ -228,7 +229,7 @@ public class Kohonen extends NeuralNetwork {
 					int ii = current.first + stepsx[k];
 					int ij = current.second + stepsy[k];
 					if (ii >= 0 && ii < nperlayer[1] && ij >= 0 && ij < nperlayer[2] && !visited[ii][ij]) {
-						q.add(new Pair<Integer, Integer>(ii, ij));
+						q.add(new Pair<>(ii, ij));
 						visited[ii][ij] = true;
 					}
 				}
@@ -281,12 +282,12 @@ public class Kohonen extends NeuralNetwork {
 				map[i][j] = (int) answers[k + offset].position(0, 0); //must have just one position and should be an integer
 		}
 
-		ArrayList<Pair<Integer, Integer>> q = new ArrayList<Pair<Integer, Integer>>();
+		ArrayList<Pair<Integer, Integer>> q = new ArrayList<>();
 
 		for (int i = 0; i < nperlayer[1]; i++)
 			for (int j = 0; j < nperlayer[2]; j++)
 				if (map[i][j] != -1)
-					q.add(new Pair<Integer, Integer>(i, j));
+					q.add(new Pair<>(i, j));
 
 		//System.out.println("BFS...");
 		while (!q.isEmpty()) {
@@ -297,19 +298,24 @@ public class Kohonen extends NeuralNetwork {
 				int i = current.first + stepsx[k];
 				int j = current.second + stepsy[k];
 				if (i >= 0 && i < nperlayer[1] && j >= 0 && j < nperlayer[2] && map[i][j] == -1) {
-					q.add(new Pair<Integer, Integer>(i, j));
+					q.add(new Pair<>(i, j));
 					map[i][j] = c;
 				}
 			}
 		}
 	}
 
+	/**
+	 * Deserializes an {@code Kohonen}
+	 * 
+	 * @param path Path to file
+	 * @return Restored {@code Kohonen instance}
+	 * @see NeuralNetwork#save(java.lang.String) 
+	 */
 	public static Kohonen open(String path) {
-		try {
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream(path));
-			Kohonen p = (Kohonen) in.readObject();
-			in.close();
-			return p;
+		try (FileInputStream fis = new FileInputStream(path);
+			 ObjectInputStream in = new ObjectInputStream(fis)) {
+			return (Kohonen)in.readObject();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

@@ -30,6 +30,8 @@ package libai.common.functions;
  * @author kronenthaler
  */
 public class Sigmoid implements Function {
+	private static final long serialVersionUID = 910726042653348547L;
+	
 	private static final Function derivate = new Function() {
 		@Override
 		public double eval(double x) {

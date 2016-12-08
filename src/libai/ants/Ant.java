@@ -59,7 +59,7 @@ public class Ant {
 	protected Ant(int index, int initialPos) {
 		this.index = index;
 		this.currentPos = initialPos;
-		this.solution = new Vector<Integer>();
+		this.solution = new Vector<>();
 	}
 
 	/**
@@ -102,7 +102,7 @@ public class Ant {
 	 * @return a copy of the Vector with the ant's current solution
 	 */
 	public Vector<Integer> copySolution() {
-		return new Vector<Integer>(this.solution);
+		return new Vector<>(this.solution);
 	}
 
 	/**

@@ -53,11 +53,11 @@ public class Triangular implements FuzzySet {
 		c = new Variable(_c);
 		DELTA = delta;
 
-		kernel = new ArrayList<Double>();
+		kernel = new ArrayList<>();
 		kernel.add(b.getValue()); //middle point
 
 		if (delta > 0) {
-			support = new ArrayList<Double>();
+			support = new ArrayList<>();
 			for (double i = Math.min(_a, Math.min(_b, _c)), max = Math.max(_a, Math.max(_b, _c)); i <= max; i += DELTA)
 				support.add(i);
 		}
@@ -67,10 +67,12 @@ public class Triangular implements FuzzySet {
 		this(_a, _b, _c, .5);
 	}
 
+	@Override
 	public double eval(Variable s) {
 		return eval(s.getValue());
 	}
 
+	@Override
 	public double eval(double s) {
 		if (s <= a.getValue() || s >= c.getValue())
 			return 0;
@@ -83,14 +85,17 @@ public class Triangular implements FuzzySet {
 		return (c.getValue() - s) / (c.getValue() - b.getValue());
 	}
 
+	@Override
 	public ArrayList<Double> getSupport() {
 		return support;
 	}
 
+	@Override
 	public ArrayList<Double> getKernel() {
 		return kernel;
 	}
 
+	@Override
 	public String toString() {
 		return "Triangle(" + a + "," + b + "," + c + ")";
 	}

@@ -52,8 +52,8 @@ public class Engine {
 	private boolean debug = false;
 
 	public Engine() {
-		rules = new ArrayList<Rule>();
-		groups = new ArrayList<FuzzyGroup>();
+		rules = new ArrayList<>();
+		groups = new ArrayList<>();
 	}
 
 	/**
@@ -138,7 +138,7 @@ public class Engine {
 			}
 
 			if (allResults == null) {
-				allResults = new HashMap<FuzzyGroup, ArrayList<Pair<Double, Double>>>();
+				allResults = new HashMap<>();
 
 				for (int i = 0; i < fireResult.length; i++) {
 					allResults.put(find(r.getAction(i)), fireResult[i]);

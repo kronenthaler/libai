@@ -23,9 +23,8 @@
  */
 package libai.nn.unsupervised;
 
-import java.io.*;
-import java.util.*;
-
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
 import libai.common.Matrix;
 import libai.nn.NeuralNetwork;
 
@@ -49,6 +48,8 @@ import libai.nn.NeuralNetwork;
  * @author kronenthaler
  */
 public class Competitive extends NeuralNetwork {
+	private static final long serialVersionUID = 3792932568798202152L;
+	
 	protected Matrix W;
 	protected int ins, outs;
 	protected int winner;
@@ -89,7 +90,6 @@ public class Competitive extends NeuralNetwork {
 	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 		int[] sort = new int[length]; // [0,length)
 		double error = 0;
-		Random rand = new Random();
 
 		Matrix r = new Matrix(1, ins);
 		Matrix row = new Matrix(1, ins);
@@ -203,12 +203,17 @@ public class Competitive extends NeuralNetwork {
 		return acum / (double) length;
 	}
 
+	/**
+	 * Deserializes an {@code Competitive}
+	 * 
+	 * @param path Path to file
+	 * @return Restored {@code Competitive instance}
+	 * @see NeuralNetwork#save(java.lang.String) 
+	 */
 	public static Competitive open(String path) {
-		try {
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream(path));
-			Competitive p = (Competitive) in.readObject();
-			in.close();
-			return p;
+		try (FileInputStream fis = new FileInputStream(path);
+			 ObjectInputStream in = new ObjectInputStream(fis)) {
+			return (Competitive)in.readObject();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
