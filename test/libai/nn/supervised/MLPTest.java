@@ -236,6 +236,40 @@ public class MLPTest {
 		}
 	}
 	
+	@Test
+	public void testInputOffset() {
+		testInputOffset(MLP.STANDARD_BACKPROPAGATION);
+		testInputOffset(MLP.MOMEMTUM_BACKPROPAGATION, 0.4);
+		testInputOffset(MLP.RESILENT_BACKPROPAGATION);
+	}
+	
+	public void testInputOffset(int type, double... args) {
+		int n = 40;
+		int m = 1;
+		int l = 1;
+		int test = 12;
+		int offset = 4;
+		Matrix[] p = new Matrix[n + test];
+		Matrix[] t = new Matrix[n + test];
+		double delta = 0.1;
+		double x = 0;
+		
+		//offset null elements + data + more nulls
+		for (int i = offset; i < n + offset; i++, x += delta) {
+			p[i] = new Matrix(m, 1);
+			t[i] = new Matrix(l, 1);
+
+			p[i].position(0, 0, x);
+			t[i].position(0, 0, f(x));
+		}
+
+		int nperlayer[] = {m, 4, l};
+		MLP net = new MLP(nperlayer, new Function[]{new Identity(), new Sigmoid(), new Identity()});
+		net.setTrainingType(type, args);
+		net.train(p, t, 0.2, 50000, offset, n);
+		net.error(p, t, offset, n);
+	}
+	
 	private double f(double x) {
 		return Math.sin(x) + Math.cos(x);
 	}
