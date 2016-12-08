@@ -374,6 +374,9 @@ public class MLP extends NeuralNetwork {
 		}
 
 		while (error > minerror && epochs-- > 0) {
+			//shuffle patterns
+			shuffle(sort);
+
 			error = 0;
 			for (int i = 0; i < length; i++) {
 				//Y[i]=Fi(<W[i],Y[i-1]>+b)
