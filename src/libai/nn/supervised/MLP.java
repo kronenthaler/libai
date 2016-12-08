@@ -201,7 +201,7 @@ public class MLP extends NeuralNetwork {
 	private void standardBP(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 		int[] sort = new int[length];
 		double error = error(patterns, answers, offset, length);
-		Matrix e = new Matrix(answers[0].getRows(), answers[0].getColumns());
+		Matrix e = new Matrix(answers[offset].getRows(), answers[offset].getColumns());
 
 		for (int i = 0; i < length; i++) {
 			sort[i] = i;
@@ -258,7 +258,7 @@ public class MLP extends NeuralNetwork {
 	private void momemtumBP(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 		int[] sort = new int[length];
 		double error = error(patterns, answers, offset, length);
-		Matrix e = new Matrix(answers[0].getRows(), answers[0].getColumns());
+		Matrix e = new Matrix(answers[offset].getRows(), answers[offset].getColumns());
 		Matrix temp3;
 		double beta = params[0];
 
@@ -341,7 +341,7 @@ public class MLP extends NeuralNetwork {
 	private void resilentBP(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 		int[] sort = new int[length];
 		double error = error(patterns, answers, offset, length);
-		Matrix e = new Matrix(answers[0].getRows(), answers[0].getColumns());
+		Matrix e = new Matrix(answers[offset].getRows(), answers[offset].getColumns());
 
 		double Nplus = 1.2,
 				Nminus = 0.5,
