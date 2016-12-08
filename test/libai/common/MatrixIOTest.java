@@ -252,12 +252,12 @@ public class MatrixIOTest {
         return null;
     }
     
-    private boolean checkTemp() {
+    public static boolean checkTemp() {
         File temp = new File(System.getProperty("java.io.tmpdir"));
         return temp.exists() && temp.canWrite() && temp.canRead();
     }
     
-    private boolean checkOctaveInstall() {    
+    public static boolean checkOctaveInstall() {    
         boolean isInstalled = false;  
         
         try {
