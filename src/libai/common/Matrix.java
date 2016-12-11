@@ -474,8 +474,8 @@ public final class Matrix implements Serializable {
 	 * @return the array with the values.
 	 */
 	public double[] getRow(int index) {
-		assert index < 0 || index >= rows : 
-			   "index must be in the interval [0, " + rows + ")";
+		assert index < 0 || index >= rows : String.format(
+			  "i must be in the interval [0, %d) current: %d", rows, index);
 		
 		final double[] ret = new double[cols];
 		System.arraycopy(matrix, index * cols, ret, 0, ret.length);
@@ -491,8 +491,8 @@ public final class Matrix implements Serializable {
 	 * @return the array with the values.
 	 */
 	public double[] getCol(int index) {
-		assert index < 0 || index >= cols : 
-			   "index must be in the interval [0, " + cols + ")";
+		assert index < 0 || index >= cols : String.format(
+			  "j must be in the interval [0, %d) current: %d", cols, index);
 		
 		final double[] ret = new double[rows];
 		for (int i = 0; i < rows; i++)
@@ -502,28 +502,37 @@ public final class Matrix implements Serializable {
 
 	/**
 	 * Return the value on the position (i,j).
-	 *
+	 * <p><i>NOTE:</i> Assertions of the indexes are made with {@code assert} 
+	 * statement. You must enable this on runtime to be effective.</p>
+	 * 
 	 * @param i index of the row
 	 * @param j index of the column
 	 * @return the value of that position
 	 */
 	public final double position(int i, int j) {
-		try {
-			return matrix[(i * cols) + j];
-		} catch (RuntimeException e) {
-			System.out.println(i + "," + j);
-			throw e;
-		}
+		assert i < 0 || i >= rows : String.format(
+			  "i must be in the interval [0, %d) current: %d", rows, i);
+		assert j < 0 || j >= cols : String.format(
+			  "j must be in the interval [0, %d) current: %d", cols, j);
+
+		return matrix[(i * cols) + j];
 	}
 
 	/**
 	 * Set the value v on the position (i,j).
+	 * <p><i>NOTE:</i> Assertions of the indexes are made with {@code assert} 
+	 * statement. You must enable this on runtime to be effective.</p>
 	 *
 	 * @param i index of the row
 	 * @param j index of the column
 	 * @param v the value to put into.
 	 */
 	public final void position(int i, int j, double v) {
+		assert i < 0 || i >= rows : String.format(
+			  "i must be in the interval [0, %d) current: %d", rows, i);
+		assert j < 0 || j >= cols : String.format(
+			  "j must be in the interval [0, %d) current: %d", cols, j);
+
 		matrix[(i * cols) + j] = v;
 	}
 
