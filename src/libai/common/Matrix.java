@@ -176,35 +176,45 @@ public final class Matrix implements Serializable {
 	}
 
 	/**
-	 * Adds two matrix. This + a, and left the result on b. The matrix b must be
-	 * created and has the same dimension of this and a. NOTE: Assertions of the
-	 * dimensions are made with assert statement. You must enable this on
-	 * runtime to be effective.
+	 * Adds two matrices. <b>{@code b = this + a}</b>
+	 * <p>The matrix {@code b} must be created and has the same dimension of 
+	 * {@code this} and {@code a}. </p>
+	 * <p><i>NOTE:</i> Assertions of the dimensions are made with {@code assert}
+	 * statement. You must enable this on runtime to be effective.</p>
 	 *
 	 * @param a The matrix to add
 	 * @param b The matrix to put the result
 	 */
 	public void add(final Matrix a, final Matrix b) {
-		assert rows == a.rows && cols == a.cols && a.rows == b.rows && a.cols == b.cols;
+		assert a != null && b != null : "a & b must be not null";
+		assert rows == a.rows && rows == b.rows
+		    && cols == a.cols && cols == b.cols :
+			   "this, a & b should have the same dimensions";
 
-		for (int i = 0, n = rows * cols; i < n; i++)
+		for (int i = 0, n = rows * cols; i < n; i++) {
 			b.matrix[i] = matrix[i] + a.matrix[i];
+		}
 	}
 
 	/**
-	 * Subtract two matrix. This - a, and left the result on b. The matrix b
-	 * must be created and has the same dimension of this and a. NOTE:
-	 * Assertions of the dimensions are made with assert statement. You must
-	 * enable this on runtime to be effective.
+	 * Subtract two matrices. <b>{@code b = this - a}</b>.
+	 * <p>The matrix {@code b} must be created and has the same dimension of 
+	 * {@code this} and {@code a}. </p>
+	 * <p><i>NOTE:</i> Assertions of the dimensions are made with {@code assert}
+	 * statement. You must enable this on runtime to be effective.</p>
 	 *
 	 * @param a The matrix to subtract
 	 * @param b The matrix to put the result
 	 */
 	public void subtract(final Matrix a, final Matrix b) {
-		assert rows == a.rows && cols == a.cols && a.rows == b.rows && a.cols == b.cols;
+		assert a != null && b != null : "a & b must be not null";
+		assert rows == a.rows && rows == b.rows
+		    && cols == a.cols && cols == b.cols :
+			   "this, a & b should have the same dimensions";
 
-		for (int i = 0, n = rows * cols; i < n; i++)
+		for (int i = 0, n = rows * cols; i < n; i++) {
 			b.matrix[i] = matrix[i] - a.matrix[i];
+		}
 	}
 
 	/**
