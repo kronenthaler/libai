@@ -33,7 +33,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Matrix implementation. This class can handle the basic operations of matrix
- * space, add, substract, product scalar product, transponse, and other useful
+ * space, add, subtract, product scalar product, transpose, and other useful
  * operations for this API.
  *
  * @author kronenthaler
