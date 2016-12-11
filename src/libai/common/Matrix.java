@@ -189,7 +189,7 @@ public final class Matrix implements Serializable {
 		assert a != null && b != null : "a & b must be not null";
 		assert rows == a.rows && rows == b.rows
 		    && cols == a.cols && cols == b.cols :
-			   "this, a & b should have the same dimensions";
+			   "this, a & b must have the same dimensions";
 
 		for (int i = 0, n = rows * cols; i < n; i++) {
 			b.matrix[i] = matrix[i] + a.matrix[i];
@@ -210,7 +210,7 @@ public final class Matrix implements Serializable {
 		assert a != null && b != null : "a & b must be not null";
 		assert rows == a.rows && rows == b.rows
 		    && cols == a.cols && cols == b.cols :
-			   "this, a & b should have the same dimensions";
+			   "this, a & b must have the same dimensions";
 
 		for (int i = 0, n = rows * cols; i < n; i++) {
 			b.matrix[i] = matrix[i] - a.matrix[i];
