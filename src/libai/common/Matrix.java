@@ -57,8 +57,21 @@ public final class Matrix implements Serializable {
 	 * @param r number of rows
 	 * @param c number of columns
 	 * @param identity if you need initialized with an identity.
+	 * @throws IllegalArgumentException if either {@code r} or {@code c} are 
+	 * less or equal than zero.
 	 */
 	public Matrix(int r, int c, boolean identity) {
+		if (r <= 0) {
+			String msg = "The number of rows must be a non zero positive"
+					   + "integer current %d";
+			throw new IllegalArgumentException(String.format(msg, r));
+		}
+		if (c <= 0) {
+			String msg = "The number of columns must be a non zero positive"
+					   + "integer current %d";
+			throw new IllegalArgumentException(String.format(msg, c));
+		}
+
 		matrix = new double[r * c];
 		rows = r;
 		cols = c;
@@ -73,25 +86,38 @@ public final class Matrix implements Serializable {
 	 * Constructor alias for Matrix(r,c,false).
 	 *
 	 * @param r number of rows
-	 * @param c number of cols
+	 * @param c number of columns
+	 * @throws IllegalArgumentException if either {@code r} or {@code c} are 
+	 * less or equal than zero.
 	 */
 	public Matrix(int r, int c) {
 		this(r, c, false);
 	}
 
 	/**
-	 * Constructor. Creates a matrix and initialize with the data on
-	 * <code>data</code>
+	 * Constructor. 
+	 * <p>Creates a matrix and initialize with the data on {@code data}.</p>
+	 * <p>The values are read as row based: data -&gt; row1, row2, ..., rown</p>
 	 *
 	 * @param r number of rows
-	 * @param c number of cols
-	 * @param data values to initialize the matrix.
+	 * @param c number of columns
+	 * @param data values to initialize the matrix (length must be 
+	 * {@code r * c}).
+	 * @throws IllegalArgumentException if either {@code r} or {@code c} are 
+	 * less or equal than zero or if {@code data} is {@code null} or has the
+	 * wrong dimension.
 	 */
 	public Matrix(int r, int c, double[] data) {
 		this(r, c, false);
 
-		//if(r != data.length || c != data[0].length)
-		//	throw new IllegalArgumentException("Mismatch dimensions");
+		if (data == null) {
+			throw new IllegalArgumentException("Data array must be not null");
+		}
+
+		if(data.length != r * c) {
+			String msg = "Wrong data array length expected %d got %d";
+			throw new IllegalArgumentException(String.format(msg, r * c, data.length));
+		}
 
 		System.arraycopy(data, 0, matrix, 0, r * c);
 	}
@@ -100,11 +126,14 @@ public final class Matrix implements Serializable {
 	 * Create a new Matrix filled with low random numbers.
 	 *
 	 * @param r number of rows
-	 * @param c number of cols
-	 * @param signed {@code true} if the matrix should be filled with positive and negative numbers
-	 * {@code false} if the numbers should be greater or equal than zero.
+	 * @param c number of columns
+	 * @param signed {@code true} if the matrix should be filled with positive 
+	 * and negative numbers {@code false} if the numbers should be greater or 
+	 * equal than zero.
 	 * @return a new matrix filled with low random numbers.
 	 * @see Matrix#fill(boolean, java.util.Random)
+	 * @throws IllegalArgumentException if either {@code r} or {@code c} are 
+	 * less or equal than zero.
 	 */
 	public static Matrix random(int r, int c, boolean signed) {
 		return random(r, c, signed, null);
@@ -114,13 +143,16 @@ public final class Matrix implements Serializable {
 	 * Create a new Matrix filled with low random numbers.
 	 *
 	 * @param r number of rows
-	 * @param c number of cols
-	 * @param signed {@code true} if the matrix should be filled with positive and negative numbers
-	 * {@code false} if the numbers should be greater or equal than zero.
-	 * @param rand The {@link Random} object used to fill the matrix, if {@code null} it will
-	 * fallback to {@link ThreadLocalRandom#current()}
+	 * @param c number of columns
+	 * @param signed {@code true} if the matrix should be filled with positive 
+	 * and negative numbers {@code false} if the numbers should be greater or
+	 * equal than zero.
+	 * @param rand The {@link Random} object used to fill the matrix, if 
+	 * {@code null} it will fallback to {@link ThreadLocalRandom#current()}
 	 * @return a new matrix filled with low random numbers.
 	 * @see Matrix#fill(boolean, java.util.Random)
+	 * @throws IllegalArgumentException if either {@code r} or {@code c} are 
+	 * less or equal than zero.
 	 */
 	public static Matrix random(int r, int c, boolean signed, Random rand) {
 		Matrix ret = new Matrix(r, c);
@@ -132,10 +164,12 @@ public final class Matrix implements Serializable {
 	 * Create a new Matrix filled with low random numbers.
 	 *
 	 * @param r number of rows
-	 * @param c number of cols
+	 * @param c number of columns
 	 * @return a new matrix filled with low random numbers.
      * @see Matrix#random(int, int, boolean) 
      * @see Matrix#random(int, int, boolean, java.util.Random) 
+	 * @throws IllegalArgumentException if either {@code r} or {@code c} are 
+	 * less or equal than zero.
      */
 	public static Matrix random(int r, int c) {
 		return random(r, c, true);

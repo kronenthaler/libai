@@ -39,6 +39,31 @@ public class MatrixTest {
     public MatrixTest() {
     }
     
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorFail1() {
+        Matrix m = new Matrix(-5, 5, false);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorFail2() {
+        Matrix m = new Matrix(5, -5, false);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorFail3() {
+        Matrix m = new Matrix(0, 1, false);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorFail4() {
+        Matrix m = new Matrix(5, 5, null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorFail5() {
+        Matrix m = new Matrix(5, 5, new double[5*4]);
+    }
+
     @Test
     public void testConstructorNotIdentity1() {
         Matrix m = new Matrix(5, 5, false);
