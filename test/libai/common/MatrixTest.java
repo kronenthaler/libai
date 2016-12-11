@@ -761,6 +761,24 @@ public class MatrixTest {
         assertTrue(hasNegativeB);
     }
     
+    @Test(expected = IllegalArgumentException.class)
+    public void testDotProductError1() {
+        Matrix a = new Matrix(2, 10, a3_data);
+        Matrix b = new Matrix(10, 2, b3_data);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testDotProductError2() {
+        Matrix a = new Matrix(1, 10, a3_data);
+        Matrix b = new Matrix(10, 2, b3_data);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testDotProductError3() {
+        Matrix a = new Matrix(2, 10, a3_data);
+        Matrix b = new Matrix(10, 1, b3_data);
+    }
+
     @Test
     public void testDotProduct() {
         //product was calculated with GNU-Octave 4.0.2 (x86_64-pc-linux-gnu)
@@ -769,7 +787,7 @@ public class MatrixTest {
         double product = a.dotProduct(b);
         assertEquals(result, product, DELTA);
     }
-    
+
     @Test
     public void testDotProduct1() {
         //product was calculated with GNU-Octave 4.0.2 (x86_64-pc-linux-gnu)

@@ -381,8 +381,24 @@ public final class Matrix implements Serializable {
 	 *
 	 * @param a The matrix to multiply
 	 * @return the scalar of the dot product.
+	 * @throws IllegalArgumentException if either {@code this} or {@code a} are
+	 * neither row nor column matrices.
 	 */
 	public double dotProduct(Matrix a) {
+		assert a != null : "a must be not null";
+		assert rows * cols == a.rows * a.cols :
+			   "a doesn't have the right dimensions";
+
+		if (this.cols != 1 && this.rows != 1) {
+			String msg = "This must be either a row or a column matrix";
+			throw new IllegalArgumentException(msg);
+		}
+
+		if (a.cols != 1 && a.rows != 1) {
+			String msg = "a must be either a row or a column matrix";
+			throw new IllegalArgumentException(msg);
+		}
+
 		double acum = 0;
 
 		for (int i = 0; i < cols * rows; i++) {
