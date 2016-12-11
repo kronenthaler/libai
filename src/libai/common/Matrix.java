@@ -409,15 +409,16 @@ public final class Matrix implements Serializable {
 	}
 
 	/**
-	 * Transpose this matrix and left the result on a. The matrix a must be
-	 * created and has the right dimensions. NOTE: Assertions of the dimensions
-	 * are made with assert statement. You must enable this on runtime to be
-	 * effective.
+	 * Transpose this matrix and left the result on a. 
+	 * <p>The matrix a must be created and has the right dimensions.</p>
+	 * <p><i>NOTE:</i> Assertions of the dimensions are made with {@code assert}
+	 * statement. You must enable this on runtime to be effective.</p>
 	 *
 	 * @param a The matrix to put the result.
 	 */
 	public void transpose(final Matrix a) {
-		assert rows == a.cols && cols == a.rows;
+		assert rows == a.cols && cols == a.rows :
+			   "Mattrix a has the wrong dimensions";
 
 		for (int i = 0; i < rows; i++)
 			for (int j = 0; j < cols; j++)
@@ -427,7 +428,7 @@ public final class Matrix implements Serializable {
 	/**
 	 * Return the transpose of this matrix.
 	 *
-	 * @return A new matrix with the transpose of this.
+	 * @return A new matrix with the transpose of {@code this}.
 	 */
 	public Matrix transpose() {
 		Matrix ret = new Matrix(cols, rows);
@@ -436,16 +437,20 @@ public final class Matrix implements Serializable {
 	}
 
 	/**
-	 * Replace one row of values of this matrix. The number of values of data
-	 * must match with the number of columns of this. NOTE: Assertions of the
-	 * dimensions are made with assert statement. You must enable this on
-	 * runtime to be effective.
+	 * Replace one row of values of this matrix. 
+	 * <p>The number of values of {@code data} must match with the number of 
+	 * columns of {@code this}.
+	 * <p><i>NOTE:</i> Assertions of the dimensions and indexes are made with
+	 * {@code assert} statement. You must enable this on runtime to be
+	 * effective.</p>
 	 *
 	 * @param index The index of the row to place the values.
 	 * @param data	The values to put in that row.
 	 */
 	public void setRow(int index, double[] data) {
-		assert cols == data.length;
+		assert cols == data.length : "Wrong vector dimension expected " + cols;
+		assert index < 0 || index >= rows : 
+			   "index must be in the interval [0, " + rows + ")";
 
 		System.arraycopy(data, 0, matrix, index * cols, data.length);
 	}
@@ -461,24 +466,36 @@ public final class Matrix implements Serializable {
 
 	/**
 	 * Return an array with the values of the specified row.
-	 *
+	 * <p><i>NOTE:</i> Assertions of the indexes are made with {@code assert} 
+	 * statement. You must enable this on runtime to be
+	 * effective.</p>
+	 * 
 	 * @param index The index of the row to return.
 	 * @return the array with the values.
 	 */
 	public double[] getRow(int index) {
-		double[] ret = new double[cols];
+		assert index < 0 || index >= rows : 
+			   "index must be in the interval [0, " + rows + ")";
+		
+		final double[] ret = new double[cols];
 		System.arraycopy(matrix, index * cols, ret, 0, ret.length);
 		return ret;
 	}
 
 	/**
 	 * Return an array with the values of the specified column.
+	 * <p><i>NOTE:</i> Assertions of the indexes are made with {@code assert} 
+	 * statement. You must enable this on runtime to be
+	 * effective.</p>
 	 *
 	 * @param index The index of the column to return.
 	 * @return the array with the values.
 	 */
 	public double[] getCol(int index) {
-		double[] ret = new double[rows];
+		assert index < 0 || index >= cols : 
+			   "index must be in the interval [0, " + cols + ")";
+		
+		final double[] ret = new double[rows];
 		for (int i = 0; i < rows; ret[i] = position(i++, index));
 		return ret;
 	}
