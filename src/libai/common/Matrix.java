@@ -220,7 +220,7 @@ public final class Matrix implements Serializable {
 	/**
 	 * Multiply this matrix by an scalar. <b>{@code b = this * a}</b>.
 	 * <p>The matrix {@code b} must be created and has the same dimension of 
-	 * {@code this}.
+	 * {@code this}. </p>
 	 * <p><i>NOTE:</i> Assertions of the dimensions are made with {@code assert}
 	 * statement. You must enable this on runtime to be effective.</p>
 	 *
@@ -238,23 +238,29 @@ public final class Matrix implements Serializable {
 	}
 
 	/**
-	 * Multiply two matrix. This * a, and left the result on b. The matrix b
-	 * must be created and has the right dimensions. NOTE: Assertions of the
-	 * dimensions are made with assert statement. You must enable this on
-	 * runtime to be effective.
+	 * Multiply two matrix. <b>{@code b = this * a}</b>
+	 * <p>The matrix {@code a} must be created and has the right dimensions, 
+	 * that is {@code a.rows = this.cols}.</p>
+	 * <p>The matrix {@code b} must be created and has the right dimensions, 
+	 * that is {@code b.rows = this.rows} and {@code b.cols = a.cols}.</p>
+	 * <p><i>NOTE:</i> Assertions of the dimensions are made with {@code assert}
+	 * statement. You must enable this on runtime to be effective.</p>
 	 *
 	 * @param a The matrix to multiply
 	 * @param b The matrix to put the result
 	 */
 	public void multiply(final Matrix a, final Matrix b) {
-		assert cols == a.rows && b.rows == rows && b.cols == a.cols;
+		assert a != null && b != null : "a & b must be not null";
+		assert cols == a.rows : "a must have as many rows as this columns";
+		assert b.rows == rows && b.cols == a.cols : "b dimensions mismatch";
 
-		double sum = 0;
+		double sum;
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < b.cols; j++) {
 				sum = 0;
-				for (int k = 0; k < cols; k++)
+				for (int k = 0; k < cols; k++) {
 					sum += position(i, k) * a.position(k, j);
+				}
 				b.position(i, j, sum);
 			}
 		}
