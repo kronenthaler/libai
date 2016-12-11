@@ -87,7 +87,7 @@ public class Adaline extends Perceptron {
 	 * 
 	 * @param path Path to file
 	 * @return Restored {@code Adaline instance}
-	 * @see NeuralNetwork#save(java.lang.String) 
+	 * @see libai.nn.NeuralNetwork#save(java.lang.String) 
 	 */
 	public static Adaline open(String path) {
 		try (FileInputStream fis = new FileInputStream(path);
