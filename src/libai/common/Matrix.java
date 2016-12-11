@@ -537,16 +537,16 @@ public final class Matrix implements Serializable {
 	}
 
 	/**
-	 * Substract the value of this with the value of b, and let the result on
+	 * Subtract the value of this with the value of b, and let the result on
 	 * resultSubstract Also, copy the original value of this into resultCopy.
 	 *
-	 * @param b Matrix to substract
-	 * @param resultSubstract Matrix to hold the result of the substraction
+	 * @param b Matrix to subtract
+	 * @param resultSubtract Matrix to hold the result of the subtraction
 	 * @param resultCopy Matrix to hold the copy of this.
 	 */
-	public void subtractAndCopy(Matrix b, Matrix resultSubstract, Matrix resultCopy) {
+	public void subtractAndCopy(Matrix b, Matrix resultSubtract, Matrix resultCopy) {
 		for (int i = 0; i < matrix.length; i++) {
-			resultSubstract.matrix[i] = matrix[i] - b.matrix[i];
+			resultSubtract.matrix[i] = matrix[i] - b.matrix[i];
 			resultCopy.matrix[i] = matrix[i];
 		}
 	}
