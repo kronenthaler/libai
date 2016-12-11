@@ -218,19 +218,23 @@ public final class Matrix implements Serializable {
 	}
 
 	/**
-	 * Multiply this matrix by an scalar. This * a, and left the result on b.
-	 * The matrix b must be created and has the same dimension of this and a.
-	 * NOTE: Assertions of the dimensions are made with assert statement. You
-	 * must enable this on runtime to be effective.
+	 * Multiply this matrix by an scalar. <b>{@code b = this * a}</b>.
+	 * <p>The matrix {@code b} must be created and has the same dimension of 
+	 * {@code this}.
+	 * <p><i>NOTE:</i> Assertions of the dimensions are made with {@code assert}
+	 * statement. You must enable this on runtime to be effective.</p>
 	 *
 	 * @param a The scalar to multiply
 	 * @param b The matrix to put the result
 	 */
 	public void multiply(final double a, final Matrix b) {
-		assert rows == b.rows && cols == b.cols;
+		assert b != null : "b must be not null";
+		assert rows == b.rows && cols == b.cols :
+			   "this & b must have the same dimensions";
 
-		for (int i = 0, n = rows * cols; i < n; i++)
+		for (int i = 0, n = rows * cols; i < n; i++) {
 			b.matrix[i] = a * matrix[i];
+		}
 	}
 
 	/**
