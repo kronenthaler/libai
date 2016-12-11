@@ -485,8 +485,7 @@ public final class Matrix implements Serializable {
 	/**
 	 * Return an array with the values of the specified column.
 	 * <p><i>NOTE:</i> Assertions of the indexes are made with {@code assert} 
-	 * statement. You must enable this on runtime to be
-	 * effective.</p>
+	 * statement. You must enable this on runtime to be effective.</p>
 	 *
 	 * @param index The index of the column to return.
 	 * @return the array with the values.
@@ -496,7 +495,8 @@ public final class Matrix implements Serializable {
 			   "index must be in the interval [0, " + cols + ")";
 		
 		final double[] ret = new double[rows];
-		for (int i = 0; i < rows; ret[i] = position(i++, index));
+		for (int i = 0; i < rows; i++)
+			ret[i] = position(i, index);
 		return ret;
 	}
 
