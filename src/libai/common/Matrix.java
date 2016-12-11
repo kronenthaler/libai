@@ -556,7 +556,7 @@ public final class Matrix implements Serializable {
 	 *
 	 * @param a constant to multiply
 	 * @param b matrix to add
-	 * @param result	Matrix to hold the result of the operation.
+	 * @param result Matrix to hold the result of the operation.
 	 */
 	public void multiplyAndAdd(double a, Matrix b, Matrix result) {
 		for (int i = 0; i < matrix.length; i++) {
@@ -566,20 +566,40 @@ public final class Matrix implements Serializable {
 
 	/**
 	 * Increments the value of one position by v.
+	 * <p><i>NOTE:</i> Assertions of the indexes are made with {@code assert} 
+	 * statement. You must enable this on runtime to be effective.</p>
 	 *
 	 * @param i index of the row
 	 * @param j index of the column
 	 * @param v value to increment.
 	 */
 	public final void increment(int i, int j, double v) {
+		assert i < 0 || i >= rows : String.format(
+			  "i must be in the interval [0, %d) current: %d", rows, i);
+		assert j < 0 || j >= cols : String.format(
+			  "j must be in the interval [0, %d) current: %d", cols, j);
+
 		matrix[(i * cols) + j] += v;
 	}
 
-	public void swap(int i, int j) {
-		double[] a = getRow(i);
-		double[] b = getRow(j);
-		setRow(i, b);
-		setRow(j, a);
+	/**
+	 * Swaps two rows.
+	 * <p><i>NOTE:</i> Assertions of the indexes are made with {@code assert} 
+	 * statement. You must enable this on runtime to be effective.</p>
+	 * 
+	 * @param i1 index of the first row
+	 * @param i2 index of the second row
+	 */
+	public void swap(int i1, int i2) {
+		assert i1 < 0 || i1 >= rows : String.format(
+			  "i1 must be in the interval [0, %d) current: %d", rows, i1);
+		assert i2 < 0 || i2 >= cols : String.format(
+			  "i2 must be in the interval [0, %d) current: %d", rows, i2);
+		
+		final double[] a = getRow(i1);
+		final double[] b = getRow(i2);
+		setRow(i1, b);
+		setRow(i2, a);
 	}
 
 	/*//TODO needs translation to this matrix class.
