@@ -359,14 +359,17 @@ public final class Matrix implements Serializable {
 	}
 
 	/**
-	 * Copy this matrix to another matrix a. The matrix a must be created and
-	 * match the dimensions of this. NOTE: Assertions of the dimensions are made
-	 * with assert statement. You must enable this on runtime to be effective.
-	 *
+	 * Copy this matrix to another matrix a. 
+	 * <p>The matrix {@code a} must have the same dimension as {@code this}.</p>
+	 * <p><i>NOTE:</i> Assertions of the dimensions are made with {@code assert}
+	 * statement. You must enable this on runtime to be effective.</p>
+	 * 
 	 * @param a The matrix to put the result.
 	 */
 	public void copy(final Matrix a) {
-		assert rows == a.rows && cols == a.cols;
+		assert a != null : "a must be not null";
+		assert rows == a.rows && cols == a.cols :
+			   "this & a must have the same dimensions";
 
 		System.arraycopy(matrix, 0, a.matrix, 0, matrix.length);
 	}
