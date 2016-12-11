@@ -186,7 +186,7 @@ public class LVQ extends Competitive {
 	 * 
 	 * @param path Path to file
 	 * @return Restored {@code LVQ instance}
-	 * @see NeuralNetwork#save(java.lang.String) 
+	 * @see libai.nn.NeuralNetwork#save(java.lang.String) 
 	 */
 	public static LVQ open(String path) {
 		try (FileInputStream fis = new FileInputStream(path);
