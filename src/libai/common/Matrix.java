@@ -268,19 +268,23 @@ public final class Matrix implements Serializable {
 
 	/**
 	 * Apply one function over the elements of the matrix and left the result on
-	 * a. For each element on this a(i,j) = F(this(i,j)). The matrix a must be
-	 * created and has the same dimension of this and a. NOTE: Assertions of the
-	 * dimensions are made with assert statement. You must enable this on
-	 * runtime to be effective.
-	 *
+	 * a. For each element on this <b>{@code a(i,j) = F(this(i,j))}</b>. 
+	 * <p>The matrix {@code a} must have the same dimension as {@code this}.</p>
+	 * <p><i>NOTE:</i> Assertions of the dimensions are made with {@code assert}
+	 * statement. You must enable this on runtime to be effective.</p>
+	 * 
 	 * @param f function to apply.
 	 * @param a The matrix to put the result.
 	 */
 	public void apply(Function f, final Matrix a) {
-		assert rows == a.rows && cols == a.cols;
+		assert f != null : "The function must be not null";
+		assert a != null : "a must be not null";
+		assert rows == a.rows && cols == a.cols :
+			   "this & b must have the same dimensions";
 
-		for (int i = 0, n = rows * cols; i < n; i++)
+		for (int i = 0, n = rows * cols; i < n; i++) {
 			a.matrix[i] = f.eval(matrix[i]);
+		}
 	}
 
 	/**
