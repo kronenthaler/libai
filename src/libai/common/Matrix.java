@@ -44,11 +44,11 @@ public final class Matrix implements Serializable {
 	/**
 	 * Matrix's data, stored for row in a sequential array.
 	 */
-	private double matrix[];
+	private final double matrix[];
 	/**
 	 * Number of rows and columns of the matrix.
 	 */
-	private int rows, cols;
+	private final int rows, cols;
 
 	/**
 	 * Constructor. Allocated the matrix and could initialize with the identity.
