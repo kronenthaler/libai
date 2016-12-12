@@ -28,7 +28,7 @@ import libai.common.Matrix;
 
 /**
  * <b>Ada</b>ptative <b>Line</b>ar neural network. Is a special case of the
- * single layer Perceptron. Uses an identity as exit function. The only 
+ * single layer Perceptron. Uses a identity as exit function. The only 
  * difference between the training algorithms is the 2*alpha multiplication. 
  * Because of this, the Adaline implementation is a subclass of Perceptron 
  * single layer.
