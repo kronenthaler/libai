@@ -166,11 +166,11 @@ public final class Matrix implements Serializable {
 	 * @param r number of rows
 	 * @param c number of columns
 	 * @return a new matrix filled with low random numbers.
-     * @see Matrix#random(int, int, boolean)
-     * @see Matrix#random(int, int, boolean, java.util.Random)
+	 * @see Matrix#random(int, int, boolean)
+	 * @see Matrix#random(int, int, boolean, java.util.Random)
 	 * @throws IllegalArgumentException if either {@code r} or {@code c} are
 	 * less or equal than zero.
-     */
+	 */
 	public static Matrix random(int r, int c) {
 		return random(r, c, true);
 	}
@@ -188,7 +188,7 @@ public final class Matrix implements Serializable {
 	public void add(final Matrix a, final Matrix b) {
 		assert a != null && b != null : "a & b must be not null";
 		assert rows == a.rows && rows == b.rows
-		    && cols == a.cols && cols == b.cols :
+			&& cols == a.cols && cols == b.cols :
 			   "this, a & b must have the same dimensions";
 
 		for (int i = 0, n = rows * cols; i < n; i++) {
@@ -209,7 +209,7 @@ public final class Matrix implements Serializable {
 	public void subtract(final Matrix a, final Matrix b) {
 		assert a != null && b != null : "a & b must be not null";
 		assert rows == a.rows && rows == b.rows
-		    && cols == a.cols && cols == b.cols :
+			&& cols == a.cols && cols == b.cols :
 			   "this, a & b must have the same dimensions";
 
 		for (int i = 0, n = rows * cols; i < n; i++) {
@@ -324,7 +324,7 @@ public final class Matrix implements Serializable {
 	 * @see Matrix#fill(boolean, java.util.Random)
 	 */
 	public void fill(boolean signed) {
-        fill(signed, null);
+		fill(signed, null);
 	}
 
 	/**
@@ -386,8 +386,7 @@ public final class Matrix implements Serializable {
 	 */
 	public double dotProduct(Matrix a) {
 		assert a != null : "a must be not null";
-		assert rows * cols == a.rows * a.cols :
-			   "a doesn't have the right dimensions";
+		assert rows * cols == a.rows * a.cols : "Mismatched dimensions";
 
 		if (this.cols != 1 && this.rows != 1) {
 			String msg = "This must be either a row or a column matrix";
@@ -418,7 +417,7 @@ public final class Matrix implements Serializable {
 	 */
 	public void transpose(final Matrix a) {
 		assert rows == a.cols && cols == a.rows :
-			   "Mattrix a has the wrong dimensions";
+			   "Matrix a has the wrong dimensions";
 
 		for (int i = 0; i < rows; i++)
 			for (int j = 0; j < cols; j++)
@@ -448,7 +447,7 @@ public final class Matrix implements Serializable {
 	 * @param data	The values to put in that row.
 	 */
 	public void setRow(int index, double[] data) {
-		assert cols == data.length : "Wrong vector dimension expected " + cols;
+		assert cols == data.length : "Wrong vector dimension, expected: " + cols;
 		assert index < 0 || index >= rows :
 			   "index must be in the interval [0, " + rows + ")";
 
@@ -492,7 +491,7 @@ public final class Matrix implements Serializable {
 	 */
 	public double[] getCol(int index) {
 		assert index < 0 || index >= cols : String.format(
-			  "j must be in the interval [0, %d) current: %d", cols, index);
+			  "index must be in the interval [0, %d) current: %d", cols, index);
 
 		final double[] ret = new double[rows];
 		for (int i = 0; i < rows; i++)
@@ -682,13 +681,13 @@ public final class Matrix implements Serializable {
 	@Override
 	public boolean equals(Object b1) {
 		if (this == b1) {
-		    return true;
+			return true;
 		}
 		if (b1 == null) {
-		    return false;
+			return false;
 		}
 		if (getClass() != b1.getClass()) {
-		    return false;
+			return false;
 		}
 
 		Matrix b = (Matrix) b1;
