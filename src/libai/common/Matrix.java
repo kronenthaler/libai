@@ -2,17 +2,17 @@
  * MIT License
  *
  * Copyright (c) 2009-2016 Ignacio Calderon <https://github.com/kronenthaler>
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -33,22 +33,22 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Matrix implementation. This class can handle the basic operations of matrix
- * space, add, substract, product scalar product, transponse, and other useful
+ * space, add, subtract, product scalar product, transpose, and other useful
  * operations for this API.
  *
  * @author kronenthaler
  */
 public final class Matrix implements Serializable {
 	private static final long serialVersionUID = 4152602945322905714L;
-	
+
 	/**
 	 * Matrix's data, stored for row in a sequential array.
 	 */
-	private double matrix[];
+	private final double matrix[];
 	/**
 	 * Number of rows and columns of the matrix.
 	 */
-	private int rows, cols;
+	private final int rows, cols;
 
 	/**
 	 * Constructor. Allocated the matrix and could initialize with the identity.
@@ -57,8 +57,21 @@ public final class Matrix implements Serializable {
 	 * @param r number of rows
 	 * @param c number of columns
 	 * @param identity if you need initialized with an identity.
+	 * @throws IllegalArgumentException if either {@code r} or {@code c} are
+	 * less or equal than zero.
 	 */
 	public Matrix(int r, int c, boolean identity) {
+		if (r <= 0) {
+			String msg = "The number of rows must be a non zero positive"
+					   + "integer current %d";
+			throw new IllegalArgumentException(String.format(msg, r));
+		}
+		if (c <= 0) {
+			String msg = "The number of columns must be a non zero positive"
+					   + "integer current %d";
+			throw new IllegalArgumentException(String.format(msg, c));
+		}
+
 		matrix = new double[r * c];
 		rows = r;
 		cols = c;
@@ -73,25 +86,38 @@ public final class Matrix implements Serializable {
 	 * Constructor alias for Matrix(r,c,false).
 	 *
 	 * @param r number of rows
-	 * @param c number of cols
+	 * @param c number of columns
+	 * @throws IllegalArgumentException if either {@code r} or {@code c} are
+	 * less or equal than zero.
 	 */
 	public Matrix(int r, int c) {
 		this(r, c, false);
 	}
 
 	/**
-	 * Constructor. Creates a matrix and initialize with the data on
-	 * <code>data</code>
+	 * Constructor.
+	 * <p>Creates a matrix and initialize with the data on {@code data}.</p>
+	 * <p>The values are read as row based: data -&gt; row1, row2, ..., rown</p>
 	 *
 	 * @param r number of rows
-	 * @param c number of cols
-	 * @param data values to initialize the matrix.
+	 * @param c number of columns
+	 * @param data values to initialize the matrix (length must be
+	 * {@code r * c}).
+	 * @throws IllegalArgumentException if either {@code r} or {@code c} are
+	 * less or equal than zero or if {@code data} is {@code null} or has the
+	 * wrong dimension.
 	 */
 	public Matrix(int r, int c, double[] data) {
 		this(r, c, false);
 
-		//if(r != data.length || c != data[0].length)
-		//	throw new IllegalArgumentException("Mismatch dimensions");
+		if (data == null) {
+			throw new IllegalArgumentException("Data array must be not null");
+		}
+
+		if(data.length != r * c) {
+			String msg = "Wrong data array length expected %d got %d";
+			throw new IllegalArgumentException(String.format(msg, r * c, data.length));
+		}
 
 		System.arraycopy(data, 0, matrix, 0, r * c);
 	}
@@ -100,11 +126,14 @@ public final class Matrix implements Serializable {
 	 * Create a new Matrix filled with low random numbers.
 	 *
 	 * @param r number of rows
-	 * @param c number of cols
-	 * @param signed {@code true} if the matrix should be filled with positive and negative numbers
-	 * {@code false} if the numbers should be greater or equal than zero.
+	 * @param c number of columns
+	 * @param signed {@code true} if the matrix should be filled with positive
+	 * and negative numbers {@code false} if the numbers should be greater or
+	 * equal than zero.
 	 * @return a new matrix filled with low random numbers.
 	 * @see Matrix#fill(boolean, java.util.Random)
+	 * @throws IllegalArgumentException if either {@code r} or {@code c} are
+	 * less or equal than zero.
 	 */
 	public static Matrix random(int r, int c, boolean signed) {
 		return random(r, c, signed, null);
@@ -114,13 +143,16 @@ public final class Matrix implements Serializable {
 	 * Create a new Matrix filled with low random numbers.
 	 *
 	 * @param r number of rows
-	 * @param c number of cols
-	 * @param signed {@code true} if the matrix should be filled with positive and negative numbers
-	 * {@code false} if the numbers should be greater or equal than zero.
-	 * @param rand The {@link Random} object used to fill the matrix, if {@code null} it will
-	 * fallback to {@link ThreadLocalRandom#current()}
+	 * @param c number of columns
+	 * @param signed {@code true} if the matrix should be filled with positive
+	 * and negative numbers {@code false} if the numbers should be greater or
+	 * equal than zero.
+	 * @param rand The {@link Random} object used to fill the matrix, if
+	 * {@code null} it will fallback to {@link ThreadLocalRandom#current()}
 	 * @return a new matrix filled with low random numbers.
 	 * @see Matrix#fill(boolean, java.util.Random)
+	 * @throws IllegalArgumentException if either {@code r} or {@code c} are
+	 * less or equal than zero.
 	 */
 	public static Matrix random(int r, int c, boolean signed, Random rand) {
 		Matrix ret = new Matrix(r, c);
@@ -132,81 +164,103 @@ public final class Matrix implements Serializable {
 	 * Create a new Matrix filled with low random numbers.
 	 *
 	 * @param r number of rows
-	 * @param c number of cols
+	 * @param c number of columns
 	 * @return a new matrix filled with low random numbers.
-     * @see Matrix#random(int, int, boolean) 
-     * @see Matrix#random(int, int, boolean, java.util.Random) 
-     */
+	 * @see Matrix#random(int, int, boolean)
+	 * @see Matrix#random(int, int, boolean, java.util.Random)
+	 * @throws IllegalArgumentException if either {@code r} or {@code c} are
+	 * less or equal than zero.
+	 */
 	public static Matrix random(int r, int c) {
 		return random(r, c, true);
 	}
 
 	/**
-	 * Adds two matrix. This + a, and left the result on b. The matrix b must be
-	 * created and has the same dimension of this and a. NOTE: Assertions of the
-	 * dimensions are made with assert statement. You must enable this on
-	 * runtime to be effective.
+	 * Adds two matrices. <b>{@code b = this + a}</b>
+	 * <p>The matrix {@code b} must be created and has the same dimension of
+	 * {@code this} and {@code a}. </p>
+	 * <p><i>NOTE:</i> Assertions of the dimensions are made with {@code assert}
+	 * statement. You must enable this on runtime to be effective.</p>
 	 *
 	 * @param a The matrix to add
 	 * @param b The matrix to put the result
 	 */
 	public void add(final Matrix a, final Matrix b) {
-		assert rows == a.rows && cols == a.cols && a.rows == b.rows && a.cols == b.cols;
+		assert a != null && b != null : "a & b must be not null";
+		assert rows == a.rows && rows == b.rows
+			&& cols == a.cols && cols == b.cols :
+			   "this, a & b must have the same dimensions";
 
-		for (int i = 0, n = rows * cols; i < n; i++)
+		for (int i = 0, n = rows * cols; i < n; i++) {
 			b.matrix[i] = matrix[i] + a.matrix[i];
+		}
 	}
 
 	/**
-	 * Subtract two matrix. This - a, and left the result on b. The matrix b
-	 * must be created and has the same dimension of this and a. NOTE:
-	 * Assertions of the dimensions are made with assert statement. You must
-	 * enable this on runtime to be effective.
+	 * Subtract two matrices. <b>{@code b = this - a}</b>.
+	 * <p>The matrix {@code b} must be created and has the same dimension of
+	 * {@code this} and {@code a}. </p>
+	 * <p><i>NOTE:</i> Assertions of the dimensions are made with {@code assert}
+	 * statement. You must enable this on runtime to be effective.</p>
 	 *
 	 * @param a The matrix to subtract
 	 * @param b The matrix to put the result
 	 */
 	public void subtract(final Matrix a, final Matrix b) {
-		assert rows == a.rows && cols == a.cols && a.rows == b.rows && a.cols == b.cols;
+		assert a != null && b != null : "a & b must be not null";
+		assert rows == a.rows && rows == b.rows
+			&& cols == a.cols && cols == b.cols :
+			   "this, a & b must have the same dimensions";
 
-		for (int i = 0, n = rows * cols; i < n; i++)
+		for (int i = 0, n = rows * cols; i < n; i++) {
 			b.matrix[i] = matrix[i] - a.matrix[i];
+		}
 	}
 
 	/**
-	 * Multiply this matrix by an scalar. This * a, and left the result on b.
-	 * The matrix b must be created and has the same dimension of this and a.
-	 * NOTE: Assertions of the dimensions are made with assert statement. You
-	 * must enable this on runtime to be effective.
+	 * Multiply this matrix by an scalar. <b>{@code b = this * a}</b>.
+	 * <p>The matrix {@code b} must be created and has the same dimension of
+	 * {@code this}. </p>
+	 * <p><i>NOTE:</i> Assertions of the dimensions are made with {@code assert}
+	 * statement. You must enable this on runtime to be effective.</p>
 	 *
 	 * @param a The scalar to multiply
 	 * @param b The matrix to put the result
 	 */
 	public void multiply(final double a, final Matrix b) {
-		assert rows == b.rows && cols == b.cols;
+		assert b != null : "b must be not null";
+		assert rows == b.rows && cols == b.cols :
+			   "this & b must have the same dimensions";
 
-		for (int i = 0, n = rows * cols; i < n; i++)
+		for (int i = 0, n = rows * cols; i < n; i++) {
 			b.matrix[i] = a * matrix[i];
+		}
 	}
 
 	/**
-	 * Multiply two matrix. This * a, and left the result on b. The matrix b
-	 * must be created and has the right dimensions. NOTE: Assertions of the
-	 * dimensions are made with assert statement. You must enable this on
-	 * runtime to be effective.
+	 * Multiply two matrix. <b>{@code b = this * a}</b>
+	 * <p>The matrix {@code a} must be created and has the right dimensions,
+	 * that is {@code a.rows = this.cols}.</p>
+	 * <p>The matrix {@code b} must be created and has the right dimensions,
+	 * that is {@code b.rows = this.rows} and {@code b.cols = a.cols}.</p>
+	 * <p><i>NOTE:</i> Assertions of the dimensions are made with {@code assert}
+	 * statement. You must enable this on runtime to be effective.</p>
 	 *
 	 * @param a The matrix to multiply
 	 * @param b The matrix to put the result
 	 */
 	public void multiply(final Matrix a, final Matrix b) {
-		assert cols == a.rows && b.rows == rows && b.cols == a.cols;
+		assert a != null && b != null : "a & b must be not null";
+		assert cols == a.rows : "a must have as many rows as this columns";
+		assert b.rows == rows && b.cols == a.cols : "b dimensions mismatch";
 
-		double sum = 0;
+		double sum;
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < b.cols; j++) {
 				sum = 0;
-				for (int k = 0; k < cols; k++)
+				for (int k = 0; k < cols; k++) {
 					sum += position(i, k) * a.position(k, j);
+				}
 				b.position(i, j, sum);
 			}
 		}
@@ -214,19 +268,23 @@ public final class Matrix implements Serializable {
 
 	/**
 	 * Apply one function over the elements of the matrix and left the result on
-	 * a. For each element on this a(i,j) = F(this(i,j)). The matrix a must be
-	 * created and has the same dimension of this and a. NOTE: Assertions of the
-	 * dimensions are made with assert statement. You must enable this on
-	 * runtime to be effective.
+	 * a. For each element on this <b>{@code a(i,j) = F(this(i,j))}</b>.
+	 * <p>The matrix {@code a} must have the same dimension as {@code this}.</p>
+	 * <p><i>NOTE:</i> Assertions of the dimensions are made with {@code assert}
+	 * statement. You must enable this on runtime to be effective.</p>
 	 *
 	 * @param f function to apply.
 	 * @param a The matrix to put the result.
 	 */
 	public void apply(Function f, final Matrix a) {
-		assert rows == a.rows && cols == a.cols;
+		assert f != null : "The function must be not null";
+		assert a != null : "a must be not null";
+		assert rows == a.rows && cols == a.cols :
+			   "this & b must have the same dimensions";
 
-		for (int i = 0, n = rows * cols; i < n; i++)
+		for (int i = 0, n = rows * cols; i < n; i++) {
 			a.matrix[i] = f.eval(matrix[i]);
+		}
 	}
 
 	/**
@@ -248,10 +306,10 @@ public final class Matrix implements Serializable {
 	}
 
 	/**
-	 * Fill the matrix with random values between (-1, 1). Alias for 
+	 * Fill the matrix with random values between (-1, 1). Alias for
 	 * {@code fill(true)}.
-	 * @see Matrix#fill(boolean) 
-	 * @see Matrix#fill(boolean, java.util.Random) 
+	 * @see Matrix#fill(boolean)
+	 * @see Matrix#fill(boolean, java.util.Random)
 	 */
 	public void fill() {
 		fill(true);
@@ -259,23 +317,23 @@ public final class Matrix implements Serializable {
 
 	/**
 	 * Fill the matrix with random values between [0, 1) if {@code signed} is
-	 * {@code is false}, and (-1, 1) if {@code true}. 
+	 * {@code is false}, and (-1, 1) if {@code true}.
 	 *
-	 * @param signed {@code false} if all the numbers should be positive, 
+	 * @param signed {@code false} if all the numbers should be positive,
 	 * {@code false} otherwise
-	 * @see Matrix#fill(boolean, java.util.Random) 
+	 * @see Matrix#fill(boolean, java.util.Random)
 	 */
 	public void fill(boolean signed) {
-        fill(signed, null);
+		fill(signed, null);
 	}
 
 	/**
 	 * Fill the matrix with random values between [0, 1) if {@code signed} is
-	 * {@code is false}, and (-1, 1) if {@code true}. 
-	 * <p>This method is based only in {@link Random#nextDouble()}, so in 
+	 * {@code is false}, and (-1, 1) if {@code true}.
+	 * <p>This method is based only in {@link Random#nextDouble()}, so in
 	 * case other intervals are needed the only thing that's needed is a
 	 * custom implementation of {@code nextDouble()}, for instance:</p><pre>
-	 * 
+	 *
 	 *     Random myRand = new Random(){
 	 *         public double nextDouble() {
 	 *             return super.nextDouble() / 1000.;
@@ -283,17 +341,17 @@ public final class Matrix implements Serializable {
 	 *     }
 	 * </pre>
 	 *
-	 * @param signed {@code false} if all the numbers should be positive, 
+	 * @param signed {@code false} if all the numbers should be positive,
 	 * {@code false} otherwise
-	 * @param r The {@link Random} object used to fill the matrix, if 
+	 * @param r The {@link Random} object used to fill the matrix, if
 	 * {@code null} it will fallback to {@link ThreadLocalRandom#current()}
 	 */
 	public void fill(boolean signed, Random r) {
 		if (r == null) r = ThreadLocalRandom.current();
-		
+
 		for (int i = 0, n = rows * cols; i < n; i++) {
 			matrix[i] = r.nextDouble();
-			
+
 			if (signed) {
 				matrix[i] *= Math.pow(-1, r.nextInt(2));
 			}
@@ -301,14 +359,17 @@ public final class Matrix implements Serializable {
 	}
 
 	/**
-	 * Copy this matrix to another matrix a. The matrix a must be created and
-	 * match the dimensions of this. NOTE: Assertions of the dimensions are made
-	 * with assert statement. You must enable this on runtime to be effective.
+	 * Copy this matrix to another matrix a.
+	 * <p>The matrix {@code a} must have the same dimension as {@code this}.</p>
+	 * <p><i>NOTE:</i> Assertions of the dimensions are made with {@code assert}
+	 * statement. You must enable this on runtime to be effective.</p>
 	 *
 	 * @param a The matrix to put the result.
 	 */
 	public void copy(final Matrix a) {
-		assert rows == a.rows && cols == a.cols;
+		assert a != null : "a must be not null";
+		assert rows == a.rows && cols == a.cols :
+			   "this & a must have the same dimensions";
 
 		System.arraycopy(matrix, 0, a.matrix, 0, matrix.length);
 	}
@@ -320,8 +381,23 @@ public final class Matrix implements Serializable {
 	 *
 	 * @param a The matrix to multiply
 	 * @return the scalar of the dot product.
+	 * @throws IllegalArgumentException if either {@code this} or {@code a} are
+	 * neither row nor column matrices.
 	 */
 	public double dotProduct(Matrix a) {
+		assert a != null : "a must be not null";
+		assert rows * cols == a.rows * a.cols : "Mismatched dimensions";
+
+		if (this.cols != 1 && this.rows != 1) {
+			String msg = "This must be either a row or a column matrix";
+			throw new IllegalArgumentException(msg);
+		}
+
+		if (a.cols != 1 && a.rows != 1) {
+			String msg = "a must be either a row or a column matrix";
+			throw new IllegalArgumentException(msg);
+		}
+
 		double acum = 0;
 
 		for (int i = 0; i < cols * rows; i++) {
@@ -332,15 +408,16 @@ public final class Matrix implements Serializable {
 	}
 
 	/**
-	 * Transpose this matrix and left the result on a. The matrix a must be
-	 * created and has the right dimensions. NOTE: Assertions of the dimensions
-	 * are made with assert statement. You must enable this on runtime to be
-	 * effective.
+	 * Transpose this matrix and left the result on a.
+	 * <p>The matrix a must be created and has the right dimensions.</p>
+	 * <p><i>NOTE:</i> Assertions of the dimensions are made with {@code assert}
+	 * statement. You must enable this on runtime to be effective.</p>
 	 *
 	 * @param a The matrix to put the result.
 	 */
 	public void transpose(final Matrix a) {
-		assert rows == a.cols && cols == a.rows;
+		assert rows == a.cols && cols == a.rows :
+			   "Matrix a has the wrong dimensions";
 
 		for (int i = 0; i < rows; i++)
 			for (int j = 0; j < cols; j++)
@@ -350,7 +427,7 @@ public final class Matrix implements Serializable {
 	/**
 	 * Return the transpose of this matrix.
 	 *
-	 * @return A new matrix with the transpose of this.
+	 * @return A new matrix with the transpose of {@code this}.
 	 */
 	public Matrix transpose() {
 		Matrix ret = new Matrix(cols, rows);
@@ -359,16 +436,20 @@ public final class Matrix implements Serializable {
 	}
 
 	/**
-	 * Replace one row of values of this matrix. The number of values of data
-	 * must match with the number of columns of this. NOTE: Assertions of the
-	 * dimensions are made with assert statement. You must enable this on
-	 * runtime to be effective.
+	 * Replace one row of values of this matrix.
+	 * <p>The number of values of {@code data} must match with the number of
+	 * columns of {@code this}.
+	 * <p><i>NOTE:</i> Assertions of the dimensions and indexes are made with
+	 * {@code assert} statement. You must enable this on runtime to be
+	 * effective.</p>
 	 *
 	 * @param index The index of the row to place the values.
 	 * @param data	The values to put in that row.
 	 */
 	public void setRow(int index, double[] data) {
-		assert cols == data.length;
+		assert cols == data.length : "Wrong vector dimension, expected: " + cols;
+		assert index < 0 || index >= rows :
+			   "index must be in the interval [0, " + rows + ")";
 
 		System.arraycopy(data, 0, matrix, index * cols, data.length);
 	}
@@ -384,66 +465,87 @@ public final class Matrix implements Serializable {
 
 	/**
 	 * Return an array with the values of the specified row.
+	 * <p><i>NOTE:</i> Assertions of the indexes are made with {@code assert}
+	 * statement. You must enable this on runtime to be
+	 * effective.</p>
 	 *
 	 * @param index The index of the row to return.
 	 * @return the array with the values.
 	 */
 	public double[] getRow(int index) {
-		double[] ret = new double[cols];
+		assert index < 0 || index >= rows : String.format(
+			  "index must be in the interval [0, %d) current: %d", rows, index);
+
+		final double[] ret = new double[cols];
 		System.arraycopy(matrix, index * cols, ret, 0, ret.length);
 		return ret;
 	}
 
 	/**
 	 * Return an array with the values of the specified column.
+	 * <p><i>NOTE:</i> Assertions of the indexes are made with {@code assert}
+	 * statement. You must enable this on runtime to be effective.</p>
 	 *
 	 * @param index The index of the column to return.
 	 * @return the array with the values.
 	 */
 	public double[] getCol(int index) {
-		double[] ret = new double[rows];
-		for (int i = 0; i < rows; ret[i] = position(i++, index));
+		assert index < 0 || index >= cols : String.format(
+			  "index must be in the interval [0, %d) current: %d", cols, index);
+
+		final double[] ret = new double[rows];
+		for (int i = 0; i < rows; i++)
+			ret[i] = position(i, index);
 		return ret;
 	}
 
 	/**
 	 * Return the value on the position (i,j).
+	 * <p><i>NOTE:</i> Assertions of the indexes are made with {@code assert}
+	 * statement. You must enable this on runtime to be effective.</p>
 	 *
 	 * @param i index of the row
 	 * @param j index of the column
 	 * @return the value of that position
 	 */
 	public final double position(int i, int j) {
-		try {
-			return matrix[(i * cols) + j];
-		} catch (RuntimeException e) {
-			System.out.println(i + "," + j);
-			throw e;
-		}
+		assert i < 0 || i >= rows : String.format(
+			  "i must be in the interval [0, %d) current: %d", rows, i);
+		assert j < 0 || j >= cols : String.format(
+			  "j must be in the interval [0, %d) current: %d", cols, j);
+
+		return matrix[(i * cols) + j];
 	}
 
 	/**
 	 * Set the value v on the position (i,j).
+	 * <p><i>NOTE:</i> Assertions of the indexes are made with {@code assert}
+	 * statement. You must enable this on runtime to be effective.</p>
 	 *
 	 * @param i index of the row
 	 * @param j index of the column
 	 * @param v the value to put into.
 	 */
 	public final void position(int i, int j, double v) {
+		assert i < 0 || i >= rows : String.format(
+			  "i must be in the interval [0, %d) current: %d", rows, i);
+		assert j < 0 || j >= cols : String.format(
+			  "j must be in the interval [0, %d) current: %d", cols, j);
+
 		matrix[(i * cols) + j] = v;
 	}
 
 	/**
-	 * Substract the value of this with the value of b, and let the result on
+	 * Subtract the value of this with the value of b, and let the result on
 	 * resultSubstract Also, copy the original value of this into resultCopy.
 	 *
-	 * @param b Matrix to substract
-	 * @param resultSubstract Matrix to hold the result of the substraction
+	 * @param b Matrix to subtract
+	 * @param resultSubtract Matrix to hold the result of the subtraction
 	 * @param resultCopy Matrix to hold the copy of this.
 	 */
-	public void subtractAndCopy(Matrix b, Matrix resultSubstract, Matrix resultCopy) {
+	public void subtractAndCopy(Matrix b, Matrix resultSubtract, Matrix resultCopy) {
 		for (int i = 0; i < matrix.length; i++) {
-			resultSubstract.matrix[i] = matrix[i] - b.matrix[i];
+			resultSubtract.matrix[i] = matrix[i] - b.matrix[i];
 			resultCopy.matrix[i] = matrix[i];
 		}
 	}
@@ -453,7 +555,7 @@ public final class Matrix implements Serializable {
 	 *
 	 * @param a constant to multiply
 	 * @param b matrix to add
-	 * @param result	Matrix to hold the result of the operation.
+	 * @param result Matrix to hold the result of the operation.
 	 */
 	public void multiplyAndAdd(double a, Matrix b, Matrix result) {
 		for (int i = 0; i < matrix.length; i++) {
@@ -463,20 +565,40 @@ public final class Matrix implements Serializable {
 
 	/**
 	 * Increments the value of one position by v.
+	 * <p><i>NOTE:</i> Assertions of the indexes are made with {@code assert}
+	 * statement. You must enable this on runtime to be effective.</p>
 	 *
 	 * @param i index of the row
 	 * @param j index of the column
 	 * @param v value to increment.
 	 */
 	public final void increment(int i, int j, double v) {
+		assert i < 0 || i >= rows : String.format(
+			  "i must be in the interval [0, %d) current: %d", rows, i);
+		assert j < 0 || j >= cols : String.format(
+			  "j must be in the interval [0, %d) current: %d", cols, j);
+
 		matrix[(i * cols) + j] += v;
 	}
 
-	public void swap(int i, int j) {
-		double[] a = getRow(i);
-		double[] b = getRow(j);
-		setRow(i, b);
-		setRow(j, a);
+	/**
+	 * Swaps two rows.
+	 * <p><i>NOTE:</i> Assertions of the indexes are made with {@code assert}
+	 * statement. You must enable this on runtime to be effective.</p>
+	 *
+	 * @param i1 index of the first row
+	 * @param i2 index of the second row
+	 */
+	public void swap(int i1, int i2) {
+		assert i1 < 0 || i1 >= rows : String.format(
+			  "i1 must be in the interval [0, %d) current: %d", rows, i1);
+		assert i2 < 0 || i2 >= cols : String.format(
+			  "i2 must be in the interval [0, %d) current: %d", rows, i2);
+
+		final double[] a = getRow(i1);
+		final double[] b = getRow(i2);
+		setRow(i1, b);
+		setRow(i2, a);
 	}
 
 	/*//TODO needs translation to this matrix class.
@@ -559,15 +681,12 @@ public final class Matrix implements Serializable {
 	@Override
 	public boolean equals(Object b1) {
 		if (this == b1) {
-		    return true;
+			return true;
 		}
-		if (b1 == null) {
-		    return false;
+		if (b1 == null || getClass() != b1.getClass()) {
+			return false;
 		}
-		if (getClass() != b1.getClass()) {
-		    return false;
-		}
-        
+
 		Matrix b = (Matrix) b1;
 		if (rows != b.rows || cols != b.cols)
 			return false;

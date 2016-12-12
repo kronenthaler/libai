@@ -2,17 +2,17 @@
  * MIT License
  *
  * Copyright (c) 2016 Federico Vera <https://github.com/dktcoding>
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -35,10 +35,35 @@ import static org.junit.Assert.*;
  */
 public class MatrixTest {
     private static final double DELTA = 1e-12;
-    
+
     public MatrixTest() {
     }
-    
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorFail1() {
+        Matrix m = new Matrix(-5, 5, false);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorFail2() {
+        Matrix m = new Matrix(5, -5, false);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorFail3() {
+        Matrix m = new Matrix(0, 1, false);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorFail4() {
+        Matrix m = new Matrix(5, 5, null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorFail5() {
+        Matrix m = new Matrix(5, 5, new double[5*4]);
+    }
+
     @Test
     public void testConstructorNotIdentity1() {
         Matrix m = new Matrix(5, 5, false);
@@ -46,7 +71,7 @@ public class MatrixTest {
             assertArrayEquals(new double[]{0,0,0,0,0}, m.getRow(i), DELTA);
         }
     }
-    
+
     @Test
     public void testConstructorNotIdentity2() {
         Matrix m = new Matrix(15, 5, false);
@@ -56,7 +81,7 @@ public class MatrixTest {
             }
         }
     }
-    
+
     @Test
     public void testConstructorIdentity1() {
         Matrix m = new Matrix(5, 5, true);
@@ -66,7 +91,7 @@ public class MatrixTest {
             assertArrayEquals(test, m.getRow(i), DELTA);
         }
     }
-    
+
     @Test
     public void testConstructorIdentity2() {
         Matrix m = new Matrix(15, 5, true);
@@ -76,7 +101,7 @@ public class MatrixTest {
             assertArrayEquals(test, m.getRow(i), DELTA);
         }
     }
-    
+
     @Test
     public void testConstructorIdentity3() {
         Matrix m = new Matrix(5, 15, true);
@@ -92,17 +117,17 @@ public class MatrixTest {
         Matrix a = Matrix.random(50, 100, true, null);
         Matrix b = Matrix.random(50, 100, false, null);
         assertNotEquals(a, b);
-        
+
         boolean hasNegativeA = false;
         boolean hasNegativeB = false;
-        
+
         for (int i = 0; i < a.getRows(); i++) {
             for (int j = 0; j < a.getColumns(); j++) {
                 hasNegativeA |= a.position(i, j) < 0;
                 hasNegativeB |= b.position(i, j) < 0;
             }
         }
-        
+
         assertTrue (hasNegativeA);
         assertFalse(hasNegativeB);
     }
@@ -198,19 +223,19 @@ public class MatrixTest {
         assertEquals(c, d);
     }
     double[] a1_data = {
-        -0.007765831782573, -0.008486990926655, -0.009829972068673, 0.000304058679693, 
-        -0.002138442736117,  0.007523070921871,  0.005449501255788, 0.005930977488527, 
-         0.005607489427692,  0.002720446955797, 
+        -0.007765831782573, -0.008486990926655, -0.009829972068673, 0.000304058679693,
+        -0.002138442736117,  0.007523070921871,  0.005449501255788, 0.005930977488527,
+         0.005607489427692,  0.002720446955797,
     };
     double[] b1_data = {
-        -0.007765831782573, -0.008486990926655, 
-        -0.009829972068673,  0.000304058679693, 
-        -0.002138442736117,  0.007523070921871, 
-         0.005449501255788,  0.005930977488527, 
+        -0.007765831782573, -0.008486990926655,
+        -0.009829972068673,  0.000304058679693,
+        -0.002138442736117,  0.007523070921871,
+         0.005449501255788,  0.005930977488527,
          0.005607489427692,  0.002720446955797,
     };
     double[] d1_data = {
-        0.000154421532520, -0.000014637731259, 
+        0.000154421532520, -0.000014637731259,
        -0.000078861505907,  0.000023086622987,
     };
 
@@ -225,14 +250,14 @@ public class MatrixTest {
         assertEquals(c, d);
     }
     double[] a2_data = {
-        -0.007253997338875, -0.009757740181475,  0.009202997305386,  0.009821458200041, 
+        -0.007253997338875, -0.009757740181475,  0.009202997305386,  0.009821458200041,
          0.006434371877310,  0.008282702832958, -0.008951885947104, -0.005934105911485,
-        -0.006161133826338, -0.002859944646273, 
+        -0.006161133826338, -0.002859944646273,
     };
     double[] b2_data = {
-        -0.007253997338875, -0.009757740181475,  0.009202997305386, 0.009821458200041, 
-         0.006434371877310,  0.008282702832958, -0.008951885947104,-0.005934105911485, 
-        -0.006161133826338, -0.002859944646273, 
+        -0.007253997338875, -0.009757740181475,  0.009202997305386, 0.009821458200041,
+         0.006434371877310,  0.008282702832958, -0.008951885947104,-0.005934105911485,
+        -0.006161133826338, -0.002859944646273,
     };
     double[] d2_data = {0.000600483207479};
 
@@ -251,7 +276,7 @@ public class MatrixTest {
         a.apply(f, b);
         assertEquals(c, b);
     }
-    
+
     @Test
     public void testApply1() {
         Function f = new Function() {
@@ -266,7 +291,7 @@ public class MatrixTest {
         a.apply(f, b);
         assertEquals(a, b);
     }
-    
+
     @Test
     public void testApply2() {
         Function f = new Function() {
@@ -296,7 +321,7 @@ public class MatrixTest {
         a.position(0, 0, 0);
         assertNotEquals(a, b);
     }
-    
+
     @Test
     public void testCopy1() {
         Matrix a = Matrix.random(10, 5);
@@ -345,7 +370,7 @@ public class MatrixTest {
         a.setValue(0);
         assertEquals(a, new Matrix(10, 15));
     }
-    
+
     @Test
     public void testIncrement() {
         Matrix m = new Matrix(5, 5, true);
@@ -426,7 +451,7 @@ public class MatrixTest {
         Matrix a = Matrix.random(10, 10);
         Matrix b = new Matrix(10, 10);
         Matrix c = new Matrix(1, 10);
-        
+
         a.copy(b);
         assertEquals(a, b);
         b.position(1, 1, 1);
@@ -442,7 +467,7 @@ public class MatrixTest {
     public void testEquals1() {
         Matrix a = new Matrix(10, 1);
         Matrix b = new Matrix(1, 10);
-        
+
         assertNotEquals(a, b);
         b = b.transpose();
         assertEquals(a, b);
@@ -452,7 +477,7 @@ public class MatrixTest {
     public void testEquals2() {
         Matrix a = new Matrix(10, 10, true);
         Matrix b = new Matrix(10, 10, true);
-        
+
         assertEquals(a, b);
         b = b.transpose();
         assertEquals(a, b);
@@ -616,10 +641,10 @@ public class MatrixTest {
         assertNotEquals(a, b);
         b.fill(true, null);
         assertNotEquals(a, b);
-        
+
         boolean hasNegativeA = false;
         boolean hasNegativeB = false;
-        
+
         for (int i = 0; i < a.getRows(); i++) {
             for (int j = 0; j < a.getColumns(); j++) {
                 hasNegativeA |= a.position(i, j) < 0;
@@ -677,14 +702,14 @@ public class MatrixTest {
         a.fill(false, rand1);
         b.fill(false, rand2);
         assertEquals(a, b);
-        
+
         for (int i = 0; i < a.getRows(); i++) {
             for (int j = 0; j < a.getColumns(); j++) {
                 hasNegativeA |= a.position(i, j) < 0;
                 hasNegativeB |= b.position(i, j) < 0;
             }
         }
-        
+
         assertFalse(hasNegativeA);
         assertFalse(hasNegativeB);
     }
@@ -721,21 +746,39 @@ public class MatrixTest {
         assertNotEquals(a, b);
         b.fill();
         assertNotEquals(a, b);
-        
+
         boolean hasNegativeA = false;
         boolean hasNegativeB = false;
-        
+
         for (int i = 0; i < a.getRows(); i++) {
             for (int j = 0; j < a.getColumns(); j++) {
                 hasNegativeA |= a.position(i, j) < 0;
                 hasNegativeB |= b.position(i, j) < 0;
             }
         }
-        
+
         assertTrue(hasNegativeA);
         assertTrue(hasNegativeB);
     }
-    
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testDotProductError1() {
+        Matrix a = new Matrix(2, 10, a3_data);
+        Matrix b = new Matrix(10, 2, b3_data);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testDotProductError2() {
+        Matrix a = new Matrix(1, 10, a3_data);
+        Matrix b = new Matrix(10, 2, b3_data);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testDotProductError3() {
+        Matrix a = new Matrix(2, 10, a3_data);
+        Matrix b = new Matrix(10, 1, b3_data);
+    }
+
     @Test
     public void testDotProduct() {
         //product was calculated with GNU-Octave 4.0.2 (x86_64-pc-linux-gnu)
@@ -744,7 +787,7 @@ public class MatrixTest {
         double product = a.dotProduct(b);
         assertEquals(result, product, DELTA);
     }
-    
+
     @Test
     public void testDotProduct1() {
         //product was calculated with GNU-Octave 4.0.2 (x86_64-pc-linux-gnu)
@@ -753,7 +796,7 @@ public class MatrixTest {
         double product = a.dotProduct(b);
         assertEquals(result, product, DELTA);
     }
-    
+
     @Test
     public void testDotProduct2() {
         //product was calculated with GNU-Octave 4.0.2 (x86_64-pc-linux-gnu)
@@ -762,7 +805,7 @@ public class MatrixTest {
         double product = a.dotProduct(b);
         assertEquals(result, product, DELTA);
     }
-    
+
     @Test
     public void testDotProduct3() {
         //product was calculated with GNU-Octave 4.0.2 (x86_64-pc-linux-gnu)
@@ -772,12 +815,12 @@ public class MatrixTest {
         assertEquals(result, product, DELTA);
     }
     double[] a3_data = {
-        0.008836540313295,  0.005681073763455,  0.006258204252537, 0.008306752574195,  0.000227322631636, 
-       -0.002351919190952, -0.002525625167333, -0.006263386710295, 0.002164190369792, -0.006667604294500, 
+        0.008836540313295,  0.005681073763455,  0.006258204252537, 0.008306752574195,  0.000227322631636,
+       -0.002351919190952, -0.002525625167333, -0.006263386710295, 0.002164190369792, -0.006667604294500,
     };
     double[] b3_data = {
          0.001482773049231, -0.001347142606673,  0.007705866269837,  0.009591078927415, -0.000875775794850,
-        -0.007544329405404, -0.005619909996736, -0.001928699595623, -0.006332203264881, -0.001393287402837, 
+        -0.007544329405404, -0.005619909996736, -0.001928699595623, -0.006332203264881, -0.001393287402837,
     };
     double result = 1.7274931467510147E-4;
 
@@ -840,7 +883,7 @@ public class MatrixTest {
         a.multiplyAndAdd(scale, b, c);
         assertEquals(c, d);
     }
-    
+
     @Test
     public void testApplyInIdentity() {
         Function f = new Function() {
