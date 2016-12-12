@@ -474,7 +474,7 @@ public final class Matrix implements Serializable {
 	 */
 	public double[] getRow(int index) {
 		assert index < 0 || index >= rows : String.format(
-			  "i must be in the interval [0, %d) current: %d", rows, index);
+			  "index must be in the interval [0, %d) current: %d", rows, index);
 
 		final double[] ret = new double[cols];
 		System.arraycopy(matrix, index * cols, ret, 0, ret.length);
@@ -683,10 +683,7 @@ public final class Matrix implements Serializable {
 		if (this == b1) {
 			return true;
 		}
-		if (b1 == null) {
-			return false;
-		}
-		if (getClass() != b1.getClass()) {
+		if (b1 == null || getClass() != b1.getClass()) {
 			return false;
 		}
 
