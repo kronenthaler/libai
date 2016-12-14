@@ -49,6 +49,16 @@ public abstract class NeuralNetwork implements Serializable {
 		this.plotter = plotter;
 	}
 
+	/**
+	 * Set's a {@link ProgressDisplay} to the {@code NeuralNetwork}. The value
+	 * will go from {@code -epochs} to {@code 0}, and updated every training
+	 * epoch.
+	 * <p><i>Note: </i> Classes that implement {@link
+	 * NeuralNetwork#train(Matrix[], Matrix[], double, int, int, int, double)}
+	 * are responsible for this behavior.</p>
+	 *
+	 * @param pb ProgressDisplay
+	 */
 	public void setProgressBar(ProgressDisplay pb) {
 		progress = pb;
 	}
@@ -161,6 +171,8 @@ public abstract class NeuralNetwork implements Serializable {
 	 * metric.
 	 * <p>{@code patterns} and {@code answers} must be arrays of
 	 * non-{@code null} <b>column</b> matrices</p>
+	 * <p><i>NOTE:</i> Assertions of the dimensions are made with {@code assert}
+	 * statement. You must enable this on runtime to be effective.</p>
 	 *
 	 * @param patterns The array with the patterns to test
 	 * @param answers The array with the expected answers for the patterns.
@@ -169,6 +181,15 @@ public abstract class NeuralNetwork implements Serializable {
 	 * @return The mean quadratic error.
 	 */
 	public double error(Matrix[] patterns, Matrix[] answers, int offset, int length) {
+		assert patterns[0].getColumns() == 1 && answers[0].getColumns() == 1 :
+				"patterns and answers must be column matrices";
+		assert patterns.length == answers.length :
+				"There must be the same ammount of patterns and answers";
+		assert offset >= 0 && offset < patterns.length : String.format(
+				"offset must be in the interval [0, %d), found: %d", patterns.length, offset);
+		assert length >= 0 && length <= patterns.length - offset : String.format(
+				"length must be in the interval (0, %d], found: %d", patterns.length - offset, length);
+
 		double error = 0.0;
 		Matrix Y = new Matrix(answers[0].getRows(), 1);
 
@@ -182,12 +203,16 @@ public abstract class NeuralNetwork implements Serializable {
 
 	/**
 	 * Calculates the square Euclidean distance between two vectors.
+	 * <p><i>NOTE:</i> Assertions of the dimensions are made with {@code assert}
+	 * statement. You must enable this on runtime to be effective.</p>
 	 *
 	 * @param a Vector a.
 	 * @param b Vector b.
 	 * @return The square Euclidean distance.
 	 */
 	public static double euclideanDistance2(double[] a, double[] b) {
+		assert a.length== b.length : "a & b must have the same length";
+
 		double sum = 0;
 		for (int i = 0; i < a.length; i++) {
 			double diff = (a[i] - b[i]);
@@ -198,24 +223,25 @@ public abstract class NeuralNetwork implements Serializable {
 
 	/**
 	 * Calculates the square Euclidean distance between two column matrix.
+	 * <p><i>NOTE:</i> Assertions of the dimensions are made with {@code assert}
+	 * statement. You must enable this on runtime to be effective.</p>
 	 *
 	 * @param a Matrix a.
 	 * @param b Matrix b.
 	 * @return The square Euclidean distance.
 	 */
 	public static double euclideanDistance2(Matrix a, Matrix b) {
-		try {
-			double sum = 0;
-			for (int i = 0; i < a.getRows(); i++) {
-				double diff = (a.position(i, 0) - b.position(i, 0));
-				sum += diff * diff;
-			}
-			return sum;
-		} catch (RuntimeException e) {
-			System.out.println("a: " + a);
-			System.out.println("\nb: " + b);
-			throw e;
+		assert a.getColumns() == 1 && b.getColumns() == 1
+				: "a & b must be column matrices";
+		assert a.getRows() == b.getRows()
+				: "a & b must have the same number of rows";
+
+		double sum = 0;
+		for (int i = 0; i < a.getRows(); i++) {
+			double diff = (a.position(i, 0) - b.position(i, 0));
+			sum += diff * diff;
 		}
+		return sum;
 	}
 
 	/**
