@@ -201,10 +201,10 @@ public class MLP extends NeuralNetwork {
 	private void standardBP(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 		int[] sort = new int[length];
 		double error = error(patterns, answers, offset, length);
-		Matrix e = new Matrix(answers[0].getRows(), answers[0].getColumns());
+		Matrix e = new Matrix(answers[offset].getRows(), answers[offset].getColumns());
 
 		for (int i = 0; i < length; i++) {
-			sort[i] = i;
+			sort[i] = i + offset;
 		}
 
 		while (error > minerror && epochs-- > 0) {
@@ -214,10 +214,10 @@ public class MLP extends NeuralNetwork {
 			error = 0;
 			for (int i = 0; i < length; i++) {
 				//Y[i]=Fi(<W[i],Y[i-1]>+b)
-				simulate(patterns[sort[i] + offset]);
+				simulate(patterns[sort[i]]);
 
 				//e=-2(t-Y[n-1])
-				answers[sort[i] + offset].subtract(Y[layers - 1], e);
+				answers[sort[i]].subtract(Y[layers - 1], e);
 
 				//calculate the error
 				for (int m = 0; m < nperlayer[layers - 1]; m++)
@@ -258,12 +258,12 @@ public class MLP extends NeuralNetwork {
 	private void momemtumBP(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 		int[] sort = new int[length];
 		double error = error(patterns, answers, offset, length);
-		Matrix e = new Matrix(answers[0].getRows(), answers[0].getColumns());
+		Matrix e = new Matrix(answers[offset].getRows(), answers[offset].getColumns());
 		Matrix temp3;
 		double beta = params[0];
 
 		for (int i = 0; i < length; i++) {
-			sort[i] = i;
+			sort[i] = i + offset;
 		}
 
 		Matrix Wprev[] = new Matrix[layers];
@@ -282,10 +282,10 @@ public class MLP extends NeuralNetwork {
 			error = 0;
 			for (int i = 0; i < length; i++) {
 				//Y[i]=Fi(<W[i],Y[i-1]>+b)
-				simulate(patterns[sort[i] + offset]);
+				simulate(patterns[sort[i]]);
 
 				//e=-2(t-Y[n-1])
-				answers[sort[i] + offset].subtract(Y[layers - 1], e);
+				answers[sort[i]].subtract(Y[layers - 1], e);
 
 				//calculate the error
 				for (int m = 0; m < nperlayer[layers - 1]; m++)
@@ -341,7 +341,7 @@ public class MLP extends NeuralNetwork {
 	private void resilentBP(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 		int[] sort = new int[length];
 		double error = error(patterns, answers, offset, length);
-		Matrix e = new Matrix(answers[0].getRows(), answers[0].getColumns());
+		Matrix e = new Matrix(answers[offset].getRows(), answers[offset].getColumns());
 
 		double Nplus = 1.2,
 				Nminus = 0.5,
@@ -350,7 +350,7 @@ public class MLP extends NeuralNetwork {
 				InitialUpdate = 0.1;
 
 		for (int i = 0; i < length; i++) {
-			sort[i] = i;
+			sort[i] = i + offset;
 		}
 
 		Matrix dacum[] = new Matrix[layers];
@@ -374,13 +374,16 @@ public class MLP extends NeuralNetwork {
 		}
 
 		while (error > minerror && epochs-- > 0) {
+			//shuffle patterns
+			shuffle(sort);
+
 			error = 0;
 			for (int i = 0; i < length; i++) {
 				//Y[i]=Fi(<W[i],Y[i-1]>+b)
-				simulate(patterns[sort[i] + offset]);
+				simulate(patterns[sort[i]]);
 
 				//e=-2(t-Y[n-1])
-				answers[sort[i] + offset].subtract(Y[layers - 1], e);
+				answers[sort[i]].subtract(Y[layers - 1], e);
 
 				//calculate the error
 				for (int m = 0; m < nperlayer[layers - 1]; m++)
