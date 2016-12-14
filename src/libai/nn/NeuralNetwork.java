@@ -172,11 +172,9 @@ public abstract class NeuralNetwork implements Serializable {
 		double error = 0.0;
 		Matrix Y = new Matrix(answers[0].getRows(), 1);
 
-		for (int i = 0, n = Y.getRows(); i < length; i++) {
-			simulate(patterns[i + offset], Y);	//inner product
-
-			for (int j = 0; j < n; j++)
-				error += Math.pow(answers[i + offset].position(j, 0) - Y.position(j, 0), 2);
+		for (int i = offset; i < length; i++) {
+			simulate(patterns[i], Y);	//inner product
+			error += euclideanDistance2(answers[i], Y);
 		}
 
 		return error / (double) length;

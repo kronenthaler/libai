@@ -29,6 +29,7 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import libai.common.Matrix;
 import libai.io.MatrixIO;
 import org.junit.Test;
@@ -46,6 +47,38 @@ import static libai.common.MatrixIOTest.eval;
 public class NeuralNetworkTest {
 
 	public NeuralNetworkTest() {
+	}
+
+	@Test
+	public void testErrorRegression() {
+		//This test is to check that the code an be replaced with
+		//euclideandistance2
+		NN nn = new NN();
+		Matrix[] patterns = new Matrix[10];
+		Matrix[] answers  = new Matrix[10];
+		Random r = new Random(0);
+		for (int i = 0; i < 10; i++) {
+			patterns[i] = Matrix.random(20, 1, true, r);
+			answers [i] = Matrix.random(10, 1, true, r);
+		}
+		//old error -> 7.498344587525985
+		assertEquals(7.498344587525985, nn.error(patterns, answers), 1e-12);
+	}
+
+	@Test
+	public void testErrorRegression2() {
+		//This test is to check that the code an be replaced with
+		//euclideandistance2
+		NN nn = new NN();
+		Matrix[] patterns = new Matrix[10];
+		Matrix[] answers  = new Matrix[10];
+		Random r = new Random(0);
+		for (int i = 0; i < 10; i++) {
+			patterns[i] = Matrix.random(35, 1, true, r);
+			answers [i] = Matrix.random(25, 1, true, r);
+		}
+		//old error -> 17.015311661715778
+		assertEquals(17.015311661715778, nn.error(patterns, answers), 1e-12);
 	}
 
 	@Test
