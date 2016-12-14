@@ -2,17 +2,17 @@
  * MIT License
  *
  * Copyright (c) 2009-2016 Ignacio Calderon <https://github.com/kronenthaler>
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -40,7 +40,7 @@ import libai.common.ProgressDisplay;
  */
 public abstract class NeuralNetwork implements Serializable {
 	private static final long serialVersionUID = 2851521924022998819L;
-	
+
 	protected transient Plotter plotter;
 	protected transient ProgressDisplay progress;
 
@@ -53,11 +53,13 @@ public abstract class NeuralNetwork implements Serializable {
 	}
 
 	/**
-	 * Train this neural network with the list of
-	 * <code>patterns</code> and the expected <code>answers</code>. 
-	 * Use the learning rate <code>alpha</code> for many <code>epochs</code>. 
-	 * Take <code>length</code> patterns from the position <code>offset</code> 
-	 * until the <code>minerror</code> is reached.
+	 * Train this neural network with the list of {@code patterns} and the
+	 * expected {@code answers}.
+	 * <p>Use the learning rate {@code alpha} for many {@code epochs}.
+	 * Take {@code length} patterns from the position {@code offset} until the
+	 * {@code minerror} is reached.</p>
+	 * <p>{@code patterns} and {@code answers} must be arrays of
+	 * non-{@code null} <b>column</b> matrices</p>
 	 *
 	 * @param patterns	The patterns to be learned.
 	 * @param answers	The expected answers.
@@ -70,8 +72,7 @@ public abstract class NeuralNetwork implements Serializable {
 	public abstract void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror);
 
 	/**
-	 * Calculate the output for the
-	 * <code>pattern</code>.
+	 * Calculate the output for the {@code pattern}.
 	 *
 	 * @param pattern	Pattern to use as input.
 	 * @return The output for the neural network.
@@ -79,9 +80,8 @@ public abstract class NeuralNetwork implements Serializable {
 	public abstract Matrix simulate(Matrix pattern);
 
 	/**
-	 * Calculate the output for the
-	 * <code>pattern</code> and left the result in
-	 * <code>result</code>.
+	 * Calculate the output for the {@code pattern} and left the result in
+	 * {@code result}.
 	 *
 	 * @param pattern	Pattern to use as input.
 	 * @param result	The output for the input.
@@ -92,7 +92,7 @@ public abstract class NeuralNetwork implements Serializable {
 	 * Save the neural network to the file in the given {@code path}
 	 *
 	 * @param path	The path for the output file.
-	 * @return {@code true} if the file can be created and written, 
+	 * @return {@code true} if the file can be created and written,
 	 * {@code false} otherwise.
 	 */
 	public boolean save(String path) {
@@ -108,19 +108,24 @@ public abstract class NeuralNetwork implements Serializable {
 
 	/**
 	 * Alias of train(patterns, answers, alpha, epochs, 0, patterns.length,
-	 * 1.e-5);
+	 * 1.e-5).
+	 * <p>{@code patterns} and {@code answers} must be arrays of
+	 * non-{@code null} <b>column</b> matrices</p>
 	 *
 	 * @param patterns	The patterns to be learned.
 	 * @param answers	The expected answers.
 	 * @param alpha	The learning rate.
 	 * @param epochs	The maximum number of iterations
+	 * @see NeuralNetwork#train(Matrix[], Matrix[], double, int, int, int, double)
 	 */
 	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs) {
 		train(patterns, answers, alpha, epochs, 0, patterns.length, 1.e-5);
 	}
 
 	/**
-	 * Alias of train(patterns, answers, alpha, epochs, offset, length, 1.e-5);
+	 * Alias of train(patterns, answers, alpha, epochs, offset, length, 1.e-5).
+	 * <p>{@code patterns} and {@code answers} must be arrays of
+	 * non-{@code null} <b>column</b> matrices</p>
 	 *
 	 * @param patterns	The patterns to be learned.
 	 * @param answers	The expected answers.
@@ -128,6 +133,7 @@ public abstract class NeuralNetwork implements Serializable {
 	 * @param epochs	The maximum number of iterations
 	 * @param offset	The first pattern position
 	 * @param length	How many patterns will be used.
+	 * @see NeuralNetwork#train(Matrix[], Matrix[], double, int, int, int, double)
 	 */
 	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length) {
 		train(patterns, answers, alpha, epochs, offset, length, 1.e-5);
@@ -136,10 +142,13 @@ public abstract class NeuralNetwork implements Serializable {
 	/**
 	 * Calculate from a set of patterns. Alias of error(patterns, answers, 0,
 	 * patterns.length)
+	 * <p>{@code patterns} and {@code answers} must be arrays of
+	 * non-{@code null} <b>column</b> matrices</p>
 	 *
 	 * @param patterns The array with the patterns to test
 	 * @param answers The array with the expected answers for the patterns.
 	 * @return The error calculate for the patterns.
+	 * @see NeuralNetwork#error(Matrix[], Matrix[], int, int)
 	 */
 	public double error(Matrix[] patterns, Matrix[] answers) {
 		return error(patterns, answers, 0, patterns.length);
@@ -149,6 +158,8 @@ public abstract class NeuralNetwork implements Serializable {
 	 * Calculates the mean quadratic error. Is the standard error metric for
 	 * neural networks. Just a few networks needs a different type of error
 	 * metric.
+	 * <p>{@code patterns} and {@code answers} must be arrays of
+	 * non-{@code null} <b>column</b> matrices</p>
 	 *
 	 * @param patterns The array with the patterns to test
 	 * @param answers The array with the expected answers for the patterns.
@@ -210,17 +221,21 @@ public abstract class NeuralNetwork implements Serializable {
 
 	/**
 	 * Calculate the Gaussian function with standard deviation
-	 * <code>sigma</code> and input parameter
-	 * <code>u^2</code>
+	 * {@code sigma} and input parameter {@code u^2}
 	 *
-	 * @param u2  {@code u2}
-	 * @param sigma  {@code sigma}
-	 * @return e^(-u^2/2.sigma)
+	 * @param u2 {@code u2}
+	 * @param sigma {@code sigma}
+	 * @return {@code e^(-u^2/2.sigma)}
 	 */
 	public static double gaussian(double u2, double sigma) {
 		return Math.exp((-u2) / (sigma * 2.0));
 	}
 
+	/**
+	 * Shuffles the array in place
+	 *
+	 * @param sort Array to be shuffled
+	 */
 	public static void shuffle(int[] sort) {
 		Random rand = new Random();
 		for (int i = 0; i < sort.length; i++) {
