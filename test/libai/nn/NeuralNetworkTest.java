@@ -30,14 +30,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import libai.common.Matrix;
-import libai.common.MatrixIOTest;
+import libai.io.MatrixIO;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+import static org.junit.Assume.*;
 import static libai.common.MatrixIOTest.checkOctaveInstall;
 import static libai.common.MatrixIOTest.checkTemp;
 import static libai.common.MatrixIOTest.eval;
-import libai.io.MatrixIO;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import static org.junit.Assume.*;
 
 /**
  *
@@ -46,6 +46,32 @@ import static org.junit.Assume.*;
 public class NeuralNetworkTest {
 
 	public NeuralNetworkTest() {
+	}
+
+	@Test
+	public void testErrorZero() {
+		NN nn = new NN();
+		Matrix[] patterns = new Matrix[10];
+		Matrix[] answers  = new Matrix[10];
+		for (int i = 0; i < 10; i++) {
+			patterns[i] = Matrix.random(20, 1);
+			answers [i] = new Matrix(20,1);
+			patterns[i].copy(answers[i]);
+		}
+		assertEquals(0, nn.error(patterns, answers), 1e-12);
+	}
+
+	@Test
+	public void testErrorZeroOffset() {
+		NN nn = new NN();
+		Matrix[] patterns = new Matrix[10];
+		Matrix[] answers  = new Matrix[10];
+		for (int i = 0; i < 10; i++) {
+			patterns[i] = Matrix.random(20, 1);
+			answers [i] = new Matrix(20,1);
+			patterns[i].copy(answers[i]);
+		}
+		assertEquals(0, nn.error(patterns, answers, 2, 7), 1e-12);
 	}
 
 	@Test
@@ -107,6 +133,26 @@ public class NeuralNetworkTest {
 			foo ^= arr2[i];
 		}
 		assertEquals(0, foo);
+	}
+
+	private static class NN extends NeuralNetwork {
+		@Override
+		public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
+
+		}
+
+		@Override
+		public Matrix simulate(Matrix pattern) {
+			return null;
+		}
+
+		@Override
+		public void simulate(Matrix pattern, Matrix result) {
+			//Dummy simulation
+			for (int i = 0; i < result.getRows(); i++) {
+				result.position(i, 0, pattern.position(i, 0));
+			}
+		}
 	}
 
 }
