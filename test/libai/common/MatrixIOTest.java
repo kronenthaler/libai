@@ -230,7 +230,7 @@ public class MatrixIOTest {
         new File(tmp + "foo.mat").delete();
     }
     
-    private String eval(String expr) {
+    public static String eval(String expr) {
         try {
             Process process = new ProcessBuilder().command(
                     "octave",
