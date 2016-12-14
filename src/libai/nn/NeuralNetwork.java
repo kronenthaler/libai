@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import libai.common.Matrix;
 import libai.common.Plotter;
 import libai.common.ProgressDisplay;
@@ -237,7 +238,7 @@ public abstract class NeuralNetwork implements Serializable {
 	 * @param sort Array to be shuffled
 	 */
 	public static void shuffle(int[] sort) {
-		Random rand = new Random();
+		Random rand = ThreadLocalRandom.current();
 		for (int i = 0; i < sort.length; i++) {
 			int j = rand.nextInt(sort.length);
 			int aux = sort[i];
