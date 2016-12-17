@@ -448,7 +448,7 @@ public final class Matrix implements Serializable {
 	 */
 	public void setRow(int index, double[] data) {
 		assert cols == data.length : "Wrong vector dimension, expected: " + cols;
-		assert index < 0 || index >= rows :
+		assert index >= 0 && index < rows :
 			   "index must be in the interval [0, " + rows + ")";
 
 		System.arraycopy(data, 0, matrix, index * cols, data.length);
@@ -473,7 +473,7 @@ public final class Matrix implements Serializable {
 	 * @return the array with the values.
 	 */
 	public double[] getRow(int index) {
-		assert index < 0 || index >= rows : String.format(
+		assert index >= 0 && index < rows : String.format(
 			  "index must be in the interval [0, %d) current: %d", rows, index);
 
 		final double[] ret = new double[cols];
@@ -490,7 +490,7 @@ public final class Matrix implements Serializable {
 	 * @return the array with the values.
 	 */
 	public double[] getCol(int index) {
-		assert index < 0 || index >= cols : String.format(
+		assert index >= 0 && index < cols : String.format(
 			  "index must be in the interval [0, %d) current: %d", cols, index);
 
 		final double[] ret = new double[rows];
@@ -509,9 +509,9 @@ public final class Matrix implements Serializable {
 	 * @return the value of that position
 	 */
 	public final double position(int i, int j) {
-		assert i < 0 || i >= rows : String.format(
+		assert i >= 0 && i < rows : String.format(
 			  "i must be in the interval [0, %d) current: %d", rows, i);
-		assert j < 0 || j >= cols : String.format(
+		assert j >= 0 && j < cols : String.format(
 			  "j must be in the interval [0, %d) current: %d", cols, j);
 
 		return matrix[(i * cols) + j];
@@ -527,9 +527,9 @@ public final class Matrix implements Serializable {
 	 * @param v the value to put into.
 	 */
 	public final void position(int i, int j, double v) {
-		assert i < 0 || i >= rows : String.format(
+		assert i >= 0 && i < rows : String.format(
 			  "i must be in the interval [0, %d) current: %d", rows, i);
-		assert j < 0 || j >= cols : String.format(
+		assert j >= 0 && j < cols : String.format(
 			  "j must be in the interval [0, %d) current: %d", cols, j);
 
 		matrix[(i * cols) + j] = v;
@@ -573,9 +573,9 @@ public final class Matrix implements Serializable {
 	 * @param v value to increment.
 	 */
 	public final void increment(int i, int j, double v) {
-		assert i < 0 || i >= rows : String.format(
+		assert i >= 0 && i < rows : String.format(
 			  "i must be in the interval [0, %d) current: %d", rows, i);
-		assert j < 0 || j >= cols : String.format(
+		assert j >= 0 && j < cols : String.format(
 			  "j must be in the interval [0, %d) current: %d", cols, j);
 
 		matrix[(i * cols) + j] += v;
@@ -590,9 +590,9 @@ public final class Matrix implements Serializable {
 	 * @param i2 index of the second row
 	 */
 	public void swap(int i1, int i2) {
-		assert i1 < 0 || i1 >= rows : String.format(
+		assert i1 >= 0 && i1 < rows : String.format(
 			  "i1 must be in the interval [0, %d) current: %d", rows, i1);
-		assert i2 < 0 || i2 >= cols : String.format(
+		assert i2 >= 0 && i2 < cols : String.format(
 			  "i2 must be in the interval [0, %d) current: %d", rows, i2);
 
 		final double[] a = getRow(i1);
