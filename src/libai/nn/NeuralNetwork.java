@@ -195,7 +195,7 @@ public abstract class NeuralNetwork implements Serializable {
 		assert patterns[0].getColumns() == 1 && answers[0].getColumns() == 1 :
 				"patterns and answers must be column matrices";
 		assert patterns.length == answers.length :
-				"There must be the same ammount of patterns and answers";
+				"There must be the same amount of patterns and answers";
 		assert offset >= 0 && offset < patterns.length : String.format(
 				"offset must be in the interval [0, %d), found: %d", patterns.length, offset);
 		assert length >= 0 && length <= patterns.length - offset : String.format(
