@@ -231,11 +231,6 @@ public abstract class NeuralNetwork implements Serializable {
 	 * @return The square Euclidean distance.
 	 */
 	public static double euclideanDistance2(Matrix a, Matrix b) {
-		assert a.getColumns() == 1 && b.getColumns() == 1
-				: "a & b must be column matrices";
-		assert a.getRows() == b.getRows()
-				: "a & b must have the same number of rows";
-
 		double sum = 0;
 		for (int i = 0; i < a.getRows(); i++) {
 			double diff = (a.position(i, 0) - b.position(i, 0));
