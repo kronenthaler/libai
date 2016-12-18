@@ -80,7 +80,18 @@ public abstract class NeuralNetwork implements Serializable {
 	 * @param length	How many patterns will be used.
 	 * @param minerror	The minimal error expected.
 	 */
-	public abstract void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror);
+	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
+		assert patterns[0].getColumns() == 1 && answers[0].getColumns() == 1 :
+				"patterns and answers must be column matrices";
+		assert patterns.length == answers.length :
+				"There must be the same amount of patterns and answers";
+		assert offset >= 0 && offset < patterns.length : String.format(
+				"offset must be in the interval [0, %d), found: %d", patterns.length, offset);
+		assert length >= 0 && length <= patterns.length - offset : String.format(
+				"length must be in the interval (0, %d], found: %d", patterns.length - offset, length);
+		assert epochs > 0 : "The number of epochs must be a positive non zero integer";
+		assert minerror >= 0 : "The error must be a postive number";
+	}
 
 	/**
 	 * Calculate the output for the {@code pattern}.
