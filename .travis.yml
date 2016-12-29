@@ -1,6 +1,9 @@
 before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y octave
-
+  
 language: java
-script: ant test 
+script: mvn test 
+
+# add later on a deploy section to place this somewhere so it can be used as a
+# dependency
