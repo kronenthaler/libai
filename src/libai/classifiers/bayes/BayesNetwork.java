@@ -31,10 +31,6 @@ public class BayesNetwork extends BayesSystem {
     
     @Override
     protected Graph getStructure(DataSet ds, double eps) {
-        String[] names = new String[ds.getMetaData().getAttributeCount()];
-        for (int i = 0; i < names.length; i++)
-            names[i] = ""+(i+1);//*/ds.getMetaData().getAttributeName(i).replace("-", "_");//
-
         Graph G = new Graph(ds.getMetaData().getAttributeCount());
         int N = G.getVertexCount();
         
@@ -46,7 +42,6 @@ public class BayesNetwork extends BayesSystem {
                 double info = I(ds, x, y);
                 if (x != y && info >= eps) {
                     L.add(new Pair<Double, Pair<Integer, Integer>>(info, new Pair<Integer, Integer>(x, y)));
-                    L.add(new Pair<Double, Pair<Integer, Integer>>(info, new Pair<Integer, Integer>(y, x)));
                 }
             }
         }
@@ -81,6 +76,7 @@ public class BayesNetwork extends BayesSystem {
         G.saveAsDot(new File("2thickening.dot"), false, names);
         
         //3. Thinning
+        //TODO: do the thinning in a second graph.
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
                 if(i == j) continue;
@@ -94,9 +90,9 @@ public class BayesNetwork extends BayesSystem {
                 }
             }
         }
+        //TODO: use the second graph as the new one.
         System.err.println("Thinning 1/2: " + G.getEdgeCount() / 2);
         G.saveAsDot(new File("3thinning1.dot"), false, names);
-        
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
                 if(i==j) continue;
@@ -115,7 +111,7 @@ public class BayesNetwork extends BayesSystem {
         //4. orient edges
         G = orientEdges(G, ds, eps); //also weird behaviour here, more edges are created
         System.err.println("orienting: " + G.getEdgeCount());
-        G.saveAsDot(new File("5oriented.dot"), false, names);
+        G.saveAsDot(new File("5oriented.dot"), true, names);
         return G;
     }
 
@@ -507,28 +503,97 @@ public class BayesNetwork extends BayesSystem {
         return (BayesNetwork)new BayesNetwork().train(ds);
     }
     
+    static String[] names; 
     public static void main(String arg[]) throws Exception {
         Class.forName("com.mysql.jdbc.Driver");
         Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/iris", "root", "r00t");
-        DataSet ds = new MySQLDataSet(conn, "alarm5", 0);
+        DataSet ds = new MySQLDataSet(conn, "alarm4", 0);
+        
+        names = new String[ds.getMetaData().getAttributeCount()];
+        for (int i = 0; i < names.length; i++)
+            names[i] = ""+(i+1);//*/ds.getMetaData().getAttributeName(i).replace("-", "_");//
+        
         int N = ds.getMetaData().getAttributeCount();
-        BayesNetwork bn = new BayesNetwork();
-        bn.initCountTree(ds);
-        Graph G = bn.getStructure(ds, EPSILON);
+        BayesNetwork pc = new BayesNetwork();
+        pc.initCountTree(ds);
         
-        /*for(int i=0;i<N;i++){
+        Graph G = pc.getStructure(ds, 0.01);
+        G.saveAsDot(new File("oriented.dot"), true, names);
+        
+        if(N < 37)
+            return;
+        
+//Total: 46
+//Correct: 38 / 46
+//Missing: 8 : [(21,12), (19,26), (22,34)]
+//Extra: 8 : [(9,20), (36,12), (25,17), (1,17), (32,33), (7,8), (14,21), (3,18)]
+//Missoriented: 5 : [(33,32), (17,25), (18,3), (20,9), (21,14)]
+
+        Graph alarm = new Graph(new Matrix(37, 37, new double[]{
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,
+        1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,}));
+        alarm.saveAsDot(new File("alarm.dot"), true, names);
+        
+        
+        Set<Pair<Integer, Integer>> correct= new HashSet<Pair<Integer,Integer>>();
+        Set<Pair<Integer, Integer>> missing= new HashSet<Pair<Integer,Integer>>();
+        Set<Pair<Integer, Integer>> extra= new HashSet<Pair<Integer,Integer>>();
+        Set<Pair<Integer, Integer>> misoriented= new HashSet<Pair<Integer,Integer>>();
+        for(int i=0;i<N;i++){
             for(int j=0;j<N;j++){
-                if(i==j) continue;
-                Set<Integer> adj = G.adjacencyPath(i, j, true);
-                Set<Integer> N1 = G.neighbors(i, true);
-                N1.retainAll(adj);
-                
-                Set<Integer> N2 = bn.neighborsToPath(i, j, G);
-                
-                System.err.println(N2+" "+N1);
+                if(alarm.isEdge(i, j, false) && G.isEdge(i, j, false)) correct.add(new Pair<Integer, Integer>(i,j));
+                if(alarm.isEdge(i, j, false) && !G.isEdge(i, j, false)) missing.add(new Pair<Integer, Integer>(i,j));
+                if(!alarm.isEdge(i, j, false) && G.isEdge(i, j, false)) extra.add(new Pair<Integer, Integer>(i,j));
+                if(alarm.isEdge(i, j, false) && G.isEdge(j, i, false)) misoriented.add(new Pair<Integer, Integer>(i,j));
             }
-        }*/
+        }
         
-        //BayesNetwork.getInstance(ds);
+        System.err.printf(
+                "Total: %d\n"+
+                "Correct: %d / %d\n"
+                + "Missing: %d : %s\n"
+                + "Extra: %d : %s\n"
+                + "Missoriented: %d : %s\n",
+                G.getEdgeCount(), 
+                correct.size(), 
+                alarm.getEdgeCount(),
+                missing.size(), missing, 
+                extra.size(), extra,
+                misoriented.size(), misoriented);
     }
 }   
