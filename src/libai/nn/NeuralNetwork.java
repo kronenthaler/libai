@@ -80,7 +80,9 @@ public abstract class NeuralNetwork implements Serializable {
 	 * @param length	How many patterns will be used.
 	 * @param minerror	The minimal error expected.
 	 */
-	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
+	public abstract void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror);
+
+	protected void validate(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 		assert patterns[0].getColumns() == 1 && answers[0].getColumns() == 1 :
 				"patterns and answers must be column matrices";
 		assert patterns.length == answers.length :
