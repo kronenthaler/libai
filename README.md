@@ -1,4 +1,6 @@
-Libai [![Build Status](https://travis-ci.org/kronenthaler/libai.svg?branch=master)](https://travis-ci.org/kronenthaler/libai)
+[![Build Status](https://travis-ci.org/kronenthaler/libai.svg?branch=master)](https://travis-ci.org/kronenthaler/libai)
+
+LibAI 
 =====
 
 A library compiling Artificial Intelligence algorithms:
