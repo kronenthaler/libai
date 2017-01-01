@@ -5,5 +5,8 @@ before_install:
 language: java
 script: mvn test 
 
+after_success:
+  - mvn clean cobertura:cobertura coveralls:report
+  
 # add later on a deploy section to place this somewhere so it can be used as a
 # dependency
