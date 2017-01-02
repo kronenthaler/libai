@@ -26,6 +26,8 @@
         </dependency>
     </dependencies>
     
+    
+
     <build>
         <plugins>
             <!-- generate the javadocs on demand: mvn javadoc:javadoc -->
@@ -43,25 +45,31 @@
                 <groupId>org.eluder.coveralls</groupId>
                 <artifactId>coveralls-maven-plugin</artifactId>
                 <version>4.3.0</version>
-                
             </plugin>
-
+            
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>cobertura-maven-plugin</artifactId>
-                <version>2.7</version>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.7.7.201606060606</version>
                 <configuration>
-                    <format>xml</format>
-                    <maxmem>256m</maxmem>
-                    <!-- aggregated reports for multi-module projects -->
-                    <aggregate>true</aggregate>
-                    <!-- ignore demos package from the coverage report-->
-                    <instrumentation>
-                        <ignores>
-                            <ignore>demos.*</ignore>
-                        </ignores>
-                    </instrumentation>
+                    <excludes>
+                        <exclude>**/demos/**/*</exclude>
+                    </excludes>
                 </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             
             <!-- make the jar executable by launching the examples -->
