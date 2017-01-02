@@ -78,6 +78,16 @@ public class BFSTest {
 		assertEquals("\0u", sb2.toString());
 	}
 	
+	@Test
+	public void testImpossible(){
+		BFS bfs = new BFS();
+
+		State init = new Node("21345678.", null, '\0');
+		Node ans = (Node)bfs.search(init);
+
+		assertEquals(ans, null);
+	}
+        
 	private final String DEMO_STEPS = 
 		 ".87654321\n"
 		+"687.54321\n"
