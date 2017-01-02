@@ -1,3 +1,5 @@
+package demos;
+
 /*
  * MIT License
  *
@@ -32,8 +34,6 @@ public class Examples extends javax.swing.JFrame {
 	 */
 	public Examples() {
 		initComponents();
-
-
 	}
 
 	/**

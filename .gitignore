@@ -1,4 +1,15 @@
 /build/
-/dist/
-/nbproject/private/
 /docs/
+/target/
+
+# ignore all IDE project files to keep it agnostic
+## intellij
+/.idea/
+*.iml
+
+## netbeans
+/nbproject/
+nbactions.xml
+
+## eclipse
+.project
