@@ -55,6 +55,12 @@
                     <maxmem>256m</maxmem>
                     <!-- aggregated reports for multi-module projects -->
                     <aggregate>true</aggregate>
+                    <!-- ignore demos package from the coverage report-->
+                    <instrumentation>
+                        <ignores>
+                            <ignore>demos.*</ignore>
+                        </ignores>
+                    </instrumentation>
                 </configuration>
             </plugin>
             
