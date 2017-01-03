@@ -491,7 +491,6 @@ public class MLP extends NeuralNetwork {
 			 ObjectInputStream in = new ObjectInputStream(fis)){
 			return (MLP) in.readObject();
 		} catch (Exception e) {
-			e.printStackTrace();
 			return null;
 		}
 	}
