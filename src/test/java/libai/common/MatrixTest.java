@@ -919,6 +919,34 @@ public class MatrixTest {
         }
     }
 
+	@Test(expected = IllegalArgumentException.class)
+	public void testDotProductThisNotRow() {
+		Matrix a = Matrix.random(2, 10);
+		Matrix b = Matrix.random(1, 20);
+		a.dotProduct(b);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testDotProductThisNotColumn() {
+		Matrix a = Matrix.random(10, 2);
+		Matrix b = Matrix.random(1, 20);
+		a.dotProduct(b);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testDotProductOtherNotRow() {
+		Matrix a = Matrix.random(1, 20);
+		Matrix b = Matrix.random(2, 10);
+		a.dotProduct(b);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testDotProductOtherNotColumn() {
+		Matrix a = Matrix.random(1, 20);
+		Matrix b = Matrix.random(10, 2);
+		a.dotProduct(b);
+	}
+
     private void assertArrayNotEquals(double[] a, double[] b, double DELTA) {
         try {
             assertArrayEquals(a, b, DELTA);
