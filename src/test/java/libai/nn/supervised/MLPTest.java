@@ -34,6 +34,8 @@ import libai.common.functions.HyperbolicTangent;
 import libai.common.functions.Sinc;
 
 import static java.lang.Math.round;
+import javax.swing.JProgressBar;
+import libai.common.ProgressDisplay;
 import static org.junit.Assert.*;
 import static org.junit.Assume.*;
 
@@ -235,7 +237,22 @@ public class MLPTest {
 			assertEquals(t[i].position(0, 0), res, 0.1);
 		}
 	}
-	
+
+	@Test
+	public void testNullPath() {
+		assertNull(MLP.open(null));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testWrongBeta() {
+		new MLP(new int[2], new Function[2], -1);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testWrongBeta2() {
+		new MLP(new int[2], new Function[2], 2);
+	}
+
 	private double f(double x) {
 		return Math.sin(x) + Math.cos(x);
 	}
