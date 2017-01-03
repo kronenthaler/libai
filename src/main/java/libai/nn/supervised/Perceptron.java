@@ -149,7 +149,7 @@ public class Perceptron extends NeuralNetwork {
 	}
 
 	/**
-	 * Deserializes an {@code Perceptron}
+	 * Deserializes a {@code Perceptron}
 	 * 
 	 * @param path Path to file
 	 * @return Restored {@code Perceptron instance}

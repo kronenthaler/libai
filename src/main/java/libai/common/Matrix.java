@@ -650,26 +650,7 @@ public final class Matrix implements Serializable {
 	 return x;
 	 }
 	 */
-	/**
-	 * Print this matrix in the OpenOffice's formula format. Useful for copy &amp;
-	 * paste in OO documents.
-	 *
-	 * @param out Stream to write on.
-	 */
-	public void printOOFormat(PrintStream out) {
-		out.print("left [ matrix{");
-		for (int i = 0, k = 0; i < rows; i++) {
-			if (i > 0)
-				out.print(" ## ");
-			for (int j = 0; j < cols; j++) {
-				if (j > 0)
-					out.print(" # ");
-				out.print(matrix[k++]);
-			}
-		}
-		out.println("} right ]newLine");
-	}
-
+	
 	/**
 	 * Check if two matrix are equals position to position with a precision of
 	 * 1e-7. If the dimensions mismatch they aren't equals. If one position
