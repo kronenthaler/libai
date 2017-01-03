@@ -377,6 +377,20 @@ public class MLPTest {
 		}
 	};
 
+	@Test(expected = IllegalArgumentException.class)
+	public void testMomentumWithNoBeta() {
+		MLP mlp = new MLP(
+			new int[]{2, 16, 1},
+			new Function[]{
+				new Identity(),
+				new Sinc(),
+				new Identity()
+			}
+		);
+		mlp.setProgressBar(progress);
+		mlp.setTrainingType(MLP.MOMEMTUM_BACKPROPAGATION);
+	}
+
 	private double f(double x) {
 		return Math.sin(x) + Math.cos(x);
 	}
