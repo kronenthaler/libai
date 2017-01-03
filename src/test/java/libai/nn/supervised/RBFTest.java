@@ -2,17 +2,17 @@
  * MIT License
  *
  * Copyright (c) 2017 Federico Vera <https://github.com/dktcoding>
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining ada copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -25,11 +25,9 @@ package libai.nn.supervised;
 
 import demos.common.SimpleProgressDisplay;
 import java.io.File;
-import java.util.Random;
 import javax.swing.JProgressBar;
 import libai.common.Matrix;
 import libai.common.MatrixIOTest;
-import libai.nn.NeuralNetwork;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -72,9 +70,9 @@ public class RBFTest {
 		RBF net = new RBF(nperlayer);
 		net.setProgressBar(new SimpleProgressDisplay(new JProgressBar()));
 		net.train(p, t, 0.001, 600000, 0, n);
-		
+
 		assumeTrue("RBF didn't converge, try again", 0.0001 > net.error(p, t));
-		
+
 		for (int i = n; i < p.length; i++) {
 			assertEquals(t[i].position(0, 0),net.simulate(p[i]).position(0, 0), 0.1);
 		}
@@ -132,15 +130,15 @@ public class RBFTest {
 		for (int i = n; i < p.length; i++) {
 			assertEquals(net.simulate(p[i]).position(0, 0), net2.simulate(p[i]).position(0, 0), 0);
 		}
-		
+
 	}
-	
+
 	@Test
 	public void testNullPath(){
 		RBF rbf = new RBF();
 		assertNull(RBF.open(null));
 	}
-	
+
 	static double f(double x) {
 		return Math.sin(x) + Math.cos(x);
 	}
