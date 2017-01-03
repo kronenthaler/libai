@@ -975,6 +975,15 @@ public class MatrixTest {
 		assertTrue(d == map.get(d));
 	}
 
+	@Test
+	public void testToString() {
+		Matrix a = new Matrix(2, 1, true);
+		assertEquals("1.00000000 \n0.00000000 \n\n", a.toString());
+		a = new Matrix(1, 2, true);
+		System.out.println(a);
+		assertEquals("1.00000000 0.00000000 \n\n", a.toString());
+	}
+
     private void assertArrayNotEquals(double[] a, double[] b, double DELTA) {
         try {
             assertArrayEquals(a, b, DELTA);
