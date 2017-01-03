@@ -2,17 +2,17 @@
  * MIT License
  *
  * Copyright (c) 2017 Federico Vera <https://github.com/dktcoding>
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -65,14 +65,14 @@ public class SVMTest {
 		NeuralNetwork net = new SVM(new LinearKernel());
 		net.setProgressBar(new SimpleProgressDisplay(new JProgressBar()));
 		net.train(patterns, ans, 0.001, 10000, 0, n);
-		
+
 		assumeTrue("SVM didn't converge, try again", 0.001 > net.error(patterns, ans));
-		
+
 		for (int i = n; i < patterns.length; i++) {
 			assertEquals(ans[i].position(0, 0), net.simulate(patterns[i]).position(0, 0), 1e-12);
 		}
 	}
-	
+
 	@Test
 	public void testSaveOpen() {
 		int n = 100;
@@ -97,21 +97,21 @@ public class SVMTest {
 		NeuralNetwork net = new SVM(new LinearKernel());
 		net.setProgressBar(new SimpleProgressDisplay(new JProgressBar()));
 		net.train(patterns, ans, 0.001, 1000, 0, n);
-		
-        assumeTrue("Can't use temp dir...", MatrixIOTest.checkTemp());
-        
-        String tmp = System.getProperty("java.io.tmpdir") + File.separator;
-        tmp = tmp + "foo.svm";
+
+		assumeTrue("Can't use temp dir...", MatrixIOTest.checkTemp());
+
+		String tmp = System.getProperty("java.io.tmpdir") + File.separator;
+		tmp = tmp + "foo.svm";
 		assertTrue(net.save(tmp));
 		SVM net2 = SVM.open(tmp);
 		assertNotNull(net2);
-        new File(tmp).delete();
-		
+		new File(tmp).delete();
+
 		assertEquals(net.error(patterns, ans), net2.error(patterns, ans), 0);
 		for (int i = n; i < patterns.length; i++) {
 			assertEquals(net.simulate(patterns[i]).position(0, 0), net2.simulate(patterns[i]).position(0, 0), 0);
 		}
-		
+
 	}
 
 	@Test
