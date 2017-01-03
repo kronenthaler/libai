@@ -484,6 +484,14 @@ public class MatrixTest {
     }
 
     @Test
+    public void testEquals3() {
+        Matrix a = new Matrix(10, 10, true);
+
+        assertNotEquals(a, null);
+        assertNotEquals(a, new Object());
+    }
+
+    @Test
     public void testGetRows() {
         Matrix m = new Matrix(20, 10);
         assertEquals(20, m.getRows());
