@@ -69,6 +69,7 @@ public class PairTest {
 
 		for (Pair p : pairs) {
 			assertEquals(p, map.get(p));
+			assertTrue(p == map.get(p));
 		}
 	}
 
