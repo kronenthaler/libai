@@ -23,6 +23,7 @@
  */
 package libai.common;
 
+import java.util.HashMap;
 import java.util.Random;
 import libai.common.functions.Function;
 import org.junit.Test;
@@ -953,6 +954,25 @@ public class MatrixTest {
 		Matrix a = Matrix.random(1, 20);
 		Matrix b = Matrix.random(10, 2);
 		a.dotProduct(b);
+	}
+
+	@Test
+	public void testHashCode() {
+		Matrix a = Matrix.random(10, 10);
+		Matrix b = Matrix.random(10, 10);
+		Matrix c = Matrix.random(10, 5);
+		Matrix d = Matrix.random( 5, 10);
+
+		HashMap<Matrix, Matrix> map = new HashMap<>(4);
+		map.put(a, a);
+		map.put(b, b);
+		map.put(c, c);
+		map.put(d, d);
+
+		assertTrue(a == map.get(a));
+		assertTrue(b == map.get(b));
+		assertTrue(c == map.get(c));
+		assertTrue(d == map.get(d));
 	}
 
     private void assertArrayNotEquals(double[] a, double[] b, double DELTA) {
