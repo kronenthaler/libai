@@ -1,25 +1,25 @@
 /*
- * MIT License
+ * The MIT License
  *
- * Copyright (c) 2016 Federico Vera <https://github.com/dktcoding>
- * 
- * Permission is hereby granted, free of charge, to any person obtaining ada copy
+ * Copyright 2017 Ignacio Calderon (http://github.com/kronenthaler).
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * 
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package libai.search;
 
@@ -28,29 +28,25 @@ import static org.junit.Assert.*;
 
 /**
  *
- * @author Federico Vera {@literal <dktcoding [at] gmail>}
+ * @author kronenthaler
  */
-public class BFSTest {
-	
-	public BFSTest() {
-	}
-
+public class AStarTest {
 	@Test
 	public void testDemo() {
-		BFS bfs = new BFS();
+		AStar bfs = new AStar();
 		
 		State init = new GemPuzzleState(".87654321", null, '-');
 		GemPuzzleState ans = (GemPuzzleState) bfs.search(init);
-		StringBuilder sb = new StringBuilder(DEMO_STEPS.length());
+		StringBuilder sb = new StringBuilder(100);
 		ans.printSolutionMoves(sb);
 		
 		assertFalse(sb.length() == 0);
 		assertEquals(DEMO_STEPS, sb.toString());
 	}
-
+	
 	@Test
 	public void testDemo2() {
-		BFS bfs = new BFS();
+		AStar bfs = new AStar();
 		
 		State init = new GemPuzzleState("1234567.8", null, '-');
 		GemPuzzleState ans = (GemPuzzleState) bfs.search(init);
@@ -65,7 +61,7 @@ public class BFSTest {
 	
 	@Test
 	public void testDemo3() {
-		BFS bfs = new BFS();
+		AStar bfs = new AStar();
 		
 		State init = new GemPuzzleState("12345.786", null, '-');
 		GemPuzzleState ans = (GemPuzzleState) bfs.search(init);
@@ -80,15 +76,14 @@ public class BFSTest {
 	
 	@Test
 	public void testImpossible(){
-		BFS bfs = new BFS();
+		AStar bfs = new AStar();
 
-		State init = new GemPuzzleState("21345678.", null, '-');
+		State init = new GemPuzzleState("21345678.", null, '\0');
 		GemPuzzleState ans = (GemPuzzleState)bfs.search(init);
 
 		assertEquals(ans, null);
 	}
-        
-	private final String DEMO_STEPS = "-uullddrruullddrruullddrruull";
+	private final String DEMO_STEPS = "-lluurrddlluurrddlluurrddlluu";
 	private final String DEMO_STEPS_2 = "1234567.8\n12345678.\n";
 	private final String DEMO_STEPS_3 = "12345.786\n12345678.\n";
 }
