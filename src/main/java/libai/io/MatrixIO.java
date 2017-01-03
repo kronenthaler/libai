@@ -76,7 +76,12 @@ public class MatrixIO {
          * <li>Files will not be {@code gzipped} since not all versions of GNU Octave 
          * support it</li></ul>
          */
-        OCTAVE
+        OCTAVE,
+		/**
+		 * Saves the matrix in a format that's compatible with the formula format of
+		 * OpenOffice and LibreOffice.
+		 */
+		OPENOFFICE,
     }
     
     /**
@@ -125,21 +130,28 @@ public class MatrixIO {
         if (output == null) {
             throw new IllegalArgumentException("OutputStream can't be null");
         }
-        if (m == null) {
-            throw new IllegalArgumentException("The matrix map can't be null");
-        }
-        if (m.isEmpty()) {
-            return;
+        if (m == null || m.isEmpty()) {
+            throw new IllegalArgumentException("The matrix map can't be null or empty");
         }
         
         t = t == null ? Target.SERIAL : t;
         
         switch(t) {
-            case CSV:    writeText(output, m, ","); break;
-            case TSV:    writeText(output, m, "\t"); break;
-            case OCTAVE: writeOctave(output, m); break;
+            case CSV:    
+				writeText(output, m, ","); 
+				break;
+            case TSV:    
+				writeText(output, m, "\t"); 
+				break;
+            case OCTAVE: 
+				writeOctave(output, m); 
+				break;
+			case OPENOFFICE: 
+				writeOpenOffice(output, m);
+				break;
             case SERIAL:
-            default:     writeSerial(output, m);
+            default:     
+				writeSerial(output, m);
         }
     }
     
@@ -210,4 +222,22 @@ public class MatrixIO {
         }
     }
     
+	private static void writeOpenOffice(OutputStream output, Map<String, Matrix> m) throws IOException{
+		PrintStream ps = new PrintStream(output, false, "US-ASCII");
+		for (String name : m.keySet()){
+			Matrix matrix = m.get(name);
+			ps.printf("%s: \n", name);
+			ps.print("left [ matrix{");
+			for (int i = 0; i < matrix.getRows(); i++) {
+				if (i > 0)
+					ps.print(" ## ");
+				for (int j = 0; j < matrix.getColumns(); j++) {
+					if (j > 0)
+						ps.print(" # ");
+					ps.print(matrix.position(i, j));
+				}
+			}
+			ps.println("} right ]newLine");
+		}
+	}
 }

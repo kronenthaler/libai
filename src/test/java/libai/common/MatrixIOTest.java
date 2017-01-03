@@ -229,6 +229,18 @@ public class MatrixIOTest {
         
         new File(tmp + "foo.mat").delete();
     }
+	
+	@Test 
+	public void testOpenOfficeFormat(){
+		double[] values = new double[]{1,2,3,4,5,6,7,8,9};
+		Matrix m = new Matrix(3, 3, values);
+		try(ByteArrayOutputStream output = new ByteArrayOutputStream()){
+			MatrixIO.write(output, m, MatrixIO.Target.OPENOFFICE);
+			assertEquals(output.toString("US-ASCII"), "a: \nleft [ matrix{1.0 # 2.0 # 3.0 ## 4.0 # 5.0 # 6.0 ## 7.0 # 8.0 # 9.0} right ]newLine\n");
+		}catch(Exception e){
+			fail("An unexpected IO error has occurred");
+		}
+	}
     
     public static String eval(String expr) {
         try {
