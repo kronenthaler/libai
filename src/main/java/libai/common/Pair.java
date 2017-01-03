@@ -31,7 +31,7 @@ import java.util.Objects;
  *
  * @author kronenthaler
  */
-public final class Pair<V extends Comparable, K extends Comparable> implements Comparable<Pair> {
+public final class Pair<V extends Comparable<V>, K extends Comparable<K>> implements Comparable<Pair<V, K>> {
 	/**
 	 * First element of the pair (the 'key').
 	 */
@@ -61,7 +61,7 @@ public final class Pair<V extends Comparable, K extends Comparable> implements C
 	 * than o.
 	 */
 	@Override
-	public int compareTo(Pair o) {
+	public int compareTo(Pair<V, K> o) {
 		return first.compareTo(o.first);
 	}
 
@@ -81,7 +81,7 @@ public final class Pair<V extends Comparable, K extends Comparable> implements C
 		if (obj == null || getClass() != obj.getClass()) {
 			return false;
 		}
-		final Pair<?, ?> other = (Pair<?, ?>) obj;
+		final Pair<V, K> other = (Pair<V, K>) obj;
 
 		return Objects.equals(first, other.first) && Objects.equals(second, other.second);
 	}
