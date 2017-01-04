@@ -56,6 +56,6 @@ public class HyperbolicTangentTest {
 
 	@Test
 	public void testGetGetDerivative() {
-		assertNull(new Identity().getDerivate().getDerivate());
+		assertNull(new HyperbolicTangent().getDerivate().getDerivate());
 	}
 }
