@@ -976,6 +976,17 @@ public class MatrixTest {
 	}
 
 	@Test
+	public void testHashCode2() {
+		Matrix a = Matrix.random(10, 10);
+		assertEquals(a.hashCode(), a.hashCode());
+		Matrix b = new Matrix(10, 10);
+		a.copy(b);
+		assertEquals(a.hashCode(), b.hashCode());
+		b.position(0, 0, b.position(0, 0) + 1);
+		assertNotEquals(a.hashCode(), b.hashCode());
+	}
+
+	@Test
 	public void testToString() {
 		Matrix a = new Matrix(2, 1, true);
 		assertEquals("1.00000000 \n0.00000000 \n\n", a.toString());
