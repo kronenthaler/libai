@@ -49,7 +49,7 @@ public class SVMTest {
 		Matrix[] patterns = new Matrix[n + t];
 		Matrix[] ans = new Matrix[n + t];
 
-		Random r = new Random();
+		Random r = new Random(0);
 		for (int i = 0; i < n; i++) {
 			int inc = r.nextInt(10);
 			patterns[i] = new Matrix(2, 1, new double[]{i + 1, (2 * (i + 1)) + 3 + Math.pow(-1, inc) * inc});
