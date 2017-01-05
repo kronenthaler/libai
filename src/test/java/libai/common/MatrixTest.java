@@ -23,6 +23,7 @@
  */
 package libai.common;
 
+import java.util.HashMap;
 import java.util.Random;
 import libai.common.functions.Function;
 import org.junit.Test;
@@ -484,6 +485,14 @@ public class MatrixTest {
     }
 
     @Test
+    public void testEquals3() {
+        Matrix a = new Matrix(10, 10, true);
+
+        assertNotEquals(a, null);
+        assertNotEquals(a, new Object());
+    }
+
+    @Test
     public void testGetRows() {
         Matrix m = new Matrix(20, 10);
         assertEquals(20, m.getRows());
@@ -918,6 +927,73 @@ public class MatrixTest {
             }
         }
     }
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testDotProductThisNotRow() {
+		Matrix a = Matrix.random(2, 10);
+		Matrix b = Matrix.random(1, 20);
+		a.dotProduct(b);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testDotProductThisNotColumn() {
+		Matrix a = Matrix.random(10, 2);
+		Matrix b = Matrix.random(1, 20);
+		a.dotProduct(b);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testDotProductOtherNotRow() {
+		Matrix a = Matrix.random(1, 20);
+		Matrix b = Matrix.random(2, 10);
+		a.dotProduct(b);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testDotProductOtherNotColumn() {
+		Matrix a = Matrix.random(1, 20);
+		Matrix b = Matrix.random(10, 2);
+		a.dotProduct(b);
+	}
+
+	@Test
+	public void testHashCode() {
+		Matrix a = Matrix.random(10, 10);
+		Matrix b = Matrix.random(10, 10);
+		Matrix c = Matrix.random(10, 5);
+		Matrix d = Matrix.random( 5, 10);
+
+		HashMap<Matrix, Matrix> map = new HashMap<>(4);
+		map.put(a, a);
+		map.put(b, b);
+		map.put(c, c);
+		map.put(d, d);
+
+		assertTrue(a == map.get(a));
+		assertTrue(b == map.get(b));
+		assertTrue(c == map.get(c));
+		assertTrue(d == map.get(d));
+	}
+
+	@Test
+	public void testHashCode2() {
+		Matrix a = Matrix.random(10, 10);
+		assertEquals(a.hashCode(), a.hashCode());
+		Matrix b = new Matrix(10, 10);
+		a.copy(b);
+		assertEquals(a.hashCode(), b.hashCode());
+		b.position(0, 0, b.position(0, 0) + 1);
+		assertNotEquals(a.hashCode(), b.hashCode());
+	}
+
+	@Test
+	public void testToString() {
+		Matrix a = new Matrix(2, 1, true);
+		assertEquals("1.00000000 \n0.00000000 \n\n", a.toString());
+		a = new Matrix(1, 2, true);
+		System.out.println(a);
+		assertEquals("1.00000000 0.00000000 \n\n", a.toString());
+	}
 
     private void assertArrayNotEquals(double[] a, double[] b, double DELTA) {
         try {
