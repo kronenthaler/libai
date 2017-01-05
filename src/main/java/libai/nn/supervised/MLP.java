@@ -195,7 +195,7 @@ public class MLP extends NeuralNetwork {
 		}
 
 		if (progress != null)
-			progress.setValue(1);
+			progress.setValue(0);
 	}
 
 	private void standardBP(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
@@ -491,7 +491,6 @@ public class MLP extends NeuralNetwork {
 			 ObjectInputStream in = new ObjectInputStream(fis)){
 			return (MLP) in.readObject();
 		} catch (Exception e) {
-			e.printStackTrace();
 			return null;
 		}
 	}

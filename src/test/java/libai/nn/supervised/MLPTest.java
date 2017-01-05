@@ -34,6 +34,8 @@ import libai.common.functions.HyperbolicTangent;
 import libai.common.functions.Sinc;
 
 import static java.lang.Math.round;
+import javax.swing.JProgressBar;
+import libai.common.ProgressDisplay;
 import static org.junit.Assert.*;
 import static org.junit.Assume.*;
 
@@ -235,7 +237,160 @@ public class MLPTest {
 			assertEquals(t[i].position(0, 0), res, 0.1);
 		}
 	}
-	
+
+	@Test
+	public void testNullPath() {
+		assertNull(MLP.open(null));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testWrongBeta() {
+		new MLP(new int[2], new Function[2], -1);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testWrongBeta2() {
+		new MLP(new int[2], new Function[2], 2);
+	}
+
+	@Test
+	public void testWithProgressBarStandard() {
+		MLP mlp = new MLP(
+			new int[]{2, 16, 1},
+			new Function[]{
+				new Identity(),
+				new Sinc(),
+				new Identity()
+			}
+		);
+		mlp.setProgressBar(progress);
+		mlp.setTrainingType(MLP.STANDARD_BACKPROPAGATION);
+		Matrix[] ins = new Matrix[4];
+		ins[0] = new Matrix(2, 1, new double[]{0, 0});
+		ins[1] = new Matrix(2, 1, new double[]{0, 1});
+		ins[2] = new Matrix(2, 1, new double[]{1, 0});
+		ins[3] = new Matrix(2, 1, new double[]{1, 1});
+		Matrix[] out = new Matrix[4];
+		out[0] = new Matrix(1, 1, new double[]{1});
+		out[1] = new Matrix(1, 1, new double[]{0});
+		out[2] = new Matrix(1, 1, new double[]{0});
+		out[3] = new Matrix(1, 1, new double[]{0});
+		mlp.train(ins, out, 0.01, 1000000, 0, 4, 0.01);
+		assumeTrue("MLP didn't converge, try again", 0.01 > mlp.error(ins, out));
+		Matrix res = new Matrix(1, 1);
+		mlp.simulate(ins[0], res);
+		assertEquals(1, round(res.position(0, 0)));
+		mlp.simulate(ins[1], res);
+		assertEquals(0, round(res.position(0, 0)));
+		mlp.simulate(ins[2], res);
+		assertEquals(0, round(res.position(0, 0)));
+		mlp.simulate(ins[3], res);
+		assertEquals(0, round(res.position(0, 0)));
+	}
+
+	@Test
+	public void testWithProgressBarResilient() {
+		MLP mlp = new MLP(
+			new int[]{2, 16, 1},
+			new Function[]{
+				new Identity(),
+				new Sinc(),
+				new Identity()
+			}
+		);
+		mlp.setProgressBar(progress);
+		mlp.setTrainingType(MLP.RESILENT_BACKPROPAGATION);
+		Matrix[] ins = new Matrix[4];
+		ins[0] = new Matrix(2, 1, new double[]{0, 0});
+		ins[1] = new Matrix(2, 1, new double[]{0, 1});
+		ins[2] = new Matrix(2, 1, new double[]{1, 0});
+		ins[3] = new Matrix(2, 1, new double[]{1, 1});
+		Matrix[] out = new Matrix[4];
+		out[0] = new Matrix(1, 1, new double[]{1});
+		out[1] = new Matrix(1, 1, new double[]{0});
+		out[2] = new Matrix(1, 1, new double[]{0});
+		out[3] = new Matrix(1, 1, new double[]{0});
+		mlp.train(ins, out, 0.01, 1000000, 0, 4, 0.01);
+		assumeTrue("MLP didn't converge, try again", 0.01 > mlp.error(ins, out));
+		Matrix res = new Matrix(1, 1);
+		mlp.simulate(ins[0], res);
+		assertEquals(1, round(res.position(0, 0)));
+		mlp.simulate(ins[1], res);
+		assertEquals(0, round(res.position(0, 0)));
+		mlp.simulate(ins[2], res);
+		assertEquals(0, round(res.position(0, 0)));
+		mlp.simulate(ins[3], res);
+		assertEquals(0, round(res.position(0, 0)));
+	}
+
+	@Test
+	public void testWithProgressBarMomentum() {
+		MLP mlp = new MLP(
+			new int[]{2, 16, 1},
+			new Function[]{
+				new Identity(),
+				new Sinc(),
+				new Identity()
+			}
+		);
+		mlp.setProgressBar(progress);
+		mlp.setTrainingType(MLP.MOMEMTUM_BACKPROPAGATION, 0.5);
+		Matrix[] ins = new Matrix[4];
+		ins[0] = new Matrix(2, 1, new double[]{0, 0});
+		ins[1] = new Matrix(2, 1, new double[]{0, 1});
+		ins[2] = new Matrix(2, 1, new double[]{1, 0});
+		ins[3] = new Matrix(2, 1, new double[]{1, 1});
+		Matrix[] out = new Matrix[4];
+		out[0] = new Matrix(1, 1, new double[]{1});
+		out[1] = new Matrix(1, 1, new double[]{0});
+		out[2] = new Matrix(1, 1, new double[]{0});
+		out[3] = new Matrix(1, 1, new double[]{0});
+		mlp.train(ins, out, 0.01, 1000000, 0, 4, 0.01);
+		assumeTrue("MLP didn't converge, try again", 0.01 > mlp.error(ins, out));
+		Matrix res = new Matrix(1, 1);
+		mlp.simulate(ins[0], res);
+		assertEquals(1, round(res.position(0, 0)));
+		mlp.simulate(ins[1], res);
+		assertEquals(0, round(res.position(0, 0)));
+		mlp.simulate(ins[2], res);
+		assertEquals(0, round(res.position(0, 0)));
+		mlp.simulate(ins[3], res);
+		assertEquals(0, round(res.position(0, 0)));
+	}
+
+	private static final ProgressDisplay progress = new ProgressDisplay() {
+		int min, max;
+		@Override
+		public void setMinimum(int v) {
+			min = v;
+		}
+
+		@Override
+		public void setMaximum(int v) {
+			max = v;
+		}
+
+		@Override
+		public void setValue(int v) {
+			assertTrue(v >= min);
+			assertTrue(v <= max);
+		}
+	};
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testMomentumWithNoBeta() {
+		MLP mlp = new MLP(
+			new int[]{2, 16, 1},
+			new Function[]{
+				new Identity(),
+				new Sinc(),
+				new Identity()
+			}
+		);
+		mlp.setProgressBar(progress);
+		mlp.setTrainingType(MLP.MOMEMTUM_BACKPROPAGATION);
+	}
+
 	private double f(double x) {
 		return Math.sin(x) + Math.cos(x);
 	}
