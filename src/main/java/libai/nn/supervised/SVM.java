@@ -162,7 +162,7 @@ public class SVM extends NeuralNetwork {
         nSupportVectors = tempnSupportVectors;
 
         if (progress != null)
-            progress.setValue(1);
+            progress.setValue(0);
     }
 
     @Override
