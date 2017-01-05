@@ -55,7 +55,7 @@ public class SVM extends NeuralNetwork {
     private int nSupportVectors = -1;		//last index of the support vector.
     private double[] errorCache;			//stores the errors to reduce calculations.
     private double deltaB;
-    private Random randGenerator = new Random(0);
+
     //trainning params.
     private double minerror;				//set in the trainning method.
     private double C = 0.05;
@@ -69,6 +69,11 @@ public class SVM extends NeuralNetwork {
     }
 
     public SVM(Kernel _kernel) {
+		this(_kernel, null);
+    }
+
+    public SVM(Kernel _kernel, Random rand) {
+		super(rand);
         kernel = _kernel;
     }
 
@@ -240,7 +245,7 @@ public class SVM extends NeuralNetwork {
             }
 
             k = k0 = i2 = 0;
-            for (rands = randGenerator.nextDouble(), k0 = (int) (rands * nSupportVectors), k = k0; k < nSupportVectors + k0; k++) {
+            for (rands = random.nextDouble(), k0 = (int) (rands * nSupportVectors), k = k0; k < nSupportVectors + k0; k++) {
                 i2 = k % nSupportVectors;
                 if (alph[i2] > 0 && alph[i2] < C) {
                     if (takeStep(i1, i2) == 1) {
@@ -250,7 +255,7 @@ public class SVM extends NeuralNetwork {
             }
 
             rands = 0;
-            for (rands = randGenerator.nextDouble(), k0 = (int) (rands * nSupportVectors), k = k0; k < nSupportVectors + k0; k++) {
+            for (rands = random.nextDouble(), k0 = (int) (rands * nSupportVectors), k = k0; k < nSupportVectors + k0; k++) {
                 i2 = k % nSupportVectors;
                 if (takeStep(i1, i2) == 1) {
                     return 1;
