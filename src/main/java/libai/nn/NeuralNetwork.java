@@ -44,6 +44,18 @@ public abstract class NeuralNetwork implements Serializable {
 
 	protected transient Plotter plotter;
 	protected transient ProgressDisplay progress;
+	protected final Random random;
+
+	public NeuralNetwork() {
+		this(null);
+	}
+
+	public NeuralNetwork(Random rand) {
+		if (rand == null) {
+			rand = ThreadLocalRandom.current();
+		}
+		random = rand;
+	}
 
 	public void setPlotter(Plotter plotter) {
 		this.plotter = plotter;
