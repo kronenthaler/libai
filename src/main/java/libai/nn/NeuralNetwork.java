@@ -285,10 +285,9 @@ public abstract class NeuralNetwork implements Serializable {
 	 *
 	 * @param sort Array to be shuffled
 	 */
-	public static void shuffle(int[] sort) {
-		Random rand = ThreadLocalRandom.current();
+	public void shuffle(int[] sort) {
 		for (int i = 0; i < sort.length; i++) {
-			int j = rand.nextInt(sort.length);
+			int j = random.nextInt(sort.length);
 			int aux = sort[i];
 			sort[i] = sort[j];
 			sort[j] = aux;
