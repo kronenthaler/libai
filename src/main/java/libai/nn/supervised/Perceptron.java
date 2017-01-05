@@ -2,17 +2,17 @@
  * MIT License
  *
  * Copyright (c) 2009-2016 Ignacio Calderon <https://github.com/kronenthaler>
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -24,6 +24,7 @@
 package libai.nn.supervised;
 
 import java.io.*;
+import java.util.Random;
 import libai.common.Matrix;
 import libai.common.functions.Sign;
 import libai.nn.NeuralNetwork;
@@ -38,7 +39,7 @@ import libai.nn.NeuralNetwork;
  */
 public class Perceptron extends NeuralNetwork {
 	private static final long serialVersionUID = 2795822735956649552L;
-	
+
 	protected Matrix W, b;
 	protected int ins, outs;
 	protected static Sign signum = new Sign();
@@ -54,6 +55,20 @@ public class Perceptron extends NeuralNetwork {
 	 * @param out Number of outputs for the network.
 	 */
 	public Perceptron(int in, int out) {
+		this(in, out, null);
+	}
+
+	/**
+	 * Constructor.
+	 *
+	 * @param in Number of inputs for the network = number of elements in the
+	 * patterns.
+	 * @param out Number of outputs for the network.
+	 * @param rand Random generator used for creating matrices
+	 */
+	public Perceptron(int in, int out, Random rand) {
+		super(rand);
+
 		ins = in;
 		outs = out;
 
@@ -150,10 +165,10 @@ public class Perceptron extends NeuralNetwork {
 
 	/**
 	 * Deserializes a {@code Perceptron}
-	 * 
+	 *
 	 * @param path Path to file
 	 * @return Restored {@code Perceptron instance}
-	 * @see NeuralNetwork#save(java.lang.String) 
+	 * @see NeuralNetwork#save(java.lang.String)
 	 */
 	public static Perceptron open(String path) {
 		try (FileInputStream fis = new FileInputStream(path);
