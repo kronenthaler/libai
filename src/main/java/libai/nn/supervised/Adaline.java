@@ -24,6 +24,7 @@
 package libai.nn.supervised;
 
 import java.io.*;
+import java.util.Random;
 import libai.common.Matrix;
 
 /**
@@ -50,6 +51,18 @@ public class Adaline extends Perceptron {
 	 */
 	public Adaline(int ins, int outs) {
 		super(ins, outs);
+	}
+
+	/**
+	 * Constructor.
+	 *
+	 * @param ins Number of inputs for the network = number of elements in the
+	 * patterns.
+	 * @param outs Number of outputs for the network.
+	 * @param rand Random generator used for creating matrices
+	 */
+	public Adaline(int ins, int outs, Random rand) {
+		super(ins, outs, rand);
 	}
 
 	/**
