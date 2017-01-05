@@ -25,6 +25,7 @@ package libai.nn.supervised;
 
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
+import java.util.Random;
 import libai.common.Matrix;
 import libai.common.functions.Function;
 import libai.nn.NeuralNetwork;
@@ -87,6 +88,26 @@ public class MLP extends NeuralNetwork {
 	 * @param beta The influence of momentum term.
 	 */
 	public MLP(int[] nperlayer, Function[] funcs, double beta) {
+		this(nperlayer, funcs, beta, null);
+	}
+
+	/**
+	 * Constructor. Creates a MLP with {@code nperlayer.length} layers. The 
+	 * number of neurons per layer is defined in {@code nperlayer}. The 
+	 * {@code nperlayer[0]} means the input layer. For each layer the neurons 
+	 * applies the output function {@code funcs[i]}. These functions must be 
+	 * derivable. The parameter {@code beta} means the momentum influence. 
+	 * If beta &lt;= 0 the momentum has no influence, if beta &gt; 0 and &lt; 1 
+	 * that's the influence.
+	 *
+	 * @param nperlayer Number of neurons per layer including the input layer.
+	 * @param funcs Function to apply per layer. The function[0] could be null.
+	 * @param beta The influence of momentum term.
+	 * @param rand Random generator used for creating matrices
+	 */
+	public MLP(int[] nperlayer, Function[] funcs, double beta, Random rand) {
+		super(rand);
+
 		if (beta < 0 || beta >= 1)
 			throw new IllegalArgumentException("beta should be positive and less than 1");
 
@@ -145,8 +166,8 @@ public class MLP extends NeuralNetwork {
 			Wt[i] = new Matrix(nperlayer[i - 1], nperlayer[i]);
 			b[i] = new Matrix(nperlayer[i], 1);
 
-			W[i].fill(); //llenar de manera aleatoria
-			b[i].fill(); //llenar de manera aleatoria
+			W[i].fill(true, random); //llenar de manera aleatoria
+			b[i].fill(true, random); //llenar de manera aleatoria
 
 			u[i] = new Matrix(W[i].getRows(), Y[i - 1].getColumns());
 			Y[i] = new Matrix(u[i].getRows(), u[i].getColumns());
