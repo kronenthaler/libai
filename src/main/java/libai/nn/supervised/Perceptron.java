@@ -75,8 +75,8 @@ public class Perceptron extends NeuralNetwork {
 		W = new Matrix(outs, ins);
 		b = new Matrix(out, 1);
 
-		W.fill();
-		b.fill();
+		W.fill(true, random);
+		b.fill(true, random);
 	}
 
 	/**
