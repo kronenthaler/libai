@@ -62,7 +62,7 @@ public class SVMTest {
 			ans[i] = new Matrix(1, 1, new double[]{inc % 2 == 0 ? +1 : -1});
 		}
 
-		NeuralNetwork net = new SVM(new LinearKernel());
+		NeuralNetwork net = new SVM(new LinearKernel(), new Random(0));
 		net.setProgressBar(new SimpleProgressDisplay(new JProgressBar()));
 		net.train(patterns, ans, 0.001, 10000, 0, n);
 

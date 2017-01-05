@@ -32,10 +32,10 @@ import libai.common.functions.Sigmoid;
 import org.junit.Test;
 import libai.common.functions.HyperbolicTangent;
 import libai.common.functions.Sinc;
+import libai.common.ProgressDisplay;
 
 import static java.lang.Math.round;
-import javax.swing.JProgressBar;
-import libai.common.ProgressDisplay;
+import java.util.Random;
 import static org.junit.Assert.*;
 import static org.junit.Assume.*;
 
@@ -53,7 +53,7 @@ public class MLPTest {
 				new Identity(), 
 				new Sigmoid(), 
 				new Identity()
-			}
+			}, 0, new Random(0)
 		);
 		Matrix[] ins = new Matrix[4];
 		ins[0] = new Matrix(2, 1, new double[]{0, 0});
@@ -86,7 +86,7 @@ public class MLPTest {
 				new Identity(), 
 				new Sigmoid(), 
 				new Identity()
-			}
+			}, 0, new Random(0)
 		);
 		mlp.setTrainingType(MLP.MOMEMTUM_BACKPROPAGATION, 0.5);
 		Matrix[] ins = new Matrix[4];
@@ -120,7 +120,7 @@ public class MLPTest {
 				new Identity(), 
 				new Sinc(), 
 				new Identity()
-			}
+			}, 0, new Random(0)
 		);
 		mlp.setTrainingType(MLP.RESILENT_BACKPROPAGATION);
 		Matrix[] ins = new Matrix[4];
@@ -156,7 +156,7 @@ public class MLPTest {
 				new Sigmoid(), 
 				new HyperbolicTangent(), 
 				new Identity()
-			}
+			}, 0, new Random(0)
 		);
 		mlp.setTrainingType(MLP.STANDARD_BACKPROPAGATION);
 		Matrix[] ins = new Matrix[4];
@@ -225,7 +225,14 @@ public class MLPTest {
 		}
 
 		int nperlayer[] = {m, 4, l};
-		MLP net = new MLP(nperlayer, new Function[]{new Identity(), new Sigmoid(), new Identity()});
+		MLP net = new MLP(
+			nperlayer, 
+			new Function[]{
+				new Identity(), 
+				new Sigmoid(), 
+				new Identity()
+			}, 0, new Random(0)
+		);
 
 		net.train(p, t, 0.2, 50000, 0, n);
 
@@ -261,7 +268,7 @@ public class MLPTest {
 				new Identity(),
 				new Sinc(),
 				new Identity()
-			}
+			}, 0, new Random(0)
 		);
 		mlp.setProgressBar(progress);
 		mlp.setTrainingType(MLP.STANDARD_BACKPROPAGATION);
@@ -296,7 +303,7 @@ public class MLPTest {
 				new Identity(),
 				new Sinc(),
 				new Identity()
-			}
+			}, 0, new Random(0)
 		);
 		mlp.setProgressBar(progress);
 		mlp.setTrainingType(MLP.RESILENT_BACKPROPAGATION);
@@ -331,7 +338,7 @@ public class MLPTest {
 				new Identity(),
 				new Sinc(),
 				new Identity()
-			}
+			}, 0, new Random(0)
 		);
 		mlp.setProgressBar(progress);
 		mlp.setTrainingType(MLP.MOMEMTUM_BACKPROPAGATION, 0.5);
