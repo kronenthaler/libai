@@ -2,17 +2,17 @@
  * MIT License
  *
  * Copyright (c) 2009-2016 Ignacio Calderon <https://github.com/kronenthaler>
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -43,7 +43,7 @@ import libai.nn.NeuralNetwork;
  */
 public class RBF extends Adaline {
 	private static final long serialVersionUID = 6772562276994202439L;
-	
+
 	private Matrix c[];
 	protected int nperlayer[];//{#inputs,#Neurons,#outputs}
 	protected double[] sigma;
@@ -60,7 +60,20 @@ public class RBF extends Adaline {
 	 * @param nperlayer Neurons Per Layer.
 	 */
 	public RBF(int[] nperlayer) {
-		super(nperlayer[1], nperlayer[2]); // input, outputs
+		this(nperlayer, null);
+	}
+
+	/**
+	 * Constructor. Receives an array with the information of the number of
+	 * neurons per layer. Layer[0] is the input layer. Layer[1] is the hidden
+	 * layer and represents the number radial functions to use. layer[2] is the
+	 * output layer.
+	 *
+	 * @param nperlayer Neurons Per Layer.
+	 * @param rand Random generator used for creating matrices
+	 */
+	public RBF(int[] nperlayer, Random rand) {
+		super(nperlayer[1], nperlayer[2], rand); // input, outputs
 
 		this.nperlayer = nperlayer;
 
@@ -147,7 +160,6 @@ public class RBF extends Adaline {
 	 */
 	private Matrix[] kmeans(int k, Matrix[] patterns, int offset, int length) {
 		int i, j, l;
-		Random rand = new Random();
 
 		Matrix[] ctemp = new Matrix[k];
 		ArrayList<Integer>[] partitions = new ArrayList[k];
@@ -156,7 +168,7 @@ public class RBF extends Adaline {
 
 		for (i = 0; i < k; i++) {
 			ctemp[i] = new Matrix(patterns[0].getRows(), patterns[0].getColumns());
-			int index = rand.nextInt(length) + offset;//abs((int)(ctemp[i].random(&xzxzx)*npatterns));;
+			int index = random.nextInt(length) + offset;//abs((int)(ctemp[i].random(&xzxzx)*npatterns));;
 			patterns[index].copy(ctemp[i]);
 			partitions[i] = new ArrayList<>();
 		}
@@ -190,7 +202,7 @@ public class RBF extends Adaline {
 				if (total == 0) {
 					//empty partition take a random pattern as centroid
 					ctemp[i] = new Matrix(patterns[0].getRows(), patterns[0].getColumns());
-					int index = rand.nextInt(length) + offset;
+					int index = random.nextInt(length) + offset;
 					patterns[index].copy(ctemp[i]);
 
 					exit = false;
@@ -239,10 +251,10 @@ public class RBF extends Adaline {
 
 	/**
 	 * Deserializes an {@code RBF}
-	 * 
+	 *
 	 * @param path Path to file
 	 * @return Restored {@code RBF instance}
-	 * @see NeuralNetwork#save(java.lang.String) 
+	 * @see NeuralNetwork#save(java.lang.String)
 	 */
 	public static RBF open(String path) {
 		try (FileInputStream fis = new FileInputStream(path);
