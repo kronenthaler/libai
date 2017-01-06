@@ -74,6 +74,21 @@ public class PairTest {
 	}
 
 	@Test
+	public void testHashCode() {
+		Pair p1 = new Pair(-10, 4);
+		Pair p2 = new Pair(-10, 4);
+
+		assertEquals(p1.hashCode(), p1.hashCode());
+		assertEquals(p1.hashCode(), p2.hashCode());
+		p2.first = "-10";
+		assertNotEquals(p1.hashCode(), p2.hashCode());
+		p2.first = -10;
+		assertEquals(p1.hashCode(), p2.hashCode());
+		p2.second = 4.0;
+		assertNotEquals(p1.hashCode(), p2.hashCode());
+	}
+
+	@Test
 	public void testToString() {
 		Pair pair = new Pair("abc", "def");
 		assertEquals("(abc,def)", pair.toString());
