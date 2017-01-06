@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  * @author Federico Vera {@literal <dktcoding [at] gmail>}
  */
 public class TripletTest {
-	
+
 	@Test
 	public void testHashCode() {
 		Triplet[] trips = new Triplet[] {
@@ -52,7 +52,25 @@ public class TripletTest {
 			assertTrue(t == map.get(t));
 		}
 	}
-	
+
+	@Test
+	public void testHashCode2() {
+		Triplet t1 = new Triplet(-10, 4, -1);
+		Triplet t2 = new Triplet(-10, 4, -1);
+		assertEquals(t1.hashCode(), t1.hashCode());
+		assertEquals(t1.hashCode(), t2.hashCode());
+		t2.first = -9;
+		assertNotEquals(t1.hashCode(), t2.hashCode());
+		t2.first = -10;
+		assertEquals(t1.hashCode(), t2.hashCode());
+		t2.second = "";
+		assertNotEquals(t1.hashCode(), t2.hashCode());
+		t2.second = 4;
+		assertEquals(t1.hashCode(), t2.hashCode());
+		t2.third = -1.0;
+		assertNotEquals(t1.hashCode(), t2.hashCode());
+	}
+
 	@Test
 	public void testEquals() {
 		Triplet triplet = new Triplet(  2, 4, -1);
@@ -65,7 +83,7 @@ public class TripletTest {
 		assertNotEquals(triplet, new Triplet(  1, 4, -1));
 		assertNotEquals(triplet, new Triplet("1", 4, -1));
 	}
-	
+
 	@Test
 	public void testToString() {
 		Triplet triplet = new Triplet(  2, 4, -1);
