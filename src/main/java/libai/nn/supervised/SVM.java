@@ -2,17 +2,17 @@
  * MIT License
  *
  * Copyright (c) 2009-2016 Ignacio Calderon <https://github.com/kronenthaler>
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -45,7 +45,7 @@ import libai.nn.NeuralNetwork;
  */
 public class SVM extends NeuralNetwork {
 	private static final long serialVersionUID = 5875835056527034341L;
-	
+
     private Kernel kernel = new GaussianKernel(2.0);	//the default kernel type is a gaussian function
     private Matrix[] densePoints;			//array with the patterns lo learn or learned...s
     private int target[];					//expected answers
@@ -55,7 +55,7 @@ public class SVM extends NeuralNetwork {
     private int nSupportVectors = -1;		//last index of the support vector.
     private double[] errorCache;			//stores the errors to reduce calculations.
     private double deltaB;
-    private Random randGenerator = new Random(0);
+
     //trainning params.
     private double minerror;				//set in the trainning method.
     private double C = 0.05;
@@ -69,6 +69,11 @@ public class SVM extends NeuralNetwork {
     }
 
     public SVM(Kernel _kernel) {
+		this(_kernel, null);
+    }
+
+    public SVM(Kernel _kernel, Random rand) {
+		super(rand);
         kernel = _kernel;
     }
 
@@ -179,10 +184,10 @@ public class SVM extends NeuralNetwork {
 
 	/**
 	 * Deserializes an {@code SVM}
-	 * 
+	 *
 	 * @param path Path to file
 	 * @return Restored {@code SVM instance}
-	 * @see NeuralNetwork#save(java.lang.String) 
+	 * @see NeuralNetwork#save(java.lang.String)
 	 */
 	public static SVM open(String path) {
 		try (FileInputStream fis = new FileInputStream(path);
@@ -240,7 +245,7 @@ public class SVM extends NeuralNetwork {
             }
 
             k = k0 = i2 = 0;
-            for (rands = randGenerator.nextDouble(), k0 = (int) (rands * nSupportVectors), k = k0; k < nSupportVectors + k0; k++) {
+            for (rands = random.nextDouble(), k0 = (int) (rands * nSupportVectors), k = k0; k < nSupportVectors + k0; k++) {
                 i2 = k % nSupportVectors;
                 if (alph[i2] > 0 && alph[i2] < C) {
                     if (takeStep(i1, i2) == 1) {
@@ -250,7 +255,7 @@ public class SVM extends NeuralNetwork {
             }
 
             rands = 0;
-            for (rands = randGenerator.nextDouble(), k0 = (int) (rands * nSupportVectors), k = k0; k < nSupportVectors + k0; k++) {
+            for (rands = random.nextDouble(), k0 = (int) (rands * nSupportVectors), k = k0; k < nSupportVectors + k0; k++) {
                 i2 = k % nSupportVectors;
                 if (takeStep(i1, i2) == 1) {
                     return 1;

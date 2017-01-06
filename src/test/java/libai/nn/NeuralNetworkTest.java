@@ -157,7 +157,7 @@ public class NeuralNetworkTest {
 		int[] arr2 = new int[10];
 		for (int i = 0; i < 10; i++) arr1[i] = arr2[i] = i;
 		assertArrayEquals(arr1, arr2);
-		NeuralNetwork.shuffle(arr1);
+		new NN().shuffle(arr1);
 		assertFalse(Arrays.equals(arr1, arr2));
 		//No value should be ommited
 		int foo = 0;

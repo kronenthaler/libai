@@ -25,6 +25,7 @@ package libai.nn.supervised;
 
 import demos.common.SimpleProgressDisplay;
 import java.io.File;
+import java.util.Random;
 import javax.swing.JProgressBar;
 import libai.common.Matrix;
 import libai.common.MatrixIOTest;
@@ -67,7 +68,7 @@ public class RBFTest {
 		}
 
 		int nperlayer[] = {m, 10, l};
-		RBF net = new RBF(nperlayer);
+		RBF net = new RBF(nperlayer, new Random(0));
 		net.setProgressBar(new SimpleProgressDisplay(new JProgressBar()));
 		net.train(p, t, 0.001, 600000, 0, n);
 
@@ -107,7 +108,7 @@ public class RBFTest {
 		}
 
 		int nperlayer[] = {m, 10, l};
-		RBF net = new RBF(nperlayer);
+		RBF net = new RBF(nperlayer, new Random(0));
 		net.setProgressBar(new SimpleProgressDisplay(new JProgressBar()));
 		net.train(p, t, 0.001, 600000, 0, n);
 

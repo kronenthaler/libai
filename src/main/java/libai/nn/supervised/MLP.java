@@ -2,17 +2,17 @@
  * MIT License
  *
  * Copyright (c) 2009-2016 Ignacio Calderon <https://github.com/kronenthaler>
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -25,6 +25,7 @@ package libai.nn.supervised;
 
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
+import java.util.Random;
 import libai.common.Matrix;
 import libai.common.functions.Function;
 import libai.nn.NeuralNetwork;
@@ -42,16 +43,16 @@ import libai.nn.NeuralNetwork;
  */
 public class MLP extends NeuralNetwork {
 	private static final long serialVersionUID = 3155220303024711102L;
-	
+
 	public static final int STANDARD_BACKPROPAGATION = 0;
 	public static final int MOMEMTUM_BACKPROPAGATION = 1;
 	public static final int RESILENT_BACKPROPAGATION = 2;
-	
+
 	private final Matrix W[], b[],
 						 Y[], d[], u[],
 						 Wt[], Yt[],
 						 M[];
-	
+
 	private final int nperlayer[]; //number of neurons per layer, including the input layer
 	private final int layers;
 	private final Function[] func;
@@ -59,8 +60,8 @@ public class MLP extends NeuralNetwork {
 	private int trainingType = STANDARD_BACKPROPAGATION;
 
 	/**
-	 * Constructor. Creates a MLP with {@code nperlayer.length} layers. The 
-	 * number of neurons per layer is defined in {@code nperlayer}. 
+	 * Constructor. Creates a MLP with {@code nperlayer.length} layers. The
+	 * number of neurons per layer is defined in {@code nperlayer}.
 	 * The {@code nperlayer[0]} means the input layer. For each layer {@code i}
 	 * the neurons applies the output function {@code funcs[i]}. These functions
 	 * must be derivable. The training algorithm is standard backpropagation.
@@ -74,12 +75,12 @@ public class MLP extends NeuralNetwork {
 	}
 
 	/**
-	 * Constructor. Creates a MLP with {@code nperlayer.length} layers. The 
-	 * number of neurons per layer is defined in {@code nperlayer}. The 
-	 * {@code nperlayer[0]} means the input layer. For each layer the neurons 
-	 * applies the output function {@code funcs[i]}. These functions must be 
-	 * derivable. The parameter {@code beta} means the momentum influence. 
-	 * If beta &lt;= 0 the momentum has no influence, if beta &gt; 0 and &lt; 1 
+	 * Constructor. Creates a MLP with {@code nperlayer.length} layers. The
+	 * number of neurons per layer is defined in {@code nperlayer}. The
+	 * {@code nperlayer[0]} means the input layer. For each layer the neurons
+	 * applies the output function {@code funcs[i]}. These functions must be
+	 * derivable. The parameter {@code beta} means the momentum influence.
+	 * If beta &lt;= 0 the momentum has no influence, if beta &gt; 0 and &lt; 1
 	 * that's the influence.
 	 *
 	 * @param nperlayer Number of neurons per layer including the input layer.
@@ -87,6 +88,26 @@ public class MLP extends NeuralNetwork {
 	 * @param beta The influence of momentum term.
 	 */
 	public MLP(int[] nperlayer, Function[] funcs, double beta) {
+		this(nperlayer, funcs, beta, null);
+	}
+
+	/**
+	 * Constructor. Creates a MLP with {@code nperlayer.length} layers. The
+	 * number of neurons per layer is defined in {@code nperlayer}. The
+	 * {@code nperlayer[0]} means the input layer. For each layer the neurons
+	 * applies the output function {@code funcs[i]}. These functions must be
+	 * derivable. The parameter {@code beta} means the momentum influence.
+	 * If beta &lt;= 0 the momentum has no influence, if beta &gt; 0 and &lt; 1
+	 * that's the influence.
+	 *
+	 * @param nperlayer Number of neurons per layer including the input layer.
+	 * @param funcs Function to apply per layer. The function[0] could be null.
+	 * @param beta The influence of momentum term.
+	 * @param rand Random generator used for creating matrices
+	 */
+	public MLP(int[] nperlayer, Function[] funcs, double beta, Random rand) {
+		super(rand);
+
 		if (beta < 0 || beta >= 1)
 			throw new IllegalArgumentException("beta should be positive and less than 1");
 
@@ -145,8 +166,8 @@ public class MLP extends NeuralNetwork {
 			Wt[i] = new Matrix(nperlayer[i - 1], nperlayer[i]);
 			b[i] = new Matrix(nperlayer[i], 1);
 
-			W[i].fill(); //llenar de manera aleatoria
-			b[i].fill(); //llenar de manera aleatoria
+			W[i].fill(true, random); //llenar de manera aleatoria
+			b[i].fill(true, random); //llenar de manera aleatoria
 
 			u[i] = new Matrix(W[i].getRows(), Y[i - 1].getColumns());
 			Y[i] = new Matrix(u[i].getRows(), u[i].getColumns());
@@ -164,8 +185,8 @@ public class MLP extends NeuralNetwork {
 	 * Train the network using the standard backpropagation algorithm. The
 	 * pattern is propagated from the input to the final layer (the output).
 	 * Then the error for the final layer is computed. The error is calculated
-	 * backwards to the first hidden layer, calculating the differentials 
-	 * between input and expected output (backpropagation). Finally, the weights 
+	 * backwards to the first hidden layer, calculating the differentials
+	 * between input and expected output (backpropagation). Finally, the weights
 	 * and biases are updated using the delta rule:<br>
 	 * W[i] = W[i] + beta*(W[i]-Wprev[i]) - (1-beta)*alpha.d[i].Y[i-1]^t <br>
 	 * B[i] = B[i] + beta*(B[i]-Bprev[i]) - (1-beta)*alpha.d[i]<br>
@@ -481,10 +502,10 @@ public class MLP extends NeuralNetwork {
 
 	/**
 	 * Deserializes an {@code MLP}
-	 * 
+	 *
 	 * @param path Path to file
 	 * @return Restored {@code MLP instance}
-	 * @see NeuralNetwork#save(java.lang.String) 
+	 * @see NeuralNetwork#save(java.lang.String)
 	 */
 	public static MLP open(String path) {
 		try (FileInputStream fis = new FileInputStream(path);
