@@ -23,6 +23,8 @@
  */
 package libai.common;
 
+import java.util.Objects;
+
 /**
  *
  * @author ignacio
@@ -58,10 +60,7 @@ public final class Triplet <V extends Comparable, K extends Comparable, Z extend
 
 	@Override
 	public int hashCode() {
-		int n = Integer.MAX_VALUE;
-		int a = ((first.hashCode() % n) + (second.hashCode() % n)) % n;
-		int b = ((a % n) + (third.hashCode() % n)) % n;
-		return b;
+		return Objects.hash(first, second, third);
 	}
 	
 	@Override
