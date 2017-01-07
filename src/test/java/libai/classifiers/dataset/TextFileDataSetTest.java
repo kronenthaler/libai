@@ -48,7 +48,7 @@ public class TextFileDataSetTest {
 	@Test
 	public void testGetSubset() {
 		assumeTrue("Couldn't create dummy dataset", writeDummyDataSet("dummy.csv"));
-        String tmp = System.getProperty("java.io.tmpdir") + File.separator + "dummy.csv";
+		String tmp = System.getProperty("java.io.tmpdir") + File.separator + "dummy.csv";
 		TextFileDataSet ds = new TextFileDataSet(new File(tmp), 0);
 		assertNotEquals(0, ds.getItemsCount());
 		DataSet ds2 = ds.getSubset(10, 20);
@@ -73,7 +73,7 @@ public class TextFileDataSetTest {
 	@Test
 	public void testGetMetaData() {
 		assumeTrue("Couldn't create dummy dataset", writeDummyDataSet("dummy.csv"));
-        String tmp = System.getProperty("java.io.tmpdir") + File.separator + "dummy.csv";
+		String tmp = System.getProperty("java.io.tmpdir") + File.separator + "dummy.csv";
 		TextFileDataSet ds = new TextFileDataSet(new File(tmp), 0);
 		MetaData md = ds.getMetaData();
 		assertEquals(4, md.getAttributeCount());
@@ -91,7 +91,7 @@ public class TextFileDataSetTest {
 	@Test
 	public void testSortOver_int() {
 		assumeTrue("Couldn't create dummy dataset", writeDummyDataSetKnown("dummy1.csv"));
-        String tmp = System.getProperty("java.io.tmpdir") + File.separator + "dummy1.csv";
+		String tmp = System.getProperty("java.io.tmpdir") + File.separator + "dummy1.csv";
 		TextFileDataSet ds = new TextFileDataSet(new File(tmp), 0);
 		Iterator<List<Attribute>> attribs = ds.sortOver(0).iterator();
 		assertEquals(0.0, attribs.next().get(0).getValue());
@@ -141,7 +141,7 @@ public class TextFileDataSetTest {
 	@Test
 	public void testSplitKeepingRelation() {
 		assumeTrue("Couldn't create dummy dataset", writeDummyDataSetKnown("dummy3.csv"));
-        String tmp = System.getProperty("java.io.tmpdir") + File.separator + "dummy3.csv";
+		String tmp = System.getProperty("java.io.tmpdir") + File.separator + "dummy3.csv";
 		TextFileDataSet ds = new TextFileDataSet(new File(tmp), 2);
 		DataSet[] dss = ds.splitKeepingRelation(0.5);
 		assertEquals(3, dss[0].getItemsCount());
@@ -162,7 +162,7 @@ public class TextFileDataSetTest {
 	@Test
 	public void testToString() {
 		assumeTrue("Couldn't create dummy dataset", writeDummyDataSetKnown("dummy4.csv"));
-        String tmp = System.getProperty("java.io.tmpdir") + File.separator + "dummy4.csv";
+		String tmp = System.getProperty("java.io.tmpdir") + File.separator + "dummy4.csv";
 		TextFileDataSet ds = new TextFileDataSet(new File(tmp), 2);
 		assertEquals(toString, ds.toString());
 	}
@@ -170,7 +170,7 @@ public class TextFileDataSetTest {
 	@Test
 	public void testGetFrequencies() {
 		assumeTrue("Couldn't create dummy dataset", writeDummyDataSetKnown("dummy5.csv"));
-        String tmp = System.getProperty("java.io.tmpdir") + File.separator + "dummy5.csv";
+		String tmp = System.getProperty("java.io.tmpdir") + File.separator + "dummy5.csv";
 		TextFileDataSet ds = new TextFileDataSet(new File(tmp), 2);
 		HashMap<Attribute, Integer> map = ds.getFrequencies(0, ds.getItemsCount(), 2);
 		assertEquals(Integer.valueOf(2), map.get(new DiscreteAttribute("false")));
@@ -183,7 +183,7 @@ public class TextFileDataSetTest {
 	@Test
 	public void testGetFrequencies2() {
 		assumeTrue("Couldn't create dummy dataset", writeDummyDataSetKnown("dummy6.csv"));
-        String tmp = System.getProperty("java.io.tmpdir") + File.separator + "dummy6.csv";
+		String tmp = System.getProperty("java.io.tmpdir") + File.separator + "dummy6.csv";
 		TextFileDataSet ds = new TextFileDataSet(new File(tmp), 2);
 		ds.sortOver(2);
 		HashMap<Attribute, Integer> map = ds.getFrequencies(0, 2, 2);
@@ -194,7 +194,7 @@ public class TextFileDataSetTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testGetFrequencies3() {
 		assumeTrue("Couldn't create dummy dataset", writeDummyDataSetKnown("dummy7.csv"));
-        String tmp = System.getProperty("java.io.tmpdir") + File.separator + "dummy7.csv";
+		String tmp = System.getProperty("java.io.tmpdir") + File.separator + "dummy7.csv";
 		TextFileDataSet ds = new TextFileDataSet(new File(tmp), 1);
 		ds.getFrequencies(0, 0, 0); //Non categorical
 	}
@@ -202,7 +202,7 @@ public class TextFileDataSetTest {
 	@Test
 	public void testAllTheSameOutput() {
 		assumeTrue("Couldn't create dummy dataset", writeDummyDataSetKnown("dummy8.csv"));
-        String tmp = System.getProperty("java.io.tmpdir") + File.separator + "dummy8.csv";
+		String tmp = System.getProperty("java.io.tmpdir") + File.separator + "dummy8.csv";
 		TextFileDataSet ds = new TextFileDataSet(new File(tmp), 2);
 		assertFalse(ds.allTheSameOutput());
 	}
@@ -210,7 +210,7 @@ public class TextFileDataSetTest {
 	@Test
 	public void testAllTheSameOutput2() {
 		assumeTrue("Couldn't create dummy dataset", writeDummyDataSetKnown("dummy9.csv"));
-        String tmp = System.getProperty("java.io.tmpdir") + File.separator + "dummy9.csv";
+		String tmp = System.getProperty("java.io.tmpdir") + File.separator + "dummy9.csv";
 		TextFileDataSet ds = new TextFileDataSet(new File(tmp), 4);
 		assertTrue(ds.allTheSameOutput());
 	}
@@ -218,7 +218,7 @@ public class TextFileDataSetTest {
 	@Test
 	public void testAllTheSame() {
 		assumeTrue("Couldn't create dummy dataset", writeDummyDataSetKnown("dummy10.csv"));
-        String tmp = System.getProperty("java.io.tmpdir") + File.separator + "dummy10.csv";
+		String tmp = System.getProperty("java.io.tmpdir") + File.separator + "dummy10.csv";
 		TextFileDataSet ds = new TextFileDataSet(new File(tmp), 4);
 		assertNull(ds.allTheSame());
 	}
@@ -226,7 +226,7 @@ public class TextFileDataSetTest {
 	@Test
 	public void testAllTheSame2() {
 		assumeTrue("Couldn't create dummy dataset", writeDummyDataSetKnown2("dummy11.csv"));
-        String tmp = System.getProperty("java.io.tmpdir") + File.separator + "dummy11.csv";
+		String tmp = System.getProperty("java.io.tmpdir") + File.separator + "dummy11.csv";
 		TextFileDataSet ds = new TextFileDataSet(new File(tmp), 3);
 		assertEquals(new DiscreteAttribute("3", "same"), ds.allTheSame());
 	}
@@ -234,7 +234,7 @@ public class TextFileDataSetTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testAllTheSame3() {
 		assumeTrue("Couldn't create dummy dataset", writeDummyDataSetKnown("dummy12.csv"));
-        String tmp = System.getProperty("java.io.tmpdir") + File.separator + "dummy12.csv";
+		String tmp = System.getProperty("java.io.tmpdir") + File.separator + "dummy12.csv";
 		TextFileDataSet ds = new TextFileDataSet(new File(tmp), 0);
 		ds.allTheSame();
 	}
@@ -246,8 +246,8 @@ public class TextFileDataSetTest {
 	}
 
 	private static boolean writeDummyDataSet(String fname) {
-        assumeTrue("Can't use temp dir...", MatrixIOTest.checkTemp());
-        String tmp = System.getProperty("java.io.tmpdir") + File.separator + fname;
+		assumeTrue("Can't use temp dir...", MatrixIOTest.checkTemp());
+		String tmp = System.getProperty("java.io.tmpdir") + File.separator + fname;
 		new File(tmp).deleteOnExit();
 		try (PrintStream ps = new PrintStream(tmp)) {
 			Random r = ThreadLocalRandom.current();
@@ -265,8 +265,8 @@ public class TextFileDataSetTest {
 	}
 
 	private static boolean writeDummyDataSetKnown(String fname) {
-        assumeTrue("Can't use temp dir...", MatrixIOTest.checkTemp());
-        String tmp = System.getProperty("java.io.tmpdir") + File.separator + fname;
+		assumeTrue("Can't use temp dir...", MatrixIOTest.checkTemp());
+		String tmp = System.getProperty("java.io.tmpdir") + File.separator + fname;
 		new File(tmp).deleteOnExit();
 		try (PrintStream ps = new PrintStream(tmp)) {
 			ps.append("0,a,true,4.4,same\n");
@@ -282,8 +282,8 @@ public class TextFileDataSetTest {
 	}
 
 	private static boolean writeDummyDataSetKnown2(String fname) {
-        assumeTrue("Can't use temp dir...", MatrixIOTest.checkTemp());
-        String tmp = System.getProperty("java.io.tmpdir") + File.separator + fname;
+		assumeTrue("Can't use temp dir...", MatrixIOTest.checkTemp());
+		String tmp = System.getProperty("java.io.tmpdir") + File.separator + fname;
 		new File(tmp).deleteOnExit();
 		try (PrintStream ps = new PrintStream(tmp)) {
 			ps.append("1,2,3,same\n");
