@@ -94,21 +94,4 @@ public class Adaline extends Perceptron {
 		W.multiply(pattern, result);	//inner product
 		result.add(b, result);		//bias
 	}
-
-	/**
-	 * Deserializes an {@code Adaline}
-	 *
-	 * @param path Path to file
-	 * @return Restored {@code Adaline instance}
-	 * @see libai.nn.NeuralNetwork#save(java.lang.String)
-	 */
-	public static Adaline open(String path) {
-		try (FileInputStream fis = new FileInputStream(path);
-			 ObjectInputStream in = new ObjectInputStream(fis)) {
-			return (Adaline) in.readObject();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
 }

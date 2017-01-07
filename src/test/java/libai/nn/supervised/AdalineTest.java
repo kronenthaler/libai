@@ -24,6 +24,7 @@
 package libai.nn.supervised;
 
 import java.io.File;
+import java.io.IOException;
 import libai.common.Matrix;
 import libai.common.MatrixIOTest;
 import org.junit.Test;
@@ -110,14 +111,21 @@ public class AdalineTest {
 		new File(foo).deleteOnExit();
 
 		assertTrue(ada.save(foo));
-		Adaline a2 = Adaline.open(foo);
-		assertNotNull(a2);
-		assertTrue(ada != a2);
 
-		assertEquals(ada.simulate(ins[0]), a2.simulate(ins[0]));
-		assertEquals(ada.simulate(ins[1]), a2.simulate(ins[1]));
-		assertEquals(ada.simulate(ins[2]), a2.simulate(ins[2]));
-		assertEquals(ada.simulate(ins[3]), a2.simulate(ins[3]));
+		try{ 
+			Adaline a2 = Adaline.open(foo);
+			assertNotNull(a2);
+			assertTrue(ada != a2);
+
+			assertEquals(ada.simulate(ins[0]), a2.simulate(ins[0]));
+			assertEquals(ada.simulate(ins[1]), a2.simulate(ins[1]));
+			assertEquals(ada.simulate(ins[2]), a2.simulate(ins[2]));
+			assertEquals(ada.simulate(ins[3]), a2.simulate(ins[3]));
+		} catch(IOException e) {
+			fail();
+		} catch(ClassNotFoundException e1) {
+			fail();
+		}
 	}
 
 	@Test

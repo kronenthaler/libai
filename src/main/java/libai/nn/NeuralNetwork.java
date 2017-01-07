@@ -23,8 +23,12 @@
  */
 package libai.nn;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Random;
@@ -140,6 +144,26 @@ public abstract class NeuralNetwork implements Serializable {
 			return false;
 		}
 		return true;
+	}
+	
+	public static final <NN extends NeuralNetwork> NN open(String path) throws IOException, ClassNotFoundException {
+		return (NN) open(new File(path));
+	}
+	
+	public static final <NN extends NeuralNetwork> NN open(File file)throws IOException, ClassNotFoundException {
+		try (FileInputStream fis = new FileInputStream(file)){
+			return (NN) open(fis);
+		} finally {
+			// nothing to do, raise the exception upwards.
+		}
+	}
+	
+	public static final <NN extends NeuralNetwork> NN open(InputStream input)throws IOException, ClassNotFoundException {
+		try (ObjectInputStream in = new ObjectInputStream(input)) {
+			return (NN) in.readObject();
+		} finally {
+			// nothing to do, raise the exception upwards.
+		}
 	}
 
 	/**

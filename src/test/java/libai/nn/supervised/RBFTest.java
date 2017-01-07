@@ -25,6 +25,7 @@ package libai.nn.supervised;
 
 import demos.common.SimpleProgressDisplay;
 import java.io.File;
+import java.io.IOException;
 import java.util.Random;
 import javax.swing.JProgressBar;
 import libai.common.Matrix;
@@ -123,21 +124,26 @@ public class RBFTest {
 		String tmp = System.getProperty("java.io.tmpdir") + File.separator;
 		tmp = tmp + "foo.rbf";
 		assertTrue(net.save(tmp));
-		RBF net2 = RBF.open(tmp);
-		assertNotNull(net2);
-		new File(tmp).delete();
+		try {
+			RBF net2 = RBF.open(tmp);
+			assertNotNull(net2);
+			new File(tmp).delete();
 
-		assertEquals(net.error(p, t), net2.error(p, t), 0);
-		for (int i = n; i < p.length; i++) {
-			assertEquals(net.simulate(p[i]).position(0, 0), net2.simulate(p[i]).position(0, 0), 0);
+			assertEquals(net.error(p, t), net2.error(p, t), 0);
+			for (int i = n; i < p.length; i++) {
+				assertEquals(net.simulate(p[i]).position(0, 0), net2.simulate(p[i]).position(0, 0), 0);
+			}
+		} catch (IOException e) {
+			fail();
+		} catch (ClassNotFoundException e1) {
+			fail();
 		}
 
 	}
 
-	@Test
-	public void testNullPath(){
-		RBF rbf = new RBF();
-		assertNull(RBF.open(null));
+	@Test(expected=NullPointerException.class)
+	public void testNullPath() throws IOException, ClassNotFoundException{
+		RBF.open((String)null);
 	}
 
 	static double f(double x) {

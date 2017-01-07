@@ -162,21 +162,4 @@ public class Perceptron extends NeuralNetwork {
 		result.add(b, result);			//bias
 		result.apply(signum, result);	//thresholding
 	}
-
-	/**
-	 * Deserializes a {@code Perceptron}
-	 *
-	 * @param path Path to file
-	 * @return Restored {@code Perceptron instance}
-	 * @see NeuralNetwork#save(java.lang.String)
-	 */
-	public static Perceptron open(String path) {
-		try (FileInputStream fis = new FileInputStream(path);
-			 ObjectInputStream in = new ObjectInputStream(fis)) {
-			return (Perceptron) in.readObject();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
 }

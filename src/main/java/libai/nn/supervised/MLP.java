@@ -499,20 +499,4 @@ public class MLP extends NeuralNetwork {
 		if (result != null)
 			Y[layers - 1].copy(result);
 	}
-
-	/**
-	 * Deserializes an {@code MLP}
-	 *
-	 * @param path Path to file
-	 * @return Restored {@code MLP instance}
-	 * @see NeuralNetwork#save(java.lang.String)
-	 */
-	public static MLP open(String path) {
-		try (FileInputStream fis = new FileInputStream(path);
-			 ObjectInputStream in = new ObjectInputStream(fis)){
-			return (MLP) in.readObject();
-		} catch (Exception e) {
-			return null;
-		}
-	}
 }
