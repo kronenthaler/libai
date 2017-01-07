@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import libai.classifiers.Attribute;
+import libai.classifiers.ContinuousAttribute;
 import libai.classifiers.DiscreteAttribute;
 import libai.common.MatrixIOTest;
 import org.junit.Test;
@@ -227,7 +228,7 @@ public class TextFileDataSetTest {
 		assumeTrue("Couldn't create dummy dataset", writeDummyDataSetKnown2("dummy11.csv"));
         String tmp = System.getProperty("java.io.tmpdir") + File.separator + "dummy11.csv";
 		TextFileDataSet ds = new TextFileDataSet(new File(tmp), 3);
-		assertEquals(new DiscreteAttribute("same"), ds.allTheSame());
+		assertEquals(new DiscreteAttribute("3", "same"), ds.allTheSame());
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -236,6 +237,12 @@ public class TextFileDataSetTest {
         String tmp = System.getProperty("java.io.tmpdir") + File.separator + "dummy12.csv";
 		TextFileDataSet ds = new TextFileDataSet(new File(tmp), 0);
 		ds.allTheSame();
+	}
+
+	@Test
+	public void testAttributtesWithNames() {
+		ContinuousAttribute ca = new ContinuousAttribute("name", 3.4);
+		assertEquals("[name]=3.4", ca.toString());
 	}
 
 	private static boolean writeDummyDataSet(String fname) {
