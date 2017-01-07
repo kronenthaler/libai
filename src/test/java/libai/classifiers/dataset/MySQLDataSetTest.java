@@ -37,11 +37,13 @@ import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import junit.framework.TestCase;
 import libai.classifiers.Attribute;
 import libai.classifiers.ContinuousAttribute;
 import libai.classifiers.DiscreteAttribute;
 import libai.common.MatrixIOTest;
-import org.junit.Test;
+import org.junit.*;
 
 import static org.junit.Assert.*;
 import static org.junit.Assume.*;
@@ -51,6 +53,24 @@ import static org.junit.Assume.*;
  * @author Federico Vera {@literal <dktcoding [at] gmail>}
  */
 public class MySQLDataSetTest {
+
+	@BeforeClass
+	public static void setUp() throws Exception {
+		// create the database test_libai
+		Connection conn = getConnection("");
+		PreparedStatement stmt = conn.prepareStatement("CREATE DATABASE IF NOT EXISTS test_libai;");
+		stmt.execute();
+		stmt.close();
+	}
+
+	@AfterClass
+	public static void tearDown() throws Exception {
+		// drop the database test_libai
+		Connection conn = getConnection();
+		PreparedStatement stmt = conn.prepareStatement("DROP DATABASE IF EXISTS test_libai;");
+		stmt.execute();
+		stmt.close();
+	}
 
 	@Test
 	public void testGetSubset() {
@@ -241,10 +261,14 @@ public class MySQLDataSetTest {
 	}
 
 	private static Connection getConnection() {
+		return getConnection("test_libai");
+	}
+
+	private static Connection getConnection(String database) {
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			return DriverManager.getConnection(
-					"jdbc:mysql://127.0.0.1:3306/test_libai", "root", ""
+					"jdbc:mysql://127.0.0.1:3306/"+database, "root", ""
 			);
 		} catch (ClassNotFoundException |
 				 InstantiationException |
