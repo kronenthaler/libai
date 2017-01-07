@@ -1,12 +1,15 @@
+services:
+  - mysql
+
 before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y octave
-  
+
 language: java
 script: mvn test 
 
 after_success:
   - mvn clean test jacoco:report coveralls:report
-  
+
 # add later on a deploy section to place this somewhere so it can be used as a
 # dependency
