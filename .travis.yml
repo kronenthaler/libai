@@ -2,6 +2,7 @@ services:
   - mysql
 
 before_install:
+  - mysql -e 'CREATE DATABASE test_libai;'
   - sudo apt-get -qq update
   - sudo apt-get install -y octave
 
