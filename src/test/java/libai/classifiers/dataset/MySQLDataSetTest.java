@@ -23,8 +23,6 @@
  */
 package libai.classifiers.dataset;
 
-import java.io.File;
-import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -35,14 +33,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import junit.framework.TestCase;
 import libai.classifiers.Attribute;
-import libai.classifiers.ContinuousAttribute;
 import libai.classifiers.DiscreteAttribute;
-import libai.common.MatrixIOTest;
 import org.junit.*;
 
 import static org.junit.Assert.*;
@@ -235,7 +227,7 @@ public class MySQLDataSetTest {
 		assertEquals(null, map.get(new DiscreteAttribute("true")));
 		c.close();
 	}
-	
+
 	@Test(expected = IllegalArgumentException.class)
 	public void testGetFrequencies3() {
 		Connection c = writeDummyDataSetKnown();
@@ -243,8 +235,8 @@ public class MySQLDataSetTest {
 		MySQLDataSet ds = new MySQLDataSet(c, "tbl2", 1);
 		ds.getFrequencies(0, 0, 0); //Non categorical
 	}
-	
-	private static final String toString = 
+
+	private static final String toString =
 		"[[col1]=4.0, [col2]=b, [col3]=false, [col4]=1.5, [col5]=same]\n" +
 		"[[col1]=2.0, [col2]=b, [col3]=false, [col4]=12.0, [col5]=same]\n" +
 		"[[col1]=0.0, [col2]=a, [col3]=true, [col4]=4.4, [col5]=same]\n" +
@@ -276,9 +268,9 @@ public class MySQLDataSetTest {
 				 SQLException ex) {
 			ex.printStackTrace();
 		}
-		return null;		
+		return null;
 	}
-	
+
 	private static Connection writeDummyDataSet() {
 		Connection conn = getConnection();
 		try (Statement s = conn.createStatement();
@@ -287,10 +279,10 @@ public class MySQLDataSetTest {
 			s.execute("DROP TABLE IF EXISTS `tbl1`;");
 			s.execute("CREATE TABLE `tbl1` ("
 					+ "`col1` INT, "
-					+ "`col2` DOUBLE,\n" 
+					+ "`col2` DOUBLE,\n"
 					+ "`col3` DOUBLE,\n"
 					+ "`col4` VARCHAR(45));");
-			
+
 			Random r = ThreadLocalRandom.current();
 			for (int i = 0; i < 100; i++) {
 				ps.setInt(1, i);
@@ -313,11 +305,11 @@ public class MySQLDataSetTest {
 			s.execute("DROP TABLE IF EXISTS `tbl2`;");
 			s.execute("CREATE TABLE `tbl2` ("
 					+ "`col1` INT, "
-					+ "`col2` VARCHAR(45),\n" 
+					+ "`col2` VARCHAR(45),\n"
 					+ "`col3` VARCHAR(45),\n"
 					+ "`col4` DOUBLE,\n"
 					+ "`col5` VARCHAR(45));");
-			
+
 			String query = "INSERT INTO `tbl2`(`col1`,`col2`,`col3`,`col4`, `col5`)VALUES(%s);";
 			s.execute(String.format(query, "0,'a','true',4.4,'same'"));
 			s.execute(String.format(query, "4,'b','false',1.5,'same'"));
@@ -338,10 +330,10 @@ public class MySQLDataSetTest {
 			s.execute("DROP TABLE IF EXISTS `tbl3`;");
 			s.execute("CREATE TABLE `tbl3` ("
 					+ "`col1` INT, "
-					+ "`col2` INT,\n" 
+					+ "`col2` INT,\n"
 					+ "`col3` INT,\n"
 					+ "`col4` VARCHAR(45));");
-			
+
 			String query = "INSERT INTO `tbl3`(`col1`,`col2`,`col3`,`col4`)VALUES(%s);";
 			s.execute(String.format(query, "1,2,3,'same'"));
 			s.execute(String.format(query, "1,2,3,'same'"));
@@ -355,5 +347,5 @@ public class MySQLDataSetTest {
 			return null;
 		}
 	}
-	
+
 }
