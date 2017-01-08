@@ -25,6 +25,7 @@ package libai.nn.unsupervised;
 
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
+import java.util.Random;
 import libai.common.Matrix;
 import libai.nn.NeuralNetwork;
 
@@ -54,7 +55,8 @@ public class Competitive extends NeuralNetwork {
 	protected int ins, outs;
 	protected int winner;
 
-	public Competitive() {
+	public Competitive(Random rand) {
+		super(rand);
 	}
 
 	/**
@@ -65,11 +67,24 @@ public class Competitive extends NeuralNetwork {
 	 * @param out Number of outputs.
 	 */
 	public Competitive(int in, int out) {
+		this(in, out, null);
+	}
+
+	/**
+	 * Constructor. Creates a network with the specified number of inputs and
+	 * outputs.
+	 *
+	 * @param in Number of inputs.
+	 * @param out Number of outputs.
+	 * @param rand Random generator used for creating matrices
+	 */
+	public Competitive(int in, int out, Random rand) {
+		super(rand);
 		ins = in;
 		outs = out;
 		W = new Matrix(outs, ins);
 
-		W.fill();
+		W.fill(true, random);
 	}
 
 	/**
