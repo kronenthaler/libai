@@ -23,10 +23,10 @@
  */
 package libai.nn.unsupervised;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import libai.common.Matrix;
 import libai.common.Pair;
-import java.io.*;
-import java.util.*;
 
 import libai.nn.NeuralNetwork;
 

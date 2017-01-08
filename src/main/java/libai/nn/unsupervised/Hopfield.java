@@ -24,7 +24,6 @@
 package libai.nn.unsupervised;
 
 import libai.nn.NeuralNetwork;
-import java.io.*;
 
 import libai.common.Matrix;
 import libai.common.functions.SymmetricSign;
