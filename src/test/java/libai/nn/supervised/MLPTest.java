@@ -24,6 +24,7 @@
 package libai.nn.supervised;
 
 import java.io.File;
+import java.io.IOException;
 import libai.common.Matrix;
 import libai.common.MatrixIOTest;
 import libai.common.functions.Function;
@@ -186,14 +187,20 @@ public class MLPTest {
 		new File(foo).deleteOnExit();
 		
 		assertTrue(mlp.save(foo));
-		MLP mlp2 = MLP.open(foo);
-		assertNotNull(mlp2);
-		assertTrue(mlp != mlp2);
-		
-		assertEquals(mlp.simulate(ins[0]), mlp2.simulate(ins[0]));
-		assertEquals(mlp.simulate(ins[1]), mlp2.simulate(ins[1]));
-		assertEquals(mlp.simulate(ins[2]), mlp2.simulate(ins[2]));
-		assertEquals(mlp.simulate(ins[3]), mlp2.simulate(ins[3]));
+		try {
+			MLP mlp2 = MLP.open(foo);
+			assertNotNull(mlp2);
+			assertTrue(mlp != mlp2);
+
+			assertEquals(mlp.simulate(ins[0]), mlp2.simulate(ins[0]));
+			assertEquals(mlp.simulate(ins[1]), mlp2.simulate(ins[1]));
+			assertEquals(mlp.simulate(ins[2]), mlp2.simulate(ins[2]));
+			assertEquals(mlp.simulate(ins[3]), mlp2.simulate(ins[3]));
+		} catch(IOException e) {
+			fail();
+		} catch(ClassNotFoundException e1) {
+			fail();
+		}
 	}
 
 	@Test
@@ -245,9 +252,9 @@ public class MLPTest {
 		}
 	}
 
-	@Test
-	public void testNullPath() {
-		assertNull(MLP.open(null));
+	@Test(expected=NullPointerException.class)
+	public void testNullPath() throws IOException, ClassNotFoundException{
+		MLP.open((String)null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)

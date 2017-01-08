@@ -248,21 +248,4 @@ public class RBF extends Adaline {
 			result.position(i, 0, NeuralNetwork.gaussian(current, sigma[i]));
 		}
 	}
-
-	/**
-	 * Deserializes an {@code RBF}
-	 *
-	 * @param path Path to file
-	 * @return Restored {@code RBF instance}
-	 * @see NeuralNetwork#save(java.lang.String)
-	 */
-	public static RBF open(String path) {
-		try (FileInputStream fis = new FileInputStream(path);
-			 ObjectInputStream in = new ObjectInputStream(fis)) {
-			return (RBF) in.readObject();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
 }

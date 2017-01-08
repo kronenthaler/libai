@@ -182,23 +182,6 @@ public class SVM extends NeuralNetwork {
         result.position(0, 0, ssign.eval(learnedFunc(pattern)));
     }
 
-	/**
-	 * Deserializes an {@code SVM}
-	 *
-	 * @param path Path to file
-	 * @return Restored {@code SVM instance}
-	 * @see NeuralNetwork#save(java.lang.String)
-	 */
-	public static SVM open(String path) {
-		try (FileInputStream fis = new FileInputStream(path);
-			 ObjectInputStream in = new ObjectInputStream(fis)) {
-			return (SVM) in.readObject();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
     @Override
     public double error(Matrix[] patterns, Matrix[] answers, int offset, int length) {
         int error = 0;

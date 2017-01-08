@@ -25,6 +25,7 @@ package libai.nn.supervised;
 
 import demos.common.SimpleProgressDisplay;
 import java.io.File;
+import java.io.IOException;
 import java.util.Random;
 import javax.swing.JProgressBar;
 import libai.common.Matrix;
@@ -103,19 +104,25 @@ public class SVMTest {
 		String tmp = System.getProperty("java.io.tmpdir") + File.separator;
 		tmp = tmp + "foo.svm";
 		assertTrue(net.save(tmp));
-		SVM net2 = SVM.open(tmp);
-		assertNotNull(net2);
-		new File(tmp).delete();
+		try {
+			SVM net2 = SVM.open(tmp);
+			assertNotNull(net2);
+			new File(tmp).delete();
 
-		assertEquals(net.error(patterns, ans), net2.error(patterns, ans), 0);
-		for (int i = n; i < patterns.length; i++) {
-			assertEquals(net.simulate(patterns[i]).position(0, 0), net2.simulate(patterns[i]).position(0, 0), 0);
+			assertEquals(net.error(patterns, ans), net2.error(patterns, ans), 0);
+			for (int i = n; i < patterns.length; i++) {
+				assertEquals(net.simulate(patterns[i]).position(0, 0), net2.simulate(patterns[i]).position(0, 0), 0);
+			}
+		} catch(IOException e) {
+			fail();
+		} catch(ClassNotFoundException e1) {
+			fail();
 		}
 
 	}
 
-	@Test
-	public void testNullPath(){
-		assertNull(SVM.open(null));
+	@Test(expected=NullPointerException.class)
+	public void testNullPath() throws IOException, ClassNotFoundException{
+		SVM.open((String)null);
 	}
 }

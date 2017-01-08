@@ -25,6 +25,7 @@ package libai.nn.supervised;
 
 import java.io.File;
 import java.util.Random;
+import java.io.IOException;
 import libai.common.Matrix;
 import libai.common.MatrixIOTest;
 import org.junit.Test;
@@ -118,14 +119,20 @@ public class PerceptronTest {
 		new File(foo).deleteOnExit();
 
 		assertTrue(p.save(foo));
-		Perceptron p2 = Perceptron.open(foo);
-		assertNotNull(p2);
-		assertTrue(p != p2);
+		try {
+			Perceptron p2 = Perceptron.open(foo);
+			assertNotNull(p2);
+			assertTrue(p != p2);
 
-		assertEquals(p.simulate(ins[0]), p2.simulate(ins[0]));
-		assertEquals(p.simulate(ins[1]), p2.simulate(ins[1]));
-		assertEquals(p.simulate(ins[2]), p2.simulate(ins[2]));
-		assertEquals(p.simulate(ins[3]), p2.simulate(ins[3]));
+			assertEquals(p.simulate(ins[0]), p2.simulate(ins[0]));
+			assertEquals(p.simulate(ins[1]), p2.simulate(ins[1]));
+			assertEquals(p.simulate(ins[2]), p2.simulate(ins[2]));
+			assertEquals(p.simulate(ins[3]), p2.simulate(ins[3]));
+		} catch(IOException e) {
+			fail();
+		} catch(ClassNotFoundException e1) {
+			fail();
+		}
 	}
 
 }

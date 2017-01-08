@@ -304,21 +304,4 @@ public class Kohonen extends NeuralNetwork {
 			}
 		}
 	}
-
-	/**
-	 * Deserializes an {@code Kohonen}
-	 * 
-	 * @param path Path to file
-	 * @return Restored {@code Kohonen instance}
-	 * @see NeuralNetwork#save(java.lang.String) 
-	 */
-	public static Kohonen open(String path) {
-		try (FileInputStream fis = new FileInputStream(path);
-			 ObjectInputStream in = new ObjectInputStream(fis)) {
-			return (Kohonen)in.readObject();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
 }
