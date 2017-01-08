@@ -25,6 +25,7 @@ package libai.nn.supervised;
 
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
+import java.util.Random;
 import libai.common.Matrix;
 
 import libai.nn.unsupervised.Competitive;
@@ -55,6 +56,22 @@ public class LVQ extends Competitive {
 	 * @param out Number of outputs for the network
 	 */
 	public LVQ(int in, int subclass, int out) {
+		this(in, subclass, out, null);
+	}
+
+	/**
+	 * Constructor. Number of inputs, number of subclasses and number of
+	 * outputs.
+	 *
+	 * @param in Number of input to the network.
+	 * @param subclass	Number of subclasses for output class. Greater subdivision
+	 * provides better classification.
+	 * @param out Number of outputs for the network
+	 * @param rand Random generator used for creating matrices
+	 */
+	public LVQ(int in, int subclass, int out, Random rand) {
+		super(rand);
+		
 		ins = in;
 		outs = out;
 		subclasses = subclass;
@@ -62,7 +79,7 @@ public class LVQ extends Competitive {
 		W = new Matrix(subclasses * outs, ins);
 		W2 = new Matrix(outs, subclasses * outs);
 
-		W.fill();
+		W.fill(true, random);
 		W2.setValue(0);
 
 		//fill W2 with 1 per row
