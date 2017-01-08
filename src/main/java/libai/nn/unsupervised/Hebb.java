@@ -25,6 +25,7 @@ package libai.nn.unsupervised;
 
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
+import java.util.Random;
 import libai.common.Matrix;
 import libai.common.functions.Sign;
 
@@ -71,9 +72,24 @@ public class Hebb extends NeuralNetwork {
 	 * @param phi Decay constant.
 	 */
 	public Hebb(int inputs, double phi) {
+		this(inputs, phi, null);
+	}
+	
+	/**
+	 * Constructor. Creates a Hebbian network with the equals number of inputs
+	 * and outputs. Set the constant for decay
+	 * <code>phi</code>. If phi = 0 the network don't forget anything, if phi =
+	 * 1 the network just remember the las pattern.
+	 *
+	 * @param inputs Number of inputs and outputs for the networks.
+	 * @param phi Decay constant.
+	 * @param rand Random generator used for creating matrices
+	 */
+	public Hebb(int inputs, double phi, Random rand) {
+		super(rand);
 		this.phi = 1 - phi; //precalculation for the decay 1-phi
 		W = new Matrix(inputs, inputs);
-		W.fill();
+		W.fill(true, random);
 	}
 
 	/**
