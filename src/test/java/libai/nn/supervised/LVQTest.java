@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
  * @author Federico Vera {@literal <dktcoding [at] gmail>}
  */
 public class LVQTest {
-	
+
 	public LVQTest() {
 	}
 
@@ -92,5 +92,5 @@ public class LVQTest {
 			}
 		}
 	}
-	
+
 }

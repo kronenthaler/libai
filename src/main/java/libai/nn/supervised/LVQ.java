@@ -69,7 +69,7 @@ public class LVQ extends Competitive {
 	 */
 	public LVQ(int in, int subclass, int out, Random rand) {
 		super(rand);
-		
+
 		ins = in;
 		outs = out;
 		subclasses = subclass;
