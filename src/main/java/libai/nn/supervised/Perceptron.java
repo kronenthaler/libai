@@ -23,7 +23,6 @@
  */
 package libai.nn.supervised;
 
-import java.io.*;
 import java.util.Random;
 import libai.common.Matrix;
 import libai.common.functions.Sign;

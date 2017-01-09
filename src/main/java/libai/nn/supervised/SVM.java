@@ -23,8 +23,7 @@
  */
 package libai.nn.supervised;
 
-import java.io.*;
-import java.util.*;
+import java.util.Random;
 import libai.common.Matrix;
 import libai.common.functions.SymmetricSign;
 import libai.common.kernels.GaussianKernel;

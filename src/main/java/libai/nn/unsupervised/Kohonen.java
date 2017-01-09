@@ -2,17 +2,17 @@
  * MIT License
  *
  * Copyright (c) 2009-2016 Ignacio Calderon <https://github.com/kronenthaler>
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -23,10 +23,11 @@
  */
 package libai.nn.unsupervised;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Random;
 import libai.common.Matrix;
 import libai.common.Pair;
-import java.io.*;
-import java.util.*;
 
 import libai.nn.NeuralNetwork;
 
@@ -34,16 +35,16 @@ import libai.nn.NeuralNetwork;
  * Kohonen's Self-organizative Maps or SOM or Kohonen. This maps are one of the
  * most important unsupervised neural networks of the history. The most
  * important feature of the kohonen's maps is the possibility of transform any
- * multidimensional space into a R^2 space, providing a highly precise 
- * clustering method. One of the most famous examples for the kohonen's maps is 
- * the transform the RGB color cube into a plane where the reds, greens, blues, 
+ * multidimensional space into a R^2 space, providing a highly precise
+ * clustering method. One of the most famous examples for the kohonen's maps is
+ * the transform the RGB color cube into a plane where the reds, greens, blues,
  * etc are clustered in a very similar way of the any color picker utility.
  *
  * @author kronenthaler
  */
 public class Kohonen extends NeuralNetwork {
 	private static final long serialVersionUID = 8918172607912802829L;
-	
+
 	private Matrix W[];					//array of weights ijk, with k positions.
 	private int[][] map;				//map of the outputs
 	private int[] nperlayer;			//array of 3 positions, {#inputs,#rows,#columns}
@@ -64,6 +65,21 @@ public class Kohonen extends NeuralNetwork {
 	 * @param neighboursY neighbors along the Y-axis
 	 */
 	public Kohonen(int[] nperlayer, double _neighborhood, int[] neighboursX, int[] neighboursY) {
+		this(nperlayer, _neighborhood, neighboursX, neighboursY, null);
+	}
+	/**
+	 * Constructor. Creates a kohonen's map with nperlayer[0] inputs,
+	 * nperlayer[1] rows and nperlayer[2] columns. Additional set the initial
+	 * size of the neighborhood and the way in the neighbors are connected.
+	 *
+	 * @param nperlayer Number of neurons (input, rows and columns)
+	 * @param _neighborhood Initial size of the neighborhood
+	 * @param neighboursX neighbors along the X-axis
+	 * @param neighboursY neighbors along the Y-axis
+	 * @param rand Random generator used for creating matrices
+	 */
+	public Kohonen(int[] nperlayer, double _neighborhood, int[] neighboursX, int[] neighboursY, Random rand) {
+		super(rand);
 		this.nperlayer = nperlayer;
 		neighborhood = _neighborhood;
 

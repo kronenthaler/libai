@@ -23,9 +23,10 @@
  */
 package libai.nn.supervised;
 
+import java.util.ArrayList;
+import java.util.PriorityQueue;
+import java.util.Random;
 import libai.common.Matrix;
-import java.io.*;
-import java.util.*;
 
 import libai.nn.NeuralNetwork;
 

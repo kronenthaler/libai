@@ -2,17 +2,17 @@
  * MIT License
  *
  * Copyright (c) 2009-2016 Ignacio Calderon <https://github.com/kronenthaler>
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -23,8 +23,7 @@
  */
 package libai.nn.unsupervised;
 
-import java.io.FileInputStream;
-import java.io.ObjectInputStream;
+import java.util.Random;
 import libai.common.Matrix;
 import libai.common.functions.Sign;
 
@@ -42,11 +41,11 @@ import libai.nn.NeuralNetwork;
  */
 public class Hebb extends NeuralNetwork {
 	private static final long serialVersionUID = 7754681003525186940L;
-	
+
 	protected double phi;
 	protected Matrix W;
 	protected static Sign sign = new Sign();
-	
+
 	public Hebb() {
 	}
 
@@ -71,9 +70,24 @@ public class Hebb extends NeuralNetwork {
 	 * @param phi Decay constant.
 	 */
 	public Hebb(int inputs, double phi) {
+		this(inputs, phi, null);
+	}
+
+	/**
+	 * Constructor. Creates a Hebbian network with the equals number of inputs
+	 * and outputs. Set the constant for decay
+	 * <code>phi</code>. If phi = 0 the network don't forget anything, if phi =
+	 * 1 the network just remember the las pattern.
+	 *
+	 * @param inputs Number of inputs and outputs for the networks.
+	 * @param phi Decay constant.
+	 * @param rand Random generator used for creating matrices
+	 */
+	public Hebb(int inputs, double phi, Random rand) {
+		super(rand);
 		this.phi = 1 - phi; //precalculation for the decay 1-phi
 		W = new Matrix(inputs, inputs);
-		W.fill();
+		W.fill(true, random);
 	}
 
 	/**
