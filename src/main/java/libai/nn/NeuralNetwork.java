@@ -64,9 +64,10 @@ public abstract class NeuralNetwork implements Serializable {
 	public void setPlotter(Plotter plotter) {
 		this.plotter = plotter;
 	}
+	public Plotter getPlotter() { return plotter; }
 
 	/**
-	 * Set's a {@link ProgressDisplay} to the {@code NeuralNetwork}. The value
+	 * Sets a {@link ProgressDisplay} to the {@code NeuralNetwork}. The value
 	 * will go from {@code -epochs} to {@code 0}, and updated every training
 	 * epoch.
 	 * <p><i>Note: </i> Classes that implement {@link
@@ -78,9 +79,10 @@ public abstract class NeuralNetwork implements Serializable {
 	public void setProgressBar(ProgressDisplay pb) {
 		progress = pb;
 	}
+	public ProgressDisplay getProgressBar(){ return progress; }
 
 	/**
-	 * Train this neural network with the list of {@code patterns} and the
+	 * Trains this neural network with the list of {@code patterns} and the
 	 * expected {@code answers}.
 	 * <p>Use the learning rate {@code alpha} for many {@code epochs}.
 	 * Take {@code length} patterns from the position {@code offset} until the
@@ -97,74 +99,6 @@ public abstract class NeuralNetwork implements Serializable {
 	 * @param minerror	The minimal error expected.
 	 */
 	public abstract void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror);
-
-	protected void validate(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
-		assert patterns[0].getColumns() == 1 && answers[0].getColumns() == 1 :
-				"patterns and answers must be column matrices";
-		assert patterns.length == answers.length :
-				"There must be the same amount of patterns and answers";
-		assert offset >= 0 && offset < patterns.length : String.format(
-				"offset must be in the interval [0, %d), found: %d", patterns.length, offset);
-		assert length >= 0 && length <= patterns.length - offset : String.format(
-				"length must be in the interval (0, %d], found: %d", patterns.length - offset, length);
-		assert epochs > 0 : "The number of epochs must be a positive non zero integer";
-		assert minerror >= 0 : "The error must be a postive number";
-	}
-
-	/**
-	 * Calculate the output for the {@code pattern}.
-	 *
-	 * @param pattern	Pattern to use as input.
-	 * @return The output for the neural network.
-	 */
-	public abstract Matrix simulate(Matrix pattern);
-
-	/**
-	 * Calculate the output for the {@code pattern} and left the result in
-	 * {@code result}.
-	 *
-	 * @param pattern	Pattern to use as input.
-	 * @param result	The output for the input.
-	 */
-	public abstract void simulate(Matrix pattern, Matrix result);
-
-	/**
-	 * Save the neural network to the file in the given {@code path}
-	 *
-	 * @param path	The path for the output file.
-	 * @return {@code true} if the file can be created and written,
-	 * {@code false} otherwise.
-	 */
-	public boolean save(String path) {
-		try (FileOutputStream fos = new FileOutputStream(path);
-		     ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-			oos.writeObject(this);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
-		}
-		return true;
-	}
-	
-	public static final <NN extends NeuralNetwork> NN open(String path) throws IOException, ClassNotFoundException {
-		return (NN) open(new File(path));
-	}
-	
-	public static final <NN extends NeuralNetwork> NN open(File file)throws IOException, ClassNotFoundException {
-		try (FileInputStream fis = new FileInputStream(file)){
-			return (NN) open(fis);
-		} finally {
-			// nothing to do, raise the exception upwards.
-		}
-	}
-	
-	public static final <NN extends NeuralNetwork> NN open(InputStream input)throws IOException, ClassNotFoundException {
-		try (ObjectInputStream in = new ObjectInputStream(input)) {
-			return (NN) in.readObject();
-		} finally {
-			// nothing to do, raise the exception upwards.
-		}
-	}
 
 	/**
 	 * Alias of train(patterns, answers, alpha, epochs, 0, patterns.length,
@@ -199,8 +133,76 @@ public abstract class NeuralNetwork implements Serializable {
 		train(patterns, answers, alpha, epochs, offset, length, 1.e-5);
 	}
 
+	protected void validate(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
+		assert patterns[0].getColumns() == 1 && answers[0].getColumns() == 1 :
+				"patterns and answers must be column matrices";
+		assert patterns.length == answers.length :
+				"There must be the same amount of patterns and answers";
+		assert offset >= 0 && offset < patterns.length : String.format(
+				"offset must be in the interval [0, %d), found: %d", patterns.length, offset);
+		assert length >= 0 && length <= patterns.length - offset : String.format(
+				"length must be in the interval (0, %d], found: %d", patterns.length - offset, length);
+		assert epochs > 0 : "The number of epochs must be a positive non zero integer";
+		assert minerror >= 0 : "The error must be a postive number";
+	}
+
 	/**
-	 * Calculate from a set of patterns. Alias of error(patterns, answers, 0,
+	 * Calculates the output for the {@code pattern}.
+	 *
+	 * @param pattern	Pattern to use as input.
+	 * @return The output for the neural network.
+	 */
+	public abstract Matrix simulate(Matrix pattern);
+
+	/**
+	 * Calculates the output for the {@code pattern} and left the result in
+	 * {@code result}.
+	 *
+	 * @param pattern	Pattern to use as input.
+	 * @param result	The output for the input.
+	 */
+	public abstract void simulate(Matrix pattern, Matrix result);
+
+	/**
+	 * Saves the neural network to the file in the given {@code path}
+	 *
+	 * @param path	The path for the output file.
+	 * @return {@code true} if the file can be created and written,
+	 * {@code false} otherwise.
+	 */
+	public boolean save(String path) {
+		try (FileOutputStream fos = new FileOutputStream(path);
+		     ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+			oos.writeObject(this);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
+	public static final <NN extends NeuralNetwork> NN open(String path) throws IOException, ClassNotFoundException {
+		return (NN) open(new File(path));
+	}
+	
+	public static final <NN extends NeuralNetwork> NN open(File file)throws IOException, ClassNotFoundException {
+		try (FileInputStream fis = new FileInputStream(file)){
+			return (NN) open(fis);
+		} finally {
+			// nothing to do, raise the exception upwards.
+		}
+	}
+	
+	public static final <NN extends NeuralNetwork> NN open(InputStream input)throws IOException, ClassNotFoundException {
+		try (ObjectInputStream in = new ObjectInputStream(input)) {
+			return (NN) in.readObject();
+		} finally {
+			// nothing to do, raise the exception upwards.
+		}
+	}
+
+	/**
+	 * Calculates from a set of patterns. Alias of error(patterns, answers, 0,
 	 * patterns.length)
 	 * <p>{@code patterns} and {@code answers} must be arrays of
 	 * non-{@code null} <b>column</b> matrices</p>
@@ -260,7 +262,7 @@ public abstract class NeuralNetwork implements Serializable {
 	 * @return The square Euclidean distance.
 	 */
 	public static double euclideanDistance2(double[] a, double[] b) {
-		assert a.length== b.length : "a & b must have the same length";
+		assert a.length == b.length : "a & b must have the same length";
 
 		double sum = 0;
 		for (int i = 0; i < a.length; i++) {
@@ -293,7 +295,7 @@ public abstract class NeuralNetwork implements Serializable {
 	}
 
 	/**
-	 * Calculate the Gaussian function with standard deviation
+	 * Calculates the Gaussian function with standard deviation
 	 * {@code sigma} and input parameter {@code u^2}
 	 *
 	 * @param u2 {@code u2}

@@ -83,18 +83,18 @@ public class Examples extends javax.swing.JFrame {
         jTabbedPane2.addTab("Genetic", jTabbedPane3);
 
         jTabbedPane1.addTab("Adaline", perceptronPanel1);
-        jTabbedPane1.addTab("MLP", mPLPanel1);
-        jTabbedPane1.addTab("RBF", rBFPanel1);
-        jTabbedPane1.addTab("LVQ", lVQPanel1);
-        jTabbedPane1.addTab("SVM", sVMPanel1);
+        jTabbedPane1.addTab("MultiLayerPerceptron", mPLPanel1);
+        jTabbedPane1.addTab("RadialBasisFunction", rBFPanel1);
+        jTabbedPane1.addTab("LearningVectorQuantization", lVQPanel1);
+        jTabbedPane1.addTab("SupportVectorMachine", sVMPanel1);
         jTabbedPane1.addTab("Kohonen", kohonenPanel1);
         jTabbedPane1.addTab("Competitive", competitivePanel1);
         jTabbedPane1.addTab("Hopfield", hebbPanel1);
 
         jTabbedPane2.addTab("Neural Networks", jTabbedPane1);
 
-        jTabbedPane4.addTab("BFS", bFSPanel1);
-        jTabbedPane4.addTab("DFS", dFSPanel1);
+        jTabbedPane4.addTab("BreadthFirstSearch", bFSPanel1);
+        jTabbedPane4.addTab("DepthFirstSearch", dFSPanel1);
         jTabbedPane4.addTab("A*", aStarPanel1);
 
         jTabbedPane2.addTab("Search", jTabbedPane4);
