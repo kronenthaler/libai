@@ -66,9 +66,7 @@ public abstract class State implements Comparable<State> {
 	 * @param o {@code o}
 	 */
 	@Override
-	public boolean equals(Object o) {
-		return compareTo((State) o) == 0;
-	}
+	public abstract boolean equals(Object o);
 
 	/**
 	 * Determines if the current state is a solution or not

@@ -23,21 +23,25 @@
  */
 package libai.nn.supervised;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import libai.common.Matrix;
-import libai.common.MatrixIOTest;
+import java.util.*;
+
+import libai.common.*;
 import libai.common.functions.Function;
 import libai.common.functions.Identity;
 import libai.common.functions.Sigmoid;
 import libai.nn.supervised.backpropagation.MomentumBackpropagation;
 import libai.nn.supervised.backpropagation.ResilientBackpropagation;
+import org.junit.After;
 import org.junit.Test;
 import libai.common.functions.HyperbolicTangent;
 import libai.common.functions.Sinc;
-import libai.common.ProgressDisplay;
 
 import static java.lang.Math.round;
+
+import java.util.List;
 import java.util.Random;
 import static org.junit.Assert.*;
 import static org.junit.Assume.*;
@@ -47,7 +51,6 @@ import static org.junit.Assume.*;
  * @author Federico Vera {@literal <dktcoding [at] gmail>}
  */
 public class MultiLayerPerceptronTest {
-	
 	@Test
 	public void testTrainXOrStandardBackProp() {
 		MultiLayerPerceptron mlp = new MultiLayerPerceptron(
@@ -193,6 +196,7 @@ public class MultiLayerPerceptronTest {
 			MultiLayerPerceptron mlp2 = MultiLayerPerceptron.open(foo);
 			assertNotNull(mlp2);
 			assertTrue(mlp != mlp2);
+			assertTrue(mlp != mlp2);
 
 			assertEquals(mlp.simulate(ins[0]), mlp2.simulate(ins[0]));
 			assertEquals(mlp.simulate(ins[1]), mlp2.simulate(ins[1]));
@@ -280,6 +284,7 @@ public class MultiLayerPerceptronTest {
 			}, new Random(0)
 		);
 		mlp.setProgressBar(progress);
+		mlp.setPlotter(new SimplePlotter());
 		Matrix[] ins = new Matrix[4];
 		ins[0] = new Matrix(2, 1, new double[]{0, 0});
 		ins[1] = new Matrix(2, 1, new double[]{0, 1});
@@ -301,6 +306,8 @@ public class MultiLayerPerceptronTest {
 		assertEquals(0, round(res.position(0, 0)));
 		mlp.simulate(ins[3], res);
 		assertEquals(0, round(res.position(0, 0)));
+
+		assertTrue(((SimplePlotter)mlp.getPlotter()).called);
 	}
 
 	@Test
@@ -314,6 +321,7 @@ public class MultiLayerPerceptronTest {
 			}, new ResilientBackpropagation(), new Random(0)
 		);
 		mlp.setProgressBar(progress);
+		mlp.setPlotter(new SimplePlotter());
 		Matrix[] ins = new Matrix[4];
 		ins[0] = new Matrix(2, 1, new double[]{0, 0});
 		ins[1] = new Matrix(2, 1, new double[]{0, 1});
@@ -335,6 +343,8 @@ public class MultiLayerPerceptronTest {
 		assertEquals(0, round(res.position(0, 0)));
 		mlp.simulate(ins[3], res);
 		assertEquals(0, round(res.position(0, 0)));
+
+		assertTrue(((SimplePlotter)mlp.getPlotter()).called);
 	}
 
 	@Test
@@ -348,6 +358,7 @@ public class MultiLayerPerceptronTest {
 			}, new MomentumBackpropagation(0.5), new Random(0)
 		);
 		mlp.setProgressBar(progress);
+		mlp.setPlotter(new SimplePlotter());
 		Matrix[] ins = new Matrix[4];
 		ins[0] = new Matrix(2, 1, new double[]{0, 0});
 		ins[1] = new Matrix(2, 1, new double[]{0, 1});
@@ -369,6 +380,8 @@ public class MultiLayerPerceptronTest {
 		assertEquals(0, round(res.position(0, 0)));
 		mlp.simulate(ins[3], res);
 		assertEquals(0, round(res.position(0, 0)));
+
+		assertTrue(((SimplePlotter)mlp.getPlotter()).called);
 	}
 
 	private static final ProgressDisplay progress = new ProgressDisplay() {
@@ -387,6 +400,25 @@ public class MultiLayerPerceptronTest {
 		public void setValue(int v) {
 			assertTrue(v >= min);
 			assertTrue(v <= max);
+		}
+	};
+
+	class SimplePlotter implements Plotter {
+		boolean called = false;
+
+		@Override
+		public void paint(Graphics g2) {
+
+		}
+
+		@Override
+		public void update(Graphics g2) {
+
+		}
+
+		@Override
+		public void setError(int epoch, double error) {
+			called = true;
 		}
 	};
 

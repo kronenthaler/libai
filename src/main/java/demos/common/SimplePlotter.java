@@ -54,9 +54,9 @@ public class SimplePlotter extends Canvas implements Plotter{
 		g.drawLine(10, 10, 10, h - 20);	  //y-axis
 		g.drawLine(10, h - 20, w - 20, h - 20); //zero
 
-		//normalizar los valores a 0-1, segun min y max.
-		if (errors.size() > w) { //estirar la ventana...
-			Dimension d = new Dimension(errors.size(), h); //ancho igual a la cantidad de elementos * 3pixels
+		//normalize values to [0-1] according to min and max
+		if (errors.size() > w) { // stretch the window
+			Dimension d = new Dimension(errors.size(), h); //width should match the ammount of elements + 3px margin
 			setSize(d);
 			setPreferredSize(d);
 			invalidate();

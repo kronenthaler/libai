@@ -175,7 +175,6 @@ public abstract class NeuralNetwork implements Serializable {
 		     ObjectOutputStream oos = new ObjectOutputStream(fos)) {
 			oos.writeObject(this);
 		} catch (Exception e) {
-			e.printStackTrace();
 			return false;
 		}
 		return true;
