@@ -23,12 +23,16 @@
  */
 package demos.nn;
 
-import libai.nn.supervised.MLP;
+import libai.nn.supervised.MultiLayerPerceptron;
 import libai.common.functions.Sigmoid;
 import libai.common.Matrix;
 import libai.common.functions.Function;
 import libai.common.functions.Identity;
 import demos.common.SimpleProgressDisplay;
+import libai.nn.supervised.backpropagation.Backpropagation;
+import libai.nn.supervised.backpropagation.MomentumBackpropagation;
+import libai.nn.supervised.backpropagation.ResilientBackpropagation;
+import libai.nn.supervised.backpropagation.StandardBackpropagation;
 
 /**
  *
@@ -71,7 +75,7 @@ public class MPLPanel extends javax.swing.JPanel {
             }
         });
 
-        jTextPane1.setText("Train a MLP network to learn the equation: sin(x) + cos(x) for x in [1, 41) using a spacing of 0.1 for training and 0.33 for test. The network has 3 layers of 1, 4 and 1 neurons and functions, identity, sigmoid and identity respectively  ");
+        jTextPane1.setText("Train a MultiLayerPerceptron network to learn the equation: sin(x) + cos(x) for x in [1, 41) using a spacing of 0.1 for training and 0.33 for test. The network has 3 layers of 1, 4 and 1 neurons and functions, identity, sigmoid and identity respectively  ");
         jScrollPane1.setViewportView(jTextPane1);
 
         algorithmType.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Standard Backpropagation", "Momentum Backpropagation", "Resilent Backpropagation" }));
@@ -138,16 +142,18 @@ public class MPLPanel extends javax.swing.JPanel {
 				}
 
 				int nperlayer[] = {m, 4, l};
-				MLP net = new MLP(nperlayer,
-						new Function[]{new Identity(), new Sigmoid(), new Identity()});
+				Backpropagation trainer;
 
 				if (algorithmType.getSelectedIndex() == 0) {
-					net.setTrainingType(MLP.STANDARD_BACKPROPAGATION);
+					trainer = new StandardBackpropagation();
 				} else if (algorithmType.getSelectedIndex() == 1) {
-					net.setTrainingType(MLP.MOMEMTUM_BACKPROPAGATION, 0.4);
+					trainer = new MomentumBackpropagation(0.4);
 				} else {
-					net.setTrainingType(MLP.RESILENT_BACKPROPAGATION);
+					trainer = new ResilientBackpropagation();
 				}
+
+				MultiLayerPerceptron net = new MultiLayerPerceptron(nperlayer,
+						new Function[]{new Identity(), new Sigmoid(), new Identity()});
 
 				net.setProgressBar(new SimpleProgressDisplay(jProgressBar1));
 				long start = System.currentTimeMillis();

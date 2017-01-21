@@ -23,19 +23,25 @@
  */
 package libai.nn.supervised;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import libai.common.Matrix;
-import libai.common.MatrixIOTest;
+import java.util.*;
+
+import libai.common.*;
 import libai.common.functions.Function;
 import libai.common.functions.Identity;
 import libai.common.functions.Sigmoid;
+import libai.nn.supervised.backpropagation.MomentumBackpropagation;
+import libai.nn.supervised.backpropagation.ResilientBackpropagation;
+import org.junit.After;
 import org.junit.Test;
 import libai.common.functions.HyperbolicTangent;
 import libai.common.functions.Sinc;
-import libai.common.ProgressDisplay;
 
 import static java.lang.Math.round;
+
+import java.util.List;
 import java.util.Random;
 import static org.junit.Assert.*;
 import static org.junit.Assume.*;
@@ -44,17 +50,16 @@ import static org.junit.Assume.*;
  *
  * @author Federico Vera {@literal <dktcoding [at] gmail>}
  */
-public class MLPTest {
-	
+public class MultiLayerPerceptronTest {
 	@Test
 	public void testTrainXOrStandardBackProp() {
-		MLP mlp = new MLP(
+		MultiLayerPerceptron mlp = new MultiLayerPerceptron(
 			new int[]{2, 3, 1}, 
 			new Function[]{
 				new Identity(), 
 				new Sigmoid(), 
 				new Identity()
-			}, 0, new Random(0)
+			}, new Random(0)
 		);
 		Matrix[] ins = new Matrix[4];
 		ins[0] = new Matrix(2, 1, new double[]{0, 0});
@@ -67,7 +72,7 @@ public class MLPTest {
 		out[2] = new Matrix(1, 1, new double[]{1});
 		out[3] = new Matrix(1, 1, new double[]{0});
 		mlp.train(ins, out, 0.05, 100000, 0, 4, 0.1);
-		assumeTrue("MLP didn't converge, try again", 0.1 > mlp.error(ins, out));
+		assumeTrue("MultiLayerPerceptron didn't converge, try again", 0.1 > mlp.error(ins, out));
 		Matrix res = new Matrix(1, 1);
 		mlp.simulate(ins[0], res);
 		assertEquals(0, round(res.position(0, 0)));
@@ -81,15 +86,15 @@ public class MLPTest {
 	
 	@Test
 	public void testTrainXOrMomentumBackProp() {
-		MLP mlp = new MLP(
+		MultiLayerPerceptron mlp = new MultiLayerPerceptron(
 			new int[]{2, 3, 1}, 
 			new Function[]{
 				new Identity(), 
 				new Sigmoid(), 
 				new Identity()
-			}, 0, new Random(0)
+			}, new MomentumBackpropagation(0.5), new Random(0)
 		);
-		mlp.setTrainingType(MLP.MOMEMTUM_BACKPROPAGATION, 0.5);
+
 		Matrix[] ins = new Matrix[4];
 		ins[0] = new Matrix(2, 1, new double[]{0, 0});
 		ins[1] = new Matrix(2, 1, new double[]{0, 1});
@@ -101,7 +106,7 @@ public class MLPTest {
 		out[2] = new Matrix(1, 1, new double[]{1});
 		out[3] = new Matrix(1, 1, new double[]{0});
 		mlp.train(ins, out, 0.05, 100000, 0, 4, 0.1);
-		assumeTrue("MLP didn't converge, try again", 0.1 > mlp.error(ins, out));
+		assumeTrue("MultiLayerPerceptron didn't converge, try again", 0.1 > mlp.error(ins, out));
 		Matrix res = new Matrix(1, 1);
 		mlp.simulate(ins[0], res);
 		assertEquals(0, round(res.position(0, 0)));
@@ -115,15 +120,15 @@ public class MLPTest {
 	
 	@Test
 	public void testTrainNorRProp() {
-		MLP mlp = new MLP(
+		MultiLayerPerceptron mlp = new MultiLayerPerceptron(
 			new int[]{2, 16, 1}, 
 			new Function[]{
 				new Identity(), 
 				new Sinc(), 
 				new Identity()
-			}, 0, new Random(0)
+			}, new ResilientBackpropagation(), new Random(0)
 		);
-		mlp.setTrainingType(MLP.RESILENT_BACKPROPAGATION);
+
 		Matrix[] ins = new Matrix[4];
 		ins[0] = new Matrix(2, 1, new double[]{0, 0});
 		ins[1] = new Matrix(2, 1, new double[]{0, 1});
@@ -135,7 +140,7 @@ public class MLPTest {
 		out[2] = new Matrix(1, 1, new double[]{0});
 		out[3] = new Matrix(1, 1, new double[]{0});
 		mlp.train(ins, out, 0.01, 1000000, 0, 4, 0.01);
-		assumeTrue("MLP didn't converge, try again", 0.01 > mlp.error(ins, out));
+		assumeTrue("MultiLayerPerceptron didn't converge, try again", 0.01 > mlp.error(ins, out));
 		Matrix res = new Matrix(1, 1);
 		mlp.simulate(ins[0], res);
 		assertEquals(1, round(res.position(0, 0)));
@@ -150,16 +155,16 @@ public class MLPTest {
 	@Test
 	public void testIO() {
         assumeTrue("Can't use temp dir...", MatrixIOTest.checkTemp());
-		MLP mlp = new MLP(
+		MultiLayerPerceptron mlp = new MultiLayerPerceptron(
 			new int[]{2, 3, 3, 2}, 
 			new Function[]{
 				new Identity(), 
 				new Sigmoid(), 
 				new HyperbolicTangent(), 
 				new Identity()
-			}, 0, new Random(0)
+			}, new Random(0)
 		);
-		mlp.setTrainingType(MLP.STANDARD_BACKPROPAGATION);
+
 		Matrix[] ins = new Matrix[4];
 		ins[0] = new Matrix(2, 1, new double[]{0, 0});
 		ins[1] = new Matrix(2, 1, new double[]{0, 1});
@@ -171,7 +176,7 @@ public class MLPTest {
 		out[2] = new Matrix(2, 1, new double[]{1, 0});
 		out[3] = new Matrix(2, 1, new double[]{0, 1});
 		mlp.train(ins, out, 0.01, 1000000, 0, 4, 0.01);
-		assumeTrue("MLP didn't converge, try again", 0.01 > mlp.error(ins, out));
+		assumeTrue("MultiLayerPerceptron didn't converge, try again", 0.01 > mlp.error(ins, out));
 		assumeTrue(0.1 > mlp.error(ins, out));
 		assertEquals(0, round(mlp.simulate(ins[0]).position(0, 0)));
 		assertEquals(1, round(mlp.simulate(ins[1]).position(0, 0)));
@@ -188,8 +193,9 @@ public class MLPTest {
 		
 		assertTrue(mlp.save(foo));
 		try {
-			MLP mlp2 = MLP.open(foo);
+			MultiLayerPerceptron mlp2 = MultiLayerPerceptron.open(foo);
 			assertNotNull(mlp2);
+			assertTrue(mlp != mlp2);
 			assertTrue(mlp != mlp2);
 
 			assertEquals(mlp.simulate(ins[0]), mlp2.simulate(ins[0]));
@@ -232,13 +238,13 @@ public class MLPTest {
 		}
 
 		int nperlayer[] = {m, 4, l};
-		MLP net = new MLP(
+		MultiLayerPerceptron net = new MultiLayerPerceptron(
 			nperlayer, 
 			new Function[]{
 				new Identity(), 
 				new Sigmoid(), 
 				new Identity()
-			}, 0, new Random(0)
+			}, new Random(0)
 		);
 
 		net.train(p, t, 0.2, 50000, 0, n);
@@ -254,31 +260,31 @@ public class MLPTest {
 
 	@Test(expected=NullPointerException.class)
 	public void testNullPath() throws IOException, ClassNotFoundException{
-		MLP.open((String)null);
+		MultiLayerPerceptron.open((String)null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testWrongBeta() {
-		new MLP(new int[2], new Function[2], -1);
+		new MultiLayerPerceptron(new int[2], new Function[2], new MomentumBackpropagation(-1));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testWrongBeta2() {
-		new MLP(new int[2], new Function[2], 2);
+		new MultiLayerPerceptron(new int[2], new Function[2], new MomentumBackpropagation(2));
 	}
 
 	@Test
 	public void testWithProgressBarStandard() {
-		MLP mlp = new MLP(
+		MultiLayerPerceptron mlp = new MultiLayerPerceptron(
 			new int[]{2, 16, 1},
 			new Function[]{
 				new Identity(),
 				new Sinc(),
 				new Identity()
-			}, 0, new Random(0)
+			}, new Random(0)
 		);
 		mlp.setProgressBar(progress);
-		mlp.setTrainingType(MLP.STANDARD_BACKPROPAGATION);
+		mlp.setPlotter(new SimplePlotter());
 		Matrix[] ins = new Matrix[4];
 		ins[0] = new Matrix(2, 1, new double[]{0, 0});
 		ins[1] = new Matrix(2, 1, new double[]{0, 1});
@@ -290,7 +296,7 @@ public class MLPTest {
 		out[2] = new Matrix(1, 1, new double[]{0});
 		out[3] = new Matrix(1, 1, new double[]{0});
 		mlp.train(ins, out, 0.01, 1000000, 0, 4, 0.01);
-		assumeTrue("MLP didn't converge, try again", 0.01 > mlp.error(ins, out));
+		assumeTrue("MultiLayerPerceptron didn't converge, try again", 0.01 > mlp.error(ins, out));
 		Matrix res = new Matrix(1, 1);
 		mlp.simulate(ins[0], res);
 		assertEquals(1, round(res.position(0, 0)));
@@ -300,20 +306,22 @@ public class MLPTest {
 		assertEquals(0, round(res.position(0, 0)));
 		mlp.simulate(ins[3], res);
 		assertEquals(0, round(res.position(0, 0)));
+
+		assertTrue(((SimplePlotter)mlp.getPlotter()).called);
 	}
 
 	@Test
 	public void testWithProgressBarResilient() {
-		MLP mlp = new MLP(
+		MultiLayerPerceptron mlp = new MultiLayerPerceptron(
 			new int[]{2, 16, 1},
 			new Function[]{
 				new Identity(),
 				new Sinc(),
 				new Identity()
-			}, 0, new Random(0)
+			}, new ResilientBackpropagation(), new Random(0)
 		);
 		mlp.setProgressBar(progress);
-		mlp.setTrainingType(MLP.RESILENT_BACKPROPAGATION);
+		mlp.setPlotter(new SimplePlotter());
 		Matrix[] ins = new Matrix[4];
 		ins[0] = new Matrix(2, 1, new double[]{0, 0});
 		ins[1] = new Matrix(2, 1, new double[]{0, 1});
@@ -325,7 +333,7 @@ public class MLPTest {
 		out[2] = new Matrix(1, 1, new double[]{0});
 		out[3] = new Matrix(1, 1, new double[]{0});
 		mlp.train(ins, out, 0.01, 1000000, 0, 4, 0.01);
-		assumeTrue("MLP didn't converge, try again", 0.01 > mlp.error(ins, out));
+		assumeTrue("MultiLayerPerceptron didn't converge, try again", 0.01 > mlp.error(ins, out));
 		Matrix res = new Matrix(1, 1);
 		mlp.simulate(ins[0], res);
 		assertEquals(1, round(res.position(0, 0)));
@@ -335,20 +343,22 @@ public class MLPTest {
 		assertEquals(0, round(res.position(0, 0)));
 		mlp.simulate(ins[3], res);
 		assertEquals(0, round(res.position(0, 0)));
+
+		assertTrue(((SimplePlotter)mlp.getPlotter()).called);
 	}
 
 	@Test
 	public void testWithProgressBarMomentum() {
-		MLP mlp = new MLP(
+		MultiLayerPerceptron mlp = new MultiLayerPerceptron(
 			new int[]{2, 16, 1},
 			new Function[]{
 				new Identity(),
 				new Sinc(),
 				new Identity()
-			}, 0, new Random(0)
+			}, new MomentumBackpropagation(0.5), new Random(0)
 		);
 		mlp.setProgressBar(progress);
-		mlp.setTrainingType(MLP.MOMEMTUM_BACKPROPAGATION, 0.5);
+		mlp.setPlotter(new SimplePlotter());
 		Matrix[] ins = new Matrix[4];
 		ins[0] = new Matrix(2, 1, new double[]{0, 0});
 		ins[1] = new Matrix(2, 1, new double[]{0, 1});
@@ -360,7 +370,7 @@ public class MLPTest {
 		out[2] = new Matrix(1, 1, new double[]{0});
 		out[3] = new Matrix(1, 1, new double[]{0});
 		mlp.train(ins, out, 0.01, 1000000, 0, 4, 0.01);
-		assumeTrue("MLP didn't converge, try again", 0.01 > mlp.error(ins, out));
+		assumeTrue("MultiLayerPerceptron didn't converge, try again", 0.01 > mlp.error(ins, out));
 		Matrix res = new Matrix(1, 1);
 		mlp.simulate(ins[0], res);
 		assertEquals(1, round(res.position(0, 0)));
@@ -370,6 +380,8 @@ public class MLPTest {
 		assertEquals(0, round(res.position(0, 0)));
 		mlp.simulate(ins[3], res);
 		assertEquals(0, round(res.position(0, 0)));
+
+		assertTrue(((SimplePlotter)mlp.getPlotter()).called);
 	}
 
 	private static final ProgressDisplay progress = new ProgressDisplay() {
@@ -391,22 +403,26 @@ public class MLPTest {
 		}
 	};
 
-	@Test(expected = IllegalArgumentException.class)
-	public void testMomentumWithNoBeta() {
-		MLP mlp = new MLP(
-			new int[]{2, 16, 1},
-			new Function[]{
-				new Identity(),
-				new Sinc(),
-				new Identity()
-			}
-		);
-		mlp.setProgressBar(progress);
-		mlp.setTrainingType(MLP.MOMEMTUM_BACKPROPAGATION);
-	}
+	class SimplePlotter implements Plotter {
+		boolean called = false;
+
+		@Override
+		public void paint(Graphics g2) {
+
+		}
+
+		@Override
+		public void update(Graphics g2) {
+
+		}
+
+		@Override
+		public void setError(int epoch, double error) {
+			called = true;
+		}
+	};
 
 	private double f(double x) {
 		return Math.sin(x) + Math.cos(x);
 	}
-	
 }

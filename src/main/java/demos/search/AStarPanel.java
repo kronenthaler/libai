@@ -213,11 +213,6 @@ public class AStarPanel extends javax.swing.JPanel {
 		}
 
 		@Override
-		public boolean equals(Object o) {
-			return table.equals(((Node) o).table);
-		}
-
-		@Override
 		public String toString() {
 			return table + " (" + g + ")";
 		}
@@ -225,6 +220,11 @@ public class AStarPanel extends javax.swing.JPanel {
 		@Override
 		public int hashCode() {
 			return table.hashCode();
+		}
+
+		@Override
+		public boolean equals(Object o){
+			return o != null && o instanceof Node && table.equals(((Node)o).table);
 		}
 
 		@Override

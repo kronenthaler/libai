@@ -213,6 +213,11 @@ public class DFSPanel extends javax.swing.JPanel {
 		}
 
 		@Override
+		public boolean equals(Object o){
+			return o != null && o instanceof Node && table.equals(((Node)o).table);
+		}
+
+		@Override
 		public boolean isSolution() {
 			return table.equals(target.table);
 		}
