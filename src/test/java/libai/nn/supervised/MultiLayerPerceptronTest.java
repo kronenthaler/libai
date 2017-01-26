@@ -195,8 +195,7 @@ public class MultiLayerPerceptronTest {
 		try {
 			MultiLayerPerceptron mlp2 = MultiLayerPerceptron.open(foo);
 			assertNotNull(mlp2);
-			assertEquals(mlp, mlp2);
-			assertEquals(mlp, mlp2);
+			assertNotEquals(mlp, mlp2);
 
 			assertEquals(mlp.simulate(ins[0]), mlp2.simulate(ins[0]));
 			assertEquals(mlp.simulate(ins[1]), mlp2.simulate(ins[1]));

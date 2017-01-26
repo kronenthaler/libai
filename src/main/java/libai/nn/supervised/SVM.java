@@ -68,7 +68,7 @@ public class SVM extends NeuralNetwork {
     }
 
     public SVM(Kernel _kernel) {
-		this(_kernel, null);
+		kernel = _kernel;
     }
 
     public SVM(Kernel _kernel, Random rand) {

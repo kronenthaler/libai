@@ -24,6 +24,8 @@
 package libai.nn.supervised;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+
 import libai.common.Matrix;
 import libai.common.functions.Sign;
 import libai.nn.NeuralNetwork;
@@ -54,7 +56,7 @@ public class Perceptron extends NeuralNetwork {
 	 * @param out Number of outputs for the network.
 	 */
 	public Perceptron(int in, int out) {
-		this(in, out, null);
+		this(in, out, ThreadLocalRandom.current());
 	}
 
 	/**
