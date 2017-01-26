@@ -23,10 +23,10 @@
  */
 package demos.nn;
 
-import libai.nn.supervised.Adaline;
-import libai.nn.NeuralNetwork;
-import libai.common.Matrix;
 import demos.common.SimpleProgressDisplay;
+import libai.common.Matrix;
+import libai.nn.NeuralNetwork;
+import libai.nn.supervised.Adaline;
 
 /**
  *

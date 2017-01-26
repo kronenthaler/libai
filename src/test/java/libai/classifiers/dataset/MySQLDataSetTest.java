@@ -23,22 +23,21 @@
  */
 package libai.classifiers.dataset;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import libai.classifiers.Attribute;
+import libai.classifiers.DiscreteAttribute;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import java.sql.*;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
-import libai.classifiers.Attribute;
-import libai.classifiers.DiscreteAttribute;
-import org.junit.*;
 
 import static org.junit.Assert.*;
-import static org.junit.Assume.*;
+import static org.junit.Assume.assumeNotNull;
 
 /**
  *

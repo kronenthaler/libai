@@ -23,8 +23,9 @@
  */
 package libai.common.kernels;
 
-import java.io.Serializable;
 import libai.common.Matrix;
+
+import java.io.Serializable;
 
 /**
  *

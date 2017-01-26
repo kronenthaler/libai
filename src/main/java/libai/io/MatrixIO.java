@@ -23,6 +23,8 @@
  */
 package libai.io;
 
+import libai.common.Matrix;
+
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
@@ -32,7 +34,6 @@ import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import libai.common.Matrix;
 
 /**
  * This class implements basic IO functions for {@link Matrix} objects.

@@ -23,11 +23,10 @@
  */
 package libai.nn.unsupervised;
 
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
-
 import libai.common.Matrix;
 import libai.nn.NeuralNetwork;
+
+import java.util.Random;
 
 /**
  * Competitive Learning is an unsupervised network where "the winner takes all".
@@ -54,10 +53,6 @@ public class Competitive extends NeuralNetwork {
 	protected Matrix W;
 	protected int ins, outs;
 	protected int winner;
-
-//	public Competitive(Random rand) {
-//		super(rand);
-//	}
 
 	/**
 	 * Constructor. Creates a network with the specified number of inputs and

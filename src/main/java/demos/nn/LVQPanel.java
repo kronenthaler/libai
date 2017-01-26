@@ -23,10 +23,10 @@
  */
 package demos.nn;
 
-import libai.nn.unsupervised.Competitive;
-import libai.nn.supervised.LVQ;
-import libai.common.Matrix;
 import demos.common.SimpleProgressDisplay;
+import libai.common.Matrix;
+import libai.nn.supervised.LVQ;
+import libai.nn.unsupervised.Competitive;
 
 /**
  *

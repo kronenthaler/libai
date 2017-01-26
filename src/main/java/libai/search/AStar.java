@@ -23,7 +23,8 @@
  */
 package libai.search;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.PriorityQueue;
 
 /**
  * JUST USEFUL FOR MINIMIZATION PROBLEMS!!

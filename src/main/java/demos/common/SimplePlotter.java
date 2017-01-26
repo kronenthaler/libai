@@ -25,6 +25,7 @@ package demos.common;
 
 import libai.common.Pair;
 import libai.common.Plotter;
+
 import java.awt.*;
 import java.util.ArrayList;
 

@@ -24,7 +24,8 @@
 package demos.common;
 
 import libai.common.ProgressDisplay;
-import javax.swing.JProgressBar;
+
+import javax.swing.*;
 
 /**
  *

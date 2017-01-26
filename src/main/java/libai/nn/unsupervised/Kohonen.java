@@ -23,13 +23,13 @@
  */
 package libai.nn.unsupervised;
 
+import libai.common.Matrix;
+import libai.common.Pair;
+import libai.nn.NeuralNetwork;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
-import libai.common.Matrix;
-import libai.common.Pair;
-
-import libai.nn.NeuralNetwork;
 
 /**
  * Kohonen's Self-organizative Maps or SOM or Kohonen. This maps are one of the

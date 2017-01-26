@@ -23,10 +23,11 @@
  */
 package libai.classifiers.dataset;
 
-import java.util.*;
+import libai.classifiers.Attribute;
+import libai.common.Triplet;
+
 import java.sql.*;
-import libai.classifiers.*;
-import libai.common.*;
+import java.util.*;
 
 /**
  *

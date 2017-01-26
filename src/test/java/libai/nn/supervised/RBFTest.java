@@ -24,16 +24,17 @@
 package libai.nn.supervised;
 
 import demos.common.SimpleProgressDisplay;
-import java.io.File;
-import java.io.IOException;
-import java.util.Random;
-import javax.swing.JProgressBar;
 import libai.common.Matrix;
 import libai.common.MatrixIOTest;
 import org.junit.Test;
 
+import javax.swing.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.Random;
+
 import static org.junit.Assert.*;
-import static org.junit.Assume.*;
+import static org.junit.Assume.assumeTrue;
 
 /**
  *

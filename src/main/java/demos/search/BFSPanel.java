@@ -23,10 +23,11 @@
  */
 package demos.search;
 
-import libai.search.State;
 import libai.search.BFS;
-import java.util.*;
+import libai.search.State;
+
 import javax.swing.*;
+import java.util.ArrayList;
 
 /**
  *

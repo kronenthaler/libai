@@ -23,12 +23,10 @@
  */
 package libai.nn.supervised;
 
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
-
 import libai.common.Matrix;
-
 import libai.nn.unsupervised.Competitive;
+
+import java.util.Random;
 
 /**
  * Learning Vector Quantization or LVQ. Is an hybrid neural network with 3

@@ -24,13 +24,15 @@
 package libai.nn.supervised;
 
 import demos.common.SimpleProgressDisplay;
-import java.util.Random;
-import javax.swing.JProgressBar;
 import libai.common.Matrix;
 import libai.nn.unsupervised.Competitive;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import javax.swing.*;
+import java.util.Random;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  *

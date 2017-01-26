@@ -23,17 +23,18 @@
  */
 package libai.nn.supervised;
 
-import java.io.File;
-import java.io.IOException;
 import libai.common.Matrix;
 import libai.common.MatrixIOTest;
-import org.junit.Test;
-import java.util.Random;
 import libai.nn.NeuralNetwork;
+import org.junit.Test;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Random;
+
+import static java.lang.Math.round;
 import static org.junit.Assert.*;
-import static org.junit.Assume.*;
-import static java.lang.Math.*;
+import static org.junit.Assume.assumeTrue;
 
 /**
  *

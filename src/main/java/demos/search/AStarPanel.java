@@ -25,8 +25,9 @@ package demos.search;
 
 import libai.search.AStar;
 import libai.search.State;
-import java.util.*;
+
 import javax.swing.*;
+import java.util.ArrayList;
 
 /**
  *

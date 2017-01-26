@@ -23,12 +23,11 @@
  */
 package libai.nn.supervised;
 
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
-
 import libai.common.Matrix;
 import libai.common.functions.Sign;
 import libai.nn.NeuralNetwork;
+
+import java.util.Random;
 
 
 /**

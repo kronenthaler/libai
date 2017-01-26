@@ -23,14 +23,12 @@
  */
 package libai.nn.supervised;
 
+import libai.common.Matrix;
+import libai.nn.NeuralNetwork;
+
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
-
-import libai.common.Matrix;
-
-import libai.nn.NeuralNetwork;
 
 /**
  * Radial Basis Function or RBF. Is an hybrid neural network with 3 layers

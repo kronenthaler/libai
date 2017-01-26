@@ -23,15 +23,16 @@
  */
 package libai.nn.supervised;
 
-import java.io.File;
-import java.util.Random;
-import java.io.IOException;
 import libai.common.Matrix;
 import libai.common.MatrixIOTest;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Random;
+
 import static org.junit.Assert.*;
-import static org.junit.Assume.*;
+import static org.junit.Assume.assumeTrue;
 
 /**
  *

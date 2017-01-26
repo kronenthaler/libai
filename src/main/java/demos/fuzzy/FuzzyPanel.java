@@ -23,14 +23,15 @@
  */
 package demos.fuzzy;
 
-import libai.fuzzy.sets.Triangular;
-import libai.fuzzy.sets.FuzzySet;
-import libai.fuzzy.FuzzyGroup;
-import libai.fuzzy.Engine;
-import libai.fuzzy.Rule;
 import libai.fuzzy.Condition;
-import java.awt.*;
+import libai.fuzzy.Engine;
+import libai.fuzzy.FuzzyGroup;
+import libai.fuzzy.Rule;
+import libai.fuzzy.sets.FuzzySet;
+import libai.fuzzy.sets.Triangular;
+
 import javax.swing.*;
+import java.awt.*;
 
 /**
  *

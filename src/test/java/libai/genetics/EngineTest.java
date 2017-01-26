@@ -23,12 +23,15 @@
  */
 package libai.genetics;
 
-import javax.swing.JProgressBar;
 import libai.genetics.chromosomes.BinaryChromosome;
 import libai.genetics.chromosomes.Chromosome;
 import libai.genetics.chromosomes.IntegerChromosome;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import javax.swing.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  *

@@ -23,12 +23,12 @@
  */
 package demos.nn;
 
-import libai.nn.supervised.MultiLayerPerceptron;
-import libai.common.functions.Sigmoid;
+import demos.common.SimpleProgressDisplay;
 import libai.common.Matrix;
 import libai.common.functions.Function;
 import libai.common.functions.Identity;
-import demos.common.SimpleProgressDisplay;
+import libai.common.functions.Sigmoid;
+import libai.nn.supervised.MultiLayerPerceptron;
 import libai.nn.supervised.backpropagation.Backpropagation;
 import libai.nn.supervised.backpropagation.MomentumBackpropagation;
 import libai.nn.supervised.backpropagation.ResilientBackpropagation;

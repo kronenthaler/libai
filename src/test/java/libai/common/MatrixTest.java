@@ -23,10 +23,11 @@
  */
 package libai.common;
 
-import java.util.HashMap;
-import java.util.Random;
 import libai.common.functions.Function;
 import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Random;
 
 import static org.junit.Assert.*;
 

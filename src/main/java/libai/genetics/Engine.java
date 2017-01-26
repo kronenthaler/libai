@@ -23,8 +23,9 @@
  */
 package libai.genetics;
 
-import javax.swing.JProgressBar;
 import libai.genetics.chromosomes.Chromosome;
+
+import javax.swing.*;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 

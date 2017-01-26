@@ -23,9 +23,9 @@
  */
 package libai.common;
 
-import java.util.Arrays;
-import java.util.HashMap;
 import org.junit.Test;
+
+import java.util.HashMap;
 
 import static org.junit.Assert.*;
 

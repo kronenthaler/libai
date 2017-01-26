@@ -24,7 +24,8 @@
 package libai.fuzzy;
 
 import libai.fuzzy.sets.FuzzySet;
-import java.util.*;
+
+import java.util.HashSet;
 
 
 /**

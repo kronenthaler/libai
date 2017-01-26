@@ -26,8 +26,6 @@ package libai.genetics.chromosomes;
 import java.util.BitSet;
 import java.util.Random;
 
-import libai.genetics.Engine;
-
 /**
  * The binary form of the chromosome. This chromosome contains a sequence of
  * bits. The mutation operation are supported by flipping a bit. And the cross

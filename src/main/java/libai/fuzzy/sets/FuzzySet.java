@@ -24,6 +24,7 @@
 package libai.fuzzy.sets;
 
 import libai.fuzzy.Variable;
+
 import java.util.ArrayList;
 
 public interface FuzzySet {

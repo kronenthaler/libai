@@ -23,28 +23,23 @@
  */
 package libai.nn.supervised;
 
+import libai.common.Matrix;
+import libai.common.MatrixIOTest;
+import libai.common.Plotter;
+import libai.common.ProgressDisplay;
+import libai.common.functions.*;
+import libai.nn.supervised.backpropagation.MomentumBackpropagation;
+import libai.nn.supervised.backpropagation.ResilientBackpropagation;
+import org.junit.Test;
+
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
-
-import libai.common.*;
-import libai.common.functions.Function;
-import libai.common.functions.Identity;
-import libai.common.functions.Sigmoid;
-import libai.nn.supervised.backpropagation.MomentumBackpropagation;
-import libai.nn.supervised.backpropagation.ResilientBackpropagation;
-import org.junit.After;
-import org.junit.Test;
-import libai.common.functions.HyperbolicTangent;
-import libai.common.functions.Sinc;
+import java.util.Random;
 
 import static java.lang.Math.round;
-
-import java.util.List;
-import java.util.Random;
 import static org.junit.Assert.*;
-import static org.junit.Assume.*;
+import static org.junit.Assume.assumeTrue;
 
 /**
  *

@@ -23,13 +23,12 @@
  */
 package libai.ants.algorithms;
 
+import libai.ants.*;
 import libai.common.Matrix;
-import libai.ants.AntFrameworkException;
-import libai.ants.Graph;
-import libai.ants.Node;
-import libai.ants.Ant;
-import libai.ants.Enviroment;
-import java.util.*;
+
+import java.util.Comparator;
+import java.util.Hashtable;
+import java.util.Vector;
 
 /**
  * This is the core class of the Ant Framework. It defines the basic operations
