@@ -403,7 +403,7 @@ public class MultiLayerPerceptronTest {
 	};
 
 	class SimplePlotter implements Plotter {
-		boolean called = false;
+		public boolean called = false;
 
 		@Override
 		public void paint(Graphics g2) {

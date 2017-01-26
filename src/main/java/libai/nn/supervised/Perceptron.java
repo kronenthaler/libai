@@ -45,9 +45,6 @@ public class Perceptron extends NeuralNetwork {
 	protected int ins, outs;
 	protected static Sign signum = new Sign();
 
-	public Perceptron() {
-	}
-
 	/**
 	 * Constructor.
 	 *
@@ -56,7 +53,7 @@ public class Perceptron extends NeuralNetwork {
 	 * @param out Number of outputs for the network.
 	 */
 	public Perceptron(int in, int out) {
-		this(in, out, ThreadLocalRandom.current());
+		this(in, out, getDefaultRandomGenerator());
 	}
 
 	/**

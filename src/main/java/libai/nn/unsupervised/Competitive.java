@@ -24,6 +24,8 @@
 package libai.nn.unsupervised;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+
 import libai.common.Matrix;
 import libai.nn.NeuralNetwork;
 
@@ -53,9 +55,9 @@ public class Competitive extends NeuralNetwork {
 	protected int ins, outs;
 	protected int winner;
 
-	public Competitive(Random rand) {
-		super(rand);
-	}
+//	public Competitive(Random rand) {
+//		super(rand);
+//	}
 
 	/**
 	 * Constructor. Creates a network with the specified number of inputs and
@@ -65,7 +67,7 @@ public class Competitive extends NeuralNetwork {
 	 * @param out Number of outputs.
 	 */
 	public Competitive(int in, int out) {
-		this(in, out, null);
+		this(in, out, getDefaultRandomGenerator());
 	}
 
 	/**

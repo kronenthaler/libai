@@ -115,7 +115,7 @@ public class AdalineTest {
 		try{ 
 			Adaline a2 = Adaline.open(foo);
 			assertNotNull(a2);
-			assertTrue(ada != a2);
+			assertNotEquals(ada, a2);
 
 			assertEquals(ada.simulate(ins[0]), a2.simulate(ins[0]));
 			assertEquals(ada.simulate(ins[1]), a2.simulate(ins[1]));

@@ -122,9 +122,10 @@ public final class Matrix implements Serializable {
 		System.arraycopy(data, 0, matrix, 0, r * c);
 	}
 
-	protected static Random getDefaultRandom(){
+	public static Random getDefaultRandom(){
 		return ThreadLocalRandom.current();
 	}
+
 	/**
 	 * Create a new Matrix filled with low random numbers.
 	 *

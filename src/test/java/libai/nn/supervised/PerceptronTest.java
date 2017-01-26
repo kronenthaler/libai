@@ -122,7 +122,7 @@ public class PerceptronTest {
 		try {
 			Perceptron p2 = Perceptron.open(foo);
 			assertNotNull(p2);
-			assertTrue(p != p2);
+			assertNotEquals(p, p2);
 
 			assertEquals(p.simulate(ins[0]), p2.simulate(ins[0]));
 			assertEquals(p.simulate(ins[1]), p2.simulate(ins[1]));

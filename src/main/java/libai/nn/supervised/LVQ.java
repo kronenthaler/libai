@@ -24,6 +24,8 @@
 package libai.nn.supervised;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+
 import libai.common.Matrix;
 
 import libai.nn.unsupervised.Competitive;
@@ -54,7 +56,7 @@ public class LVQ extends Competitive {
 	 * @param out Number of outputs for the network
 	 */
 	public LVQ(int in, int subclass, int out) {
-		this(in, subclass, out, null);
+		this(in, subclass, out, getDefaultRandomGenerator());
 	}
 
 	/**
@@ -68,10 +70,8 @@ public class LVQ extends Competitive {
 	 * @param rand Random generator used for creating matrices
 	 */
 	public LVQ(int in, int subclass, int out, Random rand) {
-		super(rand);
+		super(in, out, rand);
 
-		ins = in;
-		outs = out;
 		subclasses = subclass;
 
 		W = new Matrix(subclasses * outs, ins);

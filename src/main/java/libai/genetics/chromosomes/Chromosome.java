@@ -23,6 +23,8 @@
  */
 package libai.genetics.chromosomes;
 
+import java.util.Random;
+
 /**
  * The chromosome abstraction. Keeps the fitness and the chance to be selected
  * by the roulette. Also has the methods to mutate and cross with another
@@ -70,7 +72,7 @@ public abstract class Chromosome {
 	 * @param length {@code length}
 	 * @return {@code Chromosome} instance
 	 */
-	public abstract Chromosome getInstance(int length);
+	public abstract Chromosome getInstance(int length, Random random);
 
 	/**
 	 * @return the fitness

@@ -25,6 +25,8 @@ package libai.genetics.chromosomes;
 
 import libai.genetics.Engine;
 
+import java.util.Random;
+
 /**
  * Implementation of a permutation chromosome.
  *
@@ -35,18 +37,20 @@ public class IntegerChromosome extends Chromosome {
 	 * The genetic charge
 	 */
 	protected int[] genes;
+	protected Random random;
 
 	public IntegerChromosome() {
 	}
 
-	protected IntegerChromosome(int length) {
+	protected IntegerChromosome(int length, Random random) {
+		this.random = random;
 		genes = new int[length];
 
 		for (int i = 0; i < length; genes[i] = i++);
 
 		//generate initial permutation
 		for (int i = 0; i < length; i++) {
-			int j = Engine.r.nextInt(length);
+			int j = random.nextInt(length);
 			int aux = genes[i];
 			genes[i] = genes[j];
 			genes[j] = aux;
@@ -56,6 +60,7 @@ public class IntegerChromosome extends Chromosome {
 	protected IntegerChromosome(IntegerChromosome b) {
 		genes = new int[b.genes.length];
 		System.arraycopy(b.genes, 0, genes, 0, genes.length);
+		random = b.random;
 	}
 
 	/**
@@ -89,11 +94,11 @@ public class IntegerChromosome extends Chromosome {
 		 return getInstance(aux);*/
 
 		boolean mask[] = new boolean[genes.length];
-		for (int i = 0; i < mask.length; mask[i++] = Engine.r.nextBoolean());
+		for (int i = 0; i < mask.length; mask[i++] = random.nextBoolean());
 
 		IntegerChromosome b1 = (IntegerChromosome) b;
-		IntegerChromosome a1 = new IntegerChromosome(genes.length);
-		IntegerChromosome a2 = new IntegerChromosome(genes.length);
+		IntegerChromosome a1 = new IntegerChromosome(genes.length, random);
+		IntegerChromosome a2 = new IntegerChromosome(genes.length, random);
 
 		for (int i = 0; i < mask.length; i++) {
 			if (mask[i])
@@ -147,8 +152,8 @@ public class IntegerChromosome extends Chromosome {
 		System.arraycopy(genes, 0, ret, 0, ret.length);
 
 		for (int i = 0; i < genes.length; i++) {
-			if (Engine.r.nextDouble() < pm) {
-				int indexb = Engine.r.nextInt(genes.length);
+			if (random.nextDouble() < pm) {
+				int indexb = random.nextInt(genes.length);
 
 				if (i == indexb)
 					continue;
@@ -158,7 +163,7 @@ public class IntegerChromosome extends Chromosome {
 				ret[indexb] = aux;
 			}
 		}
-		return getInstance(ret);
+		return getInstance(ret, random);
 	}
 
 	/**
@@ -167,8 +172,8 @@ public class IntegerChromosome extends Chromosome {
 	 * @param genes The genetic charge to copy.
 	 * @return A new chromosome with the same genetic charge.
 	 */
-	protected Chromosome getInstance(int[] genes) {
-		IntegerChromosome ret = new IntegerChromosome();
+	protected Chromosome getInstance(int[] genes, Random random) {
+		IntegerChromosome ret = new IntegerChromosome(genes.length, random);
 		ret.genes = genes;
 		return ret;
 	}
@@ -191,8 +196,8 @@ public class IntegerChromosome extends Chromosome {
 	 * @return A new instance of length <code>length</code>
 	 */
 	@Override
-	public Chromosome getInstance(int length) {
-		return new IntegerChromosome(length);
+	public Chromosome getInstance(int length, Random random) {
+		return new IntegerChromosome(length, random);
 	}
 
 	/**

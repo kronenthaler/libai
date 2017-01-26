@@ -64,11 +64,8 @@ public class SVM extends NeuralNetwork {
     public static final int PARAM_EPSILON = 1;
     protected static SymmetricSign ssign = new SymmetricSign();
 
-    public SVM() {
-    }
-
     public SVM(Kernel _kernel) {
-		kernel = _kernel;
+		this(_kernel, getDefaultRandomGenerator());
     }
 
     public SVM(Kernel _kernel, Random rand) {

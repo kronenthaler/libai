@@ -76,7 +76,7 @@ public class MultiLayerPerceptron extends NeuralNetwork {
 	 * @param trainer The backpropagation implementation to be used during training
 	 */
 	public MultiLayerPerceptron(int[] nperlayer, Function[] funcs, Backpropagation trainer) {
-		this(nperlayer, funcs, trainer, null);
+		this(nperlayer, funcs, trainer, getDefaultRandomGenerator());
 	}
 
 	/**

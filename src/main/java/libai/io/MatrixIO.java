@@ -155,10 +155,11 @@ public class MatrixIO {
 			case OPENOFFICE: 
 				writeOpenOffice(output, m);
 				break;
-            case SERIAL:
-            default:     
+			case SERIAL:
+            default:
 				writeSerial(output, m);
-        }
+            	break;
+		}
     }
     
     private static void writeSerial(OutputStream output, Map<String, Matrix> m) throws IOException {

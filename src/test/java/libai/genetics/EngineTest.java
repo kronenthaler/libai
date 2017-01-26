@@ -100,8 +100,8 @@ public class EngineTest {
 				return Double.MAX_VALUE;
 			}
 		};
-		Engine engine = new Engine(IntegerChromosome.class, 200, 10, 0.6, 0.01, fitnessImpl);
 
+		Engine engine = new Engine(IntegerChromosome.class, 200, 10, 0.6, 0.01, fitnessImpl);
 		engine.setProgressBar(new JProgressBar());
 
 		//We can't guarantee that it will learn the function, but at least we can check that
