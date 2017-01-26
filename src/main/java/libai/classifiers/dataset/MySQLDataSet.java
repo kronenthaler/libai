@@ -49,7 +49,7 @@ public class MySQLDataSet implements DataSet {
         public boolean isCategorical(int fieldIndex) {
             try {
                 String type = rsMetaData.getColumnClassName(fieldIndex + 1);
-                return type.equals("java.lang.String");
+                return "java.lang.String".equals(type);
             } catch (SQLException ex) {
                 return false;
             }

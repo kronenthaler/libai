@@ -146,7 +146,7 @@ public class RBFTest {
 		RBF.open((String)null);
 	}
 
-	static double f(double x) {
+	public static double f(double x) {
 		return Math.sin(x) + Math.cos(x);
 	}
 }

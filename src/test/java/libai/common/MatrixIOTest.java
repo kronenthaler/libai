@@ -84,7 +84,7 @@ public class MatrixIOTest {
     public void testWriteTargetSerial2() throws Exception {
         Matrix a = Matrix.random(10, 20);
         ByteArrayOutputStream baos = new ByteArrayOutputStream(512);
-        MatrixIO.write(baos, a, null);
+        MatrixIO.write(baos, a);
         
         try (ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
              ObjectInputStream ois = new ObjectInputStream(bais)) {
@@ -102,7 +102,7 @@ public class MatrixIOTest {
         data.put("b", b);
         
         ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
-        MatrixIO.write(baos, data, null);
+        MatrixIO.write(baos, data);
         
         try (ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
              ObjectInputStream ois = new ObjectInputStream(bais)) {

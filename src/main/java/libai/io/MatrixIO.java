@@ -83,7 +83,10 @@ public class MatrixIO {
 		 */
 		OPENOFFICE,
     }
-    
+    public static void write(OutputStream output,
+                             Matrix m) throws IllegalArgumentException, IOException {
+        write(output, m, Target.SERIAL);
+    }
     /**
      * Writes a {@link Matrix} object to a given {@link OutputStream}.<br><br>
      * <i>Note:</i> if the target is {@link Target#OCTAVE} then the default variable name will be
@@ -107,7 +110,12 @@ public class MatrixIO {
         
         write(output, map, t);
     }
-    
+
+    public static void write(OutputStream output,
+                             Map<String, Matrix> m) throws IllegalArgumentException, IOException{
+        write(output, m, Target.SERIAL);
+    }
+
     /**
      * Writes a set of {@link Matrix} objects to a given {@link OutputStream}.<br><br>
      * <i>Note:</i> When saving to {@link Target#CSV} and {@link Target#TSV}, a line separator 
@@ -133,8 +141,6 @@ public class MatrixIO {
         if (m == null || m.isEmpty()) {
             throw new IllegalArgumentException("The matrix map can't be null or empty");
         }
-        
-        t = t == null ? Target.SERIAL : t;
         
         switch(t) {
             case CSV:    

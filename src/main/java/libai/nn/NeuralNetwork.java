@@ -51,13 +51,10 @@ public abstract class NeuralNetwork implements Serializable {
 	protected final Random random;
 
 	public NeuralNetwork() {
-		this(null);
+		this(ThreadLocalRandom.current());
 	}
 
 	public NeuralNetwork(Random rand) {
-		if (rand == null) {
-			rand = ThreadLocalRandom.current();
-		}
 		random = rand;
 	}
 

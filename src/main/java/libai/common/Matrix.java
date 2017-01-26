@@ -122,6 +122,9 @@ public final class Matrix implements Serializable {
 		System.arraycopy(data, 0, matrix, 0, r * c);
 	}
 
+	protected static Random getDefaultRandom(){
+		return ThreadLocalRandom.current();
+	}
 	/**
 	 * Create a new Matrix filled with low random numbers.
 	 *
@@ -136,7 +139,7 @@ public final class Matrix implements Serializable {
 	 * less or equal than zero.
 	 */
 	public static Matrix random(int r, int c, boolean signed) {
-		return random(r, c, signed, null);
+		return random(r, c, signed, getDefaultRandom());
 	}
 
 	/**
@@ -324,7 +327,7 @@ public final class Matrix implements Serializable {
 	 * @see Matrix#fill(boolean, java.util.Random)
 	 */
 	public void fill(boolean signed) {
-		fill(signed, null);
+		fill(signed, getDefaultRandom());
 	}
 
 	/**
@@ -347,8 +350,6 @@ public final class Matrix implements Serializable {
 	 * {@code null} it will fallback to {@link ThreadLocalRandom#current()}
 	 */
 	public void fill(boolean signed, Random r) {
-		if (r == null) r = ThreadLocalRandom.current();
-
 		for (int i = 0, n = rows * cols; i < n; i++) {
 			matrix[i] = r.nextDouble();
 

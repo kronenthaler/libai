@@ -115,8 +115,8 @@ public class MatrixTest {
 
     @Test
     public void testMatrixRandom() {
-        Matrix a = Matrix.random(50, 100, true, null);
-        Matrix b = Matrix.random(50, 100, false, null);
+        Matrix a = Matrix.random(50, 100, true);
+        Matrix b = Matrix.random(50, 100, false);
         assertNotEquals(a, b);
 
         boolean hasNegativeA = false;
@@ -223,19 +223,19 @@ public class MatrixTest {
         a.multiply(b, c);
         assertEquals(c, d);
     }
-    double[] a1_data = {
+    public final  double[] a1_data = {
         -0.007765831782573, -0.008486990926655, -0.009829972068673, 0.000304058679693,
         -0.002138442736117,  0.007523070921871,  0.005449501255788, 0.005930977488527,
          0.005607489427692,  0.002720446955797,
     };
-    double[] b1_data = {
+    public final  double[] b1_data = {
         -0.007765831782573, -0.008486990926655,
         -0.009829972068673,  0.000304058679693,
         -0.002138442736117,  0.007523070921871,
          0.005449501255788,  0.005930977488527,
          0.005607489427692,  0.002720446955797,
     };
-    double[] d1_data = {
+    public final  double[] d1_data = {
         0.000154421532520, -0.000014637731259,
        -0.000078861505907,  0.000023086622987,
     };
@@ -250,17 +250,17 @@ public class MatrixTest {
         a.multiply(b, c);
         assertEquals(c, d);
     }
-    double[] a2_data = {
+    public final  double[] a2_data = {
         -0.007253997338875, -0.009757740181475,  0.009202997305386,  0.009821458200041,
          0.006434371877310,  0.008282702832958, -0.008951885947104, -0.005934105911485,
         -0.006161133826338, -0.002859944646273,
     };
-    double[] b2_data = {
+    public final  double[] b2_data = {
         -0.007253997338875, -0.009757740181475,  0.009202997305386, 0.009821458200041,
          0.006434371877310,  0.008282702832958, -0.008951885947104,-0.005934105911485,
         -0.006161133826338, -0.002859944646273,
     };
-    double[] d2_data = {0.000600483207479};
+    public final double[] d2_data = {0.000600483207479};
 
     @Test
     public void testApply() {
@@ -646,9 +646,9 @@ public class MatrixTest {
         Matrix a = new Matrix(5, 10);
         Matrix b = new Matrix(5, 10);
         assertEquals(a, b);
-        a.fill(true, null);
+        a.fill(true);
         assertNotEquals(a, b);
-        b.fill(true, null);
+        b.fill(true);
         assertNotEquals(a, b);
 
         boolean hasNegativeA = false;
@@ -666,8 +666,8 @@ public class MatrixTest {
 
         hasNegativeA = false;
         hasNegativeB = false;
-        a.fill(false, null);
-        b.fill(false, null);
+        a.fill(false);
+        b.fill(false);
         assertNotEquals(a, b);
 
         for (int i = 0; i < a.getRows(); i++) {
@@ -740,7 +740,7 @@ public class MatrixTest {
         Matrix a = new Matrix(5, 10);
         Matrix b = new Matrix(5, 10);
         assertEquals(a, b);
-        a.fill(true, null);
+        a.fill(true);
         assertNotEquals(a, b);
         b.fill(true);
         assertNotEquals(a, b);
