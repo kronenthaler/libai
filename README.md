@@ -1,5 +1,5 @@
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/04934cde73744ece8fbfaa5963d9fa34)](https://www.codacy.com/app/kronenthaler/libai?utm_source=github.com&utm_medium=referral&utm_content=kronenthaler/libai&utm_campaign=badger)
 [![Build Status](https://travis-ci.org/kronenthaler/libai.svg?branch=master)](https://travis-ci.org/kronenthaler/libai)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/66998c0e4e3e4483b58a189885d87fec)](https://www.codacy.com/app/kronenthaler/libai?utm_source=github.com&utm_medium=referral&utm_content=kronenthaler/libai&utm_campaign=badger)
 
 LibAI 
 =====
