@@ -23,8 +23,9 @@
  */
 package libai.nn.supervised;
 
-import java.util.Random;
 import libai.common.Matrix;
+
+import java.util.Random;
 
 /**
  * <b>Ada</b>ptative <b>Line</b>ar neural network. Is a special case of the
@@ -37,9 +38,6 @@ import libai.common.Matrix;
  */
 public class Adaline extends Perceptron {
 	private static final long serialVersionUID = 6108456796562627466L;
-
-	public Adaline() {
-	}
 
 	/**
 	 * Constructor.

@@ -23,19 +23,13 @@
  */
 package libai.nn;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 import libai.common.Matrix;
 import libai.common.Plotter;
 import libai.common.ProgressDisplay;
+
+import java.io.*;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Neural network abstraction. Provides the methods to train, simulate and
@@ -51,14 +45,14 @@ public abstract class NeuralNetwork implements Serializable {
 	protected final Random random;
 
 	public NeuralNetwork() {
-		this(null);
+		this(getDefaultRandomGenerator());
+	}
+	public NeuralNetwork(Random rand) {
+		random = rand;
 	}
 
-	public NeuralNetwork(Random rand) {
-		if (rand == null) {
-			rand = ThreadLocalRandom.current();
-		}
-		random = rand;
+	public static final Random getDefaultRandomGenerator(){
+		return ThreadLocalRandom.current();
 	}
 
 	public void setPlotter(Plotter plotter) {

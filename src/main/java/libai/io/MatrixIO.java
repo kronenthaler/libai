@@ -23,6 +23,8 @@
  */
 package libai.io;
 
+import libai.common.Matrix;
+
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
@@ -32,7 +34,6 @@ import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import libai.common.Matrix;
 
 /**
  * This class implements basic IO functions for {@link Matrix} objects.
@@ -83,7 +84,10 @@ public class MatrixIO {
 		 */
 		OPENOFFICE,
     }
-    
+    public static void write(OutputStream output,
+                             Matrix m) throws IllegalArgumentException, IOException {
+        write(output, m, Target.SERIAL);
+    }
     /**
      * Writes a {@link Matrix} object to a given {@link OutputStream}.<br><br>
      * <i>Note:</i> if the target is {@link Target#OCTAVE} then the default variable name will be
@@ -107,7 +111,12 @@ public class MatrixIO {
         
         write(output, map, t);
     }
-    
+
+    public static void write(OutputStream output,
+                             Map<String, Matrix> m) throws IllegalArgumentException, IOException{
+        write(output, m, Target.SERIAL);
+    }
+
     /**
      * Writes a set of {@link Matrix} objects to a given {@link OutputStream}.<br><br>
      * <i>Note:</i> When saving to {@link Target#CSV} and {@link Target#TSV}, a line separator 
@@ -134,8 +143,6 @@ public class MatrixIO {
             throw new IllegalArgumentException("The matrix map can't be null or empty");
         }
         
-        t = t == null ? Target.SERIAL : t;
-        
         switch(t) {
             case CSV:    
 				writeText(output, m, ","); 
@@ -149,10 +156,11 @@ public class MatrixIO {
 			case OPENOFFICE: 
 				writeOpenOffice(output, m);
 				break;
-            case SERIAL:
-            default:     
+			case SERIAL:
+            default:
 				writeSerial(output, m);
-        }
+            	break;
+		}
     }
     
     private static void writeSerial(OutputStream output, Map<String, Matrix> m) throws IOException {

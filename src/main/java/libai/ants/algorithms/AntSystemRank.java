@@ -25,7 +25,8 @@ package libai.ants.algorithms;
 
 import libai.ants.Ant;
 import libai.ants.Enviroment;
-import java.util.*;
+
+import java.util.Vector;
 
 /**
  * This class belong to the core classes of the Ant Framework.

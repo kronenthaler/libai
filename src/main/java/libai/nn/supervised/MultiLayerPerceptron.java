@@ -23,12 +23,13 @@
  */
 package libai.nn.supervised;
 
-import java.util.Random;
 import libai.common.Matrix;
 import libai.common.functions.Function;
 import libai.nn.NeuralNetwork;
 import libai.nn.supervised.backpropagation.Backpropagation;
 import libai.nn.supervised.backpropagation.StandardBackpropagation;
+
+import java.util.Random;
 
 /**
  * Multi Layer Perceptron or MLP. MultiLayerPerceptron was the first algorithm proposed to train
@@ -76,7 +77,7 @@ public class MultiLayerPerceptron extends NeuralNetwork {
 	 * @param trainer The backpropagation implementation to be used during training
 	 */
 	public MultiLayerPerceptron(int[] nperlayer, Function[] funcs, Backpropagation trainer) {
-		this(nperlayer, funcs, trainer, null);
+		this(nperlayer, funcs, trainer, getDefaultRandomGenerator());
 	}
 
 	/**

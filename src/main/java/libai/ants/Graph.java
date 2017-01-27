@@ -24,6 +24,7 @@
 package libai.ants;
 
 import libai.common.Matrix;
+
 import java.io.*;
 
 /**

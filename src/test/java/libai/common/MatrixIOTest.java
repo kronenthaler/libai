@@ -23,23 +23,17 @@
  */
 package libai.common;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
 import libai.io.MatrixIO;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-import static org.junit.Assume.*;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
 
 /**
  *
@@ -84,7 +78,7 @@ public class MatrixIOTest {
     public void testWriteTargetSerial2() throws Exception {
         Matrix a = Matrix.random(10, 20);
         ByteArrayOutputStream baos = new ByteArrayOutputStream(512);
-        MatrixIO.write(baos, a, null);
+        MatrixIO.write(baos, a);
         
         try (ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
              ObjectInputStream ois = new ObjectInputStream(bais)) {
@@ -102,7 +96,7 @@ public class MatrixIOTest {
         data.put("b", b);
         
         ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
-        MatrixIO.write(baos, data, null);
+        MatrixIO.write(baos, data);
         
         try (ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
              ObjectInputStream ois = new ObjectInputStream(bais)) {

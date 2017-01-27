@@ -23,8 +23,9 @@
  */
 package libai.classifiers.dataset;
 
-import java.util.Set;
 import libai.classifiers.Attribute;
+
+import java.util.Set;
 
 /**
  *

@@ -1,9 +1,10 @@
 package demos.nn;
 
-import libai.nn.unsupervised.Hopfield;
-import libai.common.Matrix;
 import demos.common.SimpleProgressDisplay;
-import javax.swing.JCheckBox;
+import libai.common.Matrix;
+import libai.nn.unsupervised.Hopfield;
+
+import javax.swing.*;
 
 /**
  * TODO: work on it.

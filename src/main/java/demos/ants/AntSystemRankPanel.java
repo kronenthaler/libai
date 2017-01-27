@@ -23,10 +23,11 @@
  */
 package demos.ants;
 
-import libai.ants.algorithms.ElitistAntSystem;
-import libai.ants.Graph;
 import libai.ants.Enviroment;
-import java.util.*;
+import libai.ants.Graph;
+import libai.ants.algorithms.ElitistAntSystem;
+
+import java.util.Vector;
 
 /**
  *

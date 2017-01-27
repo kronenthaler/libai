@@ -24,7 +24,7 @@
 package libai.genetics.chromosomes;
 
 import java.util.BitSet;
-import libai.genetics.Engine;
+import java.util.Random;
 
 /**
  * The binary form of the chromosome. This chromosome contains a sequence of
@@ -41,16 +41,18 @@ public class BinaryChromosome extends Chromosome {
 	 */
 	protected BitSet genes;
 	protected int length;
+	protected Random random;
 
 	public BinaryChromosome() {
 	}
 
-	protected BinaryChromosome(int length) {
-		genes = new BitSet(length);
+	protected BinaryChromosome(int length, Random random) {
 		this.length = length;
+		this.random = random;
+		genes = new BitSet(length);
 
 		for (int i = 0; i < length; i++) {
-			if (Engine.r.nextBoolean())
+			if (random.nextBoolean())
 				genes.set(i);
 		}
 	}
@@ -63,6 +65,7 @@ public class BinaryChromosome extends Chromosome {
 	protected BinaryChromosome(BinaryChromosome c) {
 		genes = c.genes.get(0, c.length);
 		length = c.length;
+		random = c.random;
 	}
 
 	/**
@@ -101,8 +104,8 @@ public class BinaryChromosome extends Chromosome {
 	public Chromosome mutate(double pm) {
 		BitSet ret = genes.get(0, length);
 		for (int i = 0, n = length; i < n; i++) {
-			if (Engine.r.nextDouble() < pm)
-				ret.flip(Engine.r.nextInt(n));
+			if (random.nextDouble() < pm)
+				ret.flip(random.nextInt(n));
 		}
 		return getInstance(ret);
 	}
@@ -114,7 +117,7 @@ public class BinaryChromosome extends Chromosome {
 	 * @return A new chromosome with the same genetic charge.
 	 */
 	protected Chromosome getInstance(BitSet bs) {
-		BinaryChromosome ret = new BinaryChromosome();
+		BinaryChromosome ret = new BinaryChromosome(bs.length(), random);
 		ret.genes = bs;
 		ret.length = length;
 		return ret;
@@ -166,8 +169,8 @@ public class BinaryChromosome extends Chromosome {
 	 * @return A new instance of length <code>length</code>
 	 */
 	@Override
-	public Chromosome getInstance(int length) {
-		return new BinaryChromosome(length);
+	public Chromosome getInstance(int length, Random random) {
+		return new BinaryChromosome(length, random);
 	}
 
 	@Override

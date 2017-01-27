@@ -23,13 +23,13 @@
  */
 package libai.nn.unsupervised;
 
+import libai.common.Matrix;
+import libai.common.Pair;
+import libai.nn.NeuralNetwork;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
-import libai.common.Matrix;
-import libai.common.Pair;
-
-import libai.nn.NeuralNetwork;
 
 /**
  * Kohonen's Self-organizative Maps or SOM or Kohonen. This maps are one of the
@@ -51,9 +51,6 @@ public class Kohonen extends NeuralNetwork {
 	private double neighborhood;
 	private int stepsx[], stepsy[];
 
-	public Kohonen() {
-	}
-
 	/**
 	 * Constructor. Creates a kohonen's map with nperlayer[0] inputs,
 	 * nperlayer[1] rows and nperlayer[2] columns. Additional set the initial
@@ -65,8 +62,9 @@ public class Kohonen extends NeuralNetwork {
 	 * @param neighboursY neighbors along the Y-axis
 	 */
 	public Kohonen(int[] nperlayer, double _neighborhood, int[] neighboursX, int[] neighboursY) {
-		this(nperlayer, _neighborhood, neighboursX, neighboursY, null);
+		this(nperlayer, _neighborhood, neighboursX, neighboursY, getDefaultRandomGenerator());
 	}
+
 	/**
 	 * Constructor. Creates a kohonen's map with nperlayer[0] inputs,
 	 * nperlayer[1] rows and nperlayer[2] columns. Additional set the initial

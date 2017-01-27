@@ -23,9 +23,11 @@
  */
 package libai.genetics;
 
-import javax.swing.JProgressBar;
 import libai.genetics.chromosomes.Chromosome;
+
+import javax.swing.*;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Engine class provides complete algorithm to evolve populations of
@@ -57,7 +59,7 @@ public class Engine {
 	/**
 	 * Utility random instance.
 	 */
-	public static Random r;
+	private Random random;
 	/**
 	 * The fitness evaluator
 	 */
@@ -67,11 +69,11 @@ public class Engine {
 	 */
 	private int chromosomeSize;
 	/**
-	 * The cross probablilty
+	 * The cross probability
 	 */
 	private double pc = .6;
 	/**
-	 * The mutation probablilty
+	 * The mutation probability
 	 */
 	private double pm = .01;
 	private JProgressBar progress;
@@ -101,7 +103,7 @@ public class Engine {
 		population = new Chromosome[individuals];
 		newpopulation = new Chromosome[individuals];
 		toCross = new Chromosome[individuals];
-		r = new Random();
+		random = getDefaultRandomGenerator();
 
 		try {
 			best = (Chromosome) chromotype.newInstance();
@@ -122,7 +124,7 @@ public class Engine {
 	 */
 	protected void initialize(int chromosomeSize) {
 		for (int i = 0; i < population.length; i++)
-			population[i] = best.getInstance(chromosomeSize);
+			population[i] = best.getInstance(chromosomeSize, random);
 	}
 
 	/**
@@ -138,7 +140,7 @@ public class Engine {
 
 			double temp = (current.getFitness() / maximum);
 			current.setFitness(q + (1 - temp));
-			current.setChance(r.nextDouble());
+			current.setChance(random.nextDouble());
 
 			q += temp;
 		}
@@ -170,7 +172,7 @@ public class Engine {
 			if (toCross[i].getChance() < pc && !wait) {
 				a = i;
 				wait = true;
-				pos = Math.abs(r.nextInt(chromosomeSize));
+				pos = Math.abs(random.nextInt(chromosomeSize));
 			} else if (toCross[i].getChance() < pc && wait) {
 				b = i;
 				wait = false;
@@ -238,4 +240,6 @@ public class Engine {
 	public void setProgressBar(JProgressBar _progress) {
 		progress = _progress;
 	}
+
+	public static Random getDefaultRandomGenerator() { return ThreadLocalRandom.current(); }
 }

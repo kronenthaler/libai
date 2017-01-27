@@ -23,10 +23,9 @@
  */
 package libai.nn.unsupervised;
 
-import libai.nn.NeuralNetwork;
-
 import libai.common.Matrix;
 import libai.common.functions.SymmetricSign;
+import libai.nn.NeuralNetwork;
 
 /**
  * Hopfield's networks are the most important and most applicable recurrent

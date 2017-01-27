@@ -24,7 +24,9 @@
 package libai.ants;
 
 import libai.common.Matrix;
-import java.util.*;
+
+import java.util.Arrays;
+import java.util.Comparator;
 
 /**
  * This class belong to the core classes of the Ant Framework.

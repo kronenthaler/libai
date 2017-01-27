@@ -23,12 +23,14 @@
  */
 package libai.classifiers.dataset;
 
-import java.util.Iterator;
-import java.util.Set;
-import libai.classifiers.*;
-import java.io.*;
+import libai.classifiers.Attribute;
+import libai.classifiers.DiscreteAttribute;
+import libai.common.Triplet;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.*;
-import libai.common.*;
 
 /**
  *

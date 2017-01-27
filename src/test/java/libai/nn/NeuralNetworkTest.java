@@ -23,6 +23,10 @@
  */
 package libai.nn;
 
+import libai.common.Matrix;
+import libai.io.MatrixIO;
+import org.junit.Test;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
@@ -30,15 +34,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-import libai.common.Matrix;
-import libai.io.MatrixIO;
-import org.junit.Test;
 
+import static libai.common.MatrixIOTest.*;
 import static org.junit.Assert.*;
-import static org.junit.Assume.*;
-import static libai.common.MatrixIOTest.checkOctaveInstall;
-import static libai.common.MatrixIOTest.checkTemp;
-import static libai.common.MatrixIOTest.eval;
+import static org.junit.Assume.assumeTrue;
 
 /**
  *

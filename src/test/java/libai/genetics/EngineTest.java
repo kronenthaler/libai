@@ -23,12 +23,15 @@
  */
 package libai.genetics;
 
-import javax.swing.JProgressBar;
 import libai.genetics.chromosomes.BinaryChromosome;
 import libai.genetics.chromosomes.Chromosome;
 import libai.genetics.chromosomes.IntegerChromosome;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import javax.swing.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  *
@@ -100,8 +103,8 @@ public class EngineTest {
 				return Double.MAX_VALUE;
 			}
 		};
-		Engine engine = new Engine(IntegerChromosome.class, 200, 10, 0.6, 0.01, fitnessImpl);
 
+		Engine engine = new Engine(IntegerChromosome.class, 200, 10, 0.6, 0.01, fitnessImpl);
 		engine.setProgressBar(new JProgressBar());
 
 		//We can't guarantee that it will learn the function, but at least we can check that

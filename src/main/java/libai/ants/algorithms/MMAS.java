@@ -23,9 +23,10 @@
  */
 package libai.ants.algorithms;
 
-import libai.ants.AntFrameworkException;
 import libai.ants.Ant;
+import libai.ants.AntFrameworkException;
 import libai.ants.Enviroment;
+
 import java.util.Vector;
 
 /**
@@ -128,12 +129,7 @@ abstract public class MMAS extends Metaheuristic {
 			total_lambda = total_lambda + lambda_i;
 		}
 		//System.out.println("total_lambda = "+(total_lambda / (this.Graph.getM().getColumns() * this.Graph.getM().getRows())));
-		if ((total_lambda / (this.Graph.getM().getColumns() * this.Graph.getM().getRows())) < 0.05) {
-			//System.out.println("stagnation point");
-			return true;
-		}
-		//System.out.println("no stagnation point");
-		return false;
+		return ((total_lambda / (this.Graph.getM().getColumns() * this.Graph.getM().getRows())) < 0.05);
 	}
 
 	@Override

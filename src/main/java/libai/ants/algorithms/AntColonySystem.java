@@ -23,9 +23,10 @@
  */
 package libai.ants.algorithms;
 
-import libai.ants.AntFrameworkException;
 import libai.ants.Ant;
+import libai.ants.AntFrameworkException;
 import libai.ants.Enviroment;
+
 import java.util.Vector;
 
 /**

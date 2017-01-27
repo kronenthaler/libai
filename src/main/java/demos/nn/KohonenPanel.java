@@ -23,11 +23,12 @@
  */
 package demos.nn;
 
-import libai.nn.unsupervised.Kohonen;
-import libai.common.Matrix;
 import demos.common.SimpleProgressDisplay;
-import java.awt.*;
+import libai.common.Matrix;
+import libai.nn.unsupervised.Kohonen;
+
 import javax.swing.*;
+import java.awt.*;
 
 /**
  *

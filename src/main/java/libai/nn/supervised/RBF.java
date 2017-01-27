@@ -23,12 +23,12 @@
  */
 package libai.nn.supervised;
 
+import libai.common.Matrix;
+import libai.nn.NeuralNetwork;
+
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.Random;
-import libai.common.Matrix;
-
-import libai.nn.NeuralNetwork;
 
 /**
  * Radial Basis Function or RBF. Is an hybrid neural network with 3 layers
@@ -49,9 +49,6 @@ public class RBF extends Adaline {
 	protected int nperlayer[];//{#inputs,#Neurons,#outputs}
 	protected double[] sigma;
 
-	public RBF() {
-	}
-
 	/**
 	 * Constructor. Receives an array with the information of the number of
 	 * neurons per layer. Layer[0] is the input layer. Layer[1] is the hidden
@@ -61,7 +58,7 @@ public class RBF extends Adaline {
 	 * @param nperlayer Neurons Per Layer.
 	 */
 	public RBF(int[] nperlayer) {
-		this(nperlayer, null);
+		this(nperlayer, getDefaultRandomGenerator());
 	}
 
 	/**
@@ -138,9 +135,7 @@ public class RBF extends Adaline {
 		}
 
 		//Train the adaline network, but keep the weights and biases in this instance.
-		Adaline temp = new Adaline();
-		temp.ins = nperlayer[1];
-		temp.outs = nperlayer[2];
+		Adaline temp = new Adaline(nperlayer[1], nperlayer[2], random);
 		temp.W = W;
 		temp.b = b;
 		temp.setPlotter(plotter);

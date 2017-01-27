@@ -1,9 +1,8 @@
 package libai.nn.supervised.backpropagation;
 
 import libai.common.Matrix;
-import libai.nn.NeuralNetwork;
 import libai.common.functions.Function;
-import libai.nn.supervised.MultiLayerPerceptron;
+import libai.nn.NeuralNetwork;
 
 /**
  * Created by kronenthaler on 08/01/2017.

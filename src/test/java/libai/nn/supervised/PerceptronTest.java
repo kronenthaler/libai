@@ -23,15 +23,16 @@
  */
 package libai.nn.supervised;
 
-import java.io.File;
-import java.util.Random;
-import java.io.IOException;
 import libai.common.Matrix;
 import libai.common.MatrixIOTest;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Random;
+
 import static org.junit.Assert.*;
-import static org.junit.Assume.*;
+import static org.junit.Assume.assumeTrue;
 
 /**
  *
@@ -122,7 +123,7 @@ public class PerceptronTest {
 		try {
 			Perceptron p2 = Perceptron.open(foo);
 			assertNotNull(p2);
-			assertTrue(p != p2);
+			assertNotEquals(p, p2);
 
 			assertEquals(p.simulate(ins[0]), p2.simulate(ins[0]));
 			assertEquals(p.simulate(ins[1]), p2.simulate(ins[1]));

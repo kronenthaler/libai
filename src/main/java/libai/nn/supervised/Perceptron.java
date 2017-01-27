@@ -23,10 +23,11 @@
  */
 package libai.nn.supervised;
 
-import java.util.Random;
 import libai.common.Matrix;
 import libai.common.functions.Sign;
 import libai.nn.NeuralNetwork;
+
+import java.util.Random;
 
 
 /**
@@ -43,9 +44,6 @@ public class Perceptron extends NeuralNetwork {
 	protected int ins, outs;
 	protected static Sign signum = new Sign();
 
-	public Perceptron() {
-	}
-
 	/**
 	 * Constructor.
 	 *
@@ -54,7 +52,7 @@ public class Perceptron extends NeuralNetwork {
 	 * @param out Number of outputs for the network.
 	 */
 	public Perceptron(int in, int out) {
-		this(in, out, null);
+		this(in, out, getDefaultRandomGenerator());
 	}
 
 	/**

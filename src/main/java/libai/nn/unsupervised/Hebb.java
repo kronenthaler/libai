@@ -23,11 +23,11 @@
  */
 package libai.nn.unsupervised;
 
-import java.util.Random;
 import libai.common.Matrix;
 import libai.common.functions.Sign;
-
 import libai.nn.NeuralNetwork;
+
+import java.util.Random;
 
 /**
  * Hebbian networks are one of the few autoassociative neural networks. An
@@ -46,8 +46,6 @@ public class Hebb extends NeuralNetwork {
 	protected Matrix W;
 	protected static Sign sign = new Sign();
 
-	public Hebb() {
-	}
 
 	/**
 	 * Constructor. Creates a Hebbian network with the equals number of inputs
@@ -70,7 +68,7 @@ public class Hebb extends NeuralNetwork {
 	 * @param phi Decay constant.
 	 */
 	public Hebb(int inputs, double phi) {
-		this(inputs, phi, null);
+		this(inputs, phi, getDefaultRandomGenerator());
 	}
 
 	/**

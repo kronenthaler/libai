@@ -23,14 +23,20 @@
  */
 package libai.classifiers.trees;
 
-import libai.classifiers.*;
-import java.io.*;
-import java.util.*;
-import org.w3c.dom.*;
-import javax.xml.parsers.*;
+import libai.classifiers.Attribute;
+import libai.classifiers.ContinuousAttribute;
+import libai.classifiers.DiscreteAttribute;
 import libai.classifiers.dataset.DataSet;
 import libai.classifiers.dataset.MetaData;
 import libai.common.Pair;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.*;
+import java.util.*;
 
 /**
  * TODO: missing values.

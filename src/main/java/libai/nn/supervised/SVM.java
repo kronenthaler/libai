@@ -23,12 +23,13 @@
  */
 package libai.nn.supervised;
 
-import java.util.Random;
 import libai.common.Matrix;
 import libai.common.functions.SymmetricSign;
 import libai.common.kernels.GaussianKernel;
 import libai.common.kernels.Kernel;
 import libai.nn.NeuralNetwork;
+
+import java.util.Random;
 
 /**
  * Implementation of the SVM using the SMO algorithm. Based on the original
@@ -64,11 +65,8 @@ public class SVM extends NeuralNetwork {
     public static final int PARAM_EPSILON = 1;
     protected static SymmetricSign ssign = new SymmetricSign();
 
-    public SVM() {
-    }
-
     public SVM(Kernel _kernel) {
-		this(_kernel, null);
+		this(_kernel, getDefaultRandomGenerator());
     }
 
     public SVM(Kernel _kernel, Random rand) {

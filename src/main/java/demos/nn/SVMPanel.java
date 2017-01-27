@@ -23,12 +23,13 @@
  */
 package demos.nn;
 
-import libai.nn.supervised.SVM;
-import libai.nn.NeuralNetwork;
-import libai.common.kernels.LinearKernel;
-import libai.common.Matrix;
 import demos.common.SimpleProgressDisplay;
-import java.util.*;
+import libai.common.Matrix;
+import libai.common.kernels.LinearKernel;
+import libai.nn.NeuralNetwork;
+import libai.nn.supervised.SVM;
+
+import java.util.Random;
 
 
 /**

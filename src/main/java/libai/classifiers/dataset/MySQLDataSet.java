@@ -23,10 +23,11 @@
  */
 package libai.classifiers.dataset;
 
-import java.util.*;
+import libai.classifiers.Attribute;
+import libai.common.Triplet;
+
 import java.sql.*;
-import libai.classifiers.*;
-import libai.common.*;
+import java.util.*;
 
 /**
  *
@@ -49,7 +50,7 @@ public class MySQLDataSet implements DataSet {
         public boolean isCategorical(int fieldIndex) {
             try {
                 String type = rsMetaData.getColumnClassName(fieldIndex + 1);
-                return type.equals("java.lang.String");
+                return "java.lang.String".equals(type);
             } catch (SQLException ex) {
                 return false;
             }

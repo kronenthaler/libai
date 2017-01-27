@@ -23,10 +23,10 @@
  */
 package demos.genetic;
 
+import libai.genetics.Engine;
+import libai.genetics.Fitness;
 import libai.genetics.chromosomes.BinaryChromosome;
 import libai.genetics.chromosomes.Chromosome;
-import libai.genetics.Fitness;
-import libai.genetics.Engine;
 
 /**
  *

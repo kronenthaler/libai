@@ -23,17 +23,21 @@
  */
 package libai.classifiers.bayes;
 
-import java.io.*;
-import libai.classifiers.*;
-import libai.classifiers.dataset.*;
-
-import libai.common.*;
-import java.util.*;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
+import libai.classifiers.Attribute;
+import libai.classifiers.ContinuousAttribute;
+import libai.classifiers.DiscreteAttribute;
+import libai.classifiers.dataset.DataSet;
+import libai.classifiers.dataset.MetaData;
+import libai.common.Pair;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.*;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  *

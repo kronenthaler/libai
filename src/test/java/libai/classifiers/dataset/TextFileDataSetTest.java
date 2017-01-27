@@ -23,6 +23,12 @@
  */
 package libai.classifiers.dataset;
 
+import libai.classifiers.Attribute;
+import libai.classifiers.ContinuousAttribute;
+import libai.classifiers.DiscreteAttribute;
+import libai.common.MatrixIOTest;
+import org.junit.Test;
+
 import java.io.File;
 import java.io.PrintStream;
 import java.util.HashMap;
@@ -30,14 +36,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
-import libai.classifiers.Attribute;
-import libai.classifiers.ContinuousAttribute;
-import libai.classifiers.DiscreteAttribute;
-import libai.common.MatrixIOTest;
-import org.junit.Test;
 
 import static org.junit.Assert.*;
-import static org.junit.Assume.*;
+import static org.junit.Assume.assumeTrue;
 
 /**
  *

@@ -23,17 +23,18 @@
  */
 package libai.nn.supervised;
 
-import java.io.File;
-import java.io.IOException;
 import libai.common.Matrix;
 import libai.common.MatrixIOTest;
-import org.junit.Test;
-import java.util.Random;
 import libai.nn.NeuralNetwork;
+import org.junit.Test;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Random;
+
+import static java.lang.Math.round;
 import static org.junit.Assert.*;
-import static org.junit.Assume.*;
-import static java.lang.Math.*;
+import static org.junit.Assume.assumeTrue;
 
 /**
  *
@@ -115,7 +116,7 @@ public class AdalineTest {
 		try{ 
 			Adaline a2 = Adaline.open(foo);
 			assertNotNull(a2);
-			assertTrue(ada != a2);
+			assertNotEquals(ada, a2);
 
 			assertEquals(ada.simulate(ins[0]), a2.simulate(ins[0]));
 			assertEquals(ada.simulate(ins[1]), a2.simulate(ins[1]));

@@ -23,9 +23,12 @@
  */
 package libai.fuzzy;
 
-import libai.fuzzy.sets.FuzzySet;
 import libai.common.Pair;
-import java.util.*;
+import libai.fuzzy.sets.FuzzySet;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 
 
 /**
