@@ -37,6 +37,7 @@ import java.util.Random;
  * training. The Hebb's rule is one of the most important training rules in
  * unsupervised networks. Other algorithms like Kohonen uses this rule as base.
  *
+ * TODO: review implementation
  * @author kronenthaler
  */
 public class Hebb extends NeuralNetwork {
