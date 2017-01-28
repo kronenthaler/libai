@@ -568,11 +568,10 @@ public class C45 implements Comparable<C45> {
     public void setConfidence(double c) {
         confidence = c;
 
-        double a = 0;
         double b = 99;
         double upperLimit = doLeft(b);
 
-        for (int index = 0; a <= 3; a += 0.01, index++) {
+        for (double a = 0; a <= 3; a += 0.01) {
             double sum = upperLimit - doLeft(a);
             sum = 1.0 - sum;
             if (sum >= c) {

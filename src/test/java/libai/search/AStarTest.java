@@ -33,6 +33,10 @@ import static org.junit.Assert.assertFalse;
  * @author kronenthaler
  */
 public class AStarTest {
+	private final String DEMO_STEPS = "-lluurrddlluurrddlluurrddlluu";
+	private final String DEMO_STEPS_2 = "1234567.8\n12345678.\n";
+	private final String DEMO_STEPS_3 = "12345.786\n12345678.\n";
+
 	@Test
 	public void testDemo() {
 		AStar bfs = new AStar();
@@ -85,7 +89,4 @@ public class AStarTest {
 
 		assertEquals(ans, null);
 	}
-	private final String DEMO_STEPS = "-lluurrddlluurrddlluurrddlluu";
-	private final String DEMO_STEPS_2 = "1234567.8\n12345678.\n";
-	private final String DEMO_STEPS_3 = "12345.786\n12345678.\n";
 }

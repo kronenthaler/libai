@@ -44,6 +44,13 @@ import static org.junit.Assume.assumeNotNull;
  * @author Federico Vera {@literal <dktcoding [at] gmail>}
  */
 public class MySQLDataSetTest {
+	private static final String toString =
+			"[[col1]=4.0, [col2]=b, [col3]=false, [col4]=1.5, [col5]=same]\n" +
+			"[[col1]=2.0, [col2]=b, [col3]=false, [col4]=12.0, [col5]=same]\n" +
+			"[[col1]=0.0, [col2]=a, [col3]=true, [col4]=4.4, [col5]=same]\n" +
+			"[[col1]=3.0, [col2]=a, [col3]=true, [col4]=-12.0, [col5]=same]\n" +
+			"[[col1]=1.0, [col2]=f, [col3]=true, [col4]=4.4, [col5]=same]\n" +
+			"[[col1]=5.0, [col2]=d, [col3]=true, [col4]=8.0, [col5]=same]\n";
 
 	@BeforeClass
 	public static void setUp() throws Exception {
@@ -234,14 +241,6 @@ public class MySQLDataSetTest {
 		MySQLDataSet ds = new MySQLDataSet(c, "tbl2", 1);
 		ds.getFrequencies(0, 0, 0); //Non categorical
 	}
-
-	private static final String toString =
-		"[[col1]=4.0, [col2]=b, [col3]=false, [col4]=1.5, [col5]=same]\n" +
-		"[[col1]=2.0, [col2]=b, [col3]=false, [col4]=12.0, [col5]=same]\n" +
-		"[[col1]=0.0, [col2]=a, [col3]=true, [col4]=4.4, [col5]=same]\n" +
-		"[[col1]=3.0, [col2]=a, [col3]=true, [col4]=-12.0, [col5]=same]\n" +
-		"[[col1]=1.0, [col2]=f, [col3]=true, [col4]=4.4, [col5]=same]\n" +
-		"[[col1]=5.0, [col2]=d, [col3]=true, [col4]=8.0, [col5]=same]\n";
 
 	@Test
 	public void testToString() {

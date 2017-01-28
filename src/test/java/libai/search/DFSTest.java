@@ -33,7 +33,42 @@ import static org.junit.Assert.assertFalse;
  * @author kronenthaler
  */
 public class DFSTest{
-	
+	private final String DEMO_MOVES =
+			"-llurrdllurrdllurrdllurrdllurdrulldrrulldrruulldrrdllurrdllurrdllurrdl"
+					+ "lurrdlurdllurrdllurrulldrrdllurrdllurrdllurrdllurrdlurdllurrdllurru"
+					+ "lldrrdllurrdllurrdllurrdllurrdlurdllurrdllurrulldrrdllurrdllurrdllu"
+					+ "rrdllurrdlurdllurrdllurrulldrrdllurrdllurrdllurrdllurrdlurdllurrdll"
+					+ "urrulldrrdllurrdllurrdllurrdllurrdlurdllurrdllurrullddrrulldrrullur"
+					+ "rdlldrrulldrrulldrrulldrrulldrurdllurrdllurrulldrrdllurrdllurrdllur"
+					+ "rdllurrdlurdllurrdllurrulldrrdllurrdllurrdllurrdllurrdlurdllurrdllu"
+					+ "rrulldrrdllurrdllurrdllurrdllurrdlurdllurrdllurrulldrrdllurrdllurrd"
+					+ "llurrdllurrdlurdllurrdllurrulldrrdllurrdllurrdllurrdllurrdlurdllurr"
+					+ "dllurrulldrrdllurrdllurrdllurrdllurrdlurdllurrdllurruldrdllurrdllur"
+					+ "rdllurrdllurrdlurdllurrdllurrulldrrdllurrdllurrdllurrdllurrdlurdllu"
+					+ "rrdllurdruulldrrdllurrdllurrdllurrdllurrdlurdllurrdllurrulldrrdllur"
+					+ "rdllurrdllurrdllurrdlurdllurrdllurrulldrrdllurrdllurrdllurrdllurrdl"
+					+ "urdllurrdllurrulldrrdllurrdllurrdllurrdllurrdlurdllurrdllurrulldrrd"
+					+ "llurrdllurrdllurrdllurrdlurdllurrdllurrulldrrulldrrdllurrdllurrdllu"
+					+ "rrdllurrdlurdllurrdllurrulldrrdllurrdllurrdllurrdllurrdlurdllurrdll"
+					+ "urrulldrrdllurrdllurrdllurrdllurrdlurdllurrdllurruldrdllurrdllurrdl"
+					+ "lurrdllurrdlurdllurrdllurrulldrrdllurrdllurrdllurrdllurrdlurdllurrd"
+					+ "llurrulldrrdllurrdllurrdllurrdllurrdlurdllurrdllurrulldrrulldrrdllu"
+					+ "rrdllurrdllurrdllurrdlurdllurrdllurrulldrrdllurrdllurrdllurrdllurrd"
+					+ "lurdllurrdllurrulldrrdllurrdllurrdllurrdllurrdlurdllurrdllurrulldrr"
+					+ "dllurrdllurrdllurrdllurrdlurdllurrdllurrulldrrdllurrdllurrdllurrdll"
+					+ "urrdlurdllurrdllurrulldrrdllurrdllurrdllurrdllurrdlurdllurrdllurrul"
+					+ "drdllurrdllurrdllurrdllurrdlurdllurrdllurrulldrrdllurrdllurrdllurrd"
+					+ "llurrdlurdllurrdllurdruulldrrdllurrdllurrdllurrdllurrdlurdllurrdllu"
+					+ "rrulldrrdllurrdllurrdllurrdllurrdlurdllurrdllurrulldrrdllurrdllurrd"
+					+ "llurrdllurrdlurdllurrdllurrulldrrdllurrdllurrdllurrdllurrdlurdllurr"
+					+ "dllurrulldrrdllurrdllurrdllurrdllurrdlurdllurrdllurrulldrrulldrrdll"
+					+ "urrdllurrdllurrdllurrdlurdllurrdllurrulldrrdllurrdllurrdllurrdllurr"
+					+ "dlurdllurrdllurrulldrrdllurrdllurrdllurrdllurrdlurdllurrdllurruldrd"
+					+ "llurrdllurrdllurrdllurrdlurdllurrdllurrulldrrdllurrdllurrdllurrdllu"
+					+ "rrdlurdllurrdllurrulldrrdlluu";
+	private final String DEMO_STEPS_2 = "1234567.8\n12345678.\n";
+	private final String DEMO_STEPS_3 = "12345.786\n12345678.\n";
+
 	@Test
 	public void testDemo() {
 		DFS bfs = new DFS();
@@ -77,48 +112,12 @@ public class DFSTest{
 	}
 	
 	@Test
-	public void testImpossible(){
+	public void testImpossible() {
 		DFS bfs = new DFS();
 
 		State init = new GemPuzzleState("21345678.", null, '\0');
-		GemPuzzleState ans = (GemPuzzleState)bfs.search(init);
+		GemPuzzleState ans = (GemPuzzleState) bfs.search(init);
 
 		assertEquals(ans, null);
 	}
-	
-	private final String DEMO_MOVES = 
-		"-llurrdllurrdllurrdllurrdllurdrulldrrulldrruulldrrdllurrdllurrdllurrdl"
-		+ "lurrdlurdllurrdllurrulldrrdllurrdllurrdllurrdllurrdlurdllurrdllurru"
-		+ "lldrrdllurrdllurrdllurrdllurrdlurdllurrdllurrulldrrdllurrdllurrdllu"
-		+ "rrdllurrdlurdllurrdllurrulldrrdllurrdllurrdllurrdllurrdlurdllurrdll"
-		+ "urrulldrrdllurrdllurrdllurrdllurrdlurdllurrdllurrullddrrulldrrullur"
-		+ "rdlldrrulldrrulldrrulldrrulldrurdllurrdllurrulldrrdllurrdllurrdllur"
-		+ "rdllurrdlurdllurrdllurrulldrrdllurrdllurrdllurrdllurrdlurdllurrdllu"
-		+ "rrulldrrdllurrdllurrdllurrdllurrdlurdllurrdllurrulldrrdllurrdllurrd"
-		+ "llurrdllurrdlurdllurrdllurrulldrrdllurrdllurrdllurrdllurrdlurdllurr"
-		+ "dllurrulldrrdllurrdllurrdllurrdllurrdlurdllurrdllurruldrdllurrdllur"
-		+ "rdllurrdllurrdlurdllurrdllurrulldrrdllurrdllurrdllurrdllurrdlurdllu"
-		+ "rrdllurdruulldrrdllurrdllurrdllurrdllurrdlurdllurrdllurrulldrrdllur"
-		+ "rdllurrdllurrdllurrdlurdllurrdllurrulldrrdllurrdllurrdllurrdllurrdl"
-		+ "urdllurrdllurrulldrrdllurrdllurrdllurrdllurrdlurdllurrdllurrulldrrd"
-		+ "llurrdllurrdllurrdllurrdlurdllurrdllurrulldrrulldrrdllurrdllurrdllu"
-		+ "rrdllurrdlurdllurrdllurrulldrrdllurrdllurrdllurrdllurrdlurdllurrdll"
-		+ "urrulldrrdllurrdllurrdllurrdllurrdlurdllurrdllurruldrdllurrdllurrdl"
-		+ "lurrdllurrdlurdllurrdllurrulldrrdllurrdllurrdllurrdllurrdlurdllurrd"
-		+ "llurrulldrrdllurrdllurrdllurrdllurrdlurdllurrdllurrulldrrulldrrdllu"
-		+ "rrdllurrdllurrdllurrdlurdllurrdllurrulldrrdllurrdllurrdllurrdllurrd"
-		+ "lurdllurrdllurrulldrrdllurrdllurrdllurrdllurrdlurdllurrdllurrulldrr"
-		+ "dllurrdllurrdllurrdllurrdlurdllurrdllurrulldrrdllurrdllurrdllurrdll"
-		+ "urrdlurdllurrdllurrulldrrdllurrdllurrdllurrdllurrdlurdllurrdllurrul"
-		+ "drdllurrdllurrdllurrdllurrdlurdllurrdllurrulldrrdllurrdllurrdllurrd"
-		+ "llurrdlurdllurrdllurdruulldrrdllurrdllurrdllurrdllurrdlurdllurrdllu"
-		+ "rrulldrrdllurrdllurrdllurrdllurrdlurdllurrdllurrulldrrdllurrdllurrd"
-		+ "llurrdllurrdlurdllurrdllurrulldrrdllurrdllurrdllurrdllurrdlurdllurr"
-		+ "dllurrulldrrdllurrdllurrdllurrdllurrdlurdllurrdllurrulldrrulldrrdll"
-		+ "urrdllurrdllurrdllurrdlurdllurrdllurrulldrrdllurrdllurrdllurrdllurr"
-		+ "dlurdllurrdllurrulldrrdllurrdllurrdllurrdllurrdlurdllurrdllurruldrd"
-		+ "llurrdllurrdllurrdllurrdlurdllurrdllurrulldrrdllurrdllurrdllurrdllu"
-		+ "rrdlurdllurrdllurrulldrrdlluu";
-	private final String DEMO_STEPS_2 = "1234567.8\n12345678.\n";
-	private final String DEMO_STEPS_3 = "12345.786\n12345678.\n";
 }

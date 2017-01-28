@@ -138,7 +138,7 @@ public class Hebb extends NeuralNetwork {
 				//require 2 cycles to update properly the weights
 				for (int k = 0; k < W.getRows(); k++) {
 					for (int j = 0; j < W.getColumns(); j++) {
-						W.position(k, j, W.position(k, j) + phi * Y.position(k, 0) * (((alpha / phi) * patterns[sort[i] + offset].position(k, 0)) - W.position(k, j)));
+						W.increment(k, j, phi * Y.position(k, 0) * (((alpha / phi) * patterns[sort[i] + offset].position(k, 0)) - W.position(k, j)));
 					}
 				}
 			}

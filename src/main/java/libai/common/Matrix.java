@@ -584,6 +584,24 @@ public final class Matrix implements Serializable {
 	}
 
 	/**
+	 * Scales the value of one position by v.
+	 * <p><i>NOTE:</i> Assertions of the indexes are made with {@code assert}
+	 * statement. You must enable this on runtime to be effective.</p>
+	 *
+	 * @param i index of the row
+	 * @param j index of the column
+	 * @param v value to scale.
+	 */
+	public final void scale(int i, int j, double v){
+		assert i >= 0 && i < rows : String.format(
+				"i must be in the interval [0, %d) current: %d", rows, i);
+		assert j >= 0 && j < cols : String.format(
+				"j must be in the interval [0, %d) current: %d", cols, j);
+
+		matrix[(i * cols) + j] *= v;
+	}
+
+	/**
 	 * Swaps two rows.
 	 * <p><i>NOTE:</i> Assertions of the indexes are made with {@code assert}
 	 * statement. You must enable this on runtime to be effective.</p>
