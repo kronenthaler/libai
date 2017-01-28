@@ -89,8 +89,8 @@ public class Competitive extends NeuralNetwork {
 	 * Ww = Ww + alpha.(pattern - Ww)<br>
 	 *
 	 * @param patterns	The patterns to be learned.
-	 * @param answers The expected answers.
-	 * @param alpha	The learning rate.
+	 * @param answers 	The expected answers.
+	 * @param alpha		The learning rate.
 	 * @param epochs	The maximum number of iterations
 	 * @param offset	The first pattern position
 	 * @param length	How many patterns will be used.
@@ -99,7 +99,7 @@ public class Competitive extends NeuralNetwork {
 	@Override
 	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 		int[] sort = new int[length]; // [0,length)
-		double error = 0;
+		double error = 1;
 
 		Matrix r = new Matrix(1, ins);
 		Matrix row = new Matrix(1, ins);
@@ -112,12 +112,12 @@ public class Competitive extends NeuralNetwork {
 		}
 
 		if (progress != null) {
-			progress.setMaximum(0);
-			progress.setMinimum(-epochs);
-			progress.setValue(-epochs);
+			progress.setMaximum(epochs);
+			progress.setMinimum(0);
+			progress.setValue(0);
 		}
 
-		while ((error = error(patterns, answers, offset, length)) > minerror && epochs-- > 0) {
+		for(int currentEpoch=0; currentEpoch < epochs && error > minerror; currentEpoch++){
 			//shuffle patterns
 			shuffle(sort);
 
@@ -135,13 +135,16 @@ public class Competitive extends NeuralNetwork {
 				W.setRow(winner, r.getRow(0));
 			}
 
+			error = error(patterns, answers, offset, length);
+
 			if (plotter != null)
-				plotter.setError(epochs, error);
+				plotter.setError(currentEpoch, error);
 			if (progress != null)
-				progress.setValue(-epochs);
+				progress.setValue(currentEpoch);
 		}
+
 		if (progress != null)
-			progress.setValue(1);
+			progress.setValue(progress.getMaximum());
 	}
 
 	@Override

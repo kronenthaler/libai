@@ -51,5 +51,20 @@ public class SimpleProgressDisplay implements ProgressDisplay{
 	public void setValue(int v) {
 		progress.setValue(v);
 	}
-	
+
+	@Override
+	public int getMaximum() {
+		return progress.getMaximum();
+	}
+
+	@Override
+	public int getMinimum() {
+		return progress.getMinimum();
+	}
+
+	@Override
+	public int getValue() {
+		return progress.getValue();
+	}
+
 }

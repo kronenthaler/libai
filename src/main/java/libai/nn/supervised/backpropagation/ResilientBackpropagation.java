@@ -54,7 +54,7 @@ public class ResilientBackpropagation extends StandardBackpropagation {
 			updatesb[i].setValue(0.1);
 		}
 
-		while (error > minerror && epochs-- > 0) {
+		for(int currentEpoch=0; currentEpoch < epochs && error > minerror; currentEpoch++){
 			//shuffle patterns
 			nn.shuffle(sort);
 
@@ -135,9 +135,9 @@ public class ResilientBackpropagation extends StandardBackpropagation {
 			error /= length;
 
 			if (nn.getPlotter() != null)
-				nn.getPlotter().setError(epochs, error);
+				nn.getPlotter().setError(currentEpoch, error);
 			if (nn.getProgressBar() != null)
-				nn.getProgressBar().setValue(-epochs);
+				nn.getProgressBar().setValue(currentEpoch);
 		}
 	}
 }

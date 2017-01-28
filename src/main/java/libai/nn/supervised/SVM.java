@@ -85,9 +85,9 @@ public class SVM extends NeuralNetwork {
     @Override
     public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
         if (progress != null) {
-            progress.setMaximum(0);
-            progress.setMinimum(-epochs);
-            progress.setValue(-epochs);
+            progress.setMaximum(epochs);
+            progress.setMinimum(0);
+            progress.setValue(0);
         }
 
         this.minerror = minerror;
@@ -117,7 +117,7 @@ public class SVM extends NeuralNetwork {
 
         int numChanged = 0;
         boolean examineAll = true;
-        while (epochs-- > 0 && (numChanged > 0 || examineAll)) {
+        for(int currentEpoch=0; currentEpoch < epochs && (numChanged > 0 || examineAll); currentEpoch++){
             numChanged = 0;
             if (examineAll) {
                 for (int k = 0; k < length; k++) {
@@ -137,8 +137,9 @@ public class SVM extends NeuralNetwork {
             if (plotter != null)
                 plotter.setError(epochs, error(patterns, answers, offset, length));
             if (progress != null)
-                progress.setValue(-epochs);
+                progress.setValue(currentEpoch);
         }
+
         //clip data to keep just the support vectors.
         int tempnSupportVectors = 0;
         for (int i = 0; i < alph.length; i++)
@@ -164,7 +165,7 @@ public class SVM extends NeuralNetwork {
         nSupportVectors = tempnSupportVectors;
 
         if (progress != null)
-            progress.setValue(0);
+            progress.setValue(progress.getMaximum());
     }
 
     @Override

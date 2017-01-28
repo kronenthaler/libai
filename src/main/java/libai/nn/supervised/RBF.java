@@ -141,6 +141,9 @@ public class RBF extends Adaline {
 		temp.setPlotter(plotter);
 		temp.setProgressBar(progress);
 		temp.train(Y, answers, alpha, epochs, offset, length, minerror);
+
+		if (progress != null)
+			progress.setValue(progress.getMaximum());
 	}
 
 	/**

@@ -379,7 +379,7 @@ public class MultiLayerPerceptronTest {
 	}
 
 	private static final ProgressDisplay progress = new ProgressDisplay() {
-		int min, max;
+		int value, min, max;
 		@Override
 		public void setMinimum(int v) {
 			min = v;
@@ -392,8 +392,24 @@ public class MultiLayerPerceptronTest {
 
 		@Override
 		public void setValue(int v) {
+			value=v;
 			assertTrue(v >= min);
 			assertTrue(v <= max);
+		}
+
+		@Override
+		public int getMaximum() {
+			return max;
+		}
+
+		@Override
+		public int getMinimum() {
+			return min;
+		}
+
+		@Override
+		public int getValue() {
+			return value;
 		}
 	};
 

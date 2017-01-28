@@ -114,12 +114,12 @@ public class Hebb extends NeuralNetwork {
 		}
 
 		if (progress != null) {
-			progress.setMaximum(0);
-			progress.setMinimum(-epochs);
-			progress.setValue(-epochs);
+			progress.setMaximum(epochs);
+			progress.setMinimum(0);
+			progress.setValue(0);
 		}
 
-		while (epochs-- > 0) {
+		for(int currentEpoch=0; currentEpoch < epochs; currentEpoch++){
 			//shuffle patterns
 			shuffle(sort);
 
@@ -135,7 +135,7 @@ public class Hebb extends NeuralNetwork {
 
 				//alternative rule: no just have decay term, also inhibit the connections
 				//Wij=Wij+(phi*yi*(alpha/phi*xi - Wij))
-				//require 2 cicles to update properly the weights
+				//require 2 cycles to update properly the weights
 				for (int k = 0; k < W.getRows(); k++) {
 					for (int j = 0; j < W.getColumns(); j++) {
 						W.position(k, j, W.position(k, j) + phi * Y.position(k, 0) * (((alpha / phi) * patterns[sort[i] + offset].position(k, 0)) - W.position(k, j)));
@@ -143,10 +143,11 @@ public class Hebb extends NeuralNetwork {
 				}
 			}
 			if (progress != null)
-				progress.setValue(-epochs);
+				progress.setValue(epochs);
 		}
+
 		if (progress != null)
-			progress.setValue(1);
+			progress.setValue(progress.getMaximum());
 	}
 
 	@Override

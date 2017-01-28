@@ -90,6 +90,9 @@ public class Hopfield extends NeuralNetwork {
 			if (progress != null)
 				progress.setValue(i);
 		}
+
+		if (progress != null)
+			progress.setValue(progress.getMaximum());
 	}
 
 	@Override

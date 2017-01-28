@@ -138,7 +138,7 @@ public class Kohonen extends NeuralNetwork {
 			progress.setValue(0);
 		}
 
-		while (curr_epoch++ < epochs) {
+		for(int currentEpoch=0; currentEpoch < epochs; currentEpoch++) {
 			//System.out.println("epoch: "+curr_epoch);
 			//shuffle
 			shuffle(sort);
@@ -163,19 +163,19 @@ public class Kohonen extends NeuralNetwork {
 
 			//update neighborhood's ratio.
 			if (neighborhood >= 0.5)
-				neighborhood = lamda * Math.exp(-(float) curr_epoch / (float) epochs);
+				neighborhood = lamda * Math.exp(-(float) currentEpoch / (float) epochs);
 
 			//update alpha
 			if (alpha1 > 0.001)
-				alpha1 = alpha * Math.exp(-(float) curr_epoch / (float) epochs);
+				alpha1 = alpha * Math.exp(-(float) currentEpoch / (float) epochs);
 
 			if (progress != null)
-				progress.setValue(curr_epoch);
+				progress.setValue(currentEpoch);
 		}
 
 		expandMap(patterns, answers, offset, length);
 		if (progress != null)
-			progress.setValue(epochs * 2);
+			progress.setValue(progress.getMaximum());
 	}
 
 	@Override

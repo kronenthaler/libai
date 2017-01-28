@@ -34,7 +34,7 @@ public class MomentumBackpropagation extends StandardBackpropagation {
 			b[i].copy(bprev[i]);
 		}
 
-		while (error > minerror && epochs-- > 0) {
+		for(int currentEpoch=0; currentEpoch < epochs && error > minerror; currentEpoch++){
 			//shuffle patterns
 			nn.shuffle(sort);
 
@@ -91,9 +91,9 @@ public class MomentumBackpropagation extends StandardBackpropagation {
 			error /= length;
 
 			if (nn.getPlotter() != null)
-				nn.getPlotter().setError(epochs, error);
+				nn.getPlotter().setError(currentEpoch, error);
 			if (nn.getProgressBar() != null)
-				nn.getProgressBar().setValue(-epochs);
+				nn.getProgressBar().setValue(currentEpoch);
 		}
 	}
 }
