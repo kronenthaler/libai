@@ -107,6 +107,7 @@ public class Hebb extends NeuralNetwork {
 	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 		int[] sort = new int[length];
 		Matrix Y = new Matrix(W.getRows(), 1);
+		double error = 1;
 
 		Matrix[] patternsT = new Matrix[length];
 		for (int i = 0; i < length; i++) {
@@ -120,7 +121,7 @@ public class Hebb extends NeuralNetwork {
 			progress.setValue(0);
 		}
 
-		for(int currentEpoch=0; currentEpoch < epochs; currentEpoch++){
+		for(int currentEpoch=0; currentEpoch < epochs && error > minerror; currentEpoch++){
 			//shuffle patterns
 			shuffle(sort);
 
@@ -143,6 +144,9 @@ public class Hebb extends NeuralNetwork {
 					}
 				}
 			}
+
+			error = error(patterns, patterns, offset, length);
+
 			if (progress != null)
 				progress.setValue(epochs);
 		}
