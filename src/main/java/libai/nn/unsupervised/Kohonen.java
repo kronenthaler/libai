@@ -57,12 +57,12 @@ public class Kohonen extends NeuralNetwork {
 	 * size of the neighborhood and the way in the neighbors are connected.
 	 *
 	 * @param nperlayer Number of neurons (input, rows and columns)
-	 * @param _neighborhood Initial size of the neighborhood
+	 * @param neighborhood Initial size of the neighborhood
 	 * @param neighboursX neighbors along the X-axis
 	 * @param neighboursY neighbors along the Y-axis
 	 */
-	public Kohonen(int[] nperlayer, double _neighborhood, int[] neighboursX, int[] neighboursY) {
-		this(nperlayer, _neighborhood, neighboursX, neighboursY, getDefaultRandomGenerator());
+	public Kohonen(int[] nperlayer, double neighborhood, int[] neighboursX, int[] neighboursY) {
+		this(nperlayer, neighborhood, neighboursX, neighboursY, getDefaultRandomGenerator());
 	}
 
 	/**
@@ -71,15 +71,15 @@ public class Kohonen extends NeuralNetwork {
 	 * size of the neighborhood and the way in the neighbors are connected.
 	 *
 	 * @param nperlayer Number of neurons (input, rows and columns)
-	 * @param _neighborhood Initial size of the neighborhood
-	 * @param neighboursX neighbors along the X-axis
-	 * @param neighboursY neighbors along the Y-axis
+	 * @param neighborhood Initial size of the neighborhood
+	 * @param neighboursX neighbors along the X-axis as deltas from origin eg. +1, 0, -1, 2
+	 * @param neighboursY neighbors along the Y-axis as deltas from origin eg. +1, 0, -1, 2
 	 * @param rand Random generator used for creating matrices
 	 */
-	public Kohonen(int[] nperlayer, double _neighborhood, int[] neighboursX, int[] neighboursY, Random rand) {
+	public Kohonen(int[] nperlayer, double neighborhood, int[] neighboursX, int[] neighboursY, Random rand) {
 		super(rand);
 		this.nperlayer = nperlayer;
-		neighborhood = _neighborhood;
+		this.neighborhood = neighborhood;
 
 		W = new Matrix[nperlayer[1] * nperlayer[2]];
 		stepsx = neighboursX;
@@ -102,10 +102,10 @@ public class Kohonen extends NeuralNetwork {
 	 * int[]{0,0,1,-1}, new int[]{-1,1,0,0});
 	 *
 	 * @param nperlayer Number of neurons (input, rows and columns)
-	 * @param _neighborhood Initial size of the neighborhood
+	 * @param neighborhood Initial size of the neighborhood
 	 */
-	public Kohonen(int[] nperlayer, double _neighborhood) {
-		this(nperlayer, _neighborhood, new int[]{0, 0, 1, -1}, new int[]{-1, 1, 0, 0});
+	public Kohonen(int[] nperlayer, double neighborhood) {
+		this(nperlayer, neighborhood, new int[]{0, 0, 1, -1}, new int[]{-1, 1, 0, 0});
 	}
 
 	/**
@@ -122,7 +122,7 @@ public class Kohonen extends NeuralNetwork {
 	 */
 	@Override
 	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
-		int curr_epoch = 0, ig = 0, jg = 0;
+		int ig = 0, jg = 0;
 		double lamda = neighborhood;
 		double alpha1 = alpha;
 
@@ -138,7 +138,7 @@ public class Kohonen extends NeuralNetwork {
 			progress.setValue(0);
 		}
 
-		while (curr_epoch++ < epochs) {
+		for(int currentEpoch=0; currentEpoch < epochs; currentEpoch++) {
 			//System.out.println("epoch: "+curr_epoch);
 			//shuffle
 			shuffle(sort);
@@ -163,19 +163,19 @@ public class Kohonen extends NeuralNetwork {
 
 			//update neighborhood's ratio.
 			if (neighborhood >= 0.5)
-				neighborhood = lamda * Math.exp(-(float) curr_epoch / (float) epochs);
+				neighborhood = lamda * Math.exp(-(float) currentEpoch / (float) epochs);
 
 			//update alpha
 			if (alpha1 > 0.001)
-				alpha1 = alpha * Math.exp(-(float) curr_epoch / (float) epochs);
+				alpha1 = alpha * Math.exp(-(float) currentEpoch / (float) epochs);
 
 			if (progress != null)
-				progress.setValue(curr_epoch);
+				progress.setValue(currentEpoch);
 		}
 
 		expandMap(patterns, answers, offset, length);
 		if (progress != null)
-			progress.setValue(epochs * 2);
+			progress.setValue(progress.getMaximum());
 	}
 
 	@Override

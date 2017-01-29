@@ -37,6 +37,7 @@ import java.util.Random;
  * training. The Hebb's rule is one of the most important training rules in
  * unsupervised networks. Other algorithms like Kohonen uses this rule as base.
  *
+ * TODO: review implementation
  * @author kronenthaler
  */
 public class Hebb extends NeuralNetwork {
@@ -106,6 +107,7 @@ public class Hebb extends NeuralNetwork {
 	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 		int[] sort = new int[length];
 		Matrix Y = new Matrix(W.getRows(), 1);
+		double error = 1;
 
 		Matrix[] patternsT = new Matrix[length];
 		for (int i = 0; i < length; i++) {
@@ -114,12 +116,12 @@ public class Hebb extends NeuralNetwork {
 		}
 
 		if (progress != null) {
-			progress.setMaximum(0);
-			progress.setMinimum(-epochs);
-			progress.setValue(-epochs);
+			progress.setMaximum(epochs);
+			progress.setMinimum(0);
+			progress.setValue(0);
 		}
 
-		while (epochs-- > 0) {
+		for(int currentEpoch=0; currentEpoch < epochs && error > minerror; currentEpoch++){
 			//shuffle patterns
 			shuffle(sort);
 
@@ -135,18 +137,22 @@ public class Hebb extends NeuralNetwork {
 
 				//alternative rule: no just have decay term, also inhibit the connections
 				//Wij=Wij+(phi*yi*(alpha/phi*xi - Wij))
-				//require 2 cicles to update properly the weights
+				//require 2 cycles to update properly the weights
 				for (int k = 0; k < W.getRows(); k++) {
 					for (int j = 0; j < W.getColumns(); j++) {
-						W.position(k, j, W.position(k, j) + phi * Y.position(k, 0) * (((alpha / phi) * patterns[sort[i] + offset].position(k, 0)) - W.position(k, j)));
+						W.increment(k, j, phi * Y.position(k, 0) * (((alpha / phi) * patterns[sort[i] + offset].position(k, 0)) - W.position(k, j)));
 					}
 				}
 			}
+
+			error = error(patterns, patterns, offset, length);
+
 			if (progress != null)
-				progress.setValue(-epochs);
+				progress.setValue(epochs);
 		}
+
 		if (progress != null)
-			progress.setValue(1);
+			progress.setValue(progress.getMaximum());
 	}
 
 	@Override

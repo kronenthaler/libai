@@ -34,7 +34,7 @@ import libai.nn.NeuralNetwork;
  * answers. As the Hebb network this network is a associative memory. The main
  * goal of this network is memorize and retrieve the memorized patterns without
  * noise.
- *
+ * TODO: review implementation
  * @author kronenthaler
  */
 public class Hopfield extends NeuralNetwork {
@@ -90,6 +90,9 @@ public class Hopfield extends NeuralNetwork {
 			if (progress != null)
 				progress.setValue(i);
 		}
+
+		if (progress != null)
+			progress.setValue(progress.getMaximum());
 	}
 
 	@Override

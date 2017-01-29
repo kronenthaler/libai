@@ -166,9 +166,9 @@ public class MultiLayerPerceptron extends NeuralNetwork {
 	@Override
 	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 		if (progress != null) {
-			progress.setMaximum(0);
-			progress.setMinimum(-epochs);
-			progress.setValue(-epochs);
+			progress.setMinimum(0);
+			progress.setMaximum(epochs);
+			progress.setValue(0);
 		}
 
 		// initialize the trainer with the set of matrices required
@@ -177,7 +177,7 @@ public class MultiLayerPerceptron extends NeuralNetwork {
 		trainer.train(patterns, answers, alpha, epochs, offset, length, minerror);
 
 		if (progress != null)
-			progress.setValue(0);
+			progress.setValue(progress.getMaximum());
 	}
 
 	@Override

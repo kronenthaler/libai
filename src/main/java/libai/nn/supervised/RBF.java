@@ -95,8 +95,6 @@ public class RBF extends Adaline {
 	 */
 	@Override
 	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
-		double error, prevError, current;
-
 		if (progress != null) {
 			progress.setMaximum(0);
 			progress.setMinimum(-epochs * 2);
@@ -106,14 +104,14 @@ public class RBF extends Adaline {
 		//apply k-means to the patterns
 		c = kmeans(nperlayer[1], patterns, offset, length);
 
-		//calculate sigmas. p-closest neightbors, p is the input dimension
+		//calculate sigmas. p-closest neighbors, p is the input dimension
 		PriorityQueue<Double>[] neighbors = new PriorityQueue[nperlayer[1]];
 		for (int i = 0; i < nperlayer[1]; i++)
 			neighbors[i] = new PriorityQueue<>();
 
 		for (int i = 0; i < nperlayer[1] - 1; i++) {
 			for (int j = i + 1; j < nperlayer[1]; j++) {
-				current = Math.sqrt(euclideanDistance2(c[i], c[j]));
+				double current = Math.sqrt(euclideanDistance2(c[i], c[j]));
 				neighbors[i].add(-current);
 				neighbors[j].add(-current);
 			}
@@ -141,6 +139,9 @@ public class RBF extends Adaline {
 		temp.setPlotter(plotter);
 		temp.setProgressBar(progress);
 		temp.train(Y, answers, alpha, epochs, offset, length, minerror);
+
+		if (progress != null)
+			progress.setValue(progress.getMaximum());
 	}
 
 	/**
@@ -168,7 +169,7 @@ public class RBF extends Adaline {
 			patterns[index].copy(ctemp[i]);
 			partitions[i] = new ArrayList<>();
 		}
-		int iter = 0;
+
 		while (true) {
 			double min, current;
 			for (l = 0; l < k; l++)
@@ -205,7 +206,7 @@ public class RBF extends Adaline {
 				} else {
 					aux1.multiply(1.0 / (double) total, aux);
 
-					if (!(aux.equals(ctemp[i]))) {
+					if (!aux.equals(ctemp[i])) {
 						aux.copy(ctemp[i]);
 						exit = false;
 					}

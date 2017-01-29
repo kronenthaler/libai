@@ -54,7 +54,7 @@ public class ResilientBackpropagation extends StandardBackpropagation {
 			updatesb[i].setValue(0.1);
 		}
 
-		while (error > minerror && epochs-- > 0) {
+		for(int currentEpoch=0; currentEpoch < epochs && error > minerror; currentEpoch++){
 			//shuffle patterns
 			nn.shuffle(sort);
 
@@ -101,13 +101,13 @@ public class ResilientBackpropagation extends StandardBackpropagation {
 						double sign = dacum[l].position(i, j) > 0 ? 1 : -1;
 						if (change > 0) {
 							updates[l].position(i, j, Math.min(updates[l].position(i, j) * nPlus, maxUpdate));
-							W[l].position(i, j, W[l].position(i, j) + (-sign * updates[l].position(i, j)));
+							W[l].increment(i, j, (-sign * updates[l].position(i, j)));
 							dacumPrev[l].position(i, j, dacum[l].position(i, j));
 						} else if (change < 0) {
 							updates[l].position(i, j, Math.max(updates[l].position(i, j) * nMinus, minUpdate));
 							dacumPrev[l].position(i, j, 0);
 						} else {
-							W[l].position(i, j, W[l].position(i, j) + (-sign * updates[l].position(i, j)));
+							W[l].increment(i, j, (-sign * updates[l].position(i, j)));
 							dacumPrev[l].position(i, j, dacum[l].position(i, j));
 						}
 						dacum[l].position(i, j, 0);
@@ -118,13 +118,13 @@ public class ResilientBackpropagation extends StandardBackpropagation {
 						double sign = dacumb[l].position(i, j) > 0 ? 1 : -1;
 						if (change > 0) {
 							updatesb[l].position(i, j, Math.min(updatesb[l].position(i, j) * nPlus, maxUpdate));
-							b[l].position(i, j, b[l].position(i, j) + (-sign * updatesb[l].position(i, j)));
+							b[l].increment(i, j, (-sign * updatesb[l].position(i, j)));
 							dacumbPrev[l].position(i, j, dacumb[l].position(i, j));
 						} else if (change < 0) {
 							updatesb[l].position(i, j, Math.max(updatesb[l].position(i, j) * nMinus, minUpdate));
 							dacumbPrev[l].position(i, j, 0);
 						} else {
-							b[l].position(i, j, b[l].position(i, j) + (-sign * updatesb[l].position(i, j)));
+							b[l].increment(i, j, (-sign * updatesb[l].position(i, j)));
 							dacumbPrev[l].position(i, j, dacumb[l].position(i, j));
 						}
 						dacumb[l].position(i, j, 0);
@@ -135,9 +135,9 @@ public class ResilientBackpropagation extends StandardBackpropagation {
 			error /= length;
 
 			if (nn.getPlotter() != null)
-				nn.getPlotter().setError(epochs, error);
+				nn.getPlotter().setError(currentEpoch, error);
 			if (nn.getProgressBar() != null)
-				nn.getProgressBar().setValue(-epochs);
+				nn.getProgressBar().setValue(currentEpoch);
 		}
 	}
 }

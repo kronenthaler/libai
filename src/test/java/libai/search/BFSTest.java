@@ -33,9 +33,9 @@ import static org.junit.Assert.assertFalse;
  * @author Federico Vera {@literal <dktcoding [at] gmail>}
  */
 public class BFSTest {
-	
-	public BFSTest() {
-	}
+	private final String DEMO_STEPS = "-uullddrruullddrruullddrruull";
+	private final String DEMO_STEPS_2 = "1234567.8\n12345678.\n";
+	private final String DEMO_STEPS_3 = "12345.786\n12345678.\n";
 
 	@Test
 	public void testDemo() {
@@ -81,16 +81,12 @@ public class BFSTest {
 	}
 	
 	@Test
-	public void testImpossible(){
+	public void testImpossible() {
 		BFS bfs = new BFS();
 
 		State init = new GemPuzzleState("21345678.", null, '-');
-		GemPuzzleState ans = (GemPuzzleState)bfs.search(init);
+		GemPuzzleState ans = (GemPuzzleState) bfs.search(init);
 
 		assertEquals(ans, null);
 	}
-        
-	private final String DEMO_STEPS = "-uullddrruullddrruullddrruull";
-	private final String DEMO_STEPS_2 = "1234567.8\n12345678.\n";
-	private final String DEMO_STEPS_3 = "12345.786\n12345678.\n";
 }

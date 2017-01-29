@@ -82,26 +82,31 @@ public class MatrixTest {
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorFail1() {
         Matrix m = new Matrix(-5, 5, false);
+        assertNull(m);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorFail2() {
         Matrix m = new Matrix(5, -5, false);
+        assertNull(m);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorFail3() {
         Matrix m = new Matrix(0, 1, false);
+        assertNull(m);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorFail4() {
         Matrix m = new Matrix(5, 5, null);
+        assertNull(m);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorFail5() {
         Matrix m = new Matrix(5, 5, new double[5*4]);
+        assertNull(m);
     }
 
     @Test
@@ -386,43 +391,37 @@ public class MatrixTest {
 
     @Test
     public void testIncrement() {
-        Matrix m = new Matrix(5, 5, true);
         Random rand = new Random();
-        for (int k = 0; k < 10; k++) {
-            int i = rand.nextInt(5), j = rand.nextInt(5);
-            double inc = rand.nextDouble() * 2 - 1;
-            double prev = m.position(i, j);
-            m.increment(i, j, inc);
-            assertEquals(prev, m.position(i, j) - inc, DELTA);
-            assertNotEquals(prev, m.position(i, j), DELTA);
+        Matrix m = new Matrix(15, 5, false);
+        m.fill(true, rand);
+
+        for(int i=0;i<5;i++){
+            for(int j=0;j<5;j++){
+                double inc = rand.nextDouble() * 2 - 1;
+                double prev = m.position(i, j);
+                m.increment(i, j, inc);
+
+                assertEquals(prev, m.position(i, j) - inc, DELTA);
+                assertNotEquals(prev, m.position(i, j), DELTA);
+            }
         }
     }
 
     @Test
-    public void testIncrement1() {
-        Matrix m = new Matrix(15, 5, true);
+    public void testScale() {
         Random rand = new Random();
-        for (int k = 0; k < 10; k++) {
-            int i = rand.nextInt(15), j = rand.nextInt(5);
-            double inc = rand.nextDouble() * 2 - 1;
-            double prev = m.position(i, j);
-            m.increment(i, j, inc);
-            assertEquals(prev, m.position(i, j) - inc, DELTA);
-            assertNotEquals(prev, m.position(i, j), DELTA);
-        }
-    }
+        Matrix m = new Matrix(15, 5, false);
+        m.fill(true, rand);
 
-    @Test
-    public void testIncrement2() {
-        Matrix m = new Matrix(5, 15, true);
-        Random rand = new Random();
-        for (int k = 0; k < 10; k++) {
-            int i = rand.nextInt(5), j = rand.nextInt(15);
-            double inc = rand.nextDouble() * 2 - 1;
-            double prev = m.position(i, j);
-            m.increment(i, j, inc);
-            assertEquals(prev, m.position(i, j) - inc, DELTA);
-            assertNotEquals(prev, m.position(i, j), DELTA);
+        for(int i=0;i<5;i++){
+            for(int j=0;j<5;j++){
+                double inc = rand.nextDouble() * 2 - 1;
+                double prev = m.position(i, j);
+                m.scale(i, j, inc);
+
+                assertEquals(prev, m.position(i, j) / inc, DELTA);
+                assertNotEquals(prev, m.position(i, j), DELTA);
+            }
         }
     }
 
@@ -785,19 +784,13 @@ public class MatrixTest {
     @Test(expected = IllegalArgumentException.class)
     public void testDotProductError1() {
         Matrix a = new Matrix(2, 10, a3_data);
-        Matrix b = new Matrix(10, 2, b3_data);
+        assertNull(a);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testDotProductError2() {
-        Matrix a = new Matrix(1, 10, a3_data);
         Matrix b = new Matrix(10, 2, b3_data);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testDotProductError3() {
-        Matrix a = new Matrix(2, 10, a3_data);
-        Matrix b = new Matrix(10, 1, b3_data);
+        assertNull(b);
     }
 
     @Test

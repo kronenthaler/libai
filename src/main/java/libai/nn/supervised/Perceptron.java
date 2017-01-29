@@ -105,13 +105,12 @@ public class Perceptron extends NeuralNetwork {
 		}
 
 		if (progress != null) {
-			progress.setMaximum(0);
-			progress.setMinimum(-epochs);
-			progress.setValue(-epochs);
+			progress.setMaximum(epochs);
+			progress.setMinimum(0);
+			progress.setValue(0);
 		}
 
-		while ((error = error(patterns, answers, offset, length)) > minerror && epochs-- > 0) {
-			//if(error > prevError) break; //optional to avoid overtrainning problems
+		for(int currentEpoch=0; currentEpoch < epochs && error > minerror; currentEpoch++){
 			//shuffle patterns
 			shuffle(sort);
 
@@ -130,13 +129,16 @@ public class Perceptron extends NeuralNetwork {
 				b.add(E, b);  //b+(alpha*e)
 			}
 
+			error = error(patterns, answers, offset, length);
+
 			if (plotter != null)
-				plotter.setError(epochs, error);
+				plotter.setError(currentEpoch, error);
 			if (progress != null)
-				progress.setValue(-epochs);
+				progress.setValue(currentEpoch);
 		}
+
 		if (progress != null)
-			progress.setValue(1);
+			progress.setValue(progress.getMaximum());
 	}
 
 	@Override
@@ -155,7 +157,7 @@ public class Perceptron extends NeuralNetwork {
 	 */
 	@Override
 	public void simulate(Matrix pattern, Matrix result) {
-		W.multiply(pattern, result);		//inner product
+		W.multiply(pattern, result);	//inner product
 		result.add(b, result);			//bias
 		result.apply(signum, result);	//thresholding
 	}

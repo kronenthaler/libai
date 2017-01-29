@@ -45,6 +45,13 @@ import static org.junit.Assume.assumeTrue;
  * @author Federico Vera {@literal <dktcoding [at] gmail>}
  */
 public class TextFileDataSetTest {
+	private static final String toString =
+			"[[[0]]=4.0, [[1]]=b, [[2]]=false, [[3]]=1.5, [[4]]=same]\n" +
+					"[[[0]]=2.0, [[1]]=b, [[2]]=false, [[3]]=12.0, [[4]]=same]\n" +
+					"[[[0]]=0.0, [[1]]=a, [[2]]=true, [[3]]=4.4, [[4]]=same]\n" +
+					"[[[0]]=3.0, [[1]]=a, [[2]]=true, [[3]]=-12.0, [[4]]=same]\n" +
+					"[[[0]]=1.0, [[1]]=f, [[2]]=true, [[3]]=4.4, [[4]]=same]\n" +
+					"[[[0]]=5.0, [[1]]=d, [[2]]=true, [[3]]=8.0, [[4]]=same]\n";
 
 	@Test
 	public void testGetSubset() {
@@ -153,13 +160,6 @@ public class TextFileDataSetTest {
 		ds.close();
 	}
 
-	private static final String toString =
-		"[[[0]]=4.0, [[1]]=b, [[2]]=false, [[3]]=1.5, [[4]]=same]\n" +
-		"[[[0]]=2.0, [[1]]=b, [[2]]=false, [[3]]=12.0, [[4]]=same]\n" +
-		"[[[0]]=0.0, [[1]]=a, [[2]]=true, [[3]]=4.4, [[4]]=same]\n" +
-		"[[[0]]=3.0, [[1]]=a, [[2]]=true, [[3]]=-12.0, [[4]]=same]\n" +
-		"[[[0]]=1.0, [[1]]=f, [[2]]=true, [[3]]=4.4, [[4]]=same]\n" +
-		"[[[0]]=5.0, [[1]]=d, [[2]]=true, [[3]]=8.0, [[4]]=same]\n";
 	@Test
 	public void testToString() {
 		assumeTrue("Couldn't create dummy dataset", writeDummyDataSetKnown("dummy4.csv"));
