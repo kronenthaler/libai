@@ -109,6 +109,19 @@ public class Kohonen extends NeuralNetwork {
 	}
 
 	/**
+	 * Constructor. Creates a kohonen's map using the standard neighborhood (up,
+	 * down, left, right). Alias of Kohonen(nperlayer, _neighborhood, new
+	 * int[]{0,0,1,-1}, new int[]{-1,1,0,0});
+	 *
+	 * @param nperlayer Number of neurons (input, rows and columns)
+	 * @param neighborhood Initial size of the neighborhood
+	 * @param random Random generator used for creating matrices
+	 */
+	public Kohonen(int[] nperlayer, double neighborhood, Random random) {
+		this(nperlayer, neighborhood, new int[]{0, 0, 1, -1}, new int[]{-1, 1, 0, 0}, random);
+	}
+
+	/**
 	 * Train the map. The answers are omitted for the training process but are
 	 * necessary for the labeling of the map.
 	 *
@@ -123,7 +136,7 @@ public class Kohonen extends NeuralNetwork {
 	@Override
 	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 		int ig = 0, jg = 0;
-		double lamda = neighborhood;
+		double lambda = neighborhood;
 		double alpha1 = alpha;
 
 		int[] sort = new int[length];
@@ -163,7 +176,7 @@ public class Kohonen extends NeuralNetwork {
 
 			//update neighborhood's ratio.
 			if (neighborhood >= 0.5)
-				neighborhood = lamda * Math.exp(-(float) currentEpoch / (float) epochs);
+				neighborhood = lambda * Math.exp(-(float) currentEpoch / (float) epochs);
 
 			//update alpha
 			if (alpha1 > 0.001)
@@ -201,6 +214,7 @@ public class Kohonen extends NeuralNetwork {
 	}
 
 	/**
+	 * TODO: this metric can be misleading as it's not a closed interval and it's not normalized in any way.
 	 * The error metric used for the Kohonen's map is the mean of the border
 	 * distance. For a projection point the shortest distance to the right
 	 * cluster. Average for each distance. Lower distance means less error
