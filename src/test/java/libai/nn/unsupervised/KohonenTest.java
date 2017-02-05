@@ -23,21 +23,56 @@
  */
 package libai.nn.unsupervised;
 
-import demos.common.SimpleProgressDisplay;
 import libai.common.Matrix;
+import libai.common.Plotter;
+import libai.common.ProgressDisplay;
 import org.junit.Test;
 
-import javax.swing.*;
+import java.awt.*;
 import java.util.Random;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeTrue;
 
 /**
  * Created by kronenthaler on 31/01/2017.
  */
 public class KohonenTest {
+	private static final ProgressDisplay progress = new ProgressDisplay() {
+		int value, min, max;
+		@Override
+		public void setMinimum(int v) {
+			min = v;
+		}
+
+		@Override
+		public void setMaximum(int v) {
+			max = v;
+		}
+
+		@Override
+		public void setValue(int v) {
+			value=v;
+			assertTrue(v >= min);
+			assertTrue(v <= max);
+		}
+
+		@Override
+		public int getMaximum() {
+			return max;
+		}
+
+		@Override
+		public int getMinimum() {
+			return min;
+		}
+
+		@Override
+		public int getValue() {
+			return value;
+		}
+	};
+
 	@Test
 	public void testDemo(){
 		Matrix[] p = new Matrix[100];
@@ -63,6 +98,7 @@ public class KohonenTest {
 
 		int nperlayer[] = {1, 20, 20};
 		final Kohonen net = new Kohonen(nperlayer, 10, r);
+		net.setProgressBar(progress);
 		net.train(p, c, 1, 1000, 0, p.length);
 
 		double error = 0;
@@ -73,7 +109,8 @@ public class KohonenTest {
 			error += (got - expected) * (got - expected);
 		}
 
-		assumeTrue(error/(double)test.length < 0.20);
-		assumeTrue(net.error(test, ctest, 0, test.length) < 0.75); //distance not percentage.
+		assertTrue(error/(double)test.length < 0.20);
+		assertTrue(net.error(test, ctest, 0, test.length) < 0.75); //distance not percentage.
+		assertEquals(net.getProgressBar().getValue(), net.getProgressBar().getMaximum());
 	}
 }
