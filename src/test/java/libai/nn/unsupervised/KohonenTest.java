@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2017 Federico Vera <https://github.com/dktcoding>
+ * Copyright (c) 2017 Ignacio Calderon <https://github.com/kronenthaler>
  *
  * Permission is hereby granted, free of charge, to any person obtaining ada copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,11 +24,9 @@
 package libai.nn.unsupervised;
 
 import libai.common.Matrix;
-import libai.common.Plotter;
 import libai.common.ProgressDisplay;
 import org.junit.Test;
 
-import java.awt.*;
 import java.util.Random;
 
 import static org.junit.Assert.assertEquals;
