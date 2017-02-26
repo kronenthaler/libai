@@ -13,9 +13,10 @@ A library compiling Artificial Intelligence algorithms:
  - Learning Vector Quantization
  - Radial Basis Function
  - Support Vector Machines.
+ - Hebb
+
 * Unsupervised: 
  - Competitive
- - Hebb
  - Hopfield
  - Kohonen
 	
