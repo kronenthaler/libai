@@ -21,23 +21,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package libai.nn.unsupervised;
+package libai.nn.supervised;
 
 import libai.common.Matrix;
-import libai.common.functions.Sign;
+import libai.common.functions.SymmetricSign;
 import libai.nn.NeuralNetwork;
 
 import java.util.Random;
 
 /**
- * Hebbian networks are one of the few autoassociative neural networks. An
- * autoassociative network consists in to learn the same input pattern as output
- * pattern. This networks just is able to learn binary patterns because its
- * output function (sign). The Hebbian networks uses the Hebb's rule for
+ * Hebbian supervised networks are good for pattern retrieval and reconstructions.
+ * These networks are only able to learn binary patterns because its
+ * output function (symmetric sign). However, they can deal with partially corrupted
+ * patterns and retrieve the original one without noise. The Hebbian networks uses the Hebb's rule for
  * training. The Hebb's rule is one of the most important training rules in
  * unsupervised networks. Other algorithms like Kohonen uses this rule as base.
  *
- * TODO: review implementation
  * @author kronenthaler
  */
 public class Hebb extends NeuralNetwork {
@@ -45,7 +44,7 @@ public class Hebb extends NeuralNetwork {
 
 	protected double phi;
 	protected Matrix W;
-	protected static Sign sign = new Sign();
+	protected static SymmetricSign sign = new SymmetricSign();
 
 
 	/**
@@ -54,9 +53,10 @@ public class Hebb extends NeuralNetwork {
 	 * this(inputs, 0);
 	 *
 	 * @param inputs Number of inputs for the network.
+	 * @param outputs Number of outputs for the network.
 	 */
-	public Hebb(int inputs) {
-		this(inputs, 0);
+	public Hebb(int inputs, int outputs) {
+		this(inputs, outputs, 0);
 	}
 
 	/**
@@ -66,10 +66,11 @@ public class Hebb extends NeuralNetwork {
 	 * 1 the network just remember the las pattern.
 	 *
 	 * @param inputs Number of inputs and outputs for the networks.
+	 * @param outputs Number of outputs for the network.
 	 * @param phi Decay constant.
 	 */
-	public Hebb(int inputs, double phi) {
-		this(inputs, phi, getDefaultRandomGenerator());
+	public Hebb(int inputs, int outputs, double phi) {
+		this(inputs, outputs, phi, getDefaultRandomGenerator());
 	}
 
 	/**
@@ -79,14 +80,15 @@ public class Hebb extends NeuralNetwork {
 	 * 1 the network just remember the las pattern.
 	 *
 	 * @param inputs Number of inputs and outputs for the networks.
+	 * @param outputs Number of outputs for the network.
 	 * @param phi Decay constant.
 	 * @param rand Random generator used for creating matrices
 	 */
-	public Hebb(int inputs, double phi, Random rand) {
+	public Hebb(int inputs, int outputs, double phi, Random rand) {
 		super(rand);
 		this.phi = 1 - phi; //precalculation for the decay 1-phi
-		W = new Matrix(inputs, inputs);
-		W.fill(true, random);
+		W = new Matrix(outputs, inputs);
+		W.setValue(0); // important!! the network should be initialized with 0
 	}
 
 	/**
@@ -107,6 +109,7 @@ public class Hebb extends NeuralNetwork {
 	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 		int[] sort = new int[length];
 		Matrix Y = new Matrix(W.getRows(), 1);
+		Matrix temp = new Matrix(W.getRows(), W.getColumns());
 		double error = 1;
 
 		Matrix[] patternsT = new Matrix[length];
@@ -124,28 +127,19 @@ public class Hebb extends NeuralNetwork {
 		for(int currentEpoch=0; currentEpoch < epochs && error > minerror; currentEpoch++){
 			//shuffle patterns
 			shuffle(sort);
-
 			for (int i = 0; i < length; i++) {
 				//F(wx)
-				simulate(patterns[sort[i] + offset], Y);
+				//simulate(patterns[sort[i] + offset], Y); // for unsupervised training
+				Y = answers[sort[i] + offset];
 
 				//W=(1-phi)*W + alpha*Y*pt;
-				//W.multiply(phi,W);
-				//Y.multiply(patternsT[sort[i]],temp);
-				//temp.multiply(alpha,temp);
-				//W.add(temp,W);
-
-				//alternative rule: no just have decay term, also inhibit the connections
-				//Wij=Wij+(phi*yi*(alpha/phi*xi - Wij))
-				//require 2 cycles to update properly the weights
-				for (int k = 0; k < W.getRows(); k++) {
-					for (int j = 0; j < W.getColumns(); j++) {
-						W.increment(k, j, phi * Y.position(k, 0) * (((alpha / phi) * patterns[sort[i] + offset].position(k, 0)) - W.position(k, j)));
-					}
-				}
+				W.multiply(phi, W);
+				Y.multiply(patternsT[sort[i]], temp);
+				temp.multiply(alpha, temp);
+				W.add(temp, W);
 			}
 
-			error = error(patterns, patterns, offset, length);
+			error = error(patterns, answers, offset, length);
 
 			if (progress != null)
 				progress.setValue(epochs);
@@ -187,20 +181,20 @@ public class Hebb extends NeuralNetwork {
 	 * @param length How many patterns must be taken from the offset.
 	 * @return The average hamming distance.
 	 */
-	@Override
-	public double error(Matrix[] patterns, Matrix[] answers, int offset, int length) {
-		Matrix X = new Matrix(patterns[0].getRows(), patterns[0].getColumns());
-		Matrix Y = new Matrix(patterns[0].getRows(), patterns[0].getColumns());
-
-		double error = 0;
-		for (int i = 0; i < length; i++) {
-			simulate(patterns[i + offset], X);
-			patterns[i + offset].apply(sign, Y);
-
-			for (int j = 0; j < X.getRows(); j++)
-				error += Math.pow(Y.position(j, 0) - X.position(j, 0), 2);//0-1=1, 0-0=0, 1-1=0, 1-0=1
-		}
-
-		return error / (double) (length * patterns[0].getRows());
-	}
+//	@Override
+//	public double error(Matrix[] patterns, Matrix[] answers, int offset, int length) {
+//		Matrix X = new Matrix(patterns[0].getRows(), patterns[0].getColumns());
+//		Matrix Y = new Matrix(patterns[0].getRows(), patterns[0].getColumns());
+//
+//		double error = 0;
+//		for (int i = 0; i < length; i++) {
+//			simulate(patterns[i + offset], X);
+//			patterns[i + offset].apply(sign, Y);
+//
+//			for (int j = 0; j < X.getRows(); j++)
+//				error += Math.pow(Y.position(j, 0) - X.position(j, 0), 2);//0-1=1, 0-0=0, 1-1=0, 1-0=1
+//		}
+//
+//		return error / (double) (length * patterns[0].getRows());
+//	}
 }
