@@ -725,7 +725,7 @@ public final class Matrix implements Serializable {
 
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++)
-				str.append(String.format(Locale.US, "%+."+precision+"f ", position(i, j)));
+				str.append(String.format(Locale.US, "%."+precision+"f ", position(i, j)));
 			str.append('\n');
 		}
 		str.append('\n');

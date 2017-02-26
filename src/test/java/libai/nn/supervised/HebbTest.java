@@ -4,12 +4,7 @@ import libai.common.Matrix;
 import libai.nn.NeuralNetwork;
 import org.junit.Test;
 
-import javax.swing.*;
-import java.util.Random;
-
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeTrue;
 
 /**
  * Created by kronenthaler on 29/01/2017.
@@ -33,8 +28,6 @@ public class HebbTest {
 						-1,-1,+1,+1,+1,}),
 		};
 
-		Random r = new Random();
-
 		Matrix[] answers = new Matrix[]{
 				new Matrix(25,1, new double[]{
 						-1, 1, 1, 1,-1,
@@ -52,7 +45,7 @@ public class HebbTest {
 		};
 
 		nn.train(patterns, patterns, 0.005, 1000, 0, patterns.length);
-		assumeTrue(nn.error(answers, patterns, 0, patterns.length) < 1.e-5);
+		assertTrue(nn.error(answers, patterns, 0, patterns.length) < 1.e-5);
 	}
 
 	@Test
@@ -74,7 +67,6 @@ public class HebbTest {
 						-1,-1,+1,+1,+1,}),
 		};
 
-		Random r = new Random();
 		Matrix[] answers = new Matrix[]{
 				new Matrix(1,1, new double[]{1}),
 				new Matrix(1,1, new double[]{-1}),
@@ -97,6 +89,6 @@ public class HebbTest {
 						-1,-1,-1,-1,-1,
 						-1,-1,-1,-1,-1,}),
 		};
-		assumeTrue(nn.error(patterns2, answers, 0, patterns2.length) < 1.e-5);
+		assertTrue(nn.error(patterns2, answers, 0, patterns2.length) < 1.e-5);
 	}
 }
