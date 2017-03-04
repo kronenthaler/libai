@@ -98,8 +98,8 @@ public class SVM extends NeuralNetwork {
         }
 
         target = new int[length];
-        for (int i = offset; i < offset + length; i++)
-            target[i - offset] = (int) ssign.eval(answers[i].position(0, 0));
+        for (int i = 0; i < length; i++)
+            target[i] = (int) ssign.eval(answers[i + offset].position(0, 0));
 
         precomputedDots = new Matrix(length, length);
         for (int i = 0; i < length - 1; i++) {
@@ -183,8 +183,8 @@ public class SVM extends NeuralNetwork {
     @Override
     public double error(Matrix[] patterns, Matrix[] answers, int offset, int length) {
         int error = 0;
-        for (int i = offset; i < offset + length; i++) {
-            if (simulate(patterns[i]).position(0, 0) * answers[i].position(0, 0) < 0)
+        for (int i = 0; i < length; i++) {
+            if (simulate(patterns[i + offset]).position(0, 0) * answers[i + offset].position(0, 0) < 0)
                 error++;
         }
         return error / (double) length;

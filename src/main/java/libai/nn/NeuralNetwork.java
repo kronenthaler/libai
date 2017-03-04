@@ -210,7 +210,7 @@ public abstract class NeuralNetwork implements Serializable {
 	}
 
 	/**
-	 * Calculates the mean quadratic error. Is the standard error metric for
+	 * Calculates the mean quadratic error. It is the standard error metric for
 	 * neural networks. Just a few networks needs a different type of error
 	 * metric.
 	 * <p>{@code patterns} and {@code answers} must be arrays of
@@ -237,9 +237,9 @@ public abstract class NeuralNetwork implements Serializable {
 		double error = 0.0;
 		Matrix Y = new Matrix(answers[0].getRows(), 1);
 
-		for (int i = offset; i < length; i++) {
-			simulate(patterns[i], Y);	//inner product
-			error += euclideanDistance2(answers[i], Y);
+		for (int i = 0; i < length; i++) {
+			simulate(patterns[i + offset], Y);	//inner product
+			error += euclideanDistance2(answers[i + offset], Y);
 		}
 
 		return error / (double) length;

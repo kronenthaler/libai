@@ -88,7 +88,7 @@ public class Kohonen extends NeuralNetwork {
 		for (int i = 0; i < nperlayer[1]; i++) {
 			for (int j = 0; j < nperlayer[2]; j++) {
 				W[(i * nperlayer[2]) + j] = new Matrix(nperlayer[0], 1);
-				W[(i * nperlayer[2]) + j].setValue(0);
+				W[(i * nperlayer[2]) + j].fill(true);
 			}
 		}
 		map = new int[nperlayer[1]][nperlayer[2]];
@@ -135,7 +135,6 @@ public class Kohonen extends NeuralNetwork {
 	 */
 	@Override
 	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
-		int ig = 0, jg = 0;
 		double lambda = neighborhood;
 		double alpha1 = alpha;
 
@@ -143,7 +142,6 @@ public class Kohonen extends NeuralNetwork {
 		for (int i = 0; i < length; sort[i] = i++);
 
 		Matrix temp = new Matrix(nperlayer[0], 1);
-		Matrix winner = new Matrix(2, 1);
 
 		if (progress != null) {
 			progress.setMaximum(epochs * 2);
@@ -158,17 +156,14 @@ public class Kohonen extends NeuralNetwork {
 
 			for (int k = 0; k < length; k++) {
 				//Who is the winner
-				simulate(patterns[sort[k] + offset], winner);
-
-				ig = (int) winner.position(0, 0);
-				jg = (int) winner.position(1, 0);
+				Pair<Integer, Integer> winner = getWinnerCell(patterns[sort[k] + offset]);
 
 				//Update winner and neighbors.
 				for (int i = 0; i < nperlayer[1]; i++) {
 					for (int j = 0; j < nperlayer[2]; j++) {
-						Matrix Mij = get(i, j);
+						Matrix Mij = getPrototypeAt(i, j);
 						patterns[sort[k] + offset].subtract(Mij, temp);
-						temp.multiply(alpha1 * neighbor(i, j, ig, jg), temp);
+						temp.multiply(alpha1 * neighbor(i, j,  winner.first, winner.second), temp);
 						Mij.add(temp, Mij);
 					}
 				}
@@ -193,82 +188,34 @@ public class Kohonen extends NeuralNetwork {
 
 	@Override
 	public Matrix simulate(Matrix pattern) {
-		Matrix ret = new Matrix(2, 1);
+		Matrix ret = new Matrix(nperlayer[0], 1);
 		simulate(pattern, ret);
 		return ret;
 	}
 
 	@Override
 	public void simulate(Matrix pattern, Matrix result) {
+		Pair<Integer, Integer> winner = getWinnerCell(pattern);
+		getPrototypeAt(winner.first, winner.second).copy(result);
+	}
+
+	private Pair<Integer, Integer> getWinnerCell(Matrix pattern){
+		Pair<Integer, Integer> winner = new Pair<>(0,0);
 		double min = Double.MAX_VALUE;
 		for (int i = 0; i < nperlayer[1]; i++) {
 			for (int j = 0; j < nperlayer[2]; j++) {
-				double temp = euclideanDistance2(pattern, get(i, j));
+				double temp = euclideanDistance2(pattern, getPrototypeAt(i, j));
 				if (temp < min) {
-					result.position(0, 0, i);
-					result.position(1, 0, j);
 					min = temp;
+					winner.first = i;
+					winner.second = j;
 				}
 			}
 		}
+		return winner;
 	}
 
-	/**
-	 * TODO: this metric can be misleading as it's not a closed interval and it's not normalized in any way.
-	 * The error metric used for the Kohonen's map is the mean of the border
-	 * distance. For a projection point the shortest distance to the right
-	 * cluster. Average for each distance. Lower distance means less error
-	 * Higher distance means bigger error.
-	 *
-	 * @param patterns The array with the patterns to test
-	 * @param answers The array with the expected answers for the patterns.
-	 * @param offset The initial position inside the array.
-	 * @param length How many patterns must be taken from the offset.
-	 * @return The average border distance.
-	 */
-	@Override
-	public double error(Matrix[] patterns, Matrix[] answers, int offset, int length) {
-		double error = 0;
-
-		Matrix winner = new Matrix(2, 1);
-		for (int i = 0; i < length; i++) {
-			//calculate the winner neuron
-			simulate(patterns[i + offset], winner);
-
-			int x = (int) winner.position(0, 0);
-			int y = (int) winner.position(1, 0);
-
-			//take the euclidean distance to the nearest neuron in the expected cluster.
-			boolean[][] visited = new boolean[map.length][map[0].length];
-
-			ArrayList<Pair<Integer, Integer>> q = new ArrayList<>();
-			q.add(new Pair<>(x, y));
-			visited[x][y] = true;
-
-			while (!q.isEmpty()) {
-				Pair<Integer, Integer> current = q.remove(0);
-
-				if (map[current.first][current.second] == (int) answers[i + offset].position(0, 0)) {
-					error += Math.sqrt((current.first - x) * (current.first - x) + (current.second - y) * (current.second - y));
-					break;
-				}
-
-				for (int k = 0; k < stepsx.length; k++) {
-					int ii = current.first + stepsx[k];
-					int ij = current.second + stepsy[k];
-					if (ii >= 0 && ii < nperlayer[1] && ij >= 0 && ij < nperlayer[2] && !visited[ii][ij]) {
-						q.add(new Pair<>(ii, ij));
-						visited[ii][ij] = true;
-					}
-				}
-			}
-		}
-
-		error /= length;
-		return error;
-	}
-
-	private Matrix get(int i, int j) {
+	public Matrix getPrototypeAt(int i, int j) {
 		return W[(i * nperlayer[2]) + j];
 	}
 
@@ -298,13 +245,13 @@ public class Kohonen extends NeuralNetwork {
 	 * @param length	How many patterns to label.
 	 */
 	private void expandMap(Matrix[] patterns, Matrix[] answers, int offset, int length) {
-		Matrix winner = new Matrix(2, 1);
 		//System.out.println("labelling...");
 		for (int k = 0; k < length; k++) {
-			simulate(patterns[k + offset], winner);
+			Pair<Integer, Integer> winner = getWinnerCell(patterns[k + offset]);
+			//simulate(patterns[k + offset], winner);
 
-			int i = (int) winner.position(0, 0);
-			int j = (int) winner.position(1, 0);
+			int i = winner.first;
+			int j = winner.second;
 
 			if (map[i][j] == -1) //no overlapping
 				map[i][j] = (int) answers[k + offset].position(0, 0); //must have just one position and should be an integer
