@@ -186,11 +186,11 @@ public class LVQ extends Competitive {
 		Matrix ret1 = new Matrix(W2.getColumns(), 1);
 		Matrix ret = new Matrix(outs, 1);
 
-		for (int i = offset; i < length; i++) {
-			simulate(patterns[i], ret1);
+		for (int i = 0; i < length; i++) {
+			simulate(patterns[i + offset], ret1);
 			W2.multiply(ret1, ret);
 
-			if (ret.equals(answers[i]))
+			if (ret.equals(answers[i + offset]))
 				correct++;
 		}
 

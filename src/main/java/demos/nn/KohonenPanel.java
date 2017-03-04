@@ -29,6 +29,7 @@ import libai.nn.unsupervised.Kohonen;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Random;
 
 /**
  *
@@ -66,13 +67,14 @@ public class KohonenPanel extends javax.swing.JPanel {
                 if(map == null) return;
                 int pixelW = getWidth()/map[0].length;
                 int pixelH = getHeight()/map.length;
+                int pixelSize = Math.min(pixelW, pixelH);
                 for(int j=0;j<map[0].length;j++){
                     for(int i=0;i<map.length;i++){
                         int r=(map[i][j]>>>16)&0x000000ff;
                         int g=(map[i][j]>>>8)&0x000000ff;
                         int b=map[i][j]&0x000000ff;
                         gr.setColor(new Color(r,g,b));
-                        gr.fillRect(j*pixelW, i*pixelH, pixelW, pixelH);
+                        gr.fillRect(j*pixelSize, i*pixelSize, pixelSize, pixelSize);
                     }
                 }
             }
@@ -156,9 +158,9 @@ public class KohonenPanel extends javax.swing.JPanel {
 					for (g = 0; g <= 255; g += delta) {
 						for (b = 0; b <= 255; b += delta) {
 							p[t] = new Matrix(3, 1);
-							p[t].position(0, 0, r);
-							p[t].position(1, 0, g);
-							p[t].position(2, 0, b);
+							p[t].position(0, 0, r/255.0);
+							p[t].position(1, 0, g/255.0);
+							p[t].position(2, 0, b/255.0);
 
 							ex[t] = new Matrix(1, 1);
 							ex[t].position(0, 0, (classes[t++] = ((r << 16) | (g << 8) | b) & 0x00ffffff));
@@ -172,16 +174,29 @@ public class KohonenPanel extends javax.swing.JPanel {
 
 				ex[p.length - 1].position(0, 0, (classes[p.length - 1] = ((1 << 16) | (1 << 8) | 1) & 0x00ffffff));
 
+				Random rand = new Random();
+				for(int i=0;i<p.length;i++){
+					int tmp = rand.nextInt(p.length);
+					Matrix aux = p[i];
+					p[i]=p[tmp];
+					p[tmp]=aux;
+
+					aux = ex[i];
+					ex[i]=ex[tmp];
+					ex[tmp]=aux;
+				}
+
 				int nperlayer[] = {m, 30, 40};
 				final Kohonen net = new Kohonen(nperlayer, 10);
+
 				net.setProgressBar(new SimpleProgressDisplay(jProgressBar1));
 				net.train(p, ex, 1, 20, 0, p.length - test);
 
 				map = net.getMap();
 				canvas.repaint();
 
-				jTextPane1.setText(jTextPane1.getText() + "Error for training set: " + net.error(p, ex, 0, p.length - test));
-				jTextPane1.setText(jTextPane1.getText() + "\nError for test set: " + net.error(p, ex, p.length - test, test));
+				jTextPane1.setText(jTextPane1.getText() + "Error for training set: " + net.error(p, p, 0, p.length - test));
+				jTextPane1.setText(jTextPane1.getText() + "\nError for test set: " + net.error(p, p, p.length - test, test));
 			}
 		}).start();
 	}//GEN-LAST:event_jButton1ActionPerformed

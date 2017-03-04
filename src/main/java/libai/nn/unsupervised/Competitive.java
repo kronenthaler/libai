@@ -201,12 +201,12 @@ public class Competitive extends NeuralNetwork {
 		//average of the distances to the closest neuron
 		double[] row;
 		double acum = 0;
-		for (int i = offset; i < offset + length; i++) {
+		for (int i = 0; i < length; i++) {
 			double d = Double.MAX_VALUE;
 
 			for (int j = 0; j < outs; j++) {
 				row = W.getRow(j);
-				double dist = Math.sqrt(euclideanDistance2(patterns[i].getCol(0), row));
+				double dist = Math.sqrt(euclideanDistance2(patterns[i + offset].getCol(0), row));
 				d = Math.min(dist, d);
 			}
 

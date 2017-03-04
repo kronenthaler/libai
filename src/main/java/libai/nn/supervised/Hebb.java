@@ -168,33 +168,4 @@ public class Hebb extends NeuralNetwork {
 		W.multiply(pattern, result);
 		result.apply(sign, result);
 	}
-
-	/**
-	 * Calculate the error of the networks using the Hamming distance instead
-	 * the Euclidean. Hamming distance is defined as the number of bits
-	 * different between to bits chains,e.g. 7=111 2=010 the hamming distance
-	 * between H(7,2) = 2, the first and third bits differs.
-	 *
-	 * @param patterns The array with the patterns to test
-	 * @param answers The array with the expected answers for the patterns.
-	 * @param offset The initial position inside the array.
-	 * @param length How many patterns must be taken from the offset.
-	 * @return The average hamming distance.
-	 */
-//	@Override
-//	public double error(Matrix[] patterns, Matrix[] answers, int offset, int length) {
-//		Matrix X = new Matrix(patterns[0].getRows(), patterns[0].getColumns());
-//		Matrix Y = new Matrix(patterns[0].getRows(), patterns[0].getColumns());
-//
-//		double error = 0;
-//		for (int i = 0; i < length; i++) {
-//			simulate(patterns[i + offset], X);
-//			patterns[i + offset].apply(sign, Y);
-//
-//			for (int j = 0; j < X.getRows(); j++)
-//				error += Math.pow(Y.position(j, 0) - X.position(j, 0), 2);//0-1=1, 0-0=0, 1-1=0, 1-0=1
-//		}
-//
-//		return error / (double) (length * patterns[0].getRows());
-//	}
 }
