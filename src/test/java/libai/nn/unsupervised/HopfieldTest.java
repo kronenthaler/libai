@@ -27,10 +27,9 @@ import libai.common.Matrix;
 import libai.common.ProgressDisplay;
 import org.junit.Test;
 
-import java.util.Random;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
 /**
  * Created by kronenthaler on 05/03/2017.
  */

@@ -34,6 +34,7 @@ import libai.nn.NeuralNetwork;
  * answers. As the Hebb network this network is a associative memory. The main
  * goal of this network is memorize and retrieve the memorized patterns without
  * noise.
+ *
  * @author kronenthaler
  */
 public class Hopfield extends NeuralNetwork {
