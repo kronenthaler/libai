@@ -34,7 +34,6 @@ import libai.nn.NeuralNetwork;
  * answers. As the Hebb network this network is a associative memory. The main
  * goal of this network is memorize and retrieve the memorized patterns without
  * noise.
- * TODO: review implementation
  * @author kronenthaler
  */
 public class Hopfield extends NeuralNetwork {
@@ -42,6 +41,7 @@ public class Hopfield extends NeuralNetwork {
 
 	protected Matrix W;
 	protected static SymmetricSign ssign = new SymmetricSign();
+
 	/**
 	 * Constructor. Receives the number of input to the network.
 	 *
@@ -56,12 +56,12 @@ public class Hopfield extends NeuralNetwork {
 	 * in this algorithm.
 	 *
 	 * @param patterns	The patterns to be learned.
-	 * @param answers	The expected answers. [useless]
-	 * @param alpha	The learning rate. [useless]
-	 * @param epochs	The maximum number of iterations [useless]
-	 * @param offset	The first pattern position
+	 * @param answers	The expected answers. [ignored]
+	 * @param alpha		The learning rate. [ignored]
+	 * @param epochs	The maximum number of iterations. [ignored]
+	 * @param offset	The first pattern position.
 	 * @param length	How many patterns will be used.
-	 * @param minerror The minimal error expected.	[useless]
+	 * @param minerror The minimal error expected. [ignored]
 	 */
 	@Override
 	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
@@ -75,6 +75,7 @@ public class Hopfield extends NeuralNetwork {
 			progress.setValue(0);
 		}
 
+		// W = Sum(p[i]p[i]^t); wii = 0
 		for (int i = 0; i < length; i++) {
 			patterns[i + offset].apply(ssign, patterns[i + offset]);
 			Matrix pattern = patterns[i + offset];
@@ -82,14 +83,14 @@ public class Hopfield extends NeuralNetwork {
 			//p^t.p
 			pattern.transpose(patternT);
 			pattern.multiply(patternT, temp);
-
-			temp.subtract(I, temp);
-
 			W.add(temp, W);
 
 			if (progress != null)
 				progress.setValue(i);
 		}
+
+		for(int i=0;i<W.getRows();i++)
+			W.position(i, i, 0);
 
 		if (progress != null)
 			progress.setValue(progress.getMaximum());
@@ -97,7 +98,6 @@ public class Hopfield extends NeuralNetwork {
 
 	@Override
 	public Matrix simulate(Matrix pattern) {
-		pattern.apply(ssign, pattern);
 		Matrix result = new Matrix(pattern.getRows(), pattern.getColumns());
 		simulate(pattern, result);
 		return result;
@@ -105,11 +105,19 @@ public class Hopfield extends NeuralNetwork {
 
 	@Override
 	public void simulate(Matrix pattern, Matrix result) {
-		for (int col = 0; col < pattern.getRows(); col++) {
-			Matrix column = new Matrix(pattern.getRows(), pattern.getColumns(), W.getCol(col));
+		pattern.copy(result);
+		Matrix previous = new Matrix(pattern);
+		previous.setValue(0);
 
-			double dotProduct = pattern.dotProduct(column);
-			result.position(col, 0, dotProduct > 0 ? 1 : -1);
+		while(!result.equals(previous)) {
+			result.copy(previous);
+
+			for (int col = 0; col < result.getRows(); col++) {
+				Matrix column = new Matrix(result.getRows(), result.getColumns(), W.getCol(col));
+
+				double dotProduct = result.dotProduct(column);
+				result.position(col, 0, dotProduct == 0 ? dotProduct : (dotProduct > 0 ? 1 : -1));
+			}
 		}
 	}
 }

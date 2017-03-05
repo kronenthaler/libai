@@ -122,6 +122,10 @@ public final class Matrix implements Serializable {
 		System.arraycopy(data, 0, matrix, 0, r * c);
 	}
 
+	public Matrix(Matrix copy){
+		this(copy.getRows(), copy.getColumns(), copy.matrix);
+	}
+
 	public static Random getDefaultRandom(){
 		return ThreadLocalRandom.current();
 	}

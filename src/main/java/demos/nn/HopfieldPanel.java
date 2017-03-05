@@ -391,27 +391,23 @@ public class HopfieldPanel extends javax.swing.JPanel {
 				int n = 2;
 				int m = 25;
 				int l = 3;
-				Matrix[] patterns = new Matrix[n];
+				Matrix[] patterns = new Matrix[]{
+						new Matrix(25,1, new double[]{
+								-1,-1,+1,-1,-1,
+								-1,-1,+1,-1,-1,
+								+1,+1,+1,+1,+1,
+								-1,-1,+1,-1,-1,
+								-1,-1,+1,-1,-1,
+						}),
+						new Matrix(25,1, new double[]{
+								+1,-1,-1,-1,+1,
+								-1,+1,-1,+1,-1,
+								-1,-1,+1,-1,-1,
+								-1,+1,-1,+1,-1,
+								+1,-1,-1,-1,+1,
+						}),
+				};
 				Matrix[] ans = patterns;
-				for (int i = 0; i < n; i++) {
-					patterns[i] = new Matrix(m, 1);
-					patterns[i].setValue(-1);
-					for (int j = 0; j < m; j++) {
-						int row = j / 5;
-						int col = j % 5;
-
-						if (i == 0) {
-							if ((row == 2 || col == 2 /*|| row == 4 || col == 4*/)) {
-								patterns[i].position(j, 0, 1);
-							}
-						} else {
-							if (row == 2) {
-								patterns[i].position(j, 0, 1);
-							}
-						}
-					}
-					System.out.println(patterns[i]);
-				}
 
 				net = new Hopfield(25);
 				net.setProgressBar(new SimpleProgressDisplay(jProgressBar1));
