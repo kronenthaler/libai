@@ -35,6 +35,8 @@ import java.util.concurrent.ThreadLocalRandom;
  * Matrix implementation. This class can handle the basic operations of matrix
  * space, add, subtract, product scalar product, transpose, and other useful
  * operations for this API.
+ * For performance reasons, precondition validations are done using asserts instead
+ * of the more clear and safe exceptions.
  *
  * @author kronenthaler
  */
@@ -626,7 +628,7 @@ public final class Matrix implements Serializable {
 	}
 
 	/*//TODO needs translation to this matrix class.
-	 public Matrix solve(Matrix rhs) {
+	 public Matrix solve(Matrix rhs) { // inverse!
 	 if (rows != cols || rhs.rows != cols || rhs.cols != 1)
 	 throw new RuntimeException("Illegal matrix dimensions.");
 

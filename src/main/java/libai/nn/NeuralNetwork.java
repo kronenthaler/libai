@@ -25,6 +25,7 @@ package libai.nn;
 
 import libai.common.Matrix;
 import libai.common.Plotter;
+import libai.common.Precondition;
 import libai.common.ProgressDisplay;
 
 import java.io.*;
@@ -128,16 +129,16 @@ public abstract class NeuralNetwork implements Serializable {
 	}
 
 	protected void validate(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
-		assert patterns[0].getColumns() == 1 && answers[0].getColumns() == 1 :
-				"patterns and answers must be column matrices";
-		assert patterns.length == answers.length :
-				"There must be the same amount of patterns and answers";
-		assert offset >= 0 && offset < patterns.length : String.format(
-				"offset must be in the interval [0, %d), found: %d", patterns.length, offset);
-		assert length >= 0 && length <= patterns.length - offset : String.format(
-				"length must be in the interval (0, %d], found: %d", patterns.length - offset, length);
-		assert epochs > 0 : "The number of epochs must be a positive non zero integer";
-		assert minerror >= 0 : "The error must be a postive number";
+		//TODO: is this method really useful?
+		//second precondition doesn't apply to unsupervised learning.
+		//minerror validation might not apply to unsupervised learning
+		// epochs do not apply to some unsupervised learning (hopfield)
+		Precondition.checkArgument(patterns[0].getColumns() == 1 && answers[0].getColumns() == 1 ,  "patterns and answers must be column matrices");
+		Precondition.checkArgument(patterns.length == answers.length ,  "There must be the same amount of patterns and answers");
+		Precondition.checkArgument(offset >= 0 && offset < patterns.length , "offset must be in the interval [0, %d), found,  %d", patterns.length, offset);
+		Precondition.checkArgument(length >= 0 && length <= patterns.length - offset , "length must be in the interval (0, %d], found,  %d", patterns.length - offset, length);
+		Precondition.checkArgument(epochs > 0 ,  "The number of epochs must be a positive non zero integer");
+		Precondition.checkArgument(minerror >= 0 ,  "The error must be a positive number");
 	}
 
 	/**
@@ -225,14 +226,10 @@ public abstract class NeuralNetwork implements Serializable {
 	 * @return The mean quadratic error.
 	 */
 	public double error(Matrix[] patterns, Matrix[] answers, int offset, int length) {
-		assert patterns[0].getColumns() == 1 && answers[0].getColumns() == 1 :
-				"patterns and answers must be column matrices";
-		assert patterns.length == answers.length :
-				"There must be the same amount of patterns and answers";
-		assert offset >= 0 && offset < patterns.length : String.format(
-				"offset must be in the interval [0, %d), found: %d", patterns.length, offset);
-		assert length >= 0 && length <= patterns.length - offset : String.format(
-				"length must be in the interval (0, %d], found: %d", patterns.length - offset, length);
+		Precondition.checkArgument(patterns[0].getColumns() == 1 && answers[0].getColumns() == 1 ,  "patterns and answers must be column matrices");
+		Precondition.checkArgument(patterns.length == answers.length ,  "There must be the same amount of patterns and answers");
+		Precondition.checkArgument(offset >= 0 && offset < patterns.length , "offset must be in the interval [0, %d), found,  %d", patterns.length, offset);
+		Precondition.checkArgument(length >= 0 && length <= patterns.length - offset , "length must be in the interval (0, %d], found,  %d", patterns.length - offset, length);
 
 		double error = 0.0;
 		Matrix Y = new Matrix(answers[0].getRows(), 1);
@@ -255,7 +252,7 @@ public abstract class NeuralNetwork implements Serializable {
 	 * @return The square Euclidean distance.
 	 */
 	public static double euclideanDistance2(double[] a, double[] b) {
-		assert a.length == b.length : "a & b must have the same length";
+		Precondition.checkArgument(a.length == b.length ,  "a & b must have the same length");
 
 		double sum = 0;
 		for (int i = 0; i < a.length; i++) {
@@ -275,9 +272,9 @@ public abstract class NeuralNetwork implements Serializable {
 	 * @return The square Euclidean distance.
 	 */
 	public static double euclideanDistance2(Matrix a, Matrix b) {
-		assert a.getColumns() == 1 : "a must be a column matrix";
-		assert b.getColumns() == 1 : "b must be a column matrix";
-		assert a.getRows() == b.getRows() : "a & b must have the same length";
+		Precondition.checkArgument(a.getColumns() == 1 ,  "a must be a column matrix");
+		Precondition.checkArgument(b.getColumns() == 1 ,  "b must be a column matrix");
+		Precondition.checkArgument(a.getRows() == b.getRows() ,  "a & b must have the same length");
 
 		double sum = 0;
 		for (int i = 0; i < a.getRows(); i++) {
