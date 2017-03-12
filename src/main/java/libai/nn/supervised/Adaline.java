@@ -23,7 +23,7 @@
  */
 package libai.nn.supervised;
 
-import libai.common.matrix.Matrix;
+import libai.common.matrix.Column;
 
 import java.util.Random;
 
@@ -65,29 +65,27 @@ public class Adaline extends Perceptron {
 	/**
 	 * Alias of super.train(patterns, answers, 2*alpha, epochs, offset, length,
 	 * minerror);
-	 *
-	 * @param patterns	The patterns to be learned.
+	 *  @param patterns    The patterns to be learned.
 	 * @param answers The expected answers.
-	 * @param alpha	The learning rate.
-	 * @param epochs	The maximum number of iterations
-	 * @param offset	The first pattern position
-	 * @param length	How many patterns will be used.
+	 * @param alpha    The learning rate.
+	 * @param epochs    The maximum number of iterations
+	 * @param offset    The first pattern position
+	 * @param length    How many patterns will be used.
 	 * @param minerror The minimal error expected.
 	 */
 	@Override
-	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
+	public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 		super.train(patterns, answers, 2 * alpha, epochs, offset, length, minerror);
 	}
 
 	/**
 	 * Calculate the output for the pattern and left the result on result.
 	 * result = W * pattern + b
-	 *
-	 * @param pattern The input pattern
+	 *  @param pattern The input pattern
 	 * @param result The output result.
 	 */
 	@Override
-	public void simulate(Matrix pattern, Matrix result) {
+	public void simulate(Column pattern, Column result) {
 		W.multiply(pattern, result);	//inner product
 		result.add(b, result);		//bias
 	}

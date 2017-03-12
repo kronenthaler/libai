@@ -84,7 +84,7 @@ public class SVM extends NeuralNetwork {
     }
 
     @Override
-    public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
+    public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror) {
         if (progress != null) {
             progress.setMaximum(epochs);
             progress.setMinimum(0);
@@ -170,19 +170,19 @@ public class SVM extends NeuralNetwork {
     }
 
     @Override
-    public Matrix simulate(Matrix pattern) {
-        Matrix temp = new Column(1); //always returns a single class
+    public Column simulate(Column pattern) {
+        Column temp = new Column(1); //always returns a single class
         simulate(pattern, temp);
         return temp;
     }
 
     @Override
-    public void simulate(Matrix pattern, Matrix result) {
+    public void simulate(Column pattern, Column result) {
         result.position(0, 0, ssign.eval(learnedFunc(pattern)));
     }
 
     @Override
-    public double error(Matrix[] patterns, Matrix[] answers, int offset, int length) {
+    public double error(Column[] patterns, Column[] answers, int offset, int length) {
         int error = 0;
         for (int i = 0; i < length; i++) {
             if (simulate(patterns[i + offset]).position(0, 0) * answers[i + offset].position(0, 0) < 0)

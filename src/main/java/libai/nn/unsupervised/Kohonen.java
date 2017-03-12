@@ -125,17 +125,16 @@ public class Kohonen extends NeuralNetwork {
 	/**
 	 * Train the map. The answers are omitted for the training process but are
 	 * necessary for the labeling of the map.
-	 *
-	 * @param patterns	The patterns to be learned.
+	 *  @param patterns    The patterns to be learned.
 	 * @param answers The expected answers.
-	 * @param alpha	The learning rate.
-	 * @param epochs	The maximum number of iterations
-	 * @param offset	The first pattern position
-	 * @param length	How many patterns will be used.
+	 * @param alpha    The learning rate.
+	 * @param epochs    The maximum number of iterations
+	 * @param offset    The first pattern position
+	 * @param length    How many patterns will be used.
 	 * @param minerror The minimal error expected.
 	 */
 	@Override
-	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
+	public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 		double lambda = neighborhood;
 		double alpha1 = alpha;
 
@@ -188,14 +187,14 @@ public class Kohonen extends NeuralNetwork {
 	}
 
 	@Override
-	public Matrix simulate(Matrix pattern) {
-		Matrix ret = new Column(nperlayer[0]);
+	public Column simulate(Column pattern) {
+		Column ret = new Column(nperlayer[0]);
 		simulate(pattern, ret);
 		return ret;
 	}
 
 	@Override
-	public void simulate(Matrix pattern, Matrix result) {
+	public void simulate(Column pattern, Column result) {
 		Pair<Integer, Integer> winner = getWinnerCell(pattern);
 		getPrototypeAt(winner.first, winner.second).copy(result);
 	}

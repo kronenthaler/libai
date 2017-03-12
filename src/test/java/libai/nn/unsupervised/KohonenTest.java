@@ -74,10 +74,10 @@ public class KohonenTest {
 
 	@Test
 	public void testDemo(){
-		Matrix[] p = new Matrix[100];
-		Matrix[] c = new Matrix[100];
-		Matrix[] test = new Matrix[20];
-		Matrix[] ctest = new Matrix[20];
+		Column[] p = new Column[100];
+		Column[] c = new Column[100];
+		Column[] test = new Column[20];
+		Column[] ctest = new Column[20];
 		Random r = new Random(0);
 
 		for(int i=0;i<p.length;i++){

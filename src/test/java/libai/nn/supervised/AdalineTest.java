@@ -46,19 +46,19 @@ public class AdalineTest {
 	@Test
 	public void testTrainOr() {
 		Adaline ada = new Adaline(2, 1, new Random(0));
-		Matrix[] ins = new Matrix[4];
+		Column[] ins = new Column[4];
 		ins[0] = new Column(2, new double[]{0, 0});
 		ins[1] = new Column(2, new double[]{0, 1});
 		ins[2] = new Column(2, new double[]{1, 0});
 		ins[3] = new Column(2, new double[]{1, 1});
-		Matrix[] out = new Matrix[4];
+		Column[] out = new Column[4];
 		out[0] = new Column(1, new double[]{0});
 		out[1] = new Column(1, new double[]{1});
 		out[2] = new Column(1, new double[]{1});
 		out[3] = new Column(1, new double[]{1});
 		ada.train(ins, out, 0.1, 1000);
 		assertTrue(0.1 > ada.error(ins, out));
-		Matrix res = new Column(1);
+		Column res = new Column(1);
 		ada.simulate(ins[0], res);
 		assertEquals(0, round(res.position(0, 0)));
 		ada.simulate(ins[1], res);
@@ -73,12 +73,12 @@ public class AdalineTest {
 	public void testTrainAnd() {
 		// Trains an Or and tests simulate(Matrix, Matrix)
 		Adaline ada = new Adaline(2, 1, new Random(0));
-		Matrix[] ins = new Matrix[4];
+		Column[] ins = new Column[4];
 		ins[0] = new Column(2, new double[]{0, 0});
 		ins[1] = new Column(2, new double[]{0, 1});
 		ins[2] = new Column(2, new double[]{1, 0});
 		ins[3] = new Column(2, new double[]{1, 1});
-		Matrix[] out = new Matrix[4];
+		Column[] out = new Column[4];
 		out[0] = new Column(1, new double[]{0});
 		out[1] = new Column(1, new double[]{0});
 		out[2] = new Column(1, new double[]{0});
@@ -91,12 +91,12 @@ public class AdalineTest {
 	public void testIO() {
         assumeTrue("Can't use temp dir...", MatrixIOTest.checkTemp());
 		Adaline ada = new Adaline(2, 1, new Random(0));
-		Matrix[] ins = new Matrix[4];
+		Column[] ins = new Column[4];
 		ins[0] = new Column(2, new double[]{0, 0});
 		ins[1] = new Column(2, new double[]{0, 1});
 		ins[2] = new Column(2, new double[]{1, 0});
 		ins[3] = new Column(2, new double[]{1, 1});
-		Matrix[] out = new Matrix[4];
+		Column[] out = new Column[4];
 		out[0] = new Column(1, new double[]{1});
 		out[1] = new Column(1, new double[]{1});
 		out[2] = new Column(1, new double[]{1});
@@ -135,8 +135,8 @@ public class AdalineTest {
 		int n = 40;
 		int t = 10;
 
-		Matrix[] patterns = new Matrix[n + t];
-		Matrix[] ans = new Matrix[n + t];
+		Column[] patterns = new Column[n + t];
+		Column[] ans = new Column[n + t];
 
 		for (int i = 0; i < n; i++) {
 			patterns[i] = new Column(1, new double[]{i + 1});

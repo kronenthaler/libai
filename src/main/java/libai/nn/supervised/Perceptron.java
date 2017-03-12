@@ -83,17 +83,16 @@ public class Perceptron extends NeuralNetwork {
 	 * Train the perceptron using the standard update rule: <br>
 	 * W = W + alpha.e.pattern^t<br>
 	 * b = b + alpha.e
-	 *
-	 * @param patterns	The patterns to be learned.
+	 *  @param patterns    The patterns to be learned.
 	 * @param answers The expected answers.
-	 * @param alpha	The learning rate.
-	 * @param epochs	The maximum number of iterations
-	 * @param offset	The first pattern position
-	 * @param length	How many patterns will be used.
+	 * @param alpha    The learning rate.
+	 * @param epochs    The maximum number of iterations
+	 * @param offset    The first pattern position
+	 * @param length    How many patterns will be used.
 	 * @param minerror The minimal error expected.
 	 */
 	@Override
-	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
+	public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 		int[] sort = new int[length]; // [0,length)
 		double error = 1;
 		Column Y = new Column(outs);
@@ -145,7 +144,7 @@ public class Perceptron extends NeuralNetwork {
 	}
 
 	@Override
-	public Matrix simulate(Matrix p) {
+	public Column simulate(Column p) {
 		Column Y = new Column(outs);
 		simulate(p, Y);
 		return Y;
@@ -154,12 +153,11 @@ public class Perceptron extends NeuralNetwork {
 	/**
 	 * Calculate the output for the pattern and left the result on result.
 	 * result = signum(W * pattern + b)
-	 *
-	 * @param pattern The input pattern
+	 *  @param pattern The input pattern
 	 * @param result The output result.
 	 */
 	@Override
-	public void simulate(Matrix pattern, Matrix result) {
+	public void simulate(Column pattern, Column result) {
 		W.multiply(pattern, result);	//inner product
 		result.add(b, result);			//bias
 		result.apply(signum, result);	//thresholding

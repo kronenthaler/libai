@@ -23,6 +23,7 @@
  */
 package libai.nn.supervised;
 
+import libai.common.matrix.Column;
 import libai.common.matrix.Matrix;
 import libai.common.functions.SymmetricSign;
 import libai.nn.NeuralNetwork;
@@ -96,17 +97,16 @@ public class Hebb extends NeuralNetwork {
 	 * consist on reinforce the right connections if they produce a correct
 	 * answer and inhibit the others. The decay term has an influence in how
 	 * much affects the previous knowledge to the reinforcement.
-	 *
-	 * @param patterns	The patterns to be learned.
+	 *  @param patterns    The patterns to be learned.
 	 * @param answers The expected answers.
-	 * @param alpha	The learning rate.
-	 * @param epochs	The maximum number of iterations
-	 * @param offset	The first pattern position
-	 * @param length	How many patterns will be used.
+	 * @param alpha    The learning rate.
+	 * @param epochs    The maximum number of iterations
+	 * @param offset    The first pattern position
+	 * @param length    How many patterns will be used.
 	 * @param minerror The minimal error expected.
 	 */
 	@Override
-	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
+	public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 		int[] sort = new int[length];
 		Matrix temp = new Matrix(W.getRows(), W.getColumns());
 		double error = 1;
@@ -149,8 +149,8 @@ public class Hebb extends NeuralNetwork {
 	}
 
 	@Override
-	public Matrix simulate(Matrix pattern) {
-		Matrix ret = new Matrix(pattern.getRows(), pattern.getColumns());
+	public Column simulate(Column pattern) {
+		Column ret = new Column(pattern.getRows());
 		simulate(pattern, ret);
 		return ret;
 	}
@@ -158,12 +158,11 @@ public class Hebb extends NeuralNetwork {
 	/**
 	 * Calculate the output for the pattern and left the result on result.
 	 * result = sign(W * pattern)
-	 *
-	 * @param pattern The input pattern
+	 *  @param pattern The input pattern
 	 * @param result The output result.
 	 */
 	@Override
-	public void simulate(Matrix pattern, Matrix result) {
+	public void simulate(Column pattern, Column result) {
 		W.multiply(pattern, result);
 		result.apply(sign, result);
 	}

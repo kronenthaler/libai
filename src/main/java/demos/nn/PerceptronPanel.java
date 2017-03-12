@@ -103,8 +103,8 @@ public class PerceptronPanel extends javax.swing.JPanel {
 				int n = 40;
 				int t = 10;
 
-				Matrix[] patterns = new Matrix[n + t];
-				Matrix[] ans = new Matrix[n + t];
+				Column[] patterns = new Column[n + t];
+				Column[] ans = new Column[n + t];
 
 				for (int i = 0; i < n; i++) {
 					patterns[i] = new Column(1, new double[]{i + 1});

@@ -49,8 +49,8 @@ public class SVMTest {
 		int n = 100;
 		int t = 40;
 
-		Matrix[] patterns = new Matrix[n + t];
-		Matrix[] ans = new Matrix[n + t];
+		Column[] patterns = new Column[n + t];
+		Column[] ans = new Column[n + t];
 
 		Random r = new Random(0);
 		for (int i = 0; i < n; i++) {
@@ -81,8 +81,8 @@ public class SVMTest {
 		int n = 100;
 		int t = 40;
 
-		Matrix[] patterns = new Matrix[n + t];
-		Matrix[] ans = new Matrix[n + t];
+		Column[] patterns = new Column[n + t];
+		Column[] ans = new Column[n + t];
 
 		Random r = new Random();
 		for (int i = 0; i < n; i++) {

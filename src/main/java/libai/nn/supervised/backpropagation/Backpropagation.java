@@ -19,5 +19,5 @@ public interface Backpropagation {
 	/**
 	 * Trains a neural network using the backpropagation implementaion.
 	 */
-	void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror);
+	void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror);
 }

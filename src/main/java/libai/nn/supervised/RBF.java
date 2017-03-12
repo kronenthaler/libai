@@ -85,17 +85,16 @@ public class RBF extends Adaline {
 	 * the function is calculated using n-nearest neighbors. When n = the number
 	 * of inputs. Then the output for the hidden layer are precalculated and
 	 * used as input for the Adaline training.
-	 *
-	 * @param patterns	The patterns to be learned.
+	 *  @param patterns    The patterns to be learned.
 	 * @param answers The expected answers.
-	 * @param alpha	The learning rate.
-	 * @param epochs	The maximum number of iterations
-	 * @param offset	The first pattern position
-	 * @param length	How many patterns will be used.
+	 * @param alpha    The learning rate.
+	 * @param epochs    The maximum number of iterations
+	 * @param offset    The first pattern position
+	 * @param length    How many patterns will be used.
 	 * @param minerror The minimal error expected.
 	 */
 	@Override
-	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
+	public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 		if (progress != null) {
 			progress.setMaximum(0);
 			progress.setMinimum(-epochs * 2);
@@ -127,7 +126,7 @@ public class RBF extends Adaline {
 		}
 
 		//precalculate the ouputs for each pattern in the hidden layer
-		Matrix Y[] = new Matrix[patterns.length];
+		Column Y[] = new Column[patterns.length];
 		for (int j = 0; j < length; j++) {
 			Y[j + offset] = new Column(nperlayer[1]);
 			simulateNoChange(patterns[j + offset], Y[j + offset]);
@@ -219,15 +218,15 @@ public class RBF extends Adaline {
 	}
 
 	@Override
-	public Matrix simulate(Matrix pattern) {
-		Matrix y = new Column(nperlayer[2]);
+	public Column simulate(Column pattern) {
+		Column y = new Column(nperlayer[2]);
 		simulate(pattern, y);
 		return y;
 	}
 
 	@Override
-	public void simulate(Matrix pattern, Matrix result) {
-		Matrix aux = new Column(nperlayer[1]);
+	public void simulate(Column pattern, Column result) {
+		Column aux = new Column(nperlayer[1]);
 		simulateNoChange(pattern, aux);
 		super.simulate(aux, result);
 	}

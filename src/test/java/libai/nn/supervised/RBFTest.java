@@ -48,8 +48,8 @@ public class RBFTest {
 		int m = 1;
 		int l = 1;
 		int test = 12;
-		Matrix[] p = new Matrix[n + test];
-		Matrix[] t = new Matrix[n + test];
+		Column[] p = new Column[n + test];
+		Column[] t = new Column[n + test];
 		double delta = 0.1;
 		double x = 0;
 		for (int i = 0; i < n; i++, x += delta) {
@@ -88,8 +88,8 @@ public class RBFTest {
 		int m = 1;
 		int l = 1;
 		int test = 12;
-		Matrix[] p = new Matrix[n + test];
-		Matrix[] t = new Matrix[n + test];
+		Column[] p = new Column[n + test];
+		Column[] t = new Column[n + test];
 		double delta = 0.1;
 		double x = 0;
 		for (int i = 0; i < n; i++, x += delta) {

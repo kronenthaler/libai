@@ -67,7 +67,7 @@ public abstract class NeuralNetwork implements Serializable {
 	 * will go from {@code -epochs} to {@code 0}, and updated every training
 	 * epoch.
 	 * <p><i>Note: </i> Classes that implement {@link
-	 * NeuralNetwork#train(Matrix[], Matrix[], double, int, int, int, double)}
+	 * NeuralNetwork#train(Column[], Column[], double, int, int, int, double)}
 	 * are responsible for this behavior.</p>
 	 *
 	 * @param pb ProgressDisplay
@@ -85,16 +85,15 @@ public abstract class NeuralNetwork implements Serializable {
 	 * {@code minerror} is reached.</p>
 	 * <p>{@code patterns} and {@code answers} must be arrays of
 	 * non-{@code null} <b>column</b> matrices</p>
-	 *
-	 * @param patterns	The patterns to be learned.
-	 * @param answers	The expected answers.
-	 * @param alpha		The learning rate.
-	 * @param epochs	The maximum number of iterations
-	 * @param offset	The first pattern position
-	 * @param length	How many patterns will be used.
-	 * @param minerror	The minimal error expected.
+	 *  @param patterns    The patterns to be learned.
+	 * @param answers    The expected answers.
+	 * @param alpha        The learning rate.
+	 * @param epochs    The maximum number of iterations
+	 * @param offset    The first pattern position
+	 * @param length    How many patterns will be used.
+	 * @param minerror    The minimal error expected.
 	 */
-	public abstract void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror);
+	public abstract void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror);
 
 	/**
 	 * Alias of train(patterns, answers, alpha, epochs, 0, patterns.length,
@@ -102,13 +101,13 @@ public abstract class NeuralNetwork implements Serializable {
 	 * <p>{@code patterns} and {@code answers} must be arrays of
 	 * non-{@code null} <b>column</b> matrices</p>
 	 *
-	 * @param patterns	The patterns to be learned.
-	 * @param answers	The expected answers.
-	 * @param alpha	The learning rate.
-	 * @param epochs	The maximum number of iterations
-	 * @see NeuralNetwork#train(Matrix[], Matrix[], double, int, int, int, double)
+	 * @param patterns    The patterns to be learned.
+	 * @param answers    The expected answers.
+	 * @param alpha    The learning rate.
+	 * @param epochs    The maximum number of iterations
+	 * @see NeuralNetwork#train(Column[], Column[], double, int, int, int, double)
 	 */
-	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs) {
+	public void train(Column[] patterns, Column[] answers, double alpha, int epochs) {
 		train(patterns, answers, alpha, epochs, 0, patterns.length, 1.e-5);
 	}
 
@@ -117,15 +116,15 @@ public abstract class NeuralNetwork implements Serializable {
 	 * <p>{@code patterns} and {@code answers} must be arrays of
 	 * non-{@code null} <b>column</b> matrices</p>
 	 *
-	 * @param patterns	The patterns to be learned.
-	 * @param answers	The expected answers.
-	 * @param alpha	The learning rate.
-	 * @param epochs	The maximum number of iterations
-	 * @param offset	The first pattern position
-	 * @param length	How many patterns will be used.
-	 * @see NeuralNetwork#train(Matrix[], Matrix[], double, int, int, int, double)
+	 * @param patterns    The patterns to be learned.
+	 * @param answers    The expected answers.
+	 * @param alpha    The learning rate.
+	 * @param epochs    The maximum number of iterations
+	 * @param offset    The first pattern position
+	 * @param length    How many patterns will be used.
+	 * @see NeuralNetwork#train(Column[], Column[], double, int, int, int, double)
 	 */
-	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length) {
+	public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length) {
 		train(patterns, answers, alpha, epochs, offset, length, 1.e-5);
 	}
 
@@ -145,19 +144,18 @@ public abstract class NeuralNetwork implements Serializable {
 	/**
 	 * Calculates the output for the {@code pattern}.
 	 *
-	 * @param pattern	Pattern to use as input.
+	 * @param pattern    Pattern to use as input.
 	 * @return The output for the neural network.
 	 */
-	public abstract Matrix simulate(Matrix pattern);
+	public abstract Column simulate(Column pattern);
 
 	/**
 	 * Calculates the output for the {@code pattern} and left the result in
 	 * {@code result}.
-	 *
-	 * @param pattern	Pattern to use as input.
-	 * @param result	The output for the input.
+	 *  @param pattern    Pattern to use as input.
+	 * @param result    The output for the input.
 	 */
-	public abstract void simulate(Matrix pattern, Matrix result);
+	public abstract void simulate(Column pattern, Column result);
 
 	/**
 	 * Saves the neural network to the file in the given {@code path}
@@ -205,9 +203,9 @@ public abstract class NeuralNetwork implements Serializable {
 	 * @param patterns The array with the patterns to test
 	 * @param answers The array with the expected answers for the patterns.
 	 * @return The error calculate for the patterns.
-	 * @see NeuralNetwork#error(Matrix[], Matrix[], int, int)
+	 * @see NeuralNetwork#error(Column[], Column[], int, int)
 	 */
-	public double error(Matrix[] patterns, Matrix[] answers) {
+	public double error(Column[] patterns, Column[] answers) {
 		return error(patterns, answers, 0, patterns.length);
 	}
 
@@ -226,14 +224,14 @@ public abstract class NeuralNetwork implements Serializable {
 	 * @param length How many patterns must be taken from the offset.
 	 * @return The mean quadratic error.
 	 */
-	public double error(Matrix[] patterns, Matrix[] answers, int offset, int length) {
+	public double error(Column[] patterns, Column[] answers, int offset, int length) {
 		Precondition.checkArgument(patterns[0].getColumns() == 1 && answers[0].getColumns() == 1 ,  "patterns and answers must be column matrices");
 		Precondition.checkArgument(patterns.length == answers.length ,  "There must be the same amount of patterns and answers");
 		Precondition.checkArgument(offset >= 0 && offset < patterns.length , "offset must be in the interval [0, %d), found,  %d", patterns.length, offset);
 		Precondition.checkArgument(length >= 0 && length <= patterns.length - offset , "length must be in the interval (0, %d], found,  %d", patterns.length - offset, length);
 
 		double error = 0.0;
-		Matrix Y = new Column(answers[0].getRows());
+		Column Y = new Column(answers[0].getRows());
 
 		for (int i = 0; i < length; i++) {
 			simulate(patterns[i + offset], Y);	//inner product

@@ -151,8 +151,8 @@ public class KohonenPanel extends javax.swing.JPanel {
 				delta = 256 / (delta - 1);
 				final int test = n / 4;
 
-				final Matrix[] p = new Matrix[n];
-				final Matrix[] ex = new Matrix[n];
+				final Column[] p = new Column[n];
+				final Column[] ex = new Column[n];
 				int[] classes = new int[n];
 
 				for (r = 0; r <= 255; r += delta) {
@@ -178,7 +178,7 @@ public class KohonenPanel extends javax.swing.JPanel {
 				Random rand = new Random();
 				for(int i=0;i<p.length;i++){
 					int tmp = rand.nextInt(p.length);
-					Matrix aux = p[i];
+					Column aux = p[i];
 					p[i]=p[tmp];
 					p[tmp]=aux;
 

@@ -44,19 +44,19 @@ public class PerceptronTest {
 	@Test
 	public void testTrainOr() {
 		Perceptron p = new Perceptron(2, 1, new Random(0));
-		Matrix[] ins = new Matrix[4];
+		Column[] ins = new Column[4];
 		ins[0] = new Column(2, new double[]{0, 0});
 		ins[1] = new Column(2, new double[]{0, 1});
 		ins[2] = new Column(2, new double[]{1, 0});
 		ins[3] = new Column(2, new double[]{1, 1});
-		Matrix[] out = new Matrix[4];
+		Column[] out = new Column[4];
 		out[0] = new Column(1, new double[]{0});
 		out[1] = new Column(1, new double[]{1});
 		out[2] = new Column(1, new double[]{1});
 		out[3] = new Column(1, new double[]{1});
 		p.train(ins, out, 0.1, 1000);
 		assertEquals(0, p.error(ins, out), 0);
-		Matrix res = new Column(1);
+		Column res = new Column(1);
 		p.simulate(ins[0], res);
 		assertEquals(out[0], res);
 		p.simulate(ins[1], res);
@@ -70,12 +70,12 @@ public class PerceptronTest {
 	@Test
 	public void testTrainAnd() {
 		Perceptron p = new Perceptron(2, 1, new Random(0));
-		Matrix[] ins = new Matrix[4];
+		Column[] ins = new Column[4];
 		ins[0] = new Column(2, new double[]{0, 0});
 		ins[1] = new Column(2, new double[]{0, 1});
 		ins[2] = new Column(2, new double[]{1, 0});
 		ins[3] = new Column(2, new double[]{1, 1});
-		Matrix[] out = new Matrix[4];
+		Column[] out = new Column[4];
 		out[0] = new Column(1, new double[]{0});
 		out[1] = new Column(1, new double[]{0});
 		out[2] = new Column(1, new double[]{0});
@@ -96,12 +96,12 @@ public class PerceptronTest {
 	public void testIO() {
         assumeTrue("Can't use temp dir...", MatrixIOTest.checkTemp());
 		Perceptron p = new Perceptron(2, 2, new Random(0));
-		Matrix[] ins = new Matrix[4];
+		Column[] ins = new Column[4];
 		ins[0] = new Column(2, new double[]{0, 0});
 		ins[1] = new Column(2, new double[]{0, 1});
 		ins[2] = new Column(2, new double[]{1, 0});
 		ins[3] = new Column(2, new double[]{1, 1});
-		Matrix[] out = new Matrix[4];
+		Column[] out = new Column[4];
 		out[0] = new Column(2, new double[]{1, 0});
 		out[1] = new Column(2, new double[]{1, 0});
 		out[2] = new Column(2, new double[]{1, 0});

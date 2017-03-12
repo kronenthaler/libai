@@ -156,17 +156,16 @@ public class MultiLayerPerceptron extends NeuralNetwork {
 	 * and biases are updated using the delta rule:<br>
 	 * W[i] = W[i] + beta*(W[i]-Wprev[i]) - (1-beta)*alpha.d[i].Y[i-1]^t <br>
 	 * B[i] = B[i] + beta*(B[i]-Bprev[i]) - (1-beta)*alpha.d[i]<br>
-	 *
-	 * @param patterns	The patterns to be learned.
+	 *  @param patterns    The patterns to be learned.
 	 * @param answers The expected answers.
-	 * @param alpha	The learning rate.
-	 * @param epochs	The maximum number of iterations
-	 * @param offset	The first pattern position
-	 * @param length	How many patterns will be used.
+	 * @param alpha    The learning rate.
+	 * @param epochs    The maximum number of iterations
+	 * @param offset    The first pattern position
+	 * @param length    How many patterns will be used.
 	 * @param minerror The minimal error expected.
 	 */
 	@Override
-	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
+	public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 		if (progress != null) {
 			progress.setMinimum(0);
 			progress.setMaximum(epochs);
@@ -183,13 +182,13 @@ public class MultiLayerPerceptron extends NeuralNetwork {
 	}
 
 	@Override
-	public Matrix simulate(Matrix pattern) {
+	public Column simulate(Column pattern) {
 		simulate(pattern, null);
 		return Y[layers - 1];
 	}
 
 	@Override
-	public void simulate(Matrix pattern, Matrix result) {
+	public void simulate(Column pattern, Column result) {
 		//Y[0]=x
 		pattern.copy(Y[0]);
 

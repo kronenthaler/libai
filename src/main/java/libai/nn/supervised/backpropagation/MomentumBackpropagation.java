@@ -16,7 +16,7 @@ public class MomentumBackpropagation extends StandardBackpropagation {
 	}
 
 	@Override
-	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
+	public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 		int[] sort = new int[length];
 		double error = nn.error(patterns, answers, offset, length);
 		Matrix e = new Matrix(answers[0].getRows(), answers[0].getColumns());

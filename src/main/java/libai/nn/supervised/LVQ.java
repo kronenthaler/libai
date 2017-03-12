@@ -93,17 +93,16 @@ public class LVQ extends Competitive {
 	/**
 	 * Train the network using a hybrid scheme. Uses the "winner takes all"
 	 * rule.
-	 *
-	 * @param patterns	The patterns to be learned.
+	 *  @param patterns    The patterns to be learned.
 	 * @param answers The expected answers.
-	 * @param alpha		The learning rate.
-	 * @param epochs	The maximum number of iterations
-	 * @param offset	The first pattern position
-	 * @param length	How many patterns will be used.
+	 * @param alpha        The learning rate.
+	 * @param epochs    The maximum number of iterations
+	 * @param offset    The first pattern position
+	 * @param length    How many patterns will be used.
 	 * @param minerror The minimal error expected.
 	 */
 	@Override
-	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
+	public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 		int[] sort = new int[length];
 		double error = 1;
 		Row r = new Row(ins);
@@ -164,7 +163,7 @@ public class LVQ extends Competitive {
 	}
 
 	@Override
-	public Matrix simulate(Matrix pattern) {
+	public Column simulate(Column pattern) {
 		Column ret = new Column(outs);
 		W2.multiply(super.simulate(pattern), ret);
 		return ret;
@@ -181,11 +180,11 @@ public class LVQ extends Competitive {
 	 * of answers.
 	 */
 	@Override
-	public double error(Matrix[] patterns, Matrix[] answers, int offset, int length) {
+	public double error(Column[] patterns, Column[] answers, int offset, int length) {
 		//relation between correct answers and total answers
 		int correct = 0;
-		Matrix ret1 = new Column(W2.getColumns());
-		Matrix ret = new Column(outs);
+		Column ret1 = new Column(W2.getColumns());
+		Column ret = new Column(outs);
 
 		for (int i = 0; i < length; i++) {
 			simulate(patterns[i + offset], ret1);

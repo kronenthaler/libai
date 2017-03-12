@@ -57,17 +57,16 @@ public class Hopfield extends NeuralNetwork {
 	/**
 	 * Train the network. The answers, alpha, epochs and minerror are meaningless
 	 * in this algorithm.
-	 *
-	 * @param patterns	The patterns to be learned.
-	 * @param answers	The expected answers. [ignored]
-	 * @param alpha		The learning rate. [ignored]
-	 * @param epochs	The maximum number of iterations. [ignored]
-	 * @param offset	The first pattern position.
-	 * @param length	How many patterns will be used.
+	 *  @param patterns    The patterns to be learned.
+	 * @param answers    The expected answers. [ignored]
+	 * @param alpha        The learning rate. [ignored]
+	 * @param epochs    The maximum number of iterations. [ignored]
+	 * @param offset    The first pattern position.
+	 * @param length    How many patterns will be used.
 	 * @param minerror The minimal error expected. [ignored]
 	 */
 	@Override
-	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
+	public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 		Row patternT = new Row(patterns[0].getRows());
 		Matrix temp = new Matrix(W.getRows(), W.getColumns());
 
@@ -99,14 +98,14 @@ public class Hopfield extends NeuralNetwork {
 	}
 
 	@Override
-	public Matrix simulate(Matrix pattern) {
+	public Column simulate(Column pattern) {
 		Column result = new Column(pattern.getRows());
 		simulate(pattern, result);
 		return result;
 	}
 
 	@Override
-	public void simulate(Matrix pattern, Matrix result) {
+	public void simulate(Column pattern, Column result) {
 		pattern.copy(result);
 		Column previous = new Column(pattern);
 		previous.setValue(0);

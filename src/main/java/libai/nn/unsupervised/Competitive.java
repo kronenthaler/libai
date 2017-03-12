@@ -89,17 +89,16 @@ public class Competitive extends NeuralNetwork {
 	 * Euclidean distance between the pattern and the neuron is calculated. The
 	 * position with the lowest distance is updated with the rule:<br>
 	 * Ww = Ww + alpha.(pattern - Ww)<br>
-	 *
-	 * @param patterns	The patterns to be learned.
-	 * @param answers 	The expected answers.
-	 * @param alpha		The learning rate.
-	 * @param epochs	The maximum number of iterations
-	 * @param offset	The first pattern position
-	 * @param length	How many patterns will be used.
+	 *  @param patterns    The patterns to be learned.
+	 * @param answers    The expected answers.
+	 * @param alpha        The learning rate.
+	 * @param epochs    The maximum number of iterations
+	 * @param offset    The first pattern position
+	 * @param length    How many patterns will be used.
 	 * @param minerror The minimal error expected.
 	 */
 	@Override
-	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
+	public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 		int[] sort = new int[length]; // [0,length)
 		double error = 1;
 
@@ -150,7 +149,7 @@ public class Competitive extends NeuralNetwork {
 	}
 
 	@Override
-	public Matrix simulate(Matrix pattern) {
+	public Column simulate(Column pattern) {
 		Column ret = new Column(W.getRows());
 		simulate(pattern, ret);
 		return ret;
@@ -161,12 +160,11 @@ public class Competitive extends NeuralNetwork {
 	 * <code>pattern</code> and left the result in
 	 * <code>result</code>. The result will be a row matrix fill with 0 except
 	 * for the winner position.
-	 *
-	 * @param pattern Pattern to use as input.
+	 *  @param pattern Pattern to use as input.
 	 * @param result The output for the input.
 	 */
 	@Override
-	public void simulate(Matrix pattern, Matrix result) {
+	public void simulate(Column pattern, Column result) {
 		simulateNoChange(pattern);
 
 		result.setValue(0);
@@ -199,7 +197,7 @@ public class Competitive extends NeuralNetwork {
 	 * pattern.
 	 */
 	@Override
-	public double error(Matrix[] patterns, Matrix[] answers, int offset, int length) {
+	public double error(Column[] patterns, Column[] answers, int offset, int length) {
 		//average of the distances to the closest neuron
 		double[] row;
 		double acum = 0;

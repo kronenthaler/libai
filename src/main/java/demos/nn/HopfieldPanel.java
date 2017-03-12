@@ -392,7 +392,7 @@ public class HopfieldPanel extends javax.swing.JPanel {
 				int n = 2;
 				int m = 25;
 				int l = 3;
-				Matrix[] patterns = new Matrix[]{
+				Column[] patterns = new Column[]{
 						new Column(25, new double[]{
 								-1,-1,+1,-1,-1,
 								-1,-1,+1,-1,-1,
@@ -429,7 +429,7 @@ public class HopfieldPanel extends javax.swing.JPanel {
 }//GEN-LAST:event_jButton1ActionPerformed
 
 	private void testBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testBtnActionPerformed
-		Matrix pattern = new Column(25);
+		Column pattern = new Column(25);
 		JCheckBox[] input = new JCheckBox[]{p0, p1, p2, p3, p4,
 			p5, p6, p7, p8, p9,
 			p10, p11, p12, p13, p14,
@@ -448,7 +448,7 @@ public class HopfieldPanel extends javax.swing.JPanel {
 
 		int count = 0;
 		//while(count++ < 10){
-		Matrix pattern1 = net.simulate(pattern);
+		Column pattern1 = net.simulate(pattern);
 		System.err.println("\n--\npattern1:\n" + pattern1);
 
 		for (int i = 0; i < output.length; i++) {

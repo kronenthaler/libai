@@ -54,12 +54,12 @@ public class NeuralNetworkTest {
 		//This test is to check that the code an be replaced with
 		//euclideandistance2
 		NN nn = new NN();
-		Matrix[] patterns = new Matrix[10];
-		Matrix[] answers  = new Matrix[10];
+		Column[] patterns = new Column[10];
+		Column[] answers  = new Column[10];
 		Random r = new Random(0);
 		for (int i = 0; i < 10; i++) {
-			patterns[i] = Matrix.random(20, 1, true, r);
-			answers [i] = Matrix.random(10, 1, true, r);
+			patterns[i] = Column.random(20, true, r);
+			answers [i] = Column.random(10, true, r);
 		}
 		//old error -> 7.498344587525985
 		assertEquals(7.498344587525985, nn.error(patterns, answers), 1e-12);
@@ -70,12 +70,12 @@ public class NeuralNetworkTest {
 		//This test is to check that the code an be replaced with
 		//euclideandistance2
 		NN nn = new NN();
-		Matrix[] patterns = new Matrix[10];
-		Matrix[] answers  = new Matrix[10];
+		Column[] patterns = new Column[10];
+		Column[] answers  = new Column[10];
 		Random r = new Random(0);
 		for (int i = 0; i < 10; i++) {
-			patterns[i] = Matrix.random(35, 1, true, r);
-			answers [i] = Matrix.random(25, 1, true, r);
+			patterns[i] = Column.random(35, true, r);
+			answers [i] = Column.random(25, true, r);
 		}
 		//old error -> 17.015311661715778
 		assertEquals(17.015311661715778, nn.error(patterns, answers), 1e-12);
@@ -84,10 +84,10 @@ public class NeuralNetworkTest {
 	@Test
 	public void testErrorZero() {
 		NN nn = new NN();
-		Matrix[] patterns = new Matrix[10];
-		Matrix[] answers  = new Matrix[10];
+		Column[] patterns = new Column[10];
+		Column[] answers  = new Column[10];
 		for (int i = 0; i < 10; i++) {
-			patterns[i] = Matrix.random(20, 1);
+			patterns[i] = Column.random(20);
 			answers [i] = new Column(20);
 			patterns[i].copy(answers[i]);
 		}
@@ -97,10 +97,10 @@ public class NeuralNetworkTest {
 	@Test
 	public void testErrorZeroOffset() {
 		NN nn = new NN();
-		Matrix[] patterns = new Matrix[10];
-		Matrix[] answers  = new Matrix[10];
+		Column[] patterns = new Column[10];
+		Column[] answers  = new Column[10];
 		for (int i = 0; i < 10; i++) {
-			patterns[i] = Matrix.random(20, 1);
+			patterns[i] = Column.random(20);
 			answers [i] = new Column(20);
 			patterns[i].copy(answers[i]);
 		}
@@ -170,17 +170,17 @@ public class NeuralNetworkTest {
 
 	private static class NN extends NeuralNetwork {
 		@Override
-		public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
+		public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 
 		}
 
 		@Override
-		public Matrix simulate(Matrix pattern) {
+		public Column simulate(Column pattern) {
 			return null;
 		}
 
 		@Override
-		public void simulate(Matrix pattern, Matrix result) {
+		public void simulate(Column pattern, Column result) {
 			//Dummy simulation
 			for (int i = 0; i < result.getRows(); i++) {
 				result.position(i, 0, pattern.position(i, 0));

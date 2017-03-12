@@ -72,7 +72,7 @@ public class HopfieldTest {
 
 	@Test
 	public void testDemo(){
-		Matrix[] patterns = new Matrix[]{
+		Column[] patterns = new Column[]{
 				new Column(25, new double[]{
 						-1,-1,+1,-1,-1,
 						-1,-1,+1,-1,-1,
@@ -89,7 +89,7 @@ public class HopfieldTest {
 				}),
 		};
 
-		Matrix[] answers = new Matrix[]{
+		Column[] answers = new Column[]{
 				new Column(25, new double[]{
 						-1,-1,+1,-1,-1,
 						-1,-1,+1,-1,-1,
