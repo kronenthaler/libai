@@ -23,6 +23,7 @@
  */
 package libai.nn;
 
+import libai.common.matrix.Column;
 import libai.common.matrix.Matrix;
 import libai.io.MatrixIO;
 import org.junit.Test;
@@ -87,7 +88,7 @@ public class NeuralNetworkTest {
 		Matrix[] answers  = new Matrix[10];
 		for (int i = 0; i < 10; i++) {
 			patterns[i] = Matrix.random(20, 1);
-			answers [i] = new Matrix(20,1);
+			answers [i] = new Column(20);
 			patterns[i].copy(answers[i]);
 		}
 		assertEquals(0, nn.error(patterns, answers), 1e-12);
@@ -100,7 +101,7 @@ public class NeuralNetworkTest {
 		Matrix[] answers  = new Matrix[10];
 		for (int i = 0; i < 10; i++) {
 			patterns[i] = Matrix.random(20, 1);
-			answers [i] = new Matrix(20,1);
+			answers [i] = new Column(20);
 			patterns[i].copy(answers[i]);
 		}
 		assertEquals(0, nn.error(patterns, answers, 2, 7), 1e-12);

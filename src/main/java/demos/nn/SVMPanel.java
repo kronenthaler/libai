@@ -24,6 +24,7 @@
 package demos.nn;
 
 import demos.common.SimpleProgressDisplay;
+import libai.common.matrix.Column;
 import libai.common.matrix.Matrix;
 import libai.common.kernels.LinearKernel;
 import libai.nn.NeuralNetwork;
@@ -112,14 +113,14 @@ public class SVMPanel extends javax.swing.JPanel {
 				Random r = new Random();
 				for (int i = 0; i < n; i++) {
 					int inc = r.nextInt(10);
-					patterns[i] = new Matrix(2, 1, new double[]{i + 1, (2 * (i + 1)) + 3 + Math.pow(-1, inc) * inc});
-					ans[i] = new Matrix(1, 1, new double[]{inc % 2 == 0 ? +1 : -1});
+					patterns[i] = new Column(2, new double[]{i + 1, (2 * (i + 1)) + 3 + Math.pow(-1, inc) * inc});
+					ans[i] = new Column(1, new double[]{inc % 2 == 0 ? +1 : -1});
 				}
 
 				for (int i = n; i < n + t; i++) {
 					int inc = r.nextInt(10);
-					patterns[i] = new Matrix(2, 1, new double[]{i + 1.33, (2 * (i + 1.33)) + 3 + Math.pow(-1, inc) * inc});
-					ans[i] = new Matrix(1, 1, new double[]{inc % 2 == 0 ? +1 : -1});
+					patterns[i] = new Column(2, new double[]{i + 1.33, (2 * (i + 1.33)) + 3 + Math.pow(-1, inc) * inc});
+					ans[i] = new Column(1, new double[]{inc % 2 == 0 ? +1 : -1});
 				}
 
 				NeuralNetwork net = new SVM(new LinearKernel());

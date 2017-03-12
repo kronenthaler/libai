@@ -1,5 +1,6 @@
 package libai.nn.supervised.backpropagation;
 
+import libai.common.matrix.Column;
 import libai.common.matrix.Matrix;
 
 /**
@@ -48,9 +49,9 @@ public class ResilientBackpropagation extends StandardBackpropagation {
 			updates[i] = new Matrix(u[i].getRows(), Y[i - 1].getRows());
 			updates[i].setValue(initialUpdate);
 
-			dacumb[i] = new Matrix(nperlayer[i], 1);
-			dacumbPrev[i] = new Matrix(nperlayer[i], 1);
-			updatesb[i] = new Matrix(nperlayer[i], 1);
+			dacumb[i] = new Column(nperlayer[i]);
+			dacumbPrev[i] = new Column(nperlayer[i]);
+			updatesb[i] = new Column(nperlayer[i]);
 			updatesb[i].setValue(0.1);
 		}
 

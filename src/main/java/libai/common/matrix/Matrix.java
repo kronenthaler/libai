@@ -666,7 +666,7 @@ public class Matrix implements Serializable {
 	 }
 
 	 // back substitution
-	 Matrix x = new Matrix(columns, 1);
+	 Matrix x = new Column(columns);
 	 for (int j = columns - 1; j >= 0; j--) {
 	 double t = 0.0;
 	 for (int k = j + 1; k < columns; k++)

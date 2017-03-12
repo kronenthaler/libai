@@ -184,8 +184,8 @@ public class LVQ extends Competitive {
 	public double error(Matrix[] patterns, Matrix[] answers, int offset, int length) {
 		//relation between correct answers and total answers
 		int correct = 0;
-		Matrix ret1 = new Matrix(W2.getColumns(), 1);
-		Matrix ret = new Matrix(outs, 1);
+		Matrix ret1 = new Column(W2.getColumns());
+		Matrix ret = new Column(outs);
 
 		for (int i = 0; i < length; i++) {
 			simulate(patterns[i + offset], ret1);

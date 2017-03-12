@@ -1,6 +1,7 @@
 package demos.nn;
 
 import demos.common.SimpleProgressDisplay;
+import libai.common.matrix.Column;
 import libai.common.matrix.Matrix;
 import libai.nn.unsupervised.Hopfield;
 
@@ -392,14 +393,14 @@ public class HopfieldPanel extends javax.swing.JPanel {
 				int m = 25;
 				int l = 3;
 				Matrix[] patterns = new Matrix[]{
-						new Matrix(25,1, new double[]{
+						new Column(25, new double[]{
 								-1,-1,+1,-1,-1,
 								-1,-1,+1,-1,-1,
 								+1,+1,+1,+1,+1,
 								-1,-1,+1,-1,-1,
 								-1,-1,+1,-1,-1,
 						}),
-						new Matrix(25,1, new double[]{
+						new Column(25, new double[]{
 								+1,-1,-1,-1,+1,
 								-1,+1,-1,+1,-1,
 								-1,-1,+1,-1,-1,
@@ -428,7 +429,7 @@ public class HopfieldPanel extends javax.swing.JPanel {
 }//GEN-LAST:event_jButton1ActionPerformed
 
 	private void testBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testBtnActionPerformed
-		Matrix pattern = new Matrix(25, 1);
+		Matrix pattern = new Column(25);
 		JCheckBox[] input = new JCheckBox[]{p0, p1, p2, p3, p4,
 			p5, p6, p7, p8, p9,
 			p10, p11, p12, p13, p14,

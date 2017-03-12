@@ -108,7 +108,7 @@ public class Hopfield extends NeuralNetwork {
 	@Override
 	public void simulate(Matrix pattern, Matrix result) {
 		pattern.copy(result);
-		Matrix previous = new Matrix(pattern);
+		Column previous = new Column(pattern);
 		previous.setValue(0);
 
 		while(!result.equals(previous)) {

@@ -23,6 +23,7 @@
  */
 package libai.nn.unsupervised;
 
+import libai.common.matrix.Column;
 import libai.common.matrix.Matrix;
 import libai.common.ProgressDisplay;
 import org.junit.Test;
@@ -72,14 +73,14 @@ public class HopfieldTest {
 	@Test
 	public void testDemo(){
 		Matrix[] patterns = new Matrix[]{
-				new Matrix(25,1, new double[]{
+				new Column(25, new double[]{
 						-1,-1,+1,-1,-1,
 						-1,-1,+1,-1,-1,
 						+1,+1,+1,+1,+1,
 						-1,-1,+1,-1,-1,
 						-1,-1,+1,-1,-1,
 				}),
-				new Matrix(25,1, new double[]{
+				new Column(25, new double[]{
 						+1,-1,-1,-1,+1,
 						-1,+1,-1,+1,-1,
 						-1,-1,+1,-1,-1,
@@ -89,14 +90,14 @@ public class HopfieldTest {
 		};
 
 		Matrix[] answers = new Matrix[]{
-				new Matrix(25,1, new double[]{
+				new Column(25, new double[]{
 						-1,-1,+1,-1,-1,
 						-1,-1,+1,-1,-1,
 						+1,+1,+1,+1,+1,
 						-1,-1,-1,-1,-1,
 						-1,-1,-1,-1,-1,
 				}),
-				new Matrix(25,1, new double[]{
+				new Column(25, new double[]{
 						+1,-1,-1,-1,+1,
 						-1,+1,-1,+1,-1,
 						-1,-1,+1,-1,-1,

@@ -8,6 +8,10 @@ public class Row extends Matrix {
 		super(1, c);
 	}
 
+	public Row(int c, boolean identity){
+		super(1, c, true);
+	}
+
 	public Row(int c, double[] data) {
 		super(1, c, data);
 	}

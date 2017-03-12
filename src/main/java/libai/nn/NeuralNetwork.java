@@ -23,6 +23,7 @@
  */
 package libai.nn;
 
+import libai.common.matrix.Column;
 import libai.common.matrix.Matrix;
 import libai.common.Plotter;
 import libai.common.Precondition;
@@ -232,7 +233,7 @@ public abstract class NeuralNetwork implements Serializable {
 		Precondition.checkArgument(length >= 0 && length <= patterns.length - offset , "length must be in the interval (0, %d], found,  %d", patterns.length - offset, length);
 
 		double error = 0.0;
-		Matrix Y = new Matrix(answers[0].getRows(), 1);
+		Matrix Y = new Column(answers[0].getRows());
 
 		for (int i = 0; i < length; i++) {
 			simulate(patterns[i + offset], Y);	//inner product

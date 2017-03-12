@@ -1,5 +1,6 @@
 package libai.nn.supervised;
 
+import libai.common.matrix.Column;
 import libai.common.matrix.Matrix;
 import libai.nn.NeuralNetwork;
 import org.junit.Test;
@@ -14,13 +15,13 @@ public class HebbTest {
 	public void testTrain(){
 		NeuralNetwork nn = new Hebb(25, 25, 0.05);
 		Matrix[] patterns = new Matrix[]{
-				new Matrix(25,1, new double[]{
+				new Column(25, new double[]{
 						-1, 1, 1, 1,-1,
 						1,-1,-1,-1, 1,
 						1,-1,-1,-1, 1,
 						1,-1,-1,-1, 1,
 						-1, 1, 1, 1,-1}),
-				new Matrix(25,1, new double[]{
+				new Column(25, new double[]{
 						+1,+1,+1,-1,-1,
 						+1,+1,+1,-1,-1,
 						+1,+1,+1,-1,-1,
@@ -29,14 +30,14 @@ public class HebbTest {
 		};
 
 		Matrix[] answers = new Matrix[]{
-				new Matrix(25,1, new double[]{
+				new Column(25, new double[]{
 						-1, 1, 1, 1,-1,
 						1,-1,-1, 1, 1,
 						-1,-1,-1,-1,-1,
 						-1,-1,-1,-1,-1,
 						-1,-1,-1,-1,-1
 				}),
-				new Matrix(25,1, new double[]{
+				new Column(25, new double[]{
 						+1,+1,+1,-1,-1,
 						+1,+1,+1,-1,-1,
 						+1,+1,+1,-1,-1,
@@ -53,13 +54,13 @@ public class HebbTest {
 		// same input as before, just each element is given a different answer vector.
 		NeuralNetwork nn = new Hebb(25, 1, 0.05);
 		Matrix[] patterns = new Matrix[]{
-				new Matrix(25,1, new double[]{
+				new Column(25, new double[]{
 						-1, 1, 1, 1,-1,
 						1,-1,-1,-1, 1,
 						1,-1,-1,-1, 1,
 						1,-1,-1,-1, 1,
 						-1, 1, 1, 1,-1}),
-				new Matrix(25,1, new double[]{
+				new Column(25, new double[]{
 						+1,+1,+1,-1,-1,
 						+1,+1,+1,-1,-1,
 						+1,+1,+1,-1,-1,
@@ -68,21 +69,21 @@ public class HebbTest {
 		};
 
 		Matrix[] answers = new Matrix[]{
-				new Matrix(1,1, new double[]{1}),
-				new Matrix(1,1, new double[]{-1}),
+				new Column(1, new double[]{1}),
+				new Column(1, new double[]{-1}),
 		};
 
 		nn.train(patterns, answers, 0.005, 1000, 0, patterns.length);
 
 		Matrix[] patterns2 = new Matrix[]{
-				new Matrix(25,1, new double[]{
+				new Column(25, new double[]{
 						-1, 1, 1, 1,-1,
 						1,-1,-1, 1, 1,
 						-1,-1,-1,-1,-1,
 						-1,-1,-1,-1,-1,
 						-1,-1,-1,-1,-1
 				}),
-				new Matrix(25,1, new double[]{
+				new Column(25, new double[]{
 						+1,+1,+1,-1,-1,
 						+1,+1,+1,-1,-1,
 						+1,+1,+1,-1,-1,

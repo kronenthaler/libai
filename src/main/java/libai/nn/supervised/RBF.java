@@ -23,6 +23,7 @@
  */
 package libai.nn.supervised;
 
+import libai.common.matrix.Column;
 import libai.common.matrix.Matrix;
 import libai.nn.NeuralNetwork;
 
@@ -128,7 +129,7 @@ public class RBF extends Adaline {
 		//precalculate the ouputs for each pattern in the hidden layer
 		Matrix Y[] = new Matrix[patterns.length];
 		for (int j = 0; j < length; j++) {
-			Y[j + offset] = new Matrix(nperlayer[1], 1);
+			Y[j + offset] = new Column(nperlayer[1]);
 			simulateNoChange(patterns[j + offset], Y[j + offset]);
 		}
 
@@ -219,14 +220,14 @@ public class RBF extends Adaline {
 
 	@Override
 	public Matrix simulate(Matrix pattern) {
-		Matrix y = new Matrix(nperlayer[2], 1);
+		Matrix y = new Column(nperlayer[2]);
 		simulate(pattern, y);
 		return y;
 	}
 
 	@Override
 	public void simulate(Matrix pattern, Matrix result) {
-		Matrix aux = new Matrix(nperlayer[1], 1);
+		Matrix aux = new Column(nperlayer[1]);
 		simulateNoChange(pattern, aux);
 		super.simulate(aux, result);
 	}

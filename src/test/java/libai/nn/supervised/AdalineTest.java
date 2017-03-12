@@ -23,6 +23,7 @@
  */
 package libai.nn.supervised;
 
+import libai.common.matrix.Column;
 import libai.common.matrix.Matrix;
 import libai.common.MatrixIOTest;
 import libai.nn.NeuralNetwork;
@@ -46,18 +47,18 @@ public class AdalineTest {
 	public void testTrainOr() {
 		Adaline ada = new Adaline(2, 1, new Random(0));
 		Matrix[] ins = new Matrix[4];
-		ins[0] = new Matrix(2, 1, new double[]{0, 0});
-		ins[1] = new Matrix(2, 1, new double[]{0, 1});
-		ins[2] = new Matrix(2, 1, new double[]{1, 0});
-		ins[3] = new Matrix(2, 1, new double[]{1, 1});
+		ins[0] = new Column(2, new double[]{0, 0});
+		ins[1] = new Column(2, new double[]{0, 1});
+		ins[2] = new Column(2, new double[]{1, 0});
+		ins[3] = new Column(2, new double[]{1, 1});
 		Matrix[] out = new Matrix[4];
-		out[0] = new Matrix(1, 1, new double[]{0});
-		out[1] = new Matrix(1, 1, new double[]{1});
-		out[2] = new Matrix(1, 1, new double[]{1});
-		out[3] = new Matrix(1, 1, new double[]{1});
+		out[0] = new Column(1, new double[]{0});
+		out[1] = new Column(1, new double[]{1});
+		out[2] = new Column(1, new double[]{1});
+		out[3] = new Column(1, new double[]{1});
 		ada.train(ins, out, 0.1, 1000);
 		assertTrue(0.1 > ada.error(ins, out));
-		Matrix res = new Matrix(1, 1);
+		Matrix res = new Column(1);
 		ada.simulate(ins[0], res);
 		assertEquals(0, round(res.position(0, 0)));
 		ada.simulate(ins[1], res);
@@ -73,15 +74,15 @@ public class AdalineTest {
 		// Trains an Or and tests simulate(Matrix, Matrix)
 		Adaline ada = new Adaline(2, 1, new Random(0));
 		Matrix[] ins = new Matrix[4];
-		ins[0] = new Matrix(2, 1, new double[]{0, 0});
-		ins[1] = new Matrix(2, 1, new double[]{0, 1});
-		ins[2] = new Matrix(2, 1, new double[]{1, 0});
-		ins[3] = new Matrix(2, 1, new double[]{1, 1});
+		ins[0] = new Column(2, new double[]{0, 0});
+		ins[1] = new Column(2, new double[]{0, 1});
+		ins[2] = new Column(2, new double[]{1, 0});
+		ins[3] = new Column(2, new double[]{1, 1});
 		Matrix[] out = new Matrix[4];
-		out[0] = new Matrix(1, 1, new double[]{0});
-		out[1] = new Matrix(1, 1, new double[]{0});
-		out[2] = new Matrix(1, 1, new double[]{0});
-		out[3] = new Matrix(1, 1, new double[]{1});
+		out[0] = new Column(1, new double[]{0});
+		out[1] = new Column(1, new double[]{0});
+		out[2] = new Column(1, new double[]{0});
+		out[3] = new Column(1, new double[]{1});
 		ada.train(ins, out, 0.1, 1000);
 		assertTrue(0.1 > ada.error(ins, out));
 	}
@@ -91,15 +92,15 @@ public class AdalineTest {
         assumeTrue("Can't use temp dir...", MatrixIOTest.checkTemp());
 		Adaline ada = new Adaline(2, 1, new Random(0));
 		Matrix[] ins = new Matrix[4];
-		ins[0] = new Matrix(2, 1, new double[]{0, 0});
-		ins[1] = new Matrix(2, 1, new double[]{0, 1});
-		ins[2] = new Matrix(2, 1, new double[]{1, 0});
-		ins[3] = new Matrix(2, 1, new double[]{1, 1});
+		ins[0] = new Column(2, new double[]{0, 0});
+		ins[1] = new Column(2, new double[]{0, 1});
+		ins[2] = new Column(2, new double[]{1, 0});
+		ins[3] = new Column(2, new double[]{1, 1});
 		Matrix[] out = new Matrix[4];
-		out[0] = new Matrix(1, 1, new double[]{1});
-		out[1] = new Matrix(1, 1, new double[]{1});
-		out[2] = new Matrix(1, 1, new double[]{1});
-		out[3] = new Matrix(1, 1, new double[]{0});
+		out[0] = new Column(1, new double[]{1});
+		out[1] = new Column(1, new double[]{1});
+		out[2] = new Column(1, new double[]{1});
+		out[3] = new Column(1, new double[]{0});
 		ada.train(ins, out, 0.1, 1000);
 		assertTrue(0.1 > ada.error(ins, out));
 		assertEquals(1, round(ada.simulate(ins[0]).position(0, 0)));
@@ -138,13 +139,13 @@ public class AdalineTest {
 		Matrix[] ans = new Matrix[n + t];
 
 		for (int i = 0; i < n; i++) {
-			patterns[i] = new Matrix(1, 1, new double[]{i + 1});
-			ans[i] = new Matrix(1, 1, new double[]{(2 * (i + 1)) + 3});
+			patterns[i] = new Column(1, new double[]{i + 1});
+			ans[i] = new Column(1, new double[]{(2 * (i + 1)) + 3});
 		}
 
 		for (int i = n; i < n + t; i++) {
-			patterns[i] = new Matrix(1, 1, new double[]{i + 1.33});
-			ans[i] = new Matrix(1, 1, new double[]{(2 * (i + 1.33)) + 3});
+			patterns[i] = new Column(1, new double[]{i + 1.33});
+			ans[i] = new Column(1, new double[]{(2 * (i + 1.33)) + 3});
 		}
 
 		NeuralNetwork net = new Adaline(1, 1);

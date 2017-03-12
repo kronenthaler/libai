@@ -23,6 +23,7 @@
  */
 package libai.nn.unsupervised;
 
+import libai.common.matrix.Column;
 import libai.common.matrix.Matrix;
 import libai.common.ProgressDisplay;
 import org.junit.Test;
@@ -80,17 +81,17 @@ public class KohonenTest {
 		Random r = new Random(0);
 
 		for(int i=0;i<p.length;i++){
-			p[i] = new Matrix(2, 1);
-			c[i] = new Matrix(1,1, new double[]{ i/(int)(p.length/2) });
+			p[i] = new Column(2);
+			c[i] = new Column(1, new double[]{ i/(int)(p.length/2) });
 			p[i].fill(false, r);
-			p[i].add(new Matrix(2,1, new double[]{i > p.length/2 ? 10 : -10, i > p.length/2 ? 10 : -10}), p[i]);
+			p[i].add(new Column(2, new double[]{i > p.length/2 ? 10 : -10, i > p.length/2 ? 10 : -10}), p[i]);
 		}
 
 		for(int i=0;i<test.length;i++){
-			test[i] = new Matrix(2, 1);
-			ctest[i] = new Matrix(2, 1, new double[]{i > p.length/2 ? 10 : -10, i > p.length/2 ? 10 : -10});
+			test[i] = new Column(2);
+			ctest[i] = new Column(2, new double[]{i > p.length/2 ? 10 : -10, i > p.length/2 ? 10 : -10});
 			test[i].fill(false, r);
-			test[i].add(new Matrix(2,1, new double[]{i > p.length/2 ? 10 : -10, i > p.length/2 ? 10 : -10}), test[i]);
+			test[i].add(new Column(2, new double[]{i > p.length/2 ? 10 : -10, i > p.length/2 ? 10 : -10}), test[i]);
 		}
 
 		int nperlayer[] = {2, 20, 20};

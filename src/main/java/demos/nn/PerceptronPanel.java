@@ -24,6 +24,7 @@
 package demos.nn;
 
 import demos.common.SimpleProgressDisplay;
+import libai.common.matrix.Column;
 import libai.common.matrix.Matrix;
 import libai.nn.NeuralNetwork;
 import libai.nn.supervised.Adaline;
@@ -106,13 +107,13 @@ public class PerceptronPanel extends javax.swing.JPanel {
 				Matrix[] ans = new Matrix[n + t];
 
 				for (int i = 0; i < n; i++) {
-					patterns[i] = new Matrix(1, 1, new double[]{i + 1});
-					ans[i] = new Matrix(1, 1, new double[]{(2 * (i + 1)) + 3});
+					patterns[i] = new Column(1, new double[]{i + 1});
+					ans[i] = new Column(1, new double[]{(2 * (i + 1)) + 3});
 				}
 
 				for (int i = n; i < n + t; i++) {
-					patterns[i] = new Matrix(1, 1, new double[]{i + 1.33});
-					ans[i] = new Matrix(1, 1, new double[]{(2 * (i + 1.33)) + 3});
+					patterns[i] = new Column(1, new double[]{i + 1.33});
+					ans[i] = new Column(1, new double[]{(2 * (i + 1.33)) + 3});
 				}
 
 				NeuralNetwork net = new Adaline(1, 1);

@@ -1,5 +1,6 @@
 package libai.nn.supervised.backpropagation;
 
+import libai.common.matrix.Column;
 import libai.common.matrix.Matrix;
 
 /**
@@ -29,7 +30,7 @@ public class MomentumBackpropagation extends StandardBackpropagation {
 		Matrix bprev[] = new Matrix[layers];//momemtum
 		for (int i = 1; i < layers; i++) {
 			Wprev[i] = new Matrix(nperlayer[i], nperlayer[i - 1]);
-			bprev[i] = new Matrix(nperlayer[i], 1);
+			bprev[i] = new Column(nperlayer[i]);
 			W[i].copy(Wprev[i]);
 			b[i].copy(bprev[i]);
 		}

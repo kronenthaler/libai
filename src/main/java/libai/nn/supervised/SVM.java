@@ -23,6 +23,7 @@
  */
 package libai.nn.supervised;
 
+import libai.common.matrix.Column;
 import libai.common.matrix.Matrix;
 import libai.common.functions.SymmetricSign;
 import libai.common.kernels.GaussianKernel;
@@ -170,7 +171,7 @@ public class SVM extends NeuralNetwork {
 
     @Override
     public Matrix simulate(Matrix pattern) {
-        Matrix temp = new Matrix(1, 1); //always returns a single class
+        Matrix temp = new Column(1); //always returns a single class
         simulate(pattern, temp);
         return temp;
     }

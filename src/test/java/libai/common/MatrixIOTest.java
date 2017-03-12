@@ -23,6 +23,7 @@
  */
 package libai.common;
 
+import libai.common.matrix.Column;
 import libai.common.matrix.Matrix;
 import libai.io.MatrixIO;
 import org.junit.Test;
@@ -44,7 +45,7 @@ public class MatrixIOTest {
     
     @Test(expected = IllegalArgumentException.class)
     public void testNull1() throws IOException {
-        MatrixIO.write(null, new Matrix(1, 1), MatrixIO.Target.SERIAL);
+        MatrixIO.write(null, new Column(1), MatrixIO.Target.SERIAL);
     }
     
     @Test(expected = IllegalArgumentException.class)

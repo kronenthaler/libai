@@ -24,6 +24,7 @@
 package libai.nn.supervised;
 
 import demos.common.SimpleProgressDisplay;
+import libai.common.matrix.Column;
 import libai.common.matrix.Matrix;
 import libai.common.MatrixIOTest;
 import org.junit.Test;
@@ -52,8 +53,8 @@ public class RBFTest {
 		double delta = 0.1;
 		double x = 0;
 		for (int i = 0; i < n; i++, x += delta) {
-			p[i] = new Matrix(m, 1);
-			t[i] = new Matrix(l, 1);
+			p[i] = new Column(m);
+			t[i] = new Column(l);
 
 			p[i].position(0, 0, x);
 			t[i].position(0, 0, f(x));
@@ -62,8 +63,8 @@ public class RBFTest {
 		delta = 0.33;
 		x = 0;
 		for (int i = n; i < n + test && x < 4; i++, x += delta) {
-			p[i] = new Matrix(m, 1);
-			t[i] = new Matrix(l, 1);
+			p[i] = new Column(m);
+			t[i] = new Column(l);
 
 			p[i].position(0, 0, x);
 			t[i].position(0, 0, f(x));
@@ -92,8 +93,8 @@ public class RBFTest {
 		double delta = 0.1;
 		double x = 0;
 		for (int i = 0; i < n; i++, x += delta) {
-			p[i] = new Matrix(m, 1);
-			t[i] = new Matrix(l, 1);
+			p[i] = new Column(m);
+			t[i] = new Column(l);
 
 			p[i].position(0, 0, x);
 			t[i].position(0, 0, f(x));
@@ -102,8 +103,8 @@ public class RBFTest {
 		delta = 0.33;
 		x = 0;
 		for (int i = n; i < n + test && x < 4; i++, x += delta) {
-			p[i] = new Matrix(m, 1);
-			t[i] = new Matrix(l, 1);
+			p[i] = new Column(m);
+			t[i] = new Column(l);
 
 			p[i].position(0, 0, x);
 			t[i].position(0, 0, f(x));

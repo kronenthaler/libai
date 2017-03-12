@@ -189,7 +189,7 @@ public class Kohonen extends NeuralNetwork {
 
 	@Override
 	public Matrix simulate(Matrix pattern) {
-		Matrix ret = new Matrix(nperlayer[0], 1);
+		Matrix ret = new Column(nperlayer[0]);
 		simulate(pattern, ret);
 		return ret;
 	}

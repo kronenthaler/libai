@@ -24,6 +24,7 @@
 package demos.nn;
 
 import demos.common.SimpleProgressDisplay;
+import libai.common.matrix.Column;
 import libai.common.matrix.Matrix;
 import libai.nn.unsupervised.Kohonen;
 
@@ -157,12 +158,12 @@ public class KohonenPanel extends javax.swing.JPanel {
 				for (r = 0; r <= 255; r += delta) {
 					for (g = 0; g <= 255; g += delta) {
 						for (b = 0; b <= 255; b += delta) {
-							p[t] = new Matrix(3, 1);
+							p[t] = new Column(3);
 							p[t].position(0, 0, r/255.0);
 							p[t].position(1, 0, g/255.0);
 							p[t].position(2, 0, b/255.0);
 
-							ex[t] = new Matrix(1, 1);
+							ex[t] = new Column(1);
 							ex[t].position(0, 0, (classes[t++] = ((r << 16) | (g << 8) | b) & 0x00ffffff));
 						}
 					}

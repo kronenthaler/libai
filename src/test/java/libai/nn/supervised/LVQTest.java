@@ -24,6 +24,7 @@
 package libai.nn.supervised;
 
 import demos.common.SimpleProgressDisplay;
+import libai.common.matrix.Column;
 import libai.common.matrix.Matrix;
 import libai.nn.unsupervised.Competitive;
 import org.junit.Test;
@@ -51,8 +52,8 @@ public class LVQTest {
 		Matrix[] patterns = new Matrix[n];
 		Matrix[] ans = new Matrix[n];
 		for (int i = 0; i < n; i++) {
-			patterns[i] = new Matrix(m, 1);
-			ans[i] = new Matrix(l, 1);
+			patterns[i] = new Column(m);
+			ans[i] = new Column(l);
 			ans[i].setValue(0);
 		}
 
