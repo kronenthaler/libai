@@ -23,7 +23,9 @@
  */
 package libai.nn.supervised;
 
+import libai.common.matrix.Column;
 import libai.common.matrix.Matrix;
+import libai.common.matrix.Row;
 import libai.nn.unsupervised.Competitive;
 
 import java.util.Random;
@@ -104,8 +106,8 @@ public class LVQ extends Competitive {
 	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 		int[] sort = new int[length];
 		double error = 1;
-		Matrix r = new Matrix(1, ins);
-		Matrix row = new Matrix(1, W.getColumns());
+		Row r = new Row(ins);
+		Row row = new Row(W.getColumns());
 
 		Matrix[] patternsT = new Matrix[length];
 		for (int i = 0; i < length; i++) {
@@ -163,9 +165,8 @@ public class LVQ extends Competitive {
 
 	@Override
 	public Matrix simulate(Matrix pattern) {
-		Matrix ret = new Matrix(outs, 1);
-		Matrix ret1 = super.simulate(pattern);
-		W2.multiply(ret1, ret);
+		Column ret = new Column(outs);
+		W2.multiply(super.simulate(pattern), ret);
 		return ret;
 	}
 

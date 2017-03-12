@@ -23,7 +23,9 @@
  */
 package libai.nn.unsupervised;
 
+import libai.common.matrix.Column;
 import libai.common.matrix.Matrix;
+import libai.common.matrix.Row;
 import libai.nn.NeuralNetwork;
 
 import java.util.Random;
@@ -101,8 +103,8 @@ public class Competitive extends NeuralNetwork {
 		int[] sort = new int[length]; // [0,length)
 		double error = 1;
 
-		Matrix r = new Matrix(1, ins);
-		Matrix row = new Matrix(1, ins);
+		Row r = new Row(ins);
+		Row row = new Row(ins);
 
 		//initialize sort array
 		Matrix[] patternsT = new Matrix[length];
@@ -149,7 +151,7 @@ public class Competitive extends NeuralNetwork {
 
 	@Override
 	public Matrix simulate(Matrix pattern) {
-		Matrix ret = new Matrix(W.getRows(), 1);
+		Column ret = new Column(W.getRows());
 		simulate(pattern, ret);
 		return ret;
 	}

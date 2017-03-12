@@ -23,6 +23,7 @@
  */
 package libai.nn.unsupervised;
 
+import libai.common.matrix.Column;
 import libai.common.matrix.Matrix;
 import libai.common.Pair;
 import libai.nn.NeuralNetwork;
@@ -45,7 +46,7 @@ import java.util.Random;
 public class Kohonen extends NeuralNetwork {
 	private static final long serialVersionUID = 8918172607912802829L;
 
-	private Matrix W[];					//array of weights ijk, with k positions.
+	private Column W[];					//array of weights ijk, with k positions.
 	private int[][] map;				//map of the outputs
 	private int[] nperlayer;			//array of 3 positions, {#inputs,#rows,#columns}
 	private double neighborhood;
@@ -81,13 +82,13 @@ public class Kohonen extends NeuralNetwork {
 		this.nperlayer = nperlayer;
 		this.neighborhood = neighborhood;
 
-		W = new Matrix[nperlayer[1] * nperlayer[2]];
+		W = new Column[nperlayer[1] * nperlayer[2]];
 		stepsx = neighboursX;
 		stepsy = neighboursY;
 
 		for (int i = 0; i < nperlayer[1]; i++) {
 			for (int j = 0; j < nperlayer[2]; j++) {
-				W[(i * nperlayer[2]) + j] = new Matrix(nperlayer[0], 1);
+				W[(i * nperlayer[2]) + j] = new Column(nperlayer[0]);
 				W[(i * nperlayer[2]) + j].fill(true);
 			}
 		}
@@ -141,7 +142,7 @@ public class Kohonen extends NeuralNetwork {
 		int[] sort = new int[length];
 		for (int i = 0; i < length; sort[i] = i++);
 
-		Matrix temp = new Matrix(nperlayer[0], 1);
+		Column temp = new Column(nperlayer[0]);
 
 		if (progress != null) {
 			progress.setMaximum(epochs * 2);
@@ -161,7 +162,7 @@ public class Kohonen extends NeuralNetwork {
 				//Update winner and neighbors.
 				for (int i = 0; i < nperlayer[1]; i++) {
 					for (int j = 0; j < nperlayer[2]; j++) {
-						Matrix Mij = getPrototypeAt(i, j);
+						Column Mij = getPrototypeAt(i, j);
 						patterns[sort[k] + offset].subtract(Mij, temp);
 						temp.multiply(alpha1 * neighbor(i, j,  winner.first, winner.second), temp);
 						Mij.add(temp, Mij);
@@ -215,7 +216,7 @@ public class Kohonen extends NeuralNetwork {
 		return winner;
 	}
 
-	public Matrix getPrototypeAt(int i, int j) {
+	public Column getPrototypeAt(int i, int j) {
 		return W[(i * nperlayer[2]) + j];
 	}
 

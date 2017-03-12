@@ -23,8 +23,10 @@
  */
 package libai.nn.unsupervised;
 
+import libai.common.matrix.Column;
 import libai.common.matrix.Matrix;
 import libai.common.functions.SymmetricSign;
+import libai.common.matrix.Row;
 import libai.nn.NeuralNetwork;
 
 /**
@@ -66,8 +68,7 @@ public class Hopfield extends NeuralNetwork {
 	 */
 	@Override
 	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
-		Matrix I = new Matrix(W.getRows(), W.getColumns(), true);
-		Matrix patternT = new Matrix(patterns[0].getColumns(), patterns[0].getRows());
+		Row patternT = new Row(patterns[0].getRows());
 		Matrix temp = new Matrix(W.getRows(), W.getColumns());
 
 		if (progress != null) {
@@ -99,7 +100,7 @@ public class Hopfield extends NeuralNetwork {
 
 	@Override
 	public Matrix simulate(Matrix pattern) {
-		Matrix result = new Matrix(pattern.getRows(), pattern.getColumns());
+		Column result = new Column(pattern.getRows());
 		simulate(pattern, result);
 		return result;
 	}

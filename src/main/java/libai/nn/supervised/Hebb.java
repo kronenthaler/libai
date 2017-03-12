@@ -108,7 +108,6 @@ public class Hebb extends NeuralNetwork {
 	@Override
 	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 		int[] sort = new int[length];
-		Matrix Y = new Matrix(W.getRows(), 1);
 		Matrix temp = new Matrix(W.getRows(), W.getColumns());
 		double error = 1;
 
@@ -130,7 +129,7 @@ public class Hebb extends NeuralNetwork {
 			for (int i = 0; i < length; i++) {
 				//F(wx)
 				//simulate(patterns[sort[i] + offset], Y); // for unsupervised training
-				Y = answers[sort[i] + offset];
+				Matrix Y = answers[sort[i] + offset];
 
 				//W=(1-phi)*W + alpha*Y*pt;
 				W.multiply(phi, W);
