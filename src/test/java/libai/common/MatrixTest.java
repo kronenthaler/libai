@@ -799,8 +799,8 @@ public class MatrixTest {
     @Test
     public void testDotProduct() {
         //product was calculated with GNU-Octave 4.0.2 (x86_64-pc-linux-gnu)
-        Matrix a = new Matrix(1, 10, a3_data);
-        Matrix b = new Matrix(1, 10, b3_data);
+        Matrix a = new Row( 10, a3_data);
+        Matrix b = new Row( 10, b3_data);
         double product = a.dotProduct(b);
         assertEquals(result, product, DELTA);
     }
@@ -817,7 +817,7 @@ public class MatrixTest {
     @Test
     public void testDotProduct2() {
         //product was calculated with GNU-Octave 4.0.2 (x86_64-pc-linux-gnu)
-        Matrix a = new Matrix(1, 10, a3_data);
+        Matrix a = new Row( 10, a3_data);
         Matrix b = new Column(10, b3_data);
         double product = a.dotProduct(b);
         assertEquals(result, product, DELTA);
@@ -827,7 +827,7 @@ public class MatrixTest {
     public void testDotProduct3() {
         //product was calculated with GNU-Octave 4.0.2 (x86_64-pc-linux-gnu)
         Matrix a = new Column(10, a3_data);
-        Matrix b = new Matrix(1, 10, b3_data);
+        Matrix b = new Row( 10, b3_data);
         double product = a.dotProduct(b);
         assertEquals(result, product, DELTA);
     }
