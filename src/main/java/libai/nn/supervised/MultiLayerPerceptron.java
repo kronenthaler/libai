@@ -23,6 +23,7 @@
  */
 package libai.nn.supervised;
 
+import libai.common.matrix.Column;
 import libai.common.matrix.Matrix;
 import libai.common.functions.Function;
 import libai.nn.NeuralNetwork;
@@ -42,7 +43,8 @@ import java.util.Random;
 public class MultiLayerPerceptron extends NeuralNetwork {
 	private static final long serialVersionUID = 3155220303024711102L;
 
-	private final Matrix W[], Y[], b[], u[]; //WY + b = u
+	private final Matrix W[];
+	private final Column Y[], b[], u[]; //WY + b = u
 
 	private final int nperlayer[]; //number of neurons per layer, including the input layer
 	private final int layers;
@@ -120,9 +122,9 @@ public class MultiLayerPerceptron extends NeuralNetwork {
 		layers = nperlayer.length;
 
 		W = new Matrix[layers];//position zero reserved
-		b = new Matrix[layers];//position zero reserved
-		Y = new Matrix[layers];//position zero reserved for the input pattern
-		u = new Matrix[layers];//position zero reserved
+		b = new Column[layers];//position zero reserved
+		Y = new Column[layers];//position zero reserved for the input pattern
+		u = new Column[layers];//position zero reserved
 
 		initialize();
 	}
@@ -131,17 +133,17 @@ public class MultiLayerPerceptron extends NeuralNetwork {
 	 * Initialize the matrix and auxiliary buffers.
 	 */
 	private void initialize() {
-		Y[0] = new Matrix(nperlayer[0], 1);
+		Y[0] = new Column(nperlayer[0]);
 
 		for (int i = 1; i < layers; i++) {
 			W[i] = new Matrix(nperlayer[i], nperlayer[i - 1]);
-			b[i] = new Matrix(nperlayer[i], 1);
+			b[i] = new Column(nperlayer[i]);
 
 			W[i].fill(true, random); // fill randomly
 			b[i].fill(true, random); // fill randomly
 
-			u[i] = new Matrix(W[i].getRows(), Y[i - 1].getColumns());
-			Y[i] = new Matrix(u[i].getRows(), u[i].getColumns());
+			u[i] = new Column(W[i].getRows());
+			Y[i] = new Column(u[i].getRows());
 		}
 	}
 

@@ -1,7 +1,9 @@
 package libai.nn.supervised.backpropagation;
 
+import libai.common.matrix.Column;
 import libai.common.matrix.Matrix;
 import libai.common.functions.Function;
+import libai.common.matrix.Row;
 import libai.nn.NeuralNetwork;
 
 /**
@@ -12,11 +14,15 @@ public class StandardBackpropagation implements Backpropagation{
 	protected int[] nperlayer;
 	protected int layers;
 	protected Function[] func;
-	protected Matrix[] W, Y, b, u;
-	protected Matrix[] d,  M, Yt; // auxiliary buffers
+	protected Matrix[] W;
+	protected Column[] Y, b, u;
+	// auxiliary buffers
+	protected Column[] d;
+	protected Row[] Yt;
+	protected Matrix[] M;
 
 	@Override
-	public void initialize(NeuralNetwork nn, int[] nperlayer, Function[] functions, Matrix[]W, Matrix[]Y, Matrix[]b, Matrix[]u){
+	public void initialize(NeuralNetwork nn, int[] nperlayer, Function[] functions, Matrix[]W, Column[]Y, Column[]b, Column[]u){
 		this.nn = nn;
 		this.nperlayer = nperlayer;
 		this.layers = nperlayer.length;
@@ -30,21 +36,19 @@ public class StandardBackpropagation implements Backpropagation{
 	}
 
 	private void initialize(){
-		d = new Matrix[layers];//position zero reserved
-		Yt = new Matrix[layers];
+		d = new Column[layers];//position zero reserved
+		Yt = new Row[layers];
 		M = new Matrix[layers];
 
-		Yt[0] = new Matrix(1, nperlayer[0]);
+		Yt[0] = new Row(nperlayer[0]);
 		for (int i = 1; i < layers; i++) {
-			Y[i] = new Matrix(u[i].getRows(), u[i].getColumns());
-			Yt[i] = new Matrix(u[i].getColumns(), u[i].getRows());
-
+			Yt[i] = new Row(u[i].getRows());
 			M[i] = new Matrix(u[i].getRows(), Y[i - 1].getRows());
 		}
 
-		d[layers - 1] = new Matrix(u[layers - 1].getRows(), 1);
+		d[layers - 1] = new Column(u[layers - 1].getRows());
 		for (int k = layers - 2; k > 0; k--)
-			d[k] = new Matrix(u[k].getRows(), 1);
+			d[k] = new Column(u[k].getRows());
 	}
 
 	@Override
