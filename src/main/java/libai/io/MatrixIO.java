@@ -23,7 +23,7 @@
  */
 package libai.io;
 
-import libai.common.Matrix;
+import libai.common.matrix.Matrix;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;

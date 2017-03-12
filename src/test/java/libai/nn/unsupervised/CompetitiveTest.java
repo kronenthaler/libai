@@ -24,7 +24,7 @@
 package libai.nn.unsupervised;
 
 import demos.common.SimpleProgressDisplay;
-import libai.common.Matrix;
+import libai.common.matrix.Matrix;
 import org.junit.Test;
 
 import javax.swing.*;

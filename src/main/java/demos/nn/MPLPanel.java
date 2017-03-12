@@ -24,7 +24,7 @@
 package demos.nn;
 
 import demos.common.SimpleProgressDisplay;
-import libai.common.Matrix;
+import libai.common.matrix.Matrix;
 import libai.common.functions.Function;
 import libai.common.functions.Identity;
 import libai.common.functions.Sigmoid;

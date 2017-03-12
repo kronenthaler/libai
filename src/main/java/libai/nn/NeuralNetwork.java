@@ -23,7 +23,7 @@
  */
 package libai.nn;
 
-import libai.common.Matrix;
+import libai.common.matrix.Matrix;
 import libai.common.Plotter;
 import libai.common.Precondition;
 import libai.common.ProgressDisplay;

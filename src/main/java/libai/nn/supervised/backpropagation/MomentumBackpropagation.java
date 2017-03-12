@@ -1,6 +1,6 @@
 package libai.nn.supervised.backpropagation;
 
-import libai.common.Matrix;
+import libai.common.matrix.Matrix;
 
 /**
  * Created by kronenthaler on 18/01/2017.

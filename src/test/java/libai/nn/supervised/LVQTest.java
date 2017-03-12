@@ -24,7 +24,7 @@
 package libai.nn.supervised;
 
 import demos.common.SimpleProgressDisplay;
-import libai.common.Matrix;
+import libai.common.matrix.Matrix;
 import libai.nn.unsupervised.Competitive;
 import org.junit.Test;
 

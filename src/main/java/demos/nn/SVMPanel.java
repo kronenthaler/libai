@@ -24,7 +24,7 @@
 package demos.nn;
 
 import demos.common.SimpleProgressDisplay;
-import libai.common.Matrix;
+import libai.common.matrix.Matrix;
 import libai.common.kernels.LinearKernel;
 import libai.nn.NeuralNetwork;
 import libai.nn.supervised.SVM;

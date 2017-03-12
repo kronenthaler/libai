@@ -24,6 +24,7 @@
 package libai.common;
 
 import libai.common.functions.Function;
+import libai.common.matrix.Matrix;
 import org.junit.Test;
 
 import java.util.HashMap;

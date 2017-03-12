@@ -23,7 +23,7 @@
  */
 package libai.common.kernels;
 
-import libai.common.Matrix;
+import libai.common.matrix.Matrix;
 
 /**
  * Implements a linear kernel based on the dot product.

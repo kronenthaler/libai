@@ -23,7 +23,7 @@
  */
 package libai.ants;
 
-import libai.common.Matrix;
+import libai.common.matrix.Matrix;
 
 import java.util.Arrays;
 import java.util.Comparator;

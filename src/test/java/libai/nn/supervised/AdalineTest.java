@@ -23,7 +23,7 @@
  */
 package libai.nn.supervised;
 
-import libai.common.Matrix;
+import libai.common.matrix.Matrix;
 import libai.common.MatrixIOTest;
 import libai.nn.NeuralNetwork;
 import org.junit.Test;

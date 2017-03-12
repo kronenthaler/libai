@@ -23,7 +23,7 @@
  */
 package libai.nn.unsupervised;
 
-import libai.common.Matrix;
+import libai.common.matrix.Matrix;
 import libai.nn.NeuralNetwork;
 
 import java.util.Random;

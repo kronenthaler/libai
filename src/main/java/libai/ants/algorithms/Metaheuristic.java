@@ -24,7 +24,7 @@
 package libai.ants.algorithms;
 
 import libai.ants.*;
-import libai.common.Matrix;
+import libai.common.matrix.Matrix;
 
 import java.util.Comparator;
 import java.util.Hashtable;

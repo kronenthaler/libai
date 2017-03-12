@@ -23,7 +23,7 @@
  */
 package libai.nn;
 
-import libai.common.Matrix;
+import libai.common.matrix.Matrix;
 import libai.io.MatrixIO;
 import org.junit.Test;
 

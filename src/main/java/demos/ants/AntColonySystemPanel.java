@@ -27,7 +27,7 @@ import libai.ants.Enviroment;
 import libai.ants.Graph;
 import libai.ants.Node;
 import libai.ants.algorithms.AntColonySystem;
-import libai.common.Matrix;
+import libai.common.matrix.Matrix;
 
 import java.util.Collections;
 import java.util.Vector;

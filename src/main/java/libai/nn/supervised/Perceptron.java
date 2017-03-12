@@ -23,7 +23,9 @@
  */
 package libai.nn.supervised;
 
-import libai.common.Matrix;
+
+import libai.common.matrix.Column;
+import libai.common.matrix.Matrix;
 import libai.common.functions.Sign;
 import libai.nn.NeuralNetwork;
 
@@ -40,7 +42,8 @@ import java.util.Random;
 public class Perceptron extends NeuralNetwork {
 	private static final long serialVersionUID = 2795822735956649552L;
 
-	protected Matrix W, b;
+	protected Matrix W;
+	protected Column b;
 	protected int ins, outs;
 	protected static Sign signum = new Sign();
 
@@ -70,7 +73,7 @@ public class Perceptron extends NeuralNetwork {
 		outs = out;
 
 		W = new Matrix(outs, ins);
-		b = new Matrix(out, 1);
+		b = new Column(out);
 
 		W.fill(true, random);
 		b.fill(true, random);
@@ -93,8 +96,8 @@ public class Perceptron extends NeuralNetwork {
 	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
 		int[] sort = new int[length]; // [0,length)
 		double error = 1;
-		Matrix Y = new Matrix(outs, 1);
-		Matrix E = new Matrix(outs, 1);
+		Column Y = new Column(outs);
+		Column E = new Column(outs);
 		Matrix aux = new Matrix(outs, ins);
 
 		//initialize sort array
@@ -143,7 +146,7 @@ public class Perceptron extends NeuralNetwork {
 
 	@Override
 	public Matrix simulate(Matrix p) {
-		Matrix Y = new Matrix(outs, 1);
+		Column Y = new Column(outs);
 		simulate(p, Y);
 		return Y;
 	}

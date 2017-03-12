@@ -23,7 +23,8 @@
  */
 package libai.nn.supervised;
 
-import libai.common.Matrix;
+import libai.common.matrix.Column;
+import libai.common.matrix.Matrix;
 import libai.common.MatrixIOTest;
 import org.junit.Test;
 
@@ -85,10 +86,10 @@ public class PerceptronTest {
 		assertEquals(0, p.simulate(ins[1]).position(0, 0), 0);
 		assertEquals(0, p.simulate(ins[2]).position(0, 0), 0);
 		assertEquals(1, p.simulate(ins[3]).position(0, 0), 0);
-		assertEquals(new Matrix(1, 1, new double[]{0}), p.simulate(ins[0]));
-		assertEquals(new Matrix(1, 1, new double[]{0}), p.simulate(ins[1]));
-		assertEquals(new Matrix(1, 1, new double[]{0}), p.simulate(ins[2]));
-		assertEquals(new Matrix(1, 1, new double[]{1}), p.simulate(ins[3]));
+		assertEquals(new Column(1, new double[]{0}), p.simulate(ins[0]));
+		assertEquals(new Column(1, new double[]{0}), p.simulate(ins[1]));
+		assertEquals(new Column(1, new double[]{0}), p.simulate(ins[2]));
+		assertEquals(new Column(1, new double[]{1}), p.simulate(ins[3]));
 	}
 
 	@Test

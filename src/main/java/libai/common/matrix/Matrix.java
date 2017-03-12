@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package libai.common;
+package libai.common.matrix;
 
 import libai.common.functions.Function;
 
@@ -40,17 +40,17 @@ import java.util.concurrent.ThreadLocalRandom;
  *
  * @author kronenthaler
  */
-public final class Matrix implements Serializable {
+public class Matrix implements Serializable {
 	private static final long serialVersionUID = 4152602945322905714L;
 
 	/**
 	 * Matrix's data, stored for row in a sequential array.
 	 */
-	private final double matrix[];
+	protected final double matrix[];
 	/**
 	 * Number of rows and columns of the matrix.
 	 */
-	private final int rows, cols;
+	protected final int rows, columns;
 
 	/**
 	 * Constructor. Allocated the matrix and could initialize with the identity.
@@ -76,7 +76,7 @@ public final class Matrix implements Serializable {
 
 		matrix = new double[r * c];
 		rows = r;
-		cols = c;
+		columns = c;
 
 		if (identity) {
 			for (int i = 0, m = Math.min(r, c); i < m; i++)
@@ -198,10 +198,10 @@ public final class Matrix implements Serializable {
 	public void add(final Matrix a, final Matrix b) {
 		assert a != null && b != null : "a & b must be not null";
 		assert rows == a.rows && rows == b.rows
-			&& cols == a.cols && cols == b.cols :
+			&& columns == a.columns && columns == b.columns :
 			   "this, a & b must have the same dimensions";
 
-		for (int i = 0, n = rows * cols; i < n; i++) {
+		for (int i = 0, n = rows * columns; i < n; i++) {
 			b.matrix[i] = matrix[i] + a.matrix[i];
 		}
 	}
@@ -219,10 +219,10 @@ public final class Matrix implements Serializable {
 	public void subtract(final Matrix a, final Matrix b) {
 		assert a != null && b != null : "a & b must be not null";
 		assert rows == a.rows && rows == b.rows
-			&& cols == a.cols && cols == b.cols :
+			&& columns == a.columns && columns == b.columns :
 			   "this, a & b must have the same dimensions";
 
-		for (int i = 0, n = rows * cols; i < n; i++) {
+		for (int i = 0, n = rows * columns; i < n; i++) {
 			b.matrix[i] = matrix[i] - a.matrix[i];
 		}
 	}
@@ -239,10 +239,10 @@ public final class Matrix implements Serializable {
 	 */
 	public void multiply(final double a, final Matrix b) {
 		assert b != null : "b must be not null";
-		assert rows == b.rows && cols == b.cols :
+		assert rows == b.rows && columns == b.columns :
 			   "this & b must have the same dimensions";
 
-		for (int i = 0, n = rows * cols; i < n; i++) {
+		for (int i = 0, n = rows * columns; i < n; i++) {
 			b.matrix[i] = a * matrix[i];
 		}
 	}
@@ -250,9 +250,9 @@ public final class Matrix implements Serializable {
 	/**
 	 * Multiply two matrix. <b>{@code b = this * a}</b>
 	 * <p>The matrix {@code a} must be created and has the right dimensions,
-	 * that is {@code a.rows = this.cols}.</p>
+	 * that is {@code a.rows = this.columns}.</p>
 	 * <p>The matrix {@code b} must be created and has the right dimensions,
-	 * that is {@code b.rows = this.rows} and {@code b.cols = a.cols}.</p>
+	 * that is {@code b.rows = this.rows} and {@code b.columns = a.columns}.</p>
 	 * <p><i>NOTE:</i> Assertions of the dimensions are made with {@code assert}
 	 * statement. You must enable this on runtime to be effective.</p>
 	 *
@@ -261,14 +261,14 @@ public final class Matrix implements Serializable {
 	 */
 	public void multiply(final Matrix a, final Matrix b) {
 		assert a != null && b != null : "a & b must be not null";
-		assert cols == a.rows : "a must have as many rows as this columns";
-		assert b.rows == rows && b.cols == a.cols : "b dimensions mismatch";
+		assert columns == a.rows : "a must have as many rows as this columns";
+		assert b.rows == rows && b.columns == a.columns : "b dimensions mismatch";
 
 		double sum;
 		for (int i = 0; i < rows; i++) {
-			for (int j = 0; j < b.cols; j++) {
+			for (int j = 0; j < b.columns; j++) {
 				sum = 0;
-				for (int k = 0; k < cols; k++) {
+				for (int k = 0; k < columns; k++) {
 					sum += position(i, k) * a.position(k, j);
 				}
 				b.position(i, j, sum);
@@ -289,10 +289,10 @@ public final class Matrix implements Serializable {
 	public void apply(Function f, final Matrix a) {
 		assert f != null : "The function must be not null";
 		assert a != null : "a must be not null";
-		assert rows == a.rows && cols == a.cols :
+		assert rows == a.rows && columns == a.columns :
 			   "this & b must have the same dimensions";
 
-		for (int i = 0, n = rows * cols; i < n; i++) {
+		for (int i = 0, n = rows * columns; i < n; i++) {
 			a.matrix[i] = f.eval(matrix[i]);
 		}
 	}
@@ -309,7 +309,7 @@ public final class Matrix implements Serializable {
 	 * @param a The matrix to put the result.
 	 */
 	public void applyInIdentity(Function f, final Matrix a) {
-		assert cols == 1 && rows == a.rows && rows == a.cols;
+		assert columns == 1 && rows == a.rows && rows == a.columns;
 
 		for (int i = 0; i < rows; i++)
 			a.position(i, i, f.eval(position(i, 0)));
@@ -357,7 +357,7 @@ public final class Matrix implements Serializable {
 	 * {@code null} it will fallback to {@link ThreadLocalRandom#current()}
 	 */
 	public void fill(boolean signed, Random r) {
-		for (int i = 0, n = rows * cols; i < n; i++) {
+		for (int i = 0, n = rows * columns; i < n; i++) {
 			matrix[i] = r.nextDouble();
 
 			if (signed) {
@@ -376,7 +376,7 @@ public final class Matrix implements Serializable {
 	 */
 	public void copy(final Matrix a) {
 		assert a != null : "a must be not null";
-		assert rows == a.rows && cols == a.cols :
+		assert rows == a.rows && columns == a.columns :
 			   "this & a must have the same dimensions";
 
 		System.arraycopy(matrix, 0, a.matrix, 0, matrix.length);
@@ -394,21 +394,21 @@ public final class Matrix implements Serializable {
 	 */
 	public double dotProduct(Matrix a) {
 		assert a != null : "a must be not null";
-		assert rows * cols == a.rows * a.cols : "Mismatched dimensions";
+		assert rows * columns == a.rows * a.columns : "Mismatched dimensions";
 
-		if (this.cols != 1 && this.rows != 1) {
+		if (this.columns != 1 && this.rows != 1) {
 			String msg = "This must be either a row or a column matrix";
 			throw new IllegalArgumentException(msg);
 		}
 
-		if (a.cols != 1 && a.rows != 1) {
+		if (a.columns != 1 && a.rows != 1) {
 			String msg = "a must be either a row or a column matrix";
 			throw new IllegalArgumentException(msg);
 		}
 
 		double acum = 0;
 
-		for (int i = 0; i < cols * rows; i++) {
+		for (int i = 0; i < columns * rows; i++) {
 			acum += matrix[i] * a.matrix[i];
 		}
 
@@ -424,11 +424,11 @@ public final class Matrix implements Serializable {
 	 * @param a The matrix to put the result.
 	 */
 	public void transpose(final Matrix a) {
-		assert rows == a.cols && cols == a.rows :
+		assert rows == a.columns && columns == a.rows :
 			   "Matrix a has the wrong dimensions";
 
 		for (int i = 0; i < rows; i++)
-			for (int j = 0; j < cols; j++)
+			for (int j = 0; j < columns; j++)
 				a.position(j, i, position(i, j));
 	}
 
@@ -438,7 +438,7 @@ public final class Matrix implements Serializable {
 	 * @return A new matrix with the transpose of {@code this}.
 	 */
 	public Matrix transpose() {
-		Matrix ret = new Matrix(cols, rows);
+		Matrix ret = new Matrix(columns, rows);
 		transpose(ret);
 		return ret;
 	}
@@ -455,11 +455,11 @@ public final class Matrix implements Serializable {
 	 * @param data	The values to put in that row.
 	 */
 	public void setRow(int index, double[] data) {
-		assert cols == data.length : "Wrong vector dimension, expected: " + cols;
+		assert columns == data.length : "Wrong vector dimension, expected: " + columns;
 		assert index >= 0 && index < rows :
 			   "index must be in the interval [0, " + rows + ")";
 
-		System.arraycopy(data, 0, matrix, index * cols, data.length);
+		System.arraycopy(data, 0, matrix, index * columns, data.length);
 	}
 
 	/**
@@ -484,8 +484,8 @@ public final class Matrix implements Serializable {
 		assert index >= 0 && index < rows : String.format(
 			  "index must be in the interval [0, %d) current: %d", rows, index);
 
-		final double[] ret = new double[cols];
-		System.arraycopy(matrix, index * cols, ret, 0, ret.length);
+		final double[] ret = new double[columns];
+		System.arraycopy(matrix, index * columns, ret, 0, ret.length);
 		return ret;
 	}
 
@@ -498,8 +498,8 @@ public final class Matrix implements Serializable {
 	 * @return the array with the values.
 	 */
 	public double[] getCol(int index) {
-		assert index >= 0 && index < cols : String.format(
-			  "index must be in the interval [0, %d) current: %d", cols, index);
+		assert index >= 0 && index < columns : String.format(
+			  "index must be in the interval [0, %d) current: %d", columns, index);
 
 		final double[] ret = new double[rows];
 		for (int i = 0; i < rows; i++)
@@ -519,10 +519,10 @@ public final class Matrix implements Serializable {
 	public final double position(int i, int j) {
 		assert i >= 0 && i < rows : String.format(
 			  "i must be in the interval [0, %d) current: %d", rows, i);
-		assert j >= 0 && j < cols : String.format(
-			  "j must be in the interval [0, %d) current: %d", cols, j);
+		assert j >= 0 && j < columns : String.format(
+			  "j must be in the interval [0, %d) current: %d", columns, j);
 
-		return matrix[(i * cols) + j];
+		return matrix[(i * columns) + j];
 	}
 
 	/**
@@ -537,10 +537,10 @@ public final class Matrix implements Serializable {
 	public final void position(int i, int j, double v) {
 		assert i >= 0 && i < rows : String.format(
 			  "i must be in the interval [0, %d) current: %d", rows, i);
-		assert j >= 0 && j < cols : String.format(
-			  "j must be in the interval [0, %d) current: %d", cols, j);
+		assert j >= 0 && j < columns : String.format(
+			  "j must be in the interval [0, %d) current: %d", columns, j);
 
-		matrix[(i * cols) + j] = v;
+		matrix[(i * columns) + j] = v;
 	}
 
 	/**
@@ -583,10 +583,10 @@ public final class Matrix implements Serializable {
 	public final void increment(int i, int j, double v) {
 		assert i >= 0 && i < rows : String.format(
 			  "i must be in the interval [0, %d) current: %d", rows, i);
-		assert j >= 0 && j < cols : String.format(
-			  "j must be in the interval [0, %d) current: %d", cols, j);
+		assert j >= 0 && j < columns : String.format(
+			  "j must be in the interval [0, %d) current: %d", columns, j);
 
-		matrix[(i * cols) + j] += v;
+		matrix[(i * columns) + j] += v;
 	}
 
 	/**
@@ -601,10 +601,10 @@ public final class Matrix implements Serializable {
 	public final void scale(int i, int j, double v){
 		assert i >= 0 && i < rows : String.format(
 				"i must be in the interval [0, %d) current: %d", rows, i);
-		assert j >= 0 && j < cols : String.format(
-				"j must be in the interval [0, %d) current: %d", cols, j);
+		assert j >= 0 && j < columns : String.format(
+				"j must be in the interval [0, %d) current: %d", columns, j);
 
-		matrix[(i * cols) + j] *= v;
+		matrix[(i * columns) + j] *= v;
 	}
 
 	/**
@@ -618,7 +618,7 @@ public final class Matrix implements Serializable {
 	public void swap(int i1, int i2) {
 		assert i1 >= 0 && i1 < rows : String.format(
 			  "i1 must be in the interval [0, %d) current: %d", rows, i1);
-		assert i2 >= 0 && i2 < cols : String.format(
+		assert i2 >= 0 && i2 < columns : String.format(
 			  "i2 must be in the interval [0, %d) current: %d", rows, i2);
 
 		final double[] a = getRow(i1);
@@ -629,7 +629,7 @@ public final class Matrix implements Serializable {
 
 	/*//TODO needs translation to this matrix class.
 	 public Matrix solve(Matrix rhs) { // inverse!
-	 if (rows != cols || rhs.rows != cols || rhs.cols != 1)
+	 if (rows != columns || rhs.rows != columns || rhs.columns != 1)
 	 throw new RuntimeException("Illegal matrix dimensions.");
 
 	 // create copies of the data
@@ -637,11 +637,11 @@ public final class Matrix implements Serializable {
 	 Matrix b = new Matrix(rhs);
 
 	 // Gaussian elimination with partial pivoting
-	 for (int i = 0; i < cols; i++) {
+	 for (int i = 0; i < columns; i++) {
 
 	 // find pivot row and swap
 	 int max = i;
-	 for (int j = i + 1; j < cols; j++)
+	 for (int j = i + 1; j < columns; j++)
 	 if (Math.abs(A.data[j][i]) > Math.abs(A.data[max][i]))
 	 max = j;
 
@@ -652,13 +652,13 @@ public final class Matrix implements Serializable {
 	 if (A.data[i][i] == 0.0) throw new RuntimeException("Matrix is singular.");
 
 	 // pivot within b
-	 for (int j = i + 1; j < cols; j++)
+	 for (int j = i + 1; j < columns; j++)
 	 b.data[j][0] -= b.data[i][0] * A.data[j][i] / A.data[i][i];
 
 	 // pivot within A
-	 for (int j = i + 1; j < cols; j++) {
+	 for (int j = i + 1; j < columns; j++) {
 	 double m = A.data[j][i] / A.data[i][i];
-	 for (int k = i+1; k < cols; k++) {
+	 for (int k = i+1; k < columns; k++) {
 	 A.data[j][k] -= A.data[i][k] * m;
 	 }
 	 A.data[j][i] = 0.0;
@@ -666,10 +666,10 @@ public final class Matrix implements Serializable {
 	 }
 
 	 // back substitution
-	 Matrix x = new Matrix(cols, 1);
-	 for (int j = cols - 1; j >= 0; j--) {
+	 Matrix x = new Matrix(columns, 1);
+	 for (int j = columns - 1; j >= 0; j--) {
 	 double t = 0.0;
-	 for (int k = j + 1; k < cols; k++)
+	 for (int k = j + 1; k < columns; k++)
 	 t += A.data[j][k] * x.data[k][0];
 	 x.data[j][0] = (b.data[j][0] - t) / A.data[j][j];
 	 }
@@ -695,10 +695,10 @@ public final class Matrix implements Serializable {
 		}
 
 		Matrix b = (Matrix) b1;
-		if (rows != b.rows || cols != b.cols)
+		if (rows != b.rows || columns != b.columns)
 			return false;
 
-		for (int i = 0, n = rows * cols; i < n; i++) {
+		for (int i = 0, n = rows * columns; i < n; i++) {
 			if (Math.abs(matrix[i] - b.matrix[i]) > 1.e-7) { //'equals'
 				return false;
 			}
@@ -711,7 +711,7 @@ public final class Matrix implements Serializable {
 		int hash = 7;
 		hash = 73 * hash + Arrays.hashCode(this.matrix);
 		hash = 73 * hash + this.rows;
-		hash = 73 * hash + this.cols;
+		hash = 73 * hash + this.columns;
 		return hash;
 	}
 
@@ -730,7 +730,7 @@ public final class Matrix implements Serializable {
 		StringBuilder str = new StringBuilder();
 
 		for (int i = 0; i < rows; i++) {
-			for (int j = 0; j < cols; j++)
+			for (int j = 0; j < columns; j++)
 				str.append(String.format(Locale.US, "%."+precision+"f ", position(i, j)));
 			str.append('\n');
 		}
@@ -750,6 +750,6 @@ public final class Matrix implements Serializable {
 	 * @return The number of columns
 	 */
 	public int getColumns() {
-		return cols;
+		return columns;
 	}
 }
