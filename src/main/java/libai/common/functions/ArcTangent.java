@@ -25,17 +25,17 @@ package libai.common.functions;
 
 /**
  * Function ArcTan.
- * <pre> 
+ * <pre>
  * ArcTan(x)  = tan^-1(x)
- * 
+ *
  * ArcTan'(x) = 1 / (x^2 + 1)
  * </pre>
- * 
+ *
  * @author Federico Vera {@literal <fedevera at unc.edu.ar>}
  */
 public class ArcTangent implements Function {
 	private static final long serialVersionUID = 1967026062364806506L;
-	
+
 	private static final Function derivate = new Function() {
 		@Override
 		public double eval(double x) {

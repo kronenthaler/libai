@@ -30,15 +30,14 @@ import java.util.Vector;
 
 /**
  * This class belong to the core classes of the Ant Framework.
- *
+ * <p>
  * Implements the Rank Ant System algorithm. It is essentially the same as
  * Elitist Ant System, but the arcs of the best-so-far tour of the best
  * <code>r</code> ants are reinforced proportionally to the ant's rank Empirical
  * results shows that this behaves slightly better that Elitits Ant System.
  *
- * @version 1
  * @author Enrique Areyan, enrique3 at gmail.com
- *
+ * @version 1
  */
 public abstract class AntSystemRank extends ElitistAntSystem {
 	/**
@@ -68,7 +67,7 @@ public abstract class AntSystemRank extends ElitistAntSystem {
 			Vector<Integer> solution = a.getSolution();
 			double contribution = Math.max(0, this.Parameters.get(AntSystemRank.epsilon) - 1 - k) * (1 / f(solution));
 			//System.out.println("Contribution of Ant["+k+"] = "+contribution);
-            /* Add contribution to each arc of this ant's solution */
+			/* Add contribution to each arc of this ant's solution */
 			int node_i = 0, node_j = 0;
 			for (int i = 0; i < solution.size() - 1; i++) {
 				node_i = solution.get(i);

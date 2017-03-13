@@ -35,7 +35,7 @@ import java.util.ArrayList;
  * <li>centered trapezoid a != b != c != d.</li>
  * <li>right trapezoid to the right a != b != c = d.</li>
  * </ul>
- *
+ * <p>
  * In the three cases, the support of the set is the interval [a,d].<br>
  * The kernel is always the interval [b,c].<br>
  *

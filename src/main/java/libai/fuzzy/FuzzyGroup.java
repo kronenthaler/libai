@@ -35,7 +35,7 @@ import java.util.HashSet;
  * meters. This class is vital for the process of reasoning because this class
  * provide the way to get a coherent result of the defuzzify process. Besides,
  * this class hold the final value of this process.
- *
+ * <p>
  * So far, this is the only use of this class, but can be useful for other
  * purposes in the future.
  *

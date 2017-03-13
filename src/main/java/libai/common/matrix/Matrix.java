@@ -57,21 +57,21 @@ public class Matrix implements Serializable {
 	 * Constructor. Allocated the matrix and could initialize with the identity.
 	 * By default, the matrix is created filled with zeroes.
 	 *
-	 * @param r number of rows
-	 * @param c number of columns
+	 * @param r        number of rows
+	 * @param c        number of columns
 	 * @param identity if you need initialized with an identity.
 	 * @throws IllegalArgumentException if either {@code r} or {@code c} are
-	 * less or equal than zero.
+	 *                                  less or equal than zero.
 	 */
 	public Matrix(int r, int c, boolean identity) {
 		if (r <= 0) {
 			String msg = "The number of rows must be a non zero positive"
-					   + "integer current %d";
+					+ "integer current %d";
 			throw new IllegalArgumentException(String.format(msg, r));
 		}
 		if (c <= 0) {
 			String msg = "The number of columns must be a non zero positive"
-					   + "integer current %d";
+					+ "integer current %d";
 			throw new IllegalArgumentException(String.format(msg, c));
 		}
 
@@ -91,7 +91,7 @@ public class Matrix implements Serializable {
 	 * @param r number of rows
 	 * @param c number of columns
 	 * @throws IllegalArgumentException if either {@code r} or {@code c} are
-	 * less or equal than zero.
+	 *                                  less or equal than zero.
 	 */
 	public Matrix(int r, int c) {
 		this(r, c, false);
@@ -102,13 +102,13 @@ public class Matrix implements Serializable {
 	 * <p>Creates a matrix and initialize with the data on {@code data}.</p>
 	 * <p>The values are read as row based: data -&gt; row1, row2, ..., rown</p>
 	 *
-	 * @param r number of rows
-	 * @param c number of columns
+	 * @param r    number of rows
+	 * @param c    number of columns
 	 * @param data values to initialize the matrix (length must be
-	 * {@code r * c}).
+	 *             {@code r * c}).
 	 * @throws IllegalArgumentException if either {@code r} or {@code c} are
-	 * less or equal than zero or if {@code data} is {@code null} or has the
-	 * wrong dimension.
+	 *                                  less or equal than zero or if {@code data} is {@code null} or has the
+	 *                                  wrong dimension.
 	 */
 	public Matrix(int r, int c, double[] data) {
 		this(r, c, false);
@@ -117,7 +117,7 @@ public class Matrix implements Serializable {
 			throw new IllegalArgumentException("Data array must be not null");
 		}
 
-		if(data.length != r * c) {
+		if (data.length != r * c) {
 			String msg = "Wrong data array length expected %d got %d";
 			throw new IllegalArgumentException(String.format(msg, r * c, data.length));
 		}
@@ -128,28 +128,29 @@ public class Matrix implements Serializable {
 	/**
 	 * Copy constructor. Creates a copy of a matrix using another matrix.
 	 * Constructor alias for Matrix(copy.rows, copy.columns, copy.matrix).
+	 *
 	 * @param copy Source of the copy
 	 */
-	public Matrix(Matrix copy){
+	public Matrix(Matrix copy) {
 		this(copy.rows, copy.columns, copy.matrix);
 	}
 
-	public static Random getDefaultRandom(){
+	public static Random getDefaultRandom() {
 		return ThreadLocalRandom.current();
 	}
 
 	/**
 	 * Create a new Matrix filled with low random numbers.
 	 *
-	 * @param r number of rows
-	 * @param c number of columns
+	 * @param r      number of rows
+	 * @param c      number of columns
 	 * @param signed {@code true} if the matrix should be filled with positive
-	 * and negative numbers {@code false} if the numbers should be greater or
-	 * equal than zero.
+	 *               and negative numbers {@code false} if the numbers should be greater or
+	 *               equal than zero.
 	 * @return a new matrix filled with low random numbers.
-	 * @see Matrix#fill(boolean, java.util.Random)
 	 * @throws IllegalArgumentException if either {@code r} or {@code c} are
-	 * less or equal than zero.
+	 *                                  less or equal than zero.
+	 * @see Matrix#fill(boolean, java.util.Random)
 	 */
 	public static Matrix random(int r, int c, boolean signed) {
 		return random(r, c, signed, getDefaultRandom());
@@ -158,17 +159,17 @@ public class Matrix implements Serializable {
 	/**
 	 * Create a new Matrix filled with low random numbers.
 	 *
-	 * @param r number of rows
-	 * @param c number of columns
+	 * @param r      number of rows
+	 * @param c      number of columns
 	 * @param signed {@code true} if the matrix should be filled with positive
-	 * and negative numbers {@code false} if the numbers should be greater or
-	 * equal than zero.
-	 * @param rand The {@link Random} object used to fill the matrix, if
-	 * {@code null} it will fallback to {@link ThreadLocalRandom#current()}
+	 *               and negative numbers {@code false} if the numbers should be greater or
+	 *               equal than zero.
+	 * @param rand   The {@link Random} object used to fill the matrix, if
+	 *               {@code null} it will fallback to {@link ThreadLocalRandom#current()}
 	 * @return a new matrix filled with low random numbers.
-	 * @see Matrix#fill(boolean, java.util.Random)
 	 * @throws IllegalArgumentException if either {@code r} or {@code c} are
-	 * less or equal than zero.
+	 *                                  less or equal than zero.
+	 * @see Matrix#fill(boolean, java.util.Random)
 	 */
 	public static Matrix random(int r, int c, boolean signed, Random rand) {
 		Matrix ret = new Matrix(r, c);
@@ -182,10 +183,10 @@ public class Matrix implements Serializable {
 	 * @param r number of rows
 	 * @param c number of columns
 	 * @return a new matrix filled with low random numbers.
+	 * @throws IllegalArgumentException if either {@code r} or {@code c} are
+	 *                                  less or equal than zero.
 	 * @see Matrix#random(int, int, boolean)
 	 * @see Matrix#random(int, int, boolean, java.util.Random)
-	 * @throws IllegalArgumentException if either {@code r} or {@code c} are
-	 * less or equal than zero.
 	 */
 	public static Matrix random(int r, int c) {
 		return random(r, c, true);
@@ -204,8 +205,8 @@ public class Matrix implements Serializable {
 	public void add(final Matrix a, final Matrix b) {
 		assert a != null && b != null : "a & b must be not null";
 		assert rows == a.rows && rows == b.rows
-			&& columns == a.columns && columns == b.columns :
-			   "this, a & b must have the same dimensions";
+				&& columns == a.columns && columns == b.columns :
+				"this, a & b must have the same dimensions";
 
 		for (int i = 0, n = rows * columns; i < n; i++) {
 			b.matrix[i] = matrix[i] + a.matrix[i];
@@ -225,8 +226,8 @@ public class Matrix implements Serializable {
 	public void subtract(final Matrix a, final Matrix b) {
 		assert a != null && b != null : "a & b must be not null";
 		assert rows == a.rows && rows == b.rows
-			&& columns == a.columns && columns == b.columns :
-			   "this, a & b must have the same dimensions";
+				&& columns == a.columns && columns == b.columns :
+				"this, a & b must have the same dimensions";
 
 		for (int i = 0, n = rows * columns; i < n; i++) {
 			b.matrix[i] = matrix[i] - a.matrix[i];
@@ -246,7 +247,7 @@ public class Matrix implements Serializable {
 	public void multiply(final double a, final Matrix b) {
 		assert b != null : "b must be not null";
 		assert rows == b.rows && columns == b.columns :
-			   "this & b must have the same dimensions";
+				"this & b must have the same dimensions";
 
 		for (int i = 0, n = rows * columns; i < n; i++) {
 			b.matrix[i] = a * matrix[i];
@@ -296,7 +297,7 @@ public class Matrix implements Serializable {
 		assert f != null : "The function must be not null";
 		assert a != null : "a must be not null";
 		assert rows == a.rows && columns == a.columns :
-			   "this & b must have the same dimensions";
+				"this & b must have the same dimensions";
 
 		for (int i = 0, n = rows * columns; i < n; i++) {
 			a.matrix[i] = f.eval(matrix[i]);
@@ -324,6 +325,7 @@ public class Matrix implements Serializable {
 	/**
 	 * Fill the matrix with random values between (-1, 1). Alias for
 	 * {@code fill(true)}.
+	 *
 	 * @see Matrix#fill(boolean)
 	 * @see Matrix#fill(boolean, java.util.Random)
 	 */
@@ -336,7 +338,7 @@ public class Matrix implements Serializable {
 	 * {@code is false}, and (-1, 1) if {@code true}.
 	 *
 	 * @param signed {@code false} if all the numbers should be positive,
-	 * {@code false} otherwise
+	 *               {@code false} otherwise
 	 * @see Matrix#fill(boolean, java.util.Random)
 	 */
 	public void fill(boolean signed) {
@@ -349,7 +351,7 @@ public class Matrix implements Serializable {
 	 * <p>This method is based only in {@link Random#nextDouble()}, so in
 	 * case other intervals are needed the only thing that's needed is a
 	 * custom implementation of {@code nextDouble()}, for instance:</p><pre>
-	 *
+	 * <p>
 	 *     Random myRand = new Random(){
 	 *         public double nextDouble() {
 	 *             return super.nextDouble() / 1000.;
@@ -358,9 +360,9 @@ public class Matrix implements Serializable {
 	 * </pre>
 	 *
 	 * @param signed {@code false} if all the numbers should be positive,
-	 * {@code false} otherwise
-	 * @param r The {@link Random} object used to fill the matrix, if
-	 * {@code null} it will fallback to {@link ThreadLocalRandom#current()}
+	 *               {@code false} otherwise
+	 * @param r      The {@link Random} object used to fill the matrix, if
+	 *               {@code null} it will fallback to {@link ThreadLocalRandom#current()}
 	 */
 	public void fill(boolean signed, Random r) {
 		for (int i = 0, n = rows * columns; i < n; i++) {
@@ -383,7 +385,7 @@ public class Matrix implements Serializable {
 	public void copy(final Matrix a) {
 		assert a != null : "a must be not null";
 		assert rows == a.rows && columns == a.columns :
-			   "this & a must have the same dimensions";
+				"this & a must have the same dimensions";
 
 		System.arraycopy(matrix, 0, a.matrix, 0, matrix.length);
 	}
@@ -396,7 +398,7 @@ public class Matrix implements Serializable {
 	 * @param a The matrix to multiply
 	 * @return the scalar of the dot product.
 	 * @throws IllegalArgumentException if either {@code this} or {@code a} are
-	 * neither row nor column matrices.
+	 *                                  neither row nor column matrices.
 	 */
 	public double dotProduct(Matrix a) {
 		assert a != null : "a must be not null";
@@ -431,7 +433,7 @@ public class Matrix implements Serializable {
 	 */
 	public void transpose(final Matrix a) {
 		assert rows == a.columns && columns == a.rows :
-			   "Matrix a has the wrong dimensions";
+				"Matrix a has the wrong dimensions";
 
 		for (int i = 0; i < rows; i++)
 			for (int j = 0; j < columns; j++)
@@ -458,12 +460,12 @@ public class Matrix implements Serializable {
 	 * effective.</p>
 	 *
 	 * @param index The index of the row to place the values.
-	 * @param data	The values to put in that row.
+	 * @param data  The values to put in that row.
 	 */
 	public void setRow(int index, double[] data) {
 		assert columns == data.length : "Wrong vector dimension, expected: " + columns;
 		assert index >= 0 && index < rows :
-			   "index must be in the interval [0, " + rows + ")";
+				"index must be in the interval [0, " + rows + ")";
 
 		System.arraycopy(data, 0, matrix, index * columns, data.length);
 	}
@@ -488,7 +490,7 @@ public class Matrix implements Serializable {
 	 */
 	public double[] getRow(int index) {
 		assert index >= 0 && index < rows : String.format(
-			  "index must be in the interval [0, %d) current: %d", rows, index);
+				"index must be in the interval [0, %d) current: %d", rows, index);
 
 		final double[] ret = new double[columns];
 		System.arraycopy(matrix, index * columns, ret, 0, ret.length);
@@ -505,7 +507,7 @@ public class Matrix implements Serializable {
 	 */
 	public double[] getCol(int index) {
 		assert index >= 0 && index < columns : String.format(
-			  "index must be in the interval [0, %d) current: %d", columns, index);
+				"index must be in the interval [0, %d) current: %d", columns, index);
 
 		final double[] ret = new double[rows];
 		for (int i = 0; i < rows; i++)
@@ -524,9 +526,9 @@ public class Matrix implements Serializable {
 	 */
 	public final double position(int i, int j) {
 		assert i >= 0 && i < rows : String.format(
-			  "i must be in the interval [0, %d) current: %d", rows, i);
+				"i must be in the interval [0, %d) current: %d", rows, i);
 		assert j >= 0 && j < columns : String.format(
-			  "j must be in the interval [0, %d) current: %d", columns, j);
+				"j must be in the interval [0, %d) current: %d", columns, j);
 
 		return matrix[(i * columns) + j];
 	}
@@ -542,9 +544,9 @@ public class Matrix implements Serializable {
 	 */
 	public final void position(int i, int j, double v) {
 		assert i >= 0 && i < rows : String.format(
-			  "i must be in the interval [0, %d) current: %d", rows, i);
+				"i must be in the interval [0, %d) current: %d", rows, i);
 		assert j >= 0 && j < columns : String.format(
-			  "j must be in the interval [0, %d) current: %d", columns, j);
+				"j must be in the interval [0, %d) current: %d", columns, j);
 
 		matrix[(i * columns) + j] = v;
 	}
@@ -553,9 +555,9 @@ public class Matrix implements Serializable {
 	 * Subtract the value of this with the value of b, and let the result on
 	 * resultSubstract Also, copy the original value of this into resultCopy.
 	 *
-	 * @param b Matrix to subtract
+	 * @param b              Matrix to subtract
 	 * @param resultSubtract Matrix to hold the result of the subtraction
-	 * @param resultCopy Matrix to hold the copy of this.
+	 * @param resultCopy     Matrix to hold the copy of this.
 	 */
 	public void subtractAndCopy(Matrix b, Matrix resultSubtract, Matrix resultCopy) {
 		for (int i = 0; i < matrix.length; i++) {
@@ -567,8 +569,8 @@ public class Matrix implements Serializable {
 	/**
 	 * Return in result the value of (this*a + b) for each This(i,j)
 	 *
-	 * @param a constant to multiply
-	 * @param b matrix to add
+	 * @param a      constant to multiply
+	 * @param b      matrix to add
 	 * @param result Matrix to hold the result of the operation.
 	 */
 	public void multiplyAndAdd(double a, Matrix b, Matrix result) {
@@ -588,9 +590,9 @@ public class Matrix implements Serializable {
 	 */
 	public final void increment(int i, int j, double v) {
 		assert i >= 0 && i < rows : String.format(
-			  "i must be in the interval [0, %d) current: %d", rows, i);
+				"i must be in the interval [0, %d) current: %d", rows, i);
 		assert j >= 0 && j < columns : String.format(
-			  "j must be in the interval [0, %d) current: %d", columns, j);
+				"j must be in the interval [0, %d) current: %d", columns, j);
 
 		matrix[(i * columns) + j] += v;
 	}
@@ -604,7 +606,7 @@ public class Matrix implements Serializable {
 	 * @param j index of the column
 	 * @param v value to scale.
 	 */
-	public final void scale(int i, int j, double v){
+	public final void scale(int i, int j, double v) {
 		assert i >= 0 && i < rows : String.format(
 				"i must be in the interval [0, %d) current: %d", rows, i);
 		assert j >= 0 && j < columns : String.format(
@@ -623,9 +625,9 @@ public class Matrix implements Serializable {
 	 */
 	public void swap(int i1, int i2) {
 		assert i1 >= 0 && i1 < rows : String.format(
-			  "i1 must be in the interval [0, %d) current: %d", rows, i1);
+				"i1 must be in the interval [0, %d) current: %d", rows, i1);
 		assert i2 >= 0 && i2 < columns : String.format(
-			  "i2 must be in the interval [0, %d) current: %d", rows, i2);
+				"i2 must be in the interval [0, %d) current: %d", rows, i2);
 
 		final double[] a = getRow(i1);
 		final double[] b = getRow(i2);
@@ -682,7 +684,7 @@ public class Matrix implements Serializable {
 	 return x;
 	 }
 	 */
-	
+
 	/**
 	 * Check if two matrix are equals position to position with a precision of
 	 * 1e-7. If the dimensions mismatch they aren't equals. If one position
@@ -732,12 +734,12 @@ public class Matrix implements Serializable {
 		return toString(8);
 	}
 
-	public String toString(int precision){
+	public String toString(int precision) {
 		StringBuilder str = new StringBuilder();
 
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < columns; j++)
-				str.append(String.format(Locale.US, "%."+precision+"f ", position(i, j)));
+				str.append(String.format(Locale.US, "%." + precision + "f ", position(i, j)));
 			str.append('\n');
 		}
 		str.append('\n');

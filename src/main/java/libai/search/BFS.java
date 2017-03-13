@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- *
  * @author kronenthaler
  */
 public class BFS implements Search {

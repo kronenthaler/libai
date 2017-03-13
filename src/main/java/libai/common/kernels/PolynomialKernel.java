@@ -26,12 +26,11 @@ package libai.common.kernels;
 import libai.common.matrix.Matrix;
 
 /**
- *
  * @author kronenthaler
  */
 public class PolynomialKernel implements Kernel {
 	private static final long serialVersionUID = 5132845207274843125L;
-	
+
 	private double a, b;
 
 	public PolynomialKernel(double _a, double _b) {

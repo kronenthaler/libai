@@ -28,7 +28,6 @@ import libai.common.matrix.Matrix;
 import java.io.Serializable;
 
 /**
- *
  * @author kronenthaler
  */
 public interface Kernel extends Serializable {

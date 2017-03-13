@@ -27,7 +27,6 @@ import libai.ants.AntFrameworkException;
 import libai.ants.Enviroment;
 
 /**
- *
  * @author enriqueareyan
  */
 abstract public class AntQ extends AntColonySystem {

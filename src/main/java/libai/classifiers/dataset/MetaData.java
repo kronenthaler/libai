@@ -28,15 +28,14 @@ import libai.classifiers.Attribute;
 import java.util.Set;
 
 /**
- *
  * @author kronenthaler
  */
 public interface MetaData {
-    public boolean isCategorical(int fieldIndex);
+	public boolean isCategorical(int fieldIndex);
 
-    public String getAttributeName(int fieldIndex);
+	public String getAttributeName(int fieldIndex);
 
-    public int getAttributeCount();
+	public int getAttributeCount();
 
-    public Set<Attribute> getClasses();
+	public Set<Attribute> getClasses();
 }

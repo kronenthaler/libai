@@ -24,7 +24,6 @@
 package libai.classifiers;
 
 /**
- *
  * @author kronenthaler
  */
 public class DiscreteAttribute extends Attribute {
@@ -51,6 +50,6 @@ public class DiscreteAttribute extends Attribute {
 
 	@Override
 	public String toString() {
-		return "["+name+"]="+value;
+		return "[" + name + "]=" + value;
 	}
 }

@@ -31,7 +31,7 @@ package libai.common.functions;
  */
 public class Sign implements Function {
 	private static final long serialVersionUID = 1166867398304665624L;
-	
+
 	@Override
 	public double eval(double x) {
 		return x > 0 ? 1 : 0;

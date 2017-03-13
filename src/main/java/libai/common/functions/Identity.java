@@ -30,7 +30,7 @@ package libai.common.functions;
  */
 public class Identity implements Function {
 	private static final long serialVersionUID = 6331460636579541011L;
-	
+
 	private static final Function derivate = new Function() {
 		@Override
 		public double eval(double x) {

@@ -12,7 +12,7 @@ public class Row extends Matrix {
 		super(1, c);
 	}
 
-	public Row(int c, boolean identity){
+	public Row(int c, boolean identity) {
 		super(1, c, true);
 	}
 
@@ -25,13 +25,13 @@ public class Row extends Matrix {
 	}
 
 	@Override
-	public Column transpose(){
+	public Column transpose() {
 		Column result = new Column(columns);
 		transpose(result);
 		return result;
 	}
 
-	public void transpose(Column result){
+	public void transpose(Column result) {
 		System.arraycopy(matrix, 0, result.matrix, 0, matrix.length);
 	}
 
@@ -43,7 +43,7 @@ public class Row extends Matrix {
 		return random(c, signed, getDefaultRandom());
 	}
 
-	public static Row random(int c, boolean signed, Random rand){
+	public static Row random(int c, boolean signed, Random rand) {
 		Row ret = new Row(c);
 		ret.fill(signed, rand);
 		return ret;

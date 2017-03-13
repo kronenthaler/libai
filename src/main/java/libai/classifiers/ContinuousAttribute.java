@@ -24,7 +24,6 @@
 package libai.classifiers;
 
 /**
- *
  * @author kronenthaler
  */
 public class ContinuousAttribute extends Attribute {
@@ -55,6 +54,6 @@ public class ContinuousAttribute extends Attribute {
 
 	@Override
 	public String toString() {
-		return "["+name+"]=" + value;
+		return "[" + name + "]=" + value;
 	}
 }

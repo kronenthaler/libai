@@ -87,12 +87,12 @@ public class Engine {
 	 * <code>_pm</code>. To evaluate the fitness of each chromosome will use
 	 * <code>_evaluator</code>.
 	 *
-	 * @param chromotype	The class for the chromosomes
-	 * @param individuals	The number of individuals for this population
-	 * @param _chromosomeSize	The size of each chromosome
-	 * @param _pc	The crossing probability.
-	 * @param _pm	The mutation probability.
-	 * @param _evaluator	The fitness evaluator.
+	 * @param chromotype      The class for the chromosomes
+	 * @param individuals     The number of individuals for this population
+	 * @param _chromosomeSize The size of each chromosome
+	 * @param _pc             The crossing probability.
+	 * @param _pm             The mutation probability.
+	 * @param _evaluator      The fitness evaluator.
 	 */
 	public Engine(Class chromotype, int individuals, int _chromosomeSize, double _pc, double _pm, Fitness _evaluator) {
 		evaluator = _evaluator;
@@ -241,5 +241,7 @@ public class Engine {
 		progress = _progress;
 	}
 
-	public static Random getDefaultRandomGenerator() { return ThreadLocalRandom.current(); }
+	public static Random getDefaultRandomGenerator() {
+		return ThreadLocalRandom.current();
+	}
 }

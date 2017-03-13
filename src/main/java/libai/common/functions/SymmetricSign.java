@@ -31,7 +31,7 @@ package libai.common.functions;
  */
 public class SymmetricSign implements Function {
 	private static final long serialVersionUID = 3125748303856269229L;
-	
+
 	@Override
 	public double eval(double x) {
 		return x < 0 ? -1 : 1;

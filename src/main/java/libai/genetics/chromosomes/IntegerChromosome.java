@@ -44,7 +44,7 @@ public class IntegerChromosome extends Chromosome {
 		this.random = random;
 		genes = new int[length];
 
-		for (int i = 0; i < length; genes[i] = i++);
+		for (int i = 0; i < length; genes[i] = i++) ;
 
 		//generate initial permutation
 		for (int i = 0; i < length; i++) {
@@ -69,7 +69,7 @@ public class IntegerChromosome extends Chromosome {
 	 * positions, the first not contained genes of the other parent are taken
 	 * until the chromosomes are completely fill.
 	 *
-	 * @param b Chromosome to cross
+	 * @param b        Chromosome to cross
 	 * @param position Omitted.
 	 * @return A two position array with the new offsprings.
 	 */
@@ -92,7 +92,7 @@ public class IntegerChromosome extends Chromosome {
 		 return getInstance(aux);*/
 
 		boolean mask[] = new boolean[genes.length];
-		for (int i = 0; i < mask.length; mask[i++] = random.nextBoolean());
+		for (int i = 0; i < mask.length; mask[i++] = random.nextBoolean()) ;
 
 		IntegerChromosome b1 = (IntegerChromosome) b;
 		IntegerChromosome a1 = new IntegerChromosome(genes.length, random);
@@ -208,7 +208,7 @@ public class IntegerChromosome extends Chromosome {
 	@Override
 	public String toString() {
 		String ret = "";
-		for (int i = 0; i < genes.length; ret += genes[i++] + " ");
+		for (int i = 0; i < genes.length; ret += genes[i++] + " ") ;
 		return ret;
 	}
 }

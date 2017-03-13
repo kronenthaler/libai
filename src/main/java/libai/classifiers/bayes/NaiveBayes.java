@@ -40,20 +40,19 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- *
  * @author kronenthaler
  */
 public class NaiveBayes {
-    protected int outputIndex;
-    protected int totalCount;
-    protected MetaData metadata;
-    protected HashMap<Attribute, Object[]> params;
-    
+	protected int outputIndex;
+	protected int totalCount;
+	protected MetaData metadata;
+	protected HashMap<Attribute, Object[]> params;
+
 	public NaiveBayes train(DataSet ds) {
 		outputIndex = ds.getOutputIndex();
 		totalCount = ds.getItemsCount();
-        metadata = ds.getMetaData();
-		
+		metadata = ds.getMetaData();
+
 		params = new HashMap<>();
 		initialize(ds);
 		precalculate(ds);
@@ -62,8 +61,8 @@ public class NaiveBayes {
 	}
 
 	private void initialize(DataSet ds) {
-        int attributeCount =  metadata.getAttributeCount();
-        for (Attribute c : metadata.getClasses()) {
+		int attributeCount = metadata.getAttributeCount();
+		for (Attribute c : metadata.getClasses()) {
 			params.put(c, new Object[attributeCount]);
 			for (int j = 0; j < attributeCount; j++) {
 				if (j == outputIndex) {
@@ -78,39 +77,39 @@ public class NaiveBayes {
 	}
 
 	private void precalculate(DataSet ds) {
-        for(List<Attribute> record : ds){
-            Attribute outputAttr = record.get(outputIndex);
-            int j = 0;
-            for(Attribute attr : record){
-		    	Object value = attr.getValue();
-				if (j == outputIndex) { 
-                    //count simple frequencies of the output class
+		for (List<Attribute> record : ds) {
+			Attribute outputAttr = record.get(outputIndex);
+			int j = 0;
+			for (Attribute attr : record) {
+				Object value = attr.getValue();
+				if (j == outputIndex) {
+					//count simple frequencies of the output class
 					int current = (Integer) params.get(outputAttr)[j];
 					params.get(outputAttr)[j] = current + 1;
 				} else if (metadata.isCategorical(j)) {
-                    // count frequencies of each different values in this attribute
+					// count frequencies of each different values in this attribute
 					HashMap<String, Integer> freq = (HashMap<String, Integer>) params.get(outputAttr)[j];
 					if (freq.get((String) value) == null)
 						freq.put((String) value, 0);
 					freq.put((String) value, freq.get((String) value) + 1);
 				} else {
-                    // precalculate the mean and standard deviation, acumulate part.
+					// precalculate the mean and standard deviation, acumulate part.
 					Pair<Double, Double> acum = (Pair<Double, Double>) params.get(outputAttr)[j];
 					//acum for mean and SD
 					acum.first = acum.first + (Double) value;
 					acum.second = acum.second + Math.pow((Double) value, 2);
 				}
-                j++;
+				j++;
 			}
 		}
-        
-        // just for the continuous attributes, finish the calculation of the 
-        // gausian parameters.
-        // for each class values
+
+		// just for the continuous attributes, finish the calculation of the
+		// gausian parameters.
+		// for each class values
 		for (Object[] data : params.values()) {
 			// for each look up table
 			for (Object o : data) {
-                // look for the continuos attributes, that are not the output
+				// look for the continuos attributes, that are not the output
 				if (o instanceof Pair) {
 					Pair<Double, Double> acum = (Pair<Double, Double>) o;
 					double sd = acum.second;
@@ -150,7 +149,7 @@ public class NaiveBayes {
 	private double P(List<Attribute> x, Attribute h) {
 		double p = 1;
 		//look for all records in ds with class h.
-        for (int k = 0, n = x.size(); k < n; k++) {
+		for (int k = 0, n = x.size(); k < n; k++) {
 			Attribute attr = x.get(k);
 			if (metadata.isCategorical(k)) {
 				p *= (count((DiscreteAttribute) attr, k, h) + 1) / (double) (((Integer) params.get(h)[outputIndex]) + 1);
@@ -195,20 +194,20 @@ public class NaiveBayes {
 			return null;
 		}
 	}
-	
-	public static NaiveBayes getInstance(DataSet ds){
+
+	public static NaiveBayes getInstance(DataSet ds) {
 		return new NaiveBayes().train(ds);
 	}
 
 	//IO functions
 	public boolean save(File path) {
 		try (FileOutputStream fos = new FileOutputStream(path);
-			 PrintStream out = new PrintStream(fos)){
+			 PrintStream out = new PrintStream(fos)) {
 			out.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
 			out.println("<" + getClass().getSimpleName() + " "
-					+ "outputIndex=\""+outputIndex+"\" "
-					+ "totalCount=\""+totalCount+"\" "
-					+ "attributes=\""+metadata.getAttributeCount()+"\">");
+					+ "outputIndex=\"" + outputIndex + "\" "
+					+ "totalCount=\"" + totalCount + "\" "
+					+ "attributes=\"" + metadata.getAttributeCount() + "\">");
 			save(out, "\t");
 			out.println("</" + getClass().getSimpleName() + ">");
 			//safe format into a XML file.
@@ -222,7 +221,7 @@ public class NaiveBayes {
 	private void save(PrintStream out, String indent) throws IOException {
 		for (Attribute c : params.keySet()) {
 			out.println(indent + "<class>");
-			out.println(indent + "\t<params type=\"" + c.getClass().getName() + "\" name=\"" + c.getName() + "\" ><![CDATA["+c.getValue()+"]]></params>");
+			out.println(indent + "\t<params type=\"" + c.getClass().getName() + "\" name=\"" + c.getName() + "\" ><![CDATA[" + c.getValue() + "]]></params>");
 			int i = 0;
 			for (Object o : params.get(c)) {
 				out.println(indent + "\t<attribute index=\"" + i + "\">");
@@ -230,7 +229,7 @@ public class NaiveBayes {
 					out.println(indent + "\t\t<count>" + o + "</count>");
 				} else if (o instanceof Pair) { //continuous parameter
 					Pair<Double, Double> p = (Pair<Double, Double>) o;
-					out.println(indent + "\t\t<stats mean=\""+p.first+"\" sd=\""+p.second+"\"/>");
+					out.println(indent + "\t\t<stats mean=\"" + p.first + "\" sd=\"" + p.second + "\"/>");
 				} else { //discrete parameter
 					HashMap<String, Integer> freq = (HashMap<String, Integer>) o;
 					for (String key : freq.keySet()) {
@@ -243,51 +242,51 @@ public class NaiveBayes {
 			out.println(indent + "</class>");
 		}
 	}
-	
+
 	private NaiveBayes load(Node root) {
 		outputIndex = Integer.parseInt(root.getAttributes().getNamedItem("outputIndex").getTextContent());
 		totalCount = Integer.parseInt(root.getAttributes().getNamedItem("totalCount").getTextContent());
 		params = new HashMap<>();
-        int attributeCount = Integer.parseInt(root.getAttributes().getNamedItem("attributes").getTextContent());
-		
+		int attributeCount = Integer.parseInt(root.getAttributes().getNamedItem("attributes").getTextContent());
+
 		NodeList children = root.getChildNodes();
-		for(int i=0;i<children.getLength();i++){
+		for (int i = 0; i < children.getLength(); i++) {
 			Node clazz = children.item(i);
-			if(clazz.getNodeName().equals("class")){
+			if (clazz.getNodeName().equals("class")) {
 				NodeList p = clazz.getChildNodes();
 				Attribute key = null;
 				int index = -1;
-				for(int j=0;j<p.getLength();j++){
+				for (int j = 0; j < p.getLength(); j++) {
 					Node current = p.item(j);
-					if(current.getNodeName().equals("params")){
+					if (current.getNodeName().equals("params")) {
 						key = Attribute.load(current);
-					}else if(current.getNodeName().equals("attribute")){
+					} else if (current.getNodeName().equals("attribute")) {
 						index = Integer.parseInt(current.getAttributes().getNamedItem("index").getTextContent());
-						if(params.get(key)==null)
+						if (params.get(key) == null)
 							params.put(key, new Object[attributeCount]);
 						params.get(key)[index] = getParams(current);
 					}
 				}
 			}
 		}
-		
+
 		System.err.println(this);
-		
+
 		return this;
 	}
-	
-	private Object getParams(Node root){
+
+	private Object getParams(Node root) {
 		NodeList children = root.getChildNodes();
-		HashMap<String,Integer> freq = new HashMap<>();
-		for(int i=0;i<children.getLength();i++){
+		HashMap<String, Integer> freq = new HashMap<>();
+		for (int i = 0; i < children.getLength(); i++) {
 			Node current = children.item(i);
-			if(current.getNodeName().equals("count"))
-				return (Integer)Integer.parseInt(current.getTextContent());
-			else if(current.getNodeName().equals("stats")){
+			if (current.getNodeName().equals("count"))
+				return (Integer) Integer.parseInt(current.getTextContent());
+			else if (current.getNodeName().equals("stats")) {
 				double mean = Double.parseDouble(current.getAttributes().getNamedItem("mean").getTextContent());
 				double sd = Double.parseDouble(current.getAttributes().getNamedItem("sd").getTextContent());
-				return new Pair<>(mean,sd);
-			}else if(current.getNodeName().equals("item")){
+				return new Pair<>(mean, sd);
+			} else if (current.getNodeName().equals("item")) {
 				int count = Integer.parseInt(current.getAttributes().getNamedItem("count").getTextContent());
 				String key = current.getTextContent();
 				freq.put(key, count);

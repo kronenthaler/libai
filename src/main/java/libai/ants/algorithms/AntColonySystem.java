@@ -31,12 +31,11 @@ import java.util.Vector;
 
 /**
  * This class belong to the core classes of the Ant Framework.
- *
+ * <p>
  * Implements the Ant Colony System algorithm.
  *
- * @version 1
  * @author Enrique Areyan, enrique3 at gmail.com
- *
+ * @version 1
  */
 public abstract class AntColonySystem extends Metaheuristic {
 	/**
@@ -180,8 +179,9 @@ public abstract class AntColonySystem extends Metaheuristic {
 					}
 					/* Move ant */
 					currentNode = selectedNode;
-				} while (currentNode != localDestinationNode && currentNode > 0);//stop when destination node its reached
-                /*System.out.println("f(this.bestSolution) = "+ f(this.bestSolution));
+				}
+				while (currentNode != localDestinationNode && currentNode > 0);//stop when destination node its reached
+				/*System.out.println("f(this.bestSolution) = "+ f(this.bestSolution));
 				 if(f(a.getSolution()) < f(this.bestSolution)){
 				 System.out.println("Changing best sol from "+this.bestSolution+" to "+a.getSolution());
 				 this.bestSolution = a.copySolution();
@@ -295,7 +295,7 @@ public abstract class AntColonySystem extends Metaheuristic {
 	 * without the alpha parameter. It is use here when there is no candidates
 	 * in the list.
 	 *
-	 * @param i source node
+	 * @param i             source node
 	 * @param possibleNodes {@code possibleNodes}
 	 * @return destination node
 	 */

@@ -27,13 +27,12 @@ import java.util.Vector;
 
 /**
  * This class belong to the core classes of the Ant Framework.
- *
+ * <p>
  * It represent an Ant. An Ant is composed of a current position, an index where
  * it belong in the Enviroment array an a current solution
  *
- * @version 1
  * @author Enrique Areyan, enrique3 at gmail.com
- *
+ * @version 1
  */
 public class Ant {
 	/**
@@ -52,9 +51,9 @@ public class Ant {
 	/**
 	 * Constructor. Allocates the ant's index and initial position
 	 *
-	 * @param index ant's index in the enviroment array
+	 * @param index      ant's index in the enviroment array
 	 * @param initialPos ant's initial position (node index) in the problem
-	 * graph
+	 *                   graph
 	 */
 	protected Ant(int index, int initialPos) {
 		this.index = index;
@@ -118,7 +117,7 @@ public class Ant {
 	 * Ads a component to the ant's current Vector solution
 	 *
 	 * @param Solution an integer component to be added to the current ant's
-	 * solution
+	 *                 solution
 	 */
 	public void addSolution(int Solution) {
 		this.solution.add(Solution);

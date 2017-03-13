@@ -28,16 +28,15 @@ import libai.ants.Enviroment;
 
 /**
  * This class belong to the core classes of the Ant Framework.
- *
+ * <p>
  * Implements the Elitits Ant System algorithm. It is essentially the same as
  * Ant System, but the arcs of the best-so-far tour are reinforced on each
  * iteration using the
  * <code>daemonActions()</code> function. Empirical results shows that this
  * behaves better that Ant System.
  *
- * @version 1
  * @author Enrique Areyan, enrique3 at gmail.com
- *
+ * @version 1
  */
 public abstract class ElitistAntSystem extends AntSystem {
 	/**
