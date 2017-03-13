@@ -136,6 +136,7 @@ public class Kohonen extends NeuralNetwork {
 	 */
 	@Override
 	public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror) {
+		// TODO: add Preconditions here
 		double lambda = neighborhood;
 		double alpha1 = alpha;
 
@@ -200,7 +201,7 @@ public class Kohonen extends NeuralNetwork {
 		getPrototypeAt(winner.first, winner.second).copy(result);
 	}
 
-	private Pair<Integer, Integer> getWinnerCell(Matrix pattern) {
+	private Pair<Integer, Integer> getWinnerCell(Column pattern) {
 		Pair<Integer, Integer> winner = new Pair<>(0, 0);
 		double min = Double.MAX_VALUE;
 		for (int i = 0; i < nperlayer[1]; i++) {
@@ -245,7 +246,7 @@ public class Kohonen extends NeuralNetwork {
 	 * @param offset   The initial pattern position
 	 * @param length   How many patterns to label.
 	 */
-	private void expandMap(Matrix[] patterns, Matrix[] answers, int offset, int length) {
+	private void expandMap(Column[] patterns, Column[] answers, int offset, int length) {
 		//System.out.println("labelling...");
 		for (int k = 0; k < length; k++) {
 			Pair<Integer, Integer> winner = getWinnerCell(patterns[k + offset]);

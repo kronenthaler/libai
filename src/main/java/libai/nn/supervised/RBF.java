@@ -46,7 +46,7 @@ import java.util.Random;
 public class RBF extends Adaline {
 	private static final long serialVersionUID = 6772562276994202439L;
 
-	private Matrix c[];
+	private Column centers[];
 	protected int nperlayer[];//{#inputs,#Neurons,#outputs}
 	protected double[] sigma;
 
@@ -96,6 +96,7 @@ public class RBF extends Adaline {
 	 */
 	@Override
 	public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror) {
+		// TODO: add Preconditions here
 		if (progress != null) {
 			progress.setMaximum(0);
 			progress.setMinimum(-epochs * 2);
@@ -103,7 +104,7 @@ public class RBF extends Adaline {
 		}
 
 		//apply k-means to the patterns
-		c = kmeans(nperlayer[1], patterns, offset, length);
+		centers = kmeans(nperlayer[1], patterns, offset, length);
 
 		//calculate sigmas. p-closest neighbors, p is the input dimension
 		PriorityQueue<Double>[] neighbors = new PriorityQueue[nperlayer[1]];
@@ -112,7 +113,7 @@ public class RBF extends Adaline {
 
 		for (int i = 0; i < nperlayer[1] - 1; i++) {
 			for (int j = i + 1; j < nperlayer[1]; j++) {
-				double current = Math.sqrt(euclideanDistance2(c[i], c[j]));
+				double current = Math.sqrt(euclideanDistance2(centers[i], centers[j]));
 				neighbors[i].add(-current);
 				neighbors[j].add(-current);
 			}
@@ -156,16 +157,16 @@ public class RBF extends Adaline {
 	 * @param length   How many patterns are in the cloud.
 	 * @return An array with the centroids.
 	 */
-	private Matrix[] kmeans(int k, Matrix[] patterns, int offset, int length) {
+	private Column[] kmeans(int k, Column[] patterns, int offset, int length) {
 		int i, j, l;
 
-		Matrix[] ctemp = new Matrix[k];
+		Column[] ctemp = new Column[k];
 		ArrayList<Integer>[] partitions = new ArrayList[k];
-		Matrix aux = new Matrix(patterns[0].getRows(), patterns[0].getColumns());
-		Matrix aux1 = new Matrix(patterns[0].getRows(), patterns[0].getColumns());
+		Column aux = new Column(patterns[0].getRows());
+		Column aux1 = new Column(patterns[0].getRows());
 
 		for (i = 0; i < k; i++) {
-			ctemp[i] = new Matrix(patterns[0].getRows(), patterns[0].getColumns());
+			ctemp[i] = new Column(patterns[0].getRows());
 			int index = random.nextInt(length) + offset;//abs((int)(ctemp[i].random(&xzxzx)*npatterns));;
 			patterns[index].copy(ctemp[i]);
 			partitions[i] = new ArrayList<>();
@@ -199,7 +200,7 @@ public class RBF extends Adaline {
 
 				if (total == 0) {
 					//empty partition take a random pattern as centroid
-					ctemp[i] = new Matrix(patterns[0].getRows(), patterns[0].getColumns());
+					ctemp[i] = new Column(patterns[0].getRows());
 					int index = random.nextInt(length) + offset;
 					patterns[index].copy(ctemp[i]);
 
@@ -240,9 +241,9 @@ public class RBF extends Adaline {
 	 * @param pattern Pattern to evaluate
 	 * @param result  The matrix to put the result.
 	 */
-	private void simulateNoChange(Matrix pattern, Matrix result) {
+	private void simulateNoChange(Column pattern, Column result) {
 		for (int i = 0; i < nperlayer[1]; i++) {
-			double current = euclideanDistance2(pattern, c[i]);
+			double current = euclideanDistance2(pattern, centers[i]);
 			result.position(i, 0, NeuralNetwork.gaussian(current, sigma[i]));
 		}
 	}

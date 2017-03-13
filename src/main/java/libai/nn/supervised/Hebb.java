@@ -108,6 +108,7 @@ public class Hebb extends NeuralNetwork {
 	 */
 	@Override
 	public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror) {
+		// TODO: add Preconditions here
 		int[] sort = new int[length];
 		Matrix temp = new Matrix(W.getRows(), W.getColumns());
 		double error = 1;

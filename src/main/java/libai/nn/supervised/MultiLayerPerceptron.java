@@ -167,6 +167,7 @@ public class MultiLayerPerceptron extends NeuralNetwork {
 	 */
 	@Override
 	public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror) {
+		// TODO: add Preconditions here
 		if (progress != null) {
 			progress.setMinimum(0);
 			progress.setMaximum(epochs);

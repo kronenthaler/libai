@@ -94,6 +94,7 @@ public class Perceptron extends NeuralNetwork {
 	 */
 	@Override
 	public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror) {
+		// TODO: add Preconditions here
 		int[] sort = new int[length]; // [0,length)
 		double error = 1;
 		Column Y = new Column(outs);

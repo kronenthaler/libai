@@ -85,6 +85,8 @@ public class SVM extends NeuralNetwork {
 
 	@Override
 	public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror) {
+		// TODO: add Preconditions here
+
 		if (progress != null) {
 			progress.setMaximum(epochs);
 			progress.setMinimum(0);
@@ -183,6 +185,7 @@ public class SVM extends NeuralNetwork {
 
 	@Override
 	public double error(Column[] patterns, Column[] answers, int offset, int length) {
+		// TODO: add Preconditions here
 		int error = 0;
 		for (int i = 0; i < length; i++) {
 			if (simulate(patterns[i + offset]).position(0, 0) * answers[i + offset].position(0, 0) < 0)

@@ -104,6 +104,7 @@ public class LVQ extends Competitive {
 	 */
 	@Override
 	public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror) {
+		// TODO: add Preconditions here
 		int[] sort = new int[length];
 		double error = 1;
 		Row r = new Row(ins);

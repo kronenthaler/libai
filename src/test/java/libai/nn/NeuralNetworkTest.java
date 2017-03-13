@@ -111,8 +111,8 @@ public class NeuralNetworkTest {
 	public void testEuclideanDistanceMatrix() {
 		assumeTrue("Can't use temp dir...", checkTemp());
 		assumeTrue("Can't find Octave...", checkOctaveInstall());
-		Matrix a = Matrix.random(10, 1);
-		Matrix b = Matrix.random(10, 1);
+		Column a = Column.random(10);
+		Column b = Column.random(10);
 
 		String tmp = System.getProperty("java.io.tmpdir") + File.separator;
 		File matFile = new File(tmp + "euclidean.mat");

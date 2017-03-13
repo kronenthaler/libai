@@ -30,6 +30,7 @@ import libai.common.Precondition;
 import libai.common.ProgressDisplay;
 
 import java.io.*;
+import java.util.Collections;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -273,13 +274,11 @@ public abstract class NeuralNetwork implements Serializable {
 	 * <p><i>NOTE:</i> Assertions of the dimensions are made with {@code assert}
 	 * statement. You must enable this on runtime to be effective.</p>
 	 *
-	 * @param a Matrix a.
-	 * @param b Matrix b.
+	 * @param a Column matrix a.
+	 * @param b Column matrix b.
 	 * @return The square Euclidean distance.
 	 */
-	public static double euclideanDistance2(Matrix a, Matrix b) {
-		Precondition.check(a.getColumns() == 1, "a must be a column matrix");
-		Precondition.check(b.getColumns() == 1, "b must be a column matrix");
+	public static double euclideanDistance2(Column a, Column b) {
 		Precondition.check(a.getRows() == b.getRows(), "a & b must have the same length");
 
 		double sum = 0;

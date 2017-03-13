@@ -68,6 +68,7 @@ public class Hopfield extends NeuralNetwork {
 	 */
 	@Override
 	public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror) {
+		// TODO: add Preconditions here
 		Row patternT = new Row(patterns[0].getRows());
 		Matrix temp = new Matrix(W.getRows(), W.getColumns());
 
