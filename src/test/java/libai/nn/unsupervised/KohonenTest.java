@@ -83,14 +83,14 @@ public class KohonenTest {
 		for(int i=0;i<p.length;i++){
 			p[i] = new Column(2);
 			c[i] = new Column(1, new double[]{ i/(int)(p.length/2) });
-			p[i].fill(false, r);
+			p[i].fill(true, r);
 			p[i].add(new Column(2, new double[]{i > p.length/2 ? 10 : -10, i > p.length/2 ? 10 : -10}), p[i]);
 		}
 
 		for(int i=0;i<test.length;i++){
 			test[i] = new Column(2);
 			ctest[i] = new Column(2, new double[]{i > p.length/2 ? 10 : -10, i > p.length/2 ? 10 : -10});
-			test[i].fill(false, r);
+			test[i].fill(true, r);
 			test[i].add(new Column(2, new double[]{i > p.length/2 ? 10 : -10, i > p.length/2 ? 10 : -10}), test[i]);
 		}
 

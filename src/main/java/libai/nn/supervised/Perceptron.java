@@ -50,8 +50,8 @@ public class Perceptron extends NeuralNetwork {
 	/**
 	 * Constructor.
 	 *
-	 * @param in Number of inputs for the network = number of elements in the
-	 * patterns.
+	 * @param in  Number of inputs for the network = number of elements in the
+	 *            patterns.
 	 * @param out Number of outputs for the network.
 	 */
 	public Perceptron(int in, int out) {
@@ -61,9 +61,9 @@ public class Perceptron extends NeuralNetwork {
 	/**
 	 * Constructor.
 	 *
-	 * @param in Number of inputs for the network = number of elements in the
-	 * patterns.
-	 * @param out Number of outputs for the network.
+	 * @param in   Number of inputs for the network = number of elements in the
+	 *             patterns.
+	 * @param out  Number of outputs for the network.
 	 * @param rand Random generator used for creating matrices
 	 */
 	public Perceptron(int in, int out, Random rand) {
@@ -83,12 +83,13 @@ public class Perceptron extends NeuralNetwork {
 	 * Train the perceptron using the standard update rule: <br>
 	 * W = W + alpha.e.pattern^t<br>
 	 * b = b + alpha.e
-	 *  @param patterns    The patterns to be learned.
-	 * @param answers The expected answers.
+	 *
+	 * @param patterns The patterns to be learned.
+	 * @param answers  The expected answers.
 	 * @param alpha    The learning rate.
-	 * @param epochs    The maximum number of iterations
-	 * @param offset    The first pattern position
-	 * @param length    How many patterns will be used.
+	 * @param epochs   The maximum number of iterations
+	 * @param offset   The first pattern position
+	 * @param length   How many patterns will be used.
 	 * @param minerror The minimal error expected.
 	 */
 	@Override
@@ -112,7 +113,7 @@ public class Perceptron extends NeuralNetwork {
 			progress.setValue(0);
 		}
 
-		for(int currentEpoch=0; currentEpoch < epochs && error > minerror; currentEpoch++){
+		for (int currentEpoch = 0; currentEpoch < epochs && error > minerror; currentEpoch++) {
 			//shuffle patterns
 			shuffle(sort);
 
@@ -121,7 +122,7 @@ public class Perceptron extends NeuralNetwork {
 				simulate(patterns[sort[i] + offset], Y);
 
 				//e=t-y
-				answers[sort[i] + offset].subtract(Y, E);	//error
+				answers[sort[i] + offset].subtract(Y, E);    //error
 
 				//alpha*e.p^t
 				E.multiply(alpha, E);
@@ -153,13 +154,14 @@ public class Perceptron extends NeuralNetwork {
 	/**
 	 * Calculate the output for the pattern and left the result on result.
 	 * result = signum(W * pattern + b)
-	 *  @param pattern The input pattern
-	 * @param result The output result.
+	 *
+	 * @param pattern The input pattern
+	 * @param result  The output result.
 	 */
 	@Override
 	public void simulate(Column pattern, Column result) {
-		W.multiply(pattern, result);	//inner product
-		result.add(b, result);			//bias
-		result.apply(signum, result);	//thresholding
+		W.multiply(pattern, result);    //inner product
+		result.add(b, result);            //bias
+		result.apply(signum, result);    //thresholding
 	}
 }

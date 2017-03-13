@@ -69,7 +69,7 @@ public class RBF extends Adaline {
 	 * output layer.
 	 *
 	 * @param nperlayer Neurons Per Layer.
-	 * @param rand Random generator used for creating matrices
+	 * @param rand      Random generator used for creating matrices
 	 */
 	public RBF(int[] nperlayer, Random rand) {
 		super(nperlayer[1], nperlayer[2], rand); // input, outputs
@@ -85,12 +85,13 @@ public class RBF extends Adaline {
 	 * the function is calculated using n-nearest neighbors. When n = the number
 	 * of inputs. Then the output for the hidden layer are precalculated and
 	 * used as input for the Adaline training.
-	 *  @param patterns    The patterns to be learned.
-	 * @param answers The expected answers.
+	 *
+	 * @param patterns The patterns to be learned.
+	 * @param answers  The expected answers.
 	 * @param alpha    The learning rate.
-	 * @param epochs    The maximum number of iterations
-	 * @param offset    The first pattern position
-	 * @param length    How many patterns will be used.
+	 * @param epochs   The maximum number of iterations
+	 * @param offset   The first pattern position
+	 * @param length   How many patterns will be used.
 	 * @param minerror The minimal error expected.
 	 */
 	@Override
@@ -149,10 +150,10 @@ public class RBF extends Adaline {
 	 * points closest to every point in the cloud. The centroids found probably
 	 * will no be any of the patterns in the cloud.
 	 *
-	 * @param k Number of centroids to find.
+	 * @param k        Number of centroids to find.
 	 * @param patterns The cloud of patterns
-	 * @param offset Initial position of the cloud.
-	 * @param length How many patterns are in the cloud.
+	 * @param offset   Initial position of the cloud.
+	 * @param length   How many patterns are in the cloud.
 	 * @return An array with the centroids.
 	 */
 	private Matrix[] kmeans(int k, Matrix[] patterns, int offset, int length) {
@@ -237,7 +238,7 @@ public class RBF extends Adaline {
 	 * <code>result</code>.
 	 *
 	 * @param pattern Pattern to evaluate
-	 * @param result The matrix to put the result.
+	 * @param result  The matrix to put the result.
 	 */
 	private void simulateNoChange(Matrix pattern, Matrix result) {
 		for (int i = 0; i < nperlayer[1]; i++) {

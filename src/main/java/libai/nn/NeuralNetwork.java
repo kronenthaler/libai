@@ -49,18 +49,22 @@ public abstract class NeuralNetwork implements Serializable {
 	public NeuralNetwork() {
 		this(getDefaultRandomGenerator());
 	}
+
 	public NeuralNetwork(Random rand) {
 		random = rand;
 	}
 
-	public static final Random getDefaultRandomGenerator(){
+	public static final Random getDefaultRandomGenerator() {
 		return ThreadLocalRandom.current();
 	}
 
 	public void setPlotter(Plotter plotter) {
 		this.plotter = plotter;
 	}
-	public Plotter getPlotter() { return plotter; }
+
+	public Plotter getPlotter() {
+		return plotter;
+	}
 
 	/**
 	 * Sets a {@link ProgressDisplay} to the {@code NeuralNetwork}. The value
@@ -75,7 +79,10 @@ public abstract class NeuralNetwork implements Serializable {
 	public void setProgressBar(ProgressDisplay pb) {
 		progress = pb;
 	}
-	public ProgressDisplay getProgressBar(){ return progress; }
+
+	public ProgressDisplay getProgressBar() {
+		return progress;
+	}
 
 	/**
 	 * Trains this neural network with the list of {@code patterns} and the
@@ -85,13 +92,14 @@ public abstract class NeuralNetwork implements Serializable {
 	 * {@code minerror} is reached.</p>
 	 * <p>{@code patterns} and {@code answers} must be arrays of
 	 * non-{@code null} <b>column</b> matrices</p>
-	 *  @param patterns    The patterns to be learned.
-	 * @param answers    The expected answers.
-	 * @param alpha        The learning rate.
-	 * @param epochs    The maximum number of iterations
-	 * @param offset    The first pattern position
-	 * @param length    How many patterns will be used.
-	 * @param minerror    The minimal error expected.
+	 *
+	 * @param patterns The patterns to be learned.
+	 * @param answers  The expected answers.
+	 * @param alpha    The learning rate.
+	 * @param epochs   The maximum number of iterations
+	 * @param offset   The first pattern position
+	 * @param length   How many patterns will be used.
+	 * @param minerror The minimal error expected.
 	 */
 	public abstract void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror);
 
@@ -101,10 +109,10 @@ public abstract class NeuralNetwork implements Serializable {
 	 * <p>{@code patterns} and {@code answers} must be arrays of
 	 * non-{@code null} <b>column</b> matrices</p>
 	 *
-	 * @param patterns    The patterns to be learned.
-	 * @param answers    The expected answers.
+	 * @param patterns The patterns to be learned.
+	 * @param answers  The expected answers.
 	 * @param alpha    The learning rate.
-	 * @param epochs    The maximum number of iterations
+	 * @param epochs   The maximum number of iterations
 	 * @see NeuralNetwork#train(Column[], Column[], double, int, int, int, double)
 	 */
 	public void train(Column[] patterns, Column[] answers, double alpha, int epochs) {
@@ -116,12 +124,12 @@ public abstract class NeuralNetwork implements Serializable {
 	 * <p>{@code patterns} and {@code answers} must be arrays of
 	 * non-{@code null} <b>column</b> matrices</p>
 	 *
-	 * @param patterns    The patterns to be learned.
-	 * @param answers    The expected answers.
+	 * @param patterns The patterns to be learned.
+	 * @param answers  The expected answers.
 	 * @param alpha    The learning rate.
-	 * @param epochs    The maximum number of iterations
-	 * @param offset    The first pattern position
-	 * @param length    How many patterns will be used.
+	 * @param epochs   The maximum number of iterations
+	 * @param offset   The first pattern position
+	 * @param length   How many patterns will be used.
 	 * @see NeuralNetwork#train(Column[], Column[], double, int, int, int, double)
 	 */
 	public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length) {
@@ -133,18 +141,17 @@ public abstract class NeuralNetwork implements Serializable {
 		//second precondition doesn't apply to unsupervised learning.
 		//minerror validation might not apply to unsupervised learning
 		// epochs do not apply to some unsupervised learning (hopfield)
-		Precondition.checkArgument(patterns[0].getColumns() == 1 && answers[0].getColumns() == 1 ,  "patterns and answers must be column matrices");
-		Precondition.checkArgument(patterns.length == answers.length ,  "There must be the same amount of patterns and answers");
-		Precondition.checkArgument(offset >= 0 && offset < patterns.length , "offset must be in the interval [0, %d), found,  %d", patterns.length, offset);
-		Precondition.checkArgument(length >= 0 && length <= patterns.length - offset , "length must be in the interval (0, %d], found,  %d", patterns.length - offset, length);
-		Precondition.checkArgument(epochs > 0 ,  "The number of epochs must be a positive non zero integer");
-		Precondition.checkArgument(minerror >= 0 ,  "The error must be a positive number");
+		Precondition.check(patterns.length == answers.length, "There must be the same amount of patterns and answers");
+		Precondition.check(offset >= 0 && offset < patterns.length, "offset must be in the interval [0, %d), found,  %d", patterns.length, offset);
+		Precondition.check(length >= 0 && length <= patterns.length - offset, "length must be in the interval (0, %d], found,  %d", patterns.length - offset, length);
+		Precondition.check(epochs > 0, "The number of epochs must be a positive non zero integer");
+		Precondition.check(minerror >= 0, "The error must be a positive number");
 	}
 
 	/**
 	 * Calculates the output for the {@code pattern}.
 	 *
-	 * @param pattern    Pattern to use as input.
+	 * @param pattern Pattern to use as input.
 	 * @return The output for the neural network.
 	 */
 	public abstract Column simulate(Column pattern);
@@ -152,41 +159,42 @@ public abstract class NeuralNetwork implements Serializable {
 	/**
 	 * Calculates the output for the {@code pattern} and left the result in
 	 * {@code result}.
-	 *  @param pattern    Pattern to use as input.
-	 * @param result    The output for the input.
+	 *
+	 * @param pattern Pattern to use as input.
+	 * @param result  The output for the input.
 	 */
 	public abstract void simulate(Column pattern, Column result);
 
 	/**
 	 * Saves the neural network to the file in the given {@code path}
 	 *
-	 * @param path	The path for the output file.
+	 * @param path The path for the output file.
 	 * @return {@code true} if the file can be created and written,
 	 * {@code false} otherwise.
 	 */
 	public boolean save(String path) {
 		try (FileOutputStream fos = new FileOutputStream(path);
-		     ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+			 ObjectOutputStream oos = new ObjectOutputStream(fos)) {
 			oos.writeObject(this);
 		} catch (Exception e) {
 			return false;
 		}
 		return true;
 	}
-	
+
 	public static final <NN extends NeuralNetwork> NN open(String path) throws IOException, ClassNotFoundException {
 		return (NN) open(new File(path));
 	}
-	
-	public static final <NN extends NeuralNetwork> NN open(File file)throws IOException, ClassNotFoundException {
-		try (FileInputStream fis = new FileInputStream(file)){
+
+	public static final <NN extends NeuralNetwork> NN open(File file) throws IOException, ClassNotFoundException {
+		try (FileInputStream fis = new FileInputStream(file)) {
 			return (NN) open(fis);
 		} finally {
 			// nothing to do, raise the exception upwards.
 		}
 	}
-	
-	public static final <NN extends NeuralNetwork> NN open(InputStream input)throws IOException, ClassNotFoundException {
+
+	public static final <NN extends NeuralNetwork> NN open(InputStream input) throws IOException, ClassNotFoundException {
 		try (ObjectInputStream in = new ObjectInputStream(input)) {
 			return (NN) in.readObject();
 		} finally {
@@ -201,7 +209,7 @@ public abstract class NeuralNetwork implements Serializable {
 	 * non-{@code null} <b>column</b> matrices</p>
 	 *
 	 * @param patterns The array with the patterns to test
-	 * @param answers The array with the expected answers for the patterns.
+	 * @param answers  The array with the expected answers for the patterns.
 	 * @return The error calculate for the patterns.
 	 * @see NeuralNetwork#error(Column[], Column[], int, int)
 	 */
@@ -219,22 +227,21 @@ public abstract class NeuralNetwork implements Serializable {
 	 * statement. You must enable this on runtime to be effective.</p>
 	 *
 	 * @param patterns The array with the patterns to test
-	 * @param answers The array with the expected answers for the patterns.
-	 * @param offset The initial position inside the array.
-	 * @param length How many patterns must be taken from the offset.
+	 * @param answers  The array with the expected answers for the patterns.
+	 * @param offset   The initial position inside the array.
+	 * @param length   How many patterns must be taken from the offset.
 	 * @return The mean quadratic error.
 	 */
 	public double error(Column[] patterns, Column[] answers, int offset, int length) {
-		Precondition.checkArgument(patterns[0].getColumns() == 1 && answers[0].getColumns() == 1 ,  "patterns and answers must be column matrices");
-		Precondition.checkArgument(patterns.length == answers.length ,  "There must be the same amount of patterns and answers");
-		Precondition.checkArgument(offset >= 0 && offset < patterns.length , "offset must be in the interval [0, %d), found,  %d", patterns.length, offset);
-		Precondition.checkArgument(length >= 0 && length <= patterns.length - offset , "length must be in the interval (0, %d], found,  %d", patterns.length - offset, length);
+		Precondition.check(patterns.length == answers.length, "There must be the same amount of patterns and answers");
+		Precondition.check(offset >= 0 && offset < patterns.length, "offset must be in the interval [0, %d), found,  %d", patterns.length, offset);
+		Precondition.check(length >= 0 && length <= patterns.length - offset, "length must be in the interval (0, %d], found,  %d", patterns.length - offset, length);
 
 		double error = 0.0;
 		Column Y = new Column(answers[0].getRows());
 
 		for (int i = 0; i < length; i++) {
-			simulate(patterns[i + offset], Y);	//inner product
+			simulate(patterns[i + offset], Y);    //inner product
 			error += euclideanDistance2(answers[i + offset], Y);
 		}
 
@@ -251,7 +258,7 @@ public abstract class NeuralNetwork implements Serializable {
 	 * @return The square Euclidean distance.
 	 */
 	public static double euclideanDistance2(double[] a, double[] b) {
-		Precondition.checkArgument(a.length == b.length ,  "a & b must have the same length");
+		Precondition.check(a.length == b.length, "a & b must have the same length");
 
 		double sum = 0;
 		for (int i = 0; i < a.length; i++) {
@@ -271,9 +278,9 @@ public abstract class NeuralNetwork implements Serializable {
 	 * @return The square Euclidean distance.
 	 */
 	public static double euclideanDistance2(Matrix a, Matrix b) {
-		Precondition.checkArgument(a.getColumns() == 1 ,  "a must be a column matrix");
-		Precondition.checkArgument(b.getColumns() == 1 ,  "b must be a column matrix");
-		Precondition.checkArgument(a.getRows() == b.getRows() ,  "a & b must have the same length");
+		Precondition.check(a.getColumns() == 1, "a must be a column matrix");
+		Precondition.check(b.getColumns() == 1, "b must be a column matrix");
+		Precondition.check(a.getRows() == b.getRows(), "a & b must have the same length");
 
 		double sum = 0;
 		for (int i = 0; i < a.getRows(); i++) {
@@ -287,7 +294,7 @@ public abstract class NeuralNetwork implements Serializable {
 	 * Calculates the Gaussian function with standard deviation
 	 * {@code sigma} and input parameter {@code u^2}
 	 *
-	 * @param u2 {@code u2}
+	 * @param u2    {@code u2}
 	 * @param sigma {@code sigma}
 	 * @return {@code e^(-u^2/2.sigma)}
 	 */

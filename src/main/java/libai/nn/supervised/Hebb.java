@@ -53,7 +53,7 @@ public class Hebb extends NeuralNetwork {
 	 * and outputs. Set the decay constant to zero to eliminate it. Alias of
 	 * this(inputs, 0);
 	 *
-	 * @param inputs Number of inputs for the network.
+	 * @param inputs  Number of inputs for the network.
 	 * @param outputs Number of outputs for the network.
 	 */
 	public Hebb(int inputs, int outputs) {
@@ -66,9 +66,9 @@ public class Hebb extends NeuralNetwork {
 	 * <code>phi</code>. If phi = 0 the network don't forget anything, if phi =
 	 * 1 the network just remember the las pattern.
 	 *
-	 * @param inputs Number of inputs and outputs for the networks.
+	 * @param inputs  Number of inputs and outputs for the networks.
 	 * @param outputs Number of outputs for the network.
-	 * @param phi Decay constant.
+	 * @param phi     Decay constant.
 	 */
 	public Hebb(int inputs, int outputs, double phi) {
 		this(inputs, outputs, phi, getDefaultRandomGenerator());
@@ -80,10 +80,10 @@ public class Hebb extends NeuralNetwork {
 	 * <code>phi</code>. If phi = 0 the network don't forget anything, if phi =
 	 * 1 the network just remember the las pattern.
 	 *
-	 * @param inputs Number of inputs and outputs for the networks.
+	 * @param inputs  Number of inputs and outputs for the networks.
 	 * @param outputs Number of outputs for the network.
-	 * @param phi Decay constant.
-	 * @param rand Random generator used for creating matrices
+	 * @param phi     Decay constant.
+	 * @param rand    Random generator used for creating matrices
 	 */
 	public Hebb(int inputs, int outputs, double phi, Random rand) {
 		super(rand);
@@ -97,12 +97,13 @@ public class Hebb extends NeuralNetwork {
 	 * consist on reinforce the right connections if they produce a correct
 	 * answer and inhibit the others. The decay term has an influence in how
 	 * much affects the previous knowledge to the reinforcement.
-	 *  @param patterns    The patterns to be learned.
-	 * @param answers The expected answers.
+	 *
+	 * @param patterns The patterns to be learned.
+	 * @param answers  The expected answers.
 	 * @param alpha    The learning rate.
-	 * @param epochs    The maximum number of iterations
-	 * @param offset    The first pattern position
-	 * @param length    How many patterns will be used.
+	 * @param epochs   The maximum number of iterations
+	 * @param offset   The first pattern position
+	 * @param length   How many patterns will be used.
 	 * @param minerror The minimal error expected.
 	 */
 	@Override
@@ -123,7 +124,7 @@ public class Hebb extends NeuralNetwork {
 			progress.setValue(0);
 		}
 
-		for(int currentEpoch=0; currentEpoch < epochs && error > minerror; currentEpoch++){
+		for (int currentEpoch = 0; currentEpoch < epochs && error > minerror; currentEpoch++) {
 			//shuffle patterns
 			shuffle(sort);
 			for (int i = 0; i < length; i++) {
@@ -140,6 +141,8 @@ public class Hebb extends NeuralNetwork {
 
 			error = error(patterns, answers, offset, length);
 
+			if (plotter != null)
+				plotter.setError(currentEpoch, error);
 			if (progress != null)
 				progress.setValue(epochs);
 		}
@@ -150,7 +153,7 @@ public class Hebb extends NeuralNetwork {
 
 	@Override
 	public Column simulate(Column pattern) {
-		Column ret = new Column(pattern.getRows());
+		Column ret = new Column(W.getRows()); // must match the output size
 		simulate(pattern, ret);
 		return ret;
 	}
@@ -158,8 +161,9 @@ public class Hebb extends NeuralNetwork {
 	/**
 	 * Calculate the output for the pattern and left the result on result.
 	 * result = sign(W * pattern)
-	 *  @param pattern The input pattern
-	 * @param result The output result.
+	 *
+	 * @param pattern The input pattern
+	 * @param result  The output result.
 	 */
 	@Override
 	public void simulate(Column pattern, Column result) {

@@ -23,6 +23,7 @@
  */
 package libai.common.matrix;
 
+import com.sun.istack.internal.NotNull;
 import libai.common.functions.Function;
 
 import java.io.Serializable;
@@ -124,8 +125,13 @@ public class Matrix implements Serializable {
 		System.arraycopy(data, 0, matrix, 0, r * c);
 	}
 
+	/**
+	 * Copy constructor. Creates a copy of a matrix using another matrix.
+	 * Constructor alias for Matrix(copy.rows, copy.columns, copy.matrix).
+	 * @param copy Source of the copy
+	 */
 	public Matrix(Matrix copy){
-		this(copy.getRows(), copy.getColumns(), copy.matrix);
+		this(copy.rows, copy.columns, copy.matrix);
 	}
 
 	public static Random getDefaultRandom(){

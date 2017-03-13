@@ -59,7 +59,7 @@ public class MultiLayerPerceptron extends NeuralNetwork {
 	 * must be derivable. The training algorithm is standard backpropagation.
 	 *
 	 * @param nperlayer Number of neurons per layer including the input layer.
-	 * @param funcs Function to apply per layer. The function[0] could be null.
+	 * @param funcs     Function to apply per layer. The function[0] could be null.
 	 */
 	public MultiLayerPerceptron(int[] nperlayer, Function[] funcs) {
 		this(nperlayer, funcs, new StandardBackpropagation());
@@ -75,8 +75,8 @@ public class MultiLayerPerceptron extends NeuralNetwork {
 	 * object.
 	 *
 	 * @param nperlayer Number of neurons per layer including the input layer.
-	 * @param funcs Function to apply per layer. The function[0] could be null.
-	 * @param trainer The backpropagation implementation to be used during training
+	 * @param funcs     Function to apply per layer. The function[0] could be null.
+	 * @param trainer   The backpropagation implementation to be used during training
 	 */
 	public MultiLayerPerceptron(int[] nperlayer, Function[] funcs, Backpropagation trainer) {
 		this(nperlayer, funcs, trainer, getDefaultRandomGenerator());
@@ -92,8 +92,8 @@ public class MultiLayerPerceptron extends NeuralNetwork {
 	 * initialize the matrices.
 	 *
 	 * @param nperlayer Number of neurons per layer including the input layer.
-	 * @param funcs Function to apply per layer. The function[0] could be null.
-	 * @param rand Random generator used for creating matrices
+	 * @param funcs     Function to apply per layer. The function[0] could be null.
+	 * @param rand      Random generator used for creating matrices
 	 */
 	public MultiLayerPerceptron(int[] nperlayer, Function[] funcs, Random rand) {
 		this(nperlayer, funcs, new StandardBackpropagation(), rand);
@@ -108,9 +108,9 @@ public class MultiLayerPerceptron extends NeuralNetwork {
 	 * random generator to initialize the matrices.
 	 *
 	 * @param nperlayer Number of neurons per layer including the input layer.
-	 * @param funcs Function to apply per layer. The function[0] could be null.
-	 * @param trainer The backpropagation implementation to be used during training
-	 * @param rand Random generator used for creating matrices
+	 * @param funcs     Function to apply per layer. The function[0] could be null.
+	 * @param trainer   The backpropagation implementation to be used during training
+	 * @param rand      Random generator used for creating matrices
 	 */
 	public MultiLayerPerceptron(int[] nperlayer, Function[] funcs, Backpropagation trainer, Random rand) {
 		super(rand);
@@ -156,12 +156,13 @@ public class MultiLayerPerceptron extends NeuralNetwork {
 	 * and biases are updated using the delta rule:<br>
 	 * W[i] = W[i] + beta*(W[i]-Wprev[i]) - (1-beta)*alpha.d[i].Y[i-1]^t <br>
 	 * B[i] = B[i] + beta*(B[i]-Bprev[i]) - (1-beta)*alpha.d[i]<br>
-	 *  @param patterns    The patterns to be learned.
-	 * @param answers The expected answers.
+	 *
+	 * @param patterns The patterns to be learned.
+	 * @param answers  The expected answers.
 	 * @param alpha    The learning rate.
-	 * @param epochs    The maximum number of iterations
-	 * @param offset    The first pattern position
-	 * @param length    How many patterns will be used.
+	 * @param epochs   The maximum number of iterations
+	 * @param offset   The first pattern position
+	 * @param length   How many patterns will be used.
 	 * @param minerror The minimal error expected.
 	 */
 	@Override

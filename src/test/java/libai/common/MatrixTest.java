@@ -106,6 +106,12 @@ public class MatrixTest {
         assertNull(m);
     }
 
+    @Test(expected = NullPointerException.class)
+    public void testConstructorCopyFail() {
+        Matrix m = new Matrix(null);
+        assertNull(m);
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorFail5() {
         Matrix m = new Matrix(5, 5, new double[5*4]);

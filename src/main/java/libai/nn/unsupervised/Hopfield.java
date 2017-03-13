@@ -48,7 +48,7 @@ public class Hopfield extends NeuralNetwork {
 	/**
 	 * Constructor. Receives the number of input to the network.
 	 *
-	 * @param inputs	The number of input to the network.
+	 * @param inputs The number of input to the network.
 	 */
 	public Hopfield(int inputs) {
 		W = new Matrix(inputs, inputs);
@@ -57,12 +57,13 @@ public class Hopfield extends NeuralNetwork {
 	/**
 	 * Train the network. The answers, alpha, epochs and minerror are meaningless
 	 * in this algorithm.
-	 *  @param patterns    The patterns to be learned.
-	 * @param answers    The expected answers. [ignored]
-	 * @param alpha        The learning rate. [ignored]
-	 * @param epochs    The maximum number of iterations. [ignored]
-	 * @param offset    The first pattern position.
-	 * @param length    How many patterns will be used.
+	 *
+	 * @param patterns The patterns to be learned.
+	 * @param answers  The expected answers. [ignored]
+	 * @param alpha    The learning rate. [ignored]
+	 * @param epochs   The maximum number of iterations. [ignored]
+	 * @param offset   The first pattern position.
+	 * @param length   How many patterns will be used.
 	 * @param minerror The minimal error expected. [ignored]
 	 */
 	@Override
@@ -90,7 +91,7 @@ public class Hopfield extends NeuralNetwork {
 				progress.setValue(i);
 		}
 
-		for(int i=0;i<W.getRows();i++)
+		for (int i = 0; i < W.getRows(); i++)
 			W.position(i, i, 0);
 
 		if (progress != null)
@@ -110,7 +111,7 @@ public class Hopfield extends NeuralNetwork {
 		Column previous = new Column(pattern);
 		previous.setValue(0);
 
-		while(!result.equals(previous)) {
+		while (!result.equals(previous)) {
 			result.copy(previous);
 
 			for (int col = 0; col < result.getRows(); col++) {

@@ -13,11 +13,11 @@ public class ResilientBackpropagation extends StandardBackpropagation {
 			maxUpdate,
 			initialUpdate;
 
-	public ResilientBackpropagation(){
-		this(1.2,0.5,1e-6,50,0.1);
+	public ResilientBackpropagation() {
+		this(1.2, 0.5, 1e-6, 50, 0.1);
 	}
 
-	public ResilientBackpropagation(double nPlus, double nMinus, double minUpdate, double maxUpdate, double initialUpdate){
+	public ResilientBackpropagation(double nPlus, double nMinus, double minUpdate, double maxUpdate, double initialUpdate) {
 		this.nPlus = nPlus;
 		this.nMinus = nMinus;
 		this.minUpdate = minUpdate;
@@ -55,7 +55,7 @@ public class ResilientBackpropagation extends StandardBackpropagation {
 			updatesb[i].setValue(0.1);
 		}
 
-		for(int currentEpoch=0; currentEpoch < epochs && error > minerror; currentEpoch++){
+		for (int currentEpoch = 0; currentEpoch < epochs && error > minerror; currentEpoch++) {
 			//shuffle patterns
 			nn.shuffle(sort);
 

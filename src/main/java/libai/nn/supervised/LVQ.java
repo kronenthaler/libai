@@ -50,10 +50,10 @@ public class LVQ extends Competitive {
 	 * Constructor. Number of inputs, number of subclasses and number of
 	 * outputs.
 	 *
-	 * @param in Number of input to the network.
-	 * @param subclass	Number of subclasses for output class. Greater subdivision
-	 * provides better classification.
-	 * @param out Number of outputs for the network
+	 * @param in       Number of input to the network.
+	 * @param subclass Number of subclasses for output class. Greater subdivision
+	 *                 provides better classification.
+	 * @param out      Number of outputs for the network
 	 */
 	public LVQ(int in, int subclass, int out) {
 		this(in, subclass, out, getDefaultRandomGenerator());
@@ -63,11 +63,11 @@ public class LVQ extends Competitive {
 	 * Constructor. Number of inputs, number of subclasses and number of
 	 * outputs.
 	 *
-	 * @param in Number of input to the network.
-	 * @param subclass	Number of subclasses for output class. Greater subdivision
-	 * provides better classification.
-	 * @param out Number of outputs for the network
-	 * @param rand Random generator used for creating matrices
+	 * @param in       Number of input to the network.
+	 * @param subclass Number of subclasses for output class. Greater subdivision
+	 *                 provides better classification.
+	 * @param out      Number of outputs for the network
+	 * @param rand     Random generator used for creating matrices
 	 */
 	public LVQ(int in, int subclass, int out, Random rand) {
 		super(in, out, rand);
@@ -93,12 +93,13 @@ public class LVQ extends Competitive {
 	/**
 	 * Train the network using a hybrid scheme. Uses the "winner takes all"
 	 * rule.
-	 *  @param patterns    The patterns to be learned.
-	 * @param answers The expected answers.
-	 * @param alpha        The learning rate.
-	 * @param epochs    The maximum number of iterations
-	 * @param offset    The first pattern position
-	 * @param length    How many patterns will be used.
+	 *
+	 * @param patterns The patterns to be learned.
+	 * @param answers  The expected answers.
+	 * @param alpha    The learning rate.
+	 * @param epochs   The maximum number of iterations
+	 * @param offset   The first pattern position
+	 * @param length   How many patterns will be used.
 	 * @param minerror The minimal error expected.
 	 */
 	@Override
@@ -120,7 +121,7 @@ public class LVQ extends Competitive {
 			progress.setValue(0);
 		}
 
-		for(int currentEpoch=0; currentEpoch < epochs && error > minerror; currentEpoch++){
+		for (int currentEpoch = 0; currentEpoch < epochs && error > minerror; currentEpoch++) {
 			//shuffle patterns
 			shuffle(sort);
 
@@ -173,9 +174,9 @@ public class LVQ extends Competitive {
 	 * Calculates the number of incorrect answers over the total.
 	 *
 	 * @param patterns The array with the patterns to test
-	 * @param answers The array with the expected answers for the patterns.
-	 * @param offset The initial position inside the array.
-	 * @param length How many patterns must be taken from the offset.
+	 * @param answers  The array with the expected answers for the patterns.
+	 * @param offset   The initial position inside the array.
+	 * @param length   How many patterns must be taken from the offset.
 	 * @return The relation between the incorrect answers and the total number
 	 * of answers.
 	 */

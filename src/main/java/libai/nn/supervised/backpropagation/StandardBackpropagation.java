@@ -9,7 +9,7 @@ import libai.nn.NeuralNetwork;
 /**
  * Created by kronenthaler on 08/01/2017.
  */
-public class StandardBackpropagation implements Backpropagation{
+public class StandardBackpropagation implements Backpropagation {
 	protected NeuralNetwork nn;
 	protected int[] nperlayer;
 	protected int layers;
@@ -22,7 +22,7 @@ public class StandardBackpropagation implements Backpropagation{
 	protected Matrix[] M;
 
 	@Override
-	public void initialize(NeuralNetwork nn, int[] nperlayer, Function[] functions, Matrix[]W, Column[]Y, Column[]b, Column[]u){
+	public void initialize(NeuralNetwork nn, int[] nperlayer, Function[] functions, Matrix[] W, Column[] Y, Column[] b, Column[] u) {
 		this.nn = nn;
 		this.nperlayer = nperlayer;
 		this.layers = nperlayer.length;
@@ -35,7 +35,7 @@ public class StandardBackpropagation implements Backpropagation{
 		initialize();
 	}
 
-	private void initialize(){
+	private void initialize() {
 		d = new Column[layers];//position zero reserved
 		Yt = new Row[layers];
 		M = new Matrix[layers];
@@ -61,7 +61,7 @@ public class StandardBackpropagation implements Backpropagation{
 			sort[i] = i;
 		}
 
-		for(int currentEpoch=0; currentEpoch < epochs && error > minerror; currentEpoch++){
+		for (int currentEpoch = 0; currentEpoch < epochs && error > minerror; currentEpoch++) {
 			//shuffle patterns
 			nn.shuffle(sort);
 

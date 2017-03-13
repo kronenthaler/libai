@@ -60,7 +60,7 @@ public class Competitive extends NeuralNetwork {
 	 * Constructor. Creates a network with the specified number of inputs and
 	 * outputs.
 	 *
-	 * @param in Number of inputs.
+	 * @param in  Number of inputs.
 	 * @param out Number of outputs.
 	 */
 	public Competitive(int in, int out) {
@@ -71,8 +71,8 @@ public class Competitive extends NeuralNetwork {
 	 * Constructor. Creates a network with the specified number of inputs and
 	 * outputs.
 	 *
-	 * @param in Number of inputs.
-	 * @param out Number of outputs.
+	 * @param in   Number of inputs.
+	 * @param out  Number of outputs.
 	 * @param rand Random generator used for creating matrices
 	 */
 	public Competitive(int in, int out, Random rand) {
@@ -89,12 +89,13 @@ public class Competitive extends NeuralNetwork {
 	 * Euclidean distance between the pattern and the neuron is calculated. The
 	 * position with the lowest distance is updated with the rule:<br>
 	 * Ww = Ww + alpha.(pattern - Ww)<br>
-	 *  @param patterns    The patterns to be learned.
-	 * @param answers    The expected answers.
-	 * @param alpha        The learning rate.
-	 * @param epochs    The maximum number of iterations
-	 * @param offset    The first pattern position
-	 * @param length    How many patterns will be used.
+	 *
+	 * @param patterns The patterns to be learned.
+	 * @param answers  The expected answers.
+	 * @param alpha    The learning rate.
+	 * @param epochs   The maximum number of iterations
+	 * @param offset   The first pattern position
+	 * @param length   How many patterns will be used.
 	 * @param minerror The minimal error expected.
 	 */
 	@Override
@@ -118,7 +119,7 @@ public class Competitive extends NeuralNetwork {
 			progress.setValue(0);
 		}
 
-		for(int currentEpoch=0; currentEpoch < epochs && error > minerror; currentEpoch++){
+		for (int currentEpoch = 0; currentEpoch < epochs && error > minerror; currentEpoch++) {
 			//shuffle patterns
 			shuffle(sort);
 
@@ -160,8 +161,9 @@ public class Competitive extends NeuralNetwork {
 	 * <code>pattern</code> and left the result in
 	 * <code>result</code>. The result will be a row matrix fill with 0 except
 	 * for the winner position.
-	 *  @param pattern Pattern to use as input.
-	 * @param result The output for the input.
+	 *
+	 * @param pattern Pattern to use as input.
+	 * @param result  The output for the input.
 	 */
 	@Override
 	public void simulate(Column pattern, Column result) {
@@ -190,9 +192,9 @@ public class Competitive extends NeuralNetwork {
 	 * neuron. Less distance means less error and vice versa.
 	 *
 	 * @param patterns The array with the patterns to test
-	 * @param answers The array with the expected answers for the patterns.
-	 * @param offset The initial position inside the array.
-	 * @param length How many patterns must be taken from the offset.
+	 * @param answers  The array with the expected answers for the patterns.
+	 * @param offset   The initial position inside the array.
+	 * @param length   How many patterns must be taken from the offset.
 	 * @return The average distance between the pattern and the winner for that
 	 * pattern.
 	 */
