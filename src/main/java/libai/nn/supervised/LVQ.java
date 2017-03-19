@@ -23,6 +23,7 @@
  */
 package libai.nn.supervised;
 
+import libai.common.Shuffler;
 import libai.common.matrix.Column;
 import libai.common.matrix.Matrix;
 import libai.common.matrix.Row;
@@ -40,10 +41,12 @@ import java.util.Random;
  *
  * @author kronenthaler
  */
-public class LVQ extends Competitive {
+public class LVQ extends SupervisedLearning {
 	private static final long serialVersionUID = 6603129562167746698L;
 
+	protected Matrix W;
 	protected Matrix W2;
+	protected int ins, outs;
 	protected int subclasses;
 
 	/**
@@ -70,9 +73,11 @@ public class LVQ extends Competitive {
 	 * @param rand     Random generator used for creating matrices
 	 */
 	public LVQ(int in, int subclass, int out, Random rand) {
-		super(in, out, rand);
+		super(rand);
 
+		ins = in;
 		subclasses = subclass;
+		outs = out;
 
 		W = new Matrix(subclasses * outs, ins);
 		W2 = new Matrix(outs, subclasses * outs);
@@ -104,34 +109,30 @@ public class LVQ extends Competitive {
 	 */
 	@Override
 	public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror) {
-		// TODO: add Preconditions here
-		int[] sort = new int[length];
-		double error = 1;
-		Row r = new Row(ins);
-		Row row = new Row(W.getColumns());
+		validatePreconditions(patterns, answers, epochs, offset, length, minerror);
 
 		Matrix[] patternsT = new Matrix[length];
 		for (int i = 0; i < length; i++) {
 			patternsT[i] = patterns[i + offset].transpose();
-			sort[i] = i;
 		}
 
-		if (progress != null) {
-			progress.setMaximum(epochs);
-			progress.setMinimum(0);
-			progress.setValue(0);
-		}
+		double error = 1;
+		Shuffler shuffler = new Shuffler(length, this.random);
+		initializeProgressBar(epochs);
+
+		Row r = new Row(ins);
+		Row row = new Row(W.getColumns());
 
 		for (int currentEpoch = 0; currentEpoch < epochs && error > minerror; currentEpoch++) {
 			//shuffle patterns
-			shuffle(sort);
+			int[] sort = shuffler.shuffle();
 
 			for (int i = 0; i < length; i++) {
 				//calculate the distance of each pattern to each neuron (rows in W), keep the winner
 				int winnerOut = -1;
 				int winnerT = -1;
 
-				simulateNoChange(patterns[sort[i] + offset]);
+				int winner = simulateNoChange(patterns[sort[i] + offset]);
 
 				//find the row with the value 1 in the column winner of W2
 				for (int j = 0; j < W2.getRows(); j++) {
@@ -145,7 +146,7 @@ public class LVQ extends Competitive {
 				patternsT[sort[i]].copy(r);
 				row.setRow(0, W.getRow(winner));
 				r.subtract(row, r);
-				r.multiply((winnerT == winnerOut) ? alpha : -alpha, r); //if winner in T == winner int out + else -
+				r.multiply((winnerT == winnerOut) ? alpha : -alpha, r); //if winner in T == winner in out + else -
 				row.add(r, r);
 
 				W.setRow(winner, r.getRow(0));
@@ -167,8 +168,45 @@ public class LVQ extends Competitive {
 	@Override
 	public Column simulate(Column pattern) {
 		Column ret = new Column(outs);
-		W2.multiply(super.simulate(pattern), ret);
+
+		Column layer1 = new Column(W.getRows());
+		simulate(pattern, layer1);
+
+		W2.multiply(layer1, ret);
 		return ret;
+	}
+
+	/**
+	 * Calculate the output for the
+	 * <code>pattern</code> and left the result in
+	 * <code>result</code>. The result will be a row matrix fill with 0 except
+	 * for the winner position.
+	 *
+	 * @param pattern Pattern to use as input.
+	 * @param result  The output for the input.
+	 */
+	@Override
+	public void simulate(Column pattern, Column result) {
+		int winner = simulateNoChange(pattern);
+
+		result.setValue(0);
+		result.position(winner, 0, 1);
+	}
+
+	protected int simulateNoChange(Matrix pattern) {
+		double[] row;
+		double d = Double.MAX_VALUE;
+		int winner = -1;
+		for (int j = 0; j < W.getRows(); j++) {
+			row = W.getRow(j);
+			double dist = euclideanDistance2(pattern.getCol(0), row);
+			if (dist < d) {
+				d = dist;
+				winner = j;
+			}
+		}
+
+		return winner;
 	}
 
 	/**

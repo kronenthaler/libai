@@ -83,7 +83,7 @@ public class LVQTest {
 		ans[5].position(2, 0, 1);
 
 		int magicRand = 4; //Results are perfect
-		Competitive net = new LVQ(m, 2, l, new Random(magicRand));
+		LVQ net = new LVQ(m, 2, l, new Random(magicRand));
 		net.setProgressBar(new SimpleProgressDisplay(new JProgressBar()));
 		net.train(patterns, ans, 0.1, 10000);
 

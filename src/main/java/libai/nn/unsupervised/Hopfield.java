@@ -39,11 +39,10 @@ import libai.nn.NeuralNetwork;
  *
  * @author kronenthaler
  */
-public class Hopfield extends NeuralNetwork {
+public class Hopfield extends UnsupervisedLearning {
 	private static final long serialVersionUID = 9081060788269921587L;
-
-	protected Matrix W;
 	protected static SymmetricSign ssign = new SymmetricSign();
+	protected Matrix W;
 
 	/**
 	 * Constructor. Receives the number of input to the network.
@@ -59,27 +58,24 @@ public class Hopfield extends NeuralNetwork {
 	 * in this algorithm.
 	 *
 	 * @param patterns The patterns to be learned.
-	 * @param answers  The expected answers. [ignored]
 	 * @param alpha    The learning rate. [ignored]
 	 * @param epochs   The maximum number of iterations. [ignored]
 	 * @param offset   The first pattern position.
 	 * @param length   How many patterns will be used.
-	 * @param minerror The minimal error expected. [ignored]
 	 */
 	@Override
-	public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror) {
-		// TODO: add Preconditions here
+	public void train(Column[] patterns, double alpha, int epochs, int offset, int length) {
+		validatePreconditions(patterns, epochs, offset, length);
+
+		epochs = length;
+
 		Row patternT = new Row(patterns[0].getRows());
 		Matrix temp = new Matrix(W.getRows(), W.getColumns());
 
-		if (progress != null) {
-			progress.setMaximum(length - 1);
-			progress.setMinimum(0);
-			progress.setValue(0);
-		}
+		initializeProgressBar(epochs);
 
 		// W = Sum(p[i]p[i]^t); wii = 0
-		for (int i = 0; i < length; i++) {
+		for (int i = 0; i < epochs; i++) {
 			patterns[i + offset].apply(ssign, patterns[i + offset]);
 			Matrix pattern = patterns[i + offset];
 

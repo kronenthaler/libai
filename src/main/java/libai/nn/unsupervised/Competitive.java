@@ -23,6 +23,7 @@
  */
 package libai.nn.unsupervised;
 
+import libai.common.Shuffler;
 import libai.common.matrix.Column;
 import libai.common.matrix.Matrix;
 import libai.common.matrix.Row;
@@ -49,12 +50,11 @@ import java.util.Random;
  *
  * @author kronenthaler
  */
-public class Competitive extends NeuralNetwork {
+public class Competitive extends UnsupervisedLearning {
 	private static final long serialVersionUID = 3792932568798202152L;
 
 	protected Matrix W;
 	protected int ins, outs;
-	protected int winner;
 
 	/**
 	 * Constructor. Creates a network with the specified number of inputs and
@@ -91,43 +91,33 @@ public class Competitive extends NeuralNetwork {
 	 * Ww = Ww + alpha.(pattern - Ww)<br>
 	 *
 	 * @param patterns The patterns to be learned.
-	 * @param answers  The expected answers.
 	 * @param alpha    The learning rate.
 	 * @param epochs   The maximum number of iterations
 	 * @param offset   The first pattern position
 	 * @param length   How many patterns will be used.
-	 * @param minerror The minimal error expected.
 	 */
 	@Override
-	public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror) {
-		// TODO: add Preconditions here
+	public void train(Column[] patterns, double alpha, int epochs, int offset, int length) {
+		validatePreconditions(patterns, epochs, offset, length);
 
-		int[] sort = new int[length]; // [0,length)
-		double error = 1;
+		Matrix[] patternsT = new Matrix[length];
+		for (int i = 0; i < length; i++) {
+			patternsT[i] = patterns[i + offset].transpose();
+		}
+
+		Shuffler shuffler = new Shuffler(length, this.random);
+		initializeProgressBar(epochs);
 
 		Row r = new Row(ins);
 		Row row = new Row(ins);
 
-		//initialize sort array
-		Matrix[] patternsT = new Matrix[length];
-		for (int i = 0; i < length; i++) {
-			patternsT[i] = patterns[i + offset].transpose();
-			sort[i] = i;
-		}
-
-		if (progress != null) {
-			progress.setMaximum(epochs);
-			progress.setMinimum(0);
-			progress.setValue(0);
-		}
-
-		for (int currentEpoch = 0; currentEpoch < epochs && error > minerror; currentEpoch++) {
+		for (int currentEpoch = 0; currentEpoch < epochs; currentEpoch++) {
 			//shuffle patterns
-			shuffle(sort);
+			int[] sort = shuffler.shuffle();
 
 			for (int i = 0; i < length; i++) {
 				//calculate the distance of each pattern to each neuron (rows in W), keep the winner
-				simulateNoChange(patterns[sort[i] + offset]);
+				int winner = simulateNoChange(patterns[sort[i] + offset]);
 
 				//Ww = Ww + alpha . (p - Ww); w is the row of winner neuron
 				patternsT[sort[i]].copy(r);
@@ -139,10 +129,6 @@ public class Competitive extends NeuralNetwork {
 				W.setRow(winner, r.getRow(0));
 			}
 
-			error = error(patterns, answers, offset, length);
-
-			if (plotter != null)
-				plotter.setError(currentEpoch, error);
 			if (progress != null)
 				progress.setValue(currentEpoch);
 		}
@@ -169,16 +155,16 @@ public class Competitive extends NeuralNetwork {
 	 */
 	@Override
 	public void simulate(Column pattern, Column result) {
-		simulateNoChange(pattern);
+		int winner = simulateNoChange(pattern);
 
 		result.setValue(0);
 		result.position(winner, 0, 1);
 	}
 
-	protected void simulateNoChange(Matrix pattern) {
+	protected int simulateNoChange(Matrix pattern) {
 		double[] row;
 		double d = Double.MAX_VALUE;
-		winner = -1;
+		int winner = -1;
 		for (int j = 0; j < W.getRows(); j++) {
 			row = W.getRow(j);
 			double dist = euclideanDistance2(pattern.getCol(0), row);
@@ -187,6 +173,8 @@ public class Competitive extends NeuralNetwork {
 				winner = j;
 			}
 		}
+
+		return winner;
 	}
 
 	/**

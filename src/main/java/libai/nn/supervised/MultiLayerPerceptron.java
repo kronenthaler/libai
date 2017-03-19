@@ -40,7 +40,7 @@ import java.util.Random;
  *
  * @author kronenthaler
  */
-public class MultiLayerPerceptron extends NeuralNetwork {
+public class MultiLayerPerceptron extends SupervisedLearning {
 	private static final long serialVersionUID = 3155220303024711102L;
 
 	private final Matrix W[];
@@ -167,12 +167,9 @@ public class MultiLayerPerceptron extends NeuralNetwork {
 	 */
 	@Override
 	public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror) {
-		// TODO: add Preconditions here
-		if (progress != null) {
-			progress.setMinimum(0);
-			progress.setMaximum(epochs);
-			progress.setValue(0);
-		}
+		validatePreconditions(patterns, answers, epochs, offset, length, minerror);
+
+		initializeProgressBar(epochs);
 
 		// initialize the trainer with the set of matrices required
 		trainer.initialize(this, nperlayer, func, W, Y, b, u);

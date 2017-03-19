@@ -23,6 +23,7 @@
  */
 package libai.nn.supervised;
 
+import libai.common.Shuffler;
 import libai.common.matrix.Column;
 import libai.common.matrix.Matrix;
 import libai.common.functions.SymmetricSign;
@@ -40,12 +41,11 @@ import java.util.Random;
  *
  * @author kronenthaler
  */
-public class Hebb extends NeuralNetwork {
+public class Hebb extends SupervisedLearning {
 	private static final long serialVersionUID = 7754681003525186940L;
-
+	protected static SymmetricSign sign = new SymmetricSign();
 	protected double phi;
 	protected Matrix W;
-	protected static SymmetricSign sign = new SymmetricSign();
 
 
 	/**
@@ -108,26 +108,21 @@ public class Hebb extends NeuralNetwork {
 	 */
 	@Override
 	public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror) {
-		// TODO: add Preconditions here
-		int[] sort = new int[length];
-		Matrix temp = new Matrix(W.getRows(), W.getColumns());
-		double error = 1;
+		validatePreconditions(patterns, answers, epochs, offset, length, minerror);
 
 		Matrix[] patternsT = new Matrix[length];
 		for (int i = 0; i < length; i++) {
 			patternsT[i] = patterns[i + offset].transpose();
-			sort[i] = i;
 		}
 
-		if (progress != null) {
-			progress.setMaximum(epochs);
-			progress.setMinimum(0);
-			progress.setValue(0);
-		}
+		double error = 1;
+		Shuffler shuffler = new Shuffler(length, this.random);
+		initializeProgressBar(epochs);
 
+		Matrix temp = new Matrix(W.getRows(), W.getColumns());
 		for (int currentEpoch = 0; currentEpoch < epochs && error > minerror; currentEpoch++) {
 			//shuffle patterns
-			shuffle(sort);
+			int[] sort = shuffler.shuffle();
 			for (int i = 0; i < length; i++) {
 				//F(wx)
 				//simulate(patterns[sort[i] + offset], Y); // for unsupervised training

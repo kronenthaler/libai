@@ -42,10 +42,9 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public abstract class NeuralNetwork implements Serializable {
 	private static final long serialVersionUID = 2851521924022998819L;
-
+	protected final Random random;
 	protected transient Plotter plotter;
 	protected transient ProgressDisplay progress;
-	protected final Random random;
 
 	public NeuralNetwork() {
 		this(getDefaultRandomGenerator());
@@ -57,130 +56,6 @@ public abstract class NeuralNetwork implements Serializable {
 
 	public static final Random getDefaultRandomGenerator() {
 		return ThreadLocalRandom.current();
-	}
-
-	public void setPlotter(Plotter plotter) {
-		this.plotter = plotter;
-	}
-
-	public Plotter getPlotter() {
-		return plotter;
-	}
-
-	/**
-	 * Sets a {@link ProgressDisplay} to the {@code NeuralNetwork}. The value
-	 * will go from {@code -epochs} to {@code 0}, and updated every training
-	 * epoch.
-	 * <p><i>Note: </i> Classes that implement {@link
-	 * NeuralNetwork#train(Column[], Column[], double, int, int, int, double)}
-	 * are responsible for this behavior.</p>
-	 *
-	 * @param pb ProgressDisplay
-	 */
-	public void setProgressBar(ProgressDisplay pb) {
-		progress = pb;
-	}
-
-	public ProgressDisplay getProgressBar() {
-		return progress;
-	}
-
-	/**
-	 * Trains this neural network with the list of {@code patterns} and the
-	 * expected {@code answers}.
-	 * <p>Use the learning rate {@code alpha} for many {@code epochs}.
-	 * Take {@code length} patterns from the position {@code offset} until the
-	 * {@code minerror} is reached.</p>
-	 * <p>{@code patterns} and {@code answers} must be arrays of
-	 * non-{@code null} <b>column</b> matrices</p>
-	 *
-	 * @param patterns The patterns to be learned.
-	 * @param answers  The expected answers.
-	 * @param alpha    The learning rate.
-	 * @param epochs   The maximum number of iterations
-	 * @param offset   The first pattern position
-	 * @param length   How many patterns will be used.
-	 * @param minerror The minimal error expected.
-	 */
-	public abstract void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror);
-
-	/**
-	 * Alias of train(patterns, answers, alpha, epochs, 0, patterns.length,
-	 * 1.e-5).
-	 * <p>{@code patterns} and {@code answers} must be arrays of
-	 * non-{@code null} <b>column</b> matrices</p>
-	 *
-	 * @param patterns The patterns to be learned.
-	 * @param answers  The expected answers.
-	 * @param alpha    The learning rate.
-	 * @param epochs   The maximum number of iterations
-	 * @see NeuralNetwork#train(Column[], Column[], double, int, int, int, double)
-	 */
-	public void train(Column[] patterns, Column[] answers, double alpha, int epochs) {
-		train(patterns, answers, alpha, epochs, 0, patterns.length, 1.e-5);
-	}
-
-	/**
-	 * Alias of train(patterns, answers, alpha, epochs, offset, length, 1.e-5).
-	 * <p>{@code patterns} and {@code answers} must be arrays of
-	 * non-{@code null} <b>column</b> matrices</p>
-	 *
-	 * @param patterns The patterns to be learned.
-	 * @param answers  The expected answers.
-	 * @param alpha    The learning rate.
-	 * @param epochs   The maximum number of iterations
-	 * @param offset   The first pattern position
-	 * @param length   How many patterns will be used.
-	 * @see NeuralNetwork#train(Column[], Column[], double, int, int, int, double)
-	 */
-	public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length) {
-		train(patterns, answers, alpha, epochs, offset, length, 1.e-5);
-	}
-
-	protected void validate(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
-		//TODO: is this method really useful?
-		//second precondition doesn't apply to unsupervised learning.
-		//minerror validation might not apply to unsupervised learning
-		// epochs do not apply to some unsupervised learning (hopfield)
-		Precondition.check(patterns.length == answers.length, "There must be the same amount of patterns and answers");
-		Precondition.check(offset >= 0 && offset < patterns.length, "offset must be in the interval [0, %d), found,  %d", patterns.length, offset);
-		Precondition.check(length >= 0 && length <= patterns.length - offset, "length must be in the interval (0, %d], found,  %d", patterns.length - offset, length);
-		Precondition.check(epochs > 0, "The number of epochs must be a positive non zero integer");
-		Precondition.check(minerror >= 0, "The error must be a positive number");
-	}
-
-	/**
-	 * Calculates the output for the {@code pattern}.
-	 *
-	 * @param pattern Pattern to use as input.
-	 * @return The output for the neural network.
-	 */
-	public abstract Column simulate(Column pattern);
-
-	/**
-	 * Calculates the output for the {@code pattern} and left the result in
-	 * {@code result}.
-	 *
-	 * @param pattern Pattern to use as input.
-	 * @param result  The output for the input.
-	 */
-	public abstract void simulate(Column pattern, Column result);
-
-	/**
-	 * Saves the neural network to the file in the given {@code path}
-	 *
-	 * @param path The path for the output file.
-	 * @return {@code true} if the file can be created and written,
-	 * {@code false} otherwise.
-	 */
-	public boolean save(String path) {
-		try (FileOutputStream fos = new FileOutputStream(path);
-			 ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-			oos.writeObject(this);
-		} catch (Exception e) {
-			return false;
-		}
-		return true;
 	}
 
 	public static final <NN extends NeuralNetwork> NN open(String path) throws IOException, ClassNotFoundException {
@@ -201,52 +76,6 @@ public abstract class NeuralNetwork implements Serializable {
 		} finally {
 			// nothing to do, raise the exception upwards.
 		}
-	}
-
-	/**
-	 * Calculates from a set of patterns. Alias of error(patterns, answers, 0,
-	 * patterns.length)
-	 * <p>{@code patterns} and {@code answers} must be arrays of
-	 * non-{@code null} <b>column</b> matrices</p>
-	 *
-	 * @param patterns The array with the patterns to test
-	 * @param answers  The array with the expected answers for the patterns.
-	 * @return The error calculate for the patterns.
-	 * @see NeuralNetwork#error(Column[], Column[], int, int)
-	 */
-	public double error(Column[] patterns, Column[] answers) {
-		return error(patterns, answers, 0, patterns.length);
-	}
-
-	/**
-	 * Calculates the mean quadratic error. It is the standard error metric for
-	 * neural networks. Just a few networks needs a different type of error
-	 * metric.
-	 * <p>{@code patterns} and {@code answers} must be arrays of
-	 * non-{@code null} <b>column</b> matrices</p>
-	 * <p><i>NOTE:</i> Assertions of the dimensions are made with {@code assert}
-	 * statement. You must enable this on runtime to be effective.</p>
-	 *
-	 * @param patterns The array with the patterns to test
-	 * @param answers  The array with the expected answers for the patterns.
-	 * @param offset   The initial position inside the array.
-	 * @param length   How many patterns must be taken from the offset.
-	 * @return The mean quadratic error.
-	 */
-	public double error(Column[] patterns, Column[] answers, int offset, int length) {
-		Precondition.check(patterns.length == answers.length, "There must be the same amount of patterns and answers");
-		Precondition.check(offset >= 0 && offset < patterns.length, "offset must be in the interval [0, %d), found,  %d", patterns.length, offset);
-		Precondition.check(length >= 0 && length <= patterns.length - offset, "length must be in the interval (0, %d], found,  %d", patterns.length - offset, length);
-
-		double error = 0.0;
-		Column Y = new Column(answers[0].getRows());
-
-		for (int i = 0; i < length; i++) {
-			simulate(patterns[i + offset], Y);    //inner product
-			error += euclideanDistance2(answers[i + offset], Y);
-		}
-
-		return error / (double) length;
 	}
 
 	/**
@@ -301,17 +130,169 @@ public abstract class NeuralNetwork implements Serializable {
 		return Math.exp((-u2) / (sigma * 2.0));
 	}
 
+	public Plotter getPlotter() {
+		return plotter;
+	}
+
+	public void setPlotter(Plotter plotter) {
+		this.plotter = plotter;
+	}
+
+	public ProgressDisplay getProgressBar() {
+		return progress;
+	}
+
 	/**
-	 * Shuffles the array in place
+	 * Sets a {@link ProgressDisplay} to the {@code NeuralNetwork}. The value
+	 * will go from {@code -epochs} to {@code 0}, and updated every training
+	 * epoch.
+	 * <p><i>Note: </i> Classes that implement {@link
+	 * NeuralNetwork#train(Column[], Column[], double, int, int, int, double)}
+	 * are responsible for this behavior.</p>
 	 *
-	 * @param sort Array to be shuffled
+	 * @param pb ProgressDisplay
 	 */
-	public void shuffle(int[] sort) {
-		for (int i = 0; i < sort.length; i++) {
-			int j = random.nextInt(sort.length);
-			int aux = sort[i];
-			sort[i] = sort[j];
-			sort[j] = aux;
+	public void setProgressBar(ProgressDisplay pb) {
+		progress = pb;
+	}
+
+	/**
+	 * Trains this neural network with the list of {@code patterns} and the
+	 * expected {@code answers}.
+	 * <p>Use the learning rate {@code alpha} for many {@code epochs}.
+	 * Take {@code length} patterns from the position {@code offset} until the
+	 * {@code minerror} is reached.</p>
+	 * <p>{@code patterns} and {@code answers} must be arrays of
+	 * non-{@code null} <b>column</b> matrices</p>
+	 *
+	 * @param patterns The patterns to be learned.
+	 * @param answers  The expected answers.
+	 * @param alpha    The learning rate.
+	 * @param epochs   The maximum number of iterations
+	 * @param offset   The first pattern position
+	 * @param length   How many patterns will be used.
+	 * @param minerror The minimal error expected.
+	 */
+	public abstract void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror);
+
+	/**
+	 * Alias of train(patterns, answers, alpha, epochs, 0, patterns.length,
+	 * 1.e-5).
+	 * <p>{@code patterns} and {@code answers} must be arrays of
+	 * non-{@code null} <b>column</b> matrices</p>
+	 *
+	 * @param patterns The patterns to be learned.
+	 * @param answers  The expected answers.
+	 * @param alpha    The learning rate.
+	 * @param epochs   The maximum number of iterations
+	 * @see NeuralNetwork#train(Column[], Column[], double, int, int, int, double)
+	 */
+	public void train(Column[] patterns, Column[] answers, double alpha, int epochs) {
+		train(patterns, answers, alpha, epochs, 0, patterns.length, 1.e-5);
+	}
+
+	/**
+	 * Alias of train(patterns, answers, alpha, epochs, offset, length, 1.e-5).
+	 * <p>{@code patterns} and {@code answers} must be arrays of
+	 * non-{@code null} <b>column</b> matrices</p>
+	 *
+	 * @param patterns The patterns to be learned.
+	 * @param answers  The expected answers.
+	 * @param alpha    The learning rate.
+	 * @param epochs   The maximum number of iterations
+	 * @param offset   The first pattern position
+	 * @param length   How many patterns will be used.
+	 * @see NeuralNetwork#train(Column[], Column[], double, int, int, int, double)
+	 */
+	public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length) {
+		train(patterns, answers, alpha, epochs, offset, length, 1.e-5);
+	}
+
+	/**
+	 * Calculates the output for the {@code pattern}.
+	 *
+	 * @param pattern Pattern to use as input.
+	 * @return The output for the neural network.
+	 */
+	public abstract Column simulate(Column pattern);
+
+	/**
+	 * Calculates the output for the {@code pattern} and left the result in
+	 * {@code result}.
+	 *
+	 * @param pattern Pattern to use as input.
+	 * @param result  The output for the input.
+	 */
+	public abstract void simulate(Column pattern, Column result);
+
+	/**
+	 * Saves the neural network to the file in the given {@code path}
+	 *
+	 * @param path The path for the output file.
+	 * @return {@code true} if the file can be created and written,
+	 * {@code false} otherwise.
+	 */
+	public boolean save(String path) {
+		try (FileOutputStream fos = new FileOutputStream(path);
+			 ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+			oos.writeObject(this);
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Calculates from a set of patterns. Alias of error(patterns, answers, 0,
+	 * patterns.length)
+	 * <p>{@code patterns} and {@code answers} must be arrays of
+	 * non-{@code null} <b>column</b> matrices</p>
+	 *
+	 * @param patterns The array with the patterns to test
+	 * @param answers  The array with the expected answers for the patterns.
+	 * @return The error calculate for the patterns.
+	 * @see NeuralNetwork#error(Column[], Column[], int, int)
+	 */
+	public double error(Column[] patterns, Column[] answers) {
+		return error(patterns, answers, 0, patterns.length);
+	}
+
+	/**
+	 * Calculates the mean quadratic error. It is the standard error metric for
+	 * neural networks. Just a few networks needs a different type of error
+	 * metric.
+	 * <p>{@code patterns} and {@code answers} must be arrays of
+	 * non-{@code null} <b>column</b> matrices</p>
+	 * <p><i>NOTE:</i> Assertions of the dimensions are made with {@code assert}
+	 * statement. You must enable this on runtime to be effective.</p>
+	 *
+	 * @param patterns The array with the patterns to test
+	 * @param answers  The array with the expected answers for the patterns.
+	 * @param offset   The initial position inside the array.
+	 * @param length   How many patterns must be taken from the offset.
+	 * @return The mean quadratic error.
+	 */
+	public double error(Column[] patterns, Column[] answers, int offset, int length) {
+		Precondition.check(patterns.length == answers.length, "There must be the same amount of patterns and answers");
+		Precondition.check(offset >= 0 && offset < patterns.length, "offset must be in the interval [0, %d), found,  %d", patterns.length, offset);
+		Precondition.check(length >= 0 && length <= patterns.length - offset, "length must be in the interval (0, %d], found,  %d", patterns.length - offset, length);
+
+		double error = 0.0;
+		Column Y = new Column(answers[0].getRows());
+
+		for (int i = 0; i < length; i++) {
+			simulate(patterns[i + offset], Y);    //inner product
+			error += euclideanDistance2(answers[i + offset], Y);
+		}
+
+		return error / (double) length;
+	}
+
+	protected void initializeProgressBar(int maximum) {
+		if (progress != null) {
+			progress.setMaximum(maximum);
+			progress.setMinimum(0);
+			progress.setValue(0);
 		}
 	}
 }

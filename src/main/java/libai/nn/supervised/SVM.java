@@ -44,9 +44,12 @@ import java.util.Random;
  *
  * @author kronenthaler
  */
-public class SVM extends NeuralNetwork {
+public class SVM extends SupervisedLearning {
+	//static defs.
+	public static final int PARAM_C = 0;
+	public static final int PARAM_EPSILON = 1;
 	private static final long serialVersionUID = 5875835056527034341L;
-
+	protected static SymmetricSign ssign = new SymmetricSign();
 	private Kernel kernel = new GaussianKernel(2.0);    //the default kernel type is a gaussian function
 	private Matrix[] densePoints;            //array with the patterns lo learn or learned...s
 	private int target[];                    //expected answers
@@ -56,15 +59,10 @@ public class SVM extends NeuralNetwork {
 	private int nSupportVectors = -1;        //last index of the support vector.
 	private double[] errorCache;            //stores the errors to reduce calculations.
 	private double deltaB;
-
 	//trainning params.
 	private double minerror;                //set in the trainning method.
 	private double C = 0.05;
 	private double epsilon = 0.01;//0.001;
-	//static defs.
-	public static final int PARAM_C = 0;
-	public static final int PARAM_EPSILON = 1;
-	protected static SymmetricSign ssign = new SymmetricSign();
 
 	public SVM(Kernel _kernel) {
 		this(_kernel, getDefaultRandomGenerator());
@@ -85,13 +83,9 @@ public class SVM extends NeuralNetwork {
 
 	@Override
 	public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror) {
-		// TODO: add Preconditions here
+		validatePreconditions(patterns, answers, epochs, offset, length, minerror);
 
-		if (progress != null) {
-			progress.setMaximum(epochs);
-			progress.setMinimum(0);
-			progress.setValue(0);
-		}
+		initializeProgressBar(epochs);
 
 		this.minerror = minerror;
 

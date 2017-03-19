@@ -26,6 +26,7 @@ package libai.nn;
 import libai.common.matrix.Column;
 import libai.common.matrix.Matrix;
 import libai.io.MatrixIO;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -151,22 +152,22 @@ public class NeuralNetworkTest {
 		assertEquals(distOct, distLai, 1e-3);
 	}
 
-	@Test
-	public void testShuffle() {
-		int[] arr1 = new int[10];
-		int[] arr2 = new int[10];
-		for (int i = 0; i < 10; i++) arr1[i] = arr2[i] = i;
-		assertArrayEquals(arr1, arr2);
-		new NN().shuffle(arr1);
-		assertFalse(Arrays.equals(arr1, arr2));
-		//No value should be ommited
-		int foo = 0;
-		for (int i = 0; i < arr2.length; i++) {
-			foo ^= arr1[i];
-			foo ^= arr2[i];
-		}
-		assertEquals(0, foo);
-	}
+//	@Test
+//	public void testShuffle() {
+//		int[] arr1 = new int[10];
+//		int[] arr2 = new int[10];
+//		for (int i = 0; i < 10; i++) arr1[i] = arr2[i] = i;
+//		assertArrayEquals(arr1, arr2);
+//		new NN().shuffle(arr1);
+//		assertFalse(Arrays.equals(arr1, arr2));
+//		//No value should be ommited
+//		int foo = 0;
+//		for (int i = 0; i < arr2.length; i++) {
+//			foo ^= arr1[i];
+//			foo ^= arr2[i];
+//		}
+//		assertEquals(0, foo);
+//	}
 
 	private static class NN extends NeuralNetwork {
 		@Override

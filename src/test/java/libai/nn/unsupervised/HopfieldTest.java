@@ -108,7 +108,7 @@ public class HopfieldTest {
 
 		final Hopfield net= new Hopfield(25);
 		net.setProgressBar(progress);
-		net.train(patterns, null, 0, 0, 0, patterns.length);
+		net.train(patterns, null, 0, 1, 0, patterns.length);
 
 		assertTrue(net.error(answers, patterns, 0, patterns.length) < 1.e-5);
 		assertEquals(net.simulate(answers[0]), patterns[0]);

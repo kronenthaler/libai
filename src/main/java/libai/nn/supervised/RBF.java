@@ -45,10 +45,9 @@ import java.util.Random;
  */
 public class RBF extends Adaline {
 	private static final long serialVersionUID = 6772562276994202439L;
-
-	private Column centers[];
 	protected int nperlayer[];//{#inputs,#Neurons,#outputs}
 	protected double[] sigma;
+	private Column centers[];
 
 	/**
 	 * Constructor. Receives an array with the information of the number of
@@ -96,12 +95,9 @@ public class RBF extends Adaline {
 	 */
 	@Override
 	public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror) {
-		// TODO: add Preconditions here
-		if (progress != null) {
-			progress.setMaximum(0);
-			progress.setMinimum(-epochs * 2);
-			progress.setValue(-epochs * 2);
-		}
+		validatePreconditions(patterns, answers, epochs, offset, length, minerror);
+
+		initializeProgressBar(epochs);
 
 		//apply k-means to the patterns
 		centers = kmeans(nperlayer[1], patterns, offset, length);

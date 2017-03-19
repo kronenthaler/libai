@@ -24,10 +24,10 @@
 package libai.nn.supervised;
 
 
+import libai.common.Shuffler;
 import libai.common.matrix.Column;
 import libai.common.matrix.Matrix;
 import libai.common.functions.Sign;
-import libai.nn.NeuralNetwork;
 
 import java.util.Random;
 
@@ -39,13 +39,12 @@ import java.util.Random;
  *
  * @author kronenthaler
  */
-public class Perceptron extends NeuralNetwork {
+public class Perceptron extends SupervisedLearning {
 	private static final long serialVersionUID = 2795822735956649552L;
-
+	protected static Sign signum = new Sign();
 	protected Matrix W;
 	protected Column b;
 	protected int ins, outs;
-	protected static Sign signum = new Sign();
 
 	/**
 	 * Constructor.
@@ -94,29 +93,24 @@ public class Perceptron extends NeuralNetwork {
 	 */
 	@Override
 	public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror) {
-		// TODO: add Preconditions here
-		int[] sort = new int[length]; // [0,length)
-		double error = 1;
+		validatePreconditions(patterns, answers, epochs, offset, length, minerror);
+
+		Matrix[] patternsT = new Matrix[length];
+		for (int i = 0; i < length; i++) {
+			patternsT[i] = patterns[i + offset].transpose();
+		}
+
 		Column Y = new Column(outs);
 		Column E = new Column(outs);
 		Matrix aux = new Matrix(outs, ins);
 
-		//initialize sort array
-		Matrix[] patternsT = new Matrix[length];
-		for (int i = 0; i < length; i++) {
-			patternsT[i] = patterns[i + offset].transpose();
-			sort[i] = i;
-		}
-
-		if (progress != null) {
-			progress.setMaximum(epochs);
-			progress.setMinimum(0);
-			progress.setValue(0);
-		}
+		double error = 1;
+		Shuffler shuffler = new Shuffler(length, this.random);
+		initializeProgressBar(epochs);
 
 		for (int currentEpoch = 0; currentEpoch < epochs && error > minerror; currentEpoch++) {
 			//shuffle patterns
-			shuffle(sort);
+			int[] sort = shuffler.shuffle();
 
 			for (int i = 0; i < length; i++) {
 				//F(wx+b)

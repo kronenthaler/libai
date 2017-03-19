@@ -139,7 +139,7 @@ public class LVQPanel extends javax.swing.JPanel {
 				ans[4].position(2, 0, 1);
 				ans[5].position(2, 0, 1);
 
-				Competitive net = new LVQ(m, 2, l);
+				LVQ net = new LVQ(m, 2, l);
 				net.setProgressBar(new SimpleProgressDisplay(jProgressBar1));
 				net.train(patterns, ans, 0.1, 10000);
 

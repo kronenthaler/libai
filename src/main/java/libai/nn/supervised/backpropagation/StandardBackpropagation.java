@@ -1,5 +1,6 @@
 package libai.nn.supervised.backpropagation;
 
+import libai.common.Shuffler;
 import libai.common.matrix.Column;
 import libai.common.matrix.Matrix;
 import libai.common.functions.Function;
@@ -53,17 +54,14 @@ public class StandardBackpropagation implements Backpropagation {
 
 	@Override
 	public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror) {
-		int[] sort = new int[length];
+		Shuffler shuffler = new Shuffler(length, NeuralNetwork.getDefaultRandomGenerator());
+
 		double error = nn.error(patterns, answers, offset, length);
 		Matrix e = new Matrix(answers[0].getRows(), answers[0].getColumns());
 
-		for (int i = 0; i < length; i++) {
-			sort[i] = i;
-		}
-
 		for (int currentEpoch = 0; currentEpoch < epochs && error > minerror; currentEpoch++) {
 			//shuffle patterns
-			nn.shuffle(sort);
+			int[] sort = shuffler.shuffle();
 
 			error = 0;
 			for (int i = 0; i < length; i++) {

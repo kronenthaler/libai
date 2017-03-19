@@ -23,7 +23,6 @@
  */
 package libai.common.matrix;
 
-import com.sun.istack.internal.NotNull;
 import libai.common.functions.Function;
 
 import java.io.Serializable;

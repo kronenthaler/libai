@@ -23,6 +23,7 @@
  */
 package libai.nn.unsupervised;
 
+import libai.common.Shuffler;
 import libai.common.matrix.Column;
 import libai.common.matrix.Matrix;
 import libai.common.Pair;
@@ -43,7 +44,7 @@ import java.util.Random;
  *
  * @author kronenthaler
  */
-public class Kohonen extends NeuralNetwork {
+public class Kohonen extends UnsupervisedLearning {
 	private static final long serialVersionUID = 8918172607912802829L;
 
 	private Column W[];                    //array of weights ijk, with k positions.
@@ -127,34 +128,27 @@ public class Kohonen extends NeuralNetwork {
 	 * necessary for the labeling of the map.
 	 *
 	 * @param patterns The patterns to be learned.
-	 * @param answers  The expected answers.
 	 * @param alpha    The learning rate.
 	 * @param epochs   The maximum number of iterations
 	 * @param offset   The first pattern position
 	 * @param length   How many patterns will be used.
-	 * @param minerror The minimal error expected.
 	 */
 	@Override
-	public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror) {
-		// TODO: add Preconditions here
+	public void train(Column[] patterns, double alpha, int epochs, int offset, int length) {
+		validatePreconditions(patterns, epochs, offset, length);
+
 		double lambda = neighborhood;
 		double alpha1 = alpha;
 
-		int[] sort = new int[length];
-		for (int i = 0; i < length; sort[i] = i++) ;
+		Shuffler shuffler = new Shuffler(length, NeuralNetwork.getDefaultRandomGenerator());
+		initializeProgressBar(epochs);
 
 		Column temp = new Column(nperlayer[0]);
-
-		if (progress != null) {
-			progress.setMaximum(epochs * 2);
-			progress.setMinimum(0);
-			progress.setValue(0);
-		}
 
 		for (int currentEpoch = 0; currentEpoch < epochs; currentEpoch++) {
 			//System.out.println("epoch: "+curr_epoch);
 			//shuffle
-			shuffle(sort);
+			int[] sort = shuffler.shuffle();
 
 			for (int k = 0; k < length; k++) {
 				//Who is the winner
@@ -183,7 +177,6 @@ public class Kohonen extends NeuralNetwork {
 				progress.setValue(currentEpoch);
 		}
 
-		expandMap(patterns, answers, offset, length);
 		if (progress != null)
 			progress.setValue(progress.getMaximum());
 	}
