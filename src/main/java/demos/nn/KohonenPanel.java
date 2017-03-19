@@ -192,6 +192,7 @@ public class KohonenPanel extends javax.swing.JPanel {
 
 				net.setProgressBar(new SimpleProgressDisplay(jProgressBar1));
 				net.train(p, ex, 1, 20, 0, p.length - test);
+				net.expandMap(p, ex, 0, p.length - test);
 
 				map = net.getMap();
 				canvas.repaint();

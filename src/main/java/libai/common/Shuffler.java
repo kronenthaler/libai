@@ -8,8 +8,8 @@ import java.util.concurrent.ThreadLocalRandom;
  * Created by kronenthaler on 19/03/2017.
  */
 public class Shuffler {
-	private int[] order;
-	private Random random;
+	protected int[] order;
+	protected Random random;
 
 	public Shuffler(int length){
 		this(length, ThreadLocalRandom.current());
