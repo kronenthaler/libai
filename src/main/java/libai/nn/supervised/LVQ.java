@@ -23,6 +23,7 @@
  */
 package libai.nn.supervised;
 
+import libai.common.Precondition;
 import libai.common.Shuffler;
 import libai.common.matrix.Column;
 import libai.common.matrix.Matrix;
@@ -221,6 +222,10 @@ public class LVQ extends SupervisedLearning {
 	 */
 	@Override
 	public double error(Column[] patterns, Column[] answers, int offset, int length) {
+		Precondition.check(patterns.length == answers.length, "There must be the same amount of patterns and answers");
+		Precondition.check(offset >= 0 && offset < patterns.length, "offset must be in the interval [0, %d), found,  %d", patterns.length, offset);
+		Precondition.check(length >= 0 && length <= patterns.length - offset, "length must be in the interval (0, %d], found,  %d", patterns.length - offset, length);
+
 		//relation between correct answers and total answers
 		int correct = 0;
 		Column ret1 = new Column(W2.getColumns());

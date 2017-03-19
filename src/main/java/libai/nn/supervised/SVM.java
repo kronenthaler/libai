@@ -23,6 +23,7 @@
  */
 package libai.nn.supervised;
 
+import libai.common.Precondition;
 import libai.common.matrix.Column;
 import libai.common.matrix.Matrix;
 import libai.common.functions.SymmetricSign;
@@ -179,7 +180,10 @@ public class SVM extends SupervisedLearning {
 
 	@Override
 	public double error(Column[] patterns, Column[] answers, int offset, int length) {
-		// TODO: add Preconditions here
+		Precondition.check(patterns.length == answers.length, "There must be the same amount of patterns and answers");
+		Precondition.check(offset >= 0 && offset < patterns.length, "offset must be in the interval [0, %d), found,  %d", patterns.length, offset);
+		Precondition.check(length >= 0 && length <= patterns.length - offset, "length must be in the interval (0, %d], found,  %d", patterns.length - offset, length);
+
 		int error = 0;
 		for (int i = 0; i < length; i++) {
 			if (simulate(patterns[i + offset]).position(0, 0) * answers[i + offset].position(0, 0) < 0)

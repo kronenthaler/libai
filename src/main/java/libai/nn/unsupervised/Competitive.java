@@ -23,6 +23,7 @@
  */
 package libai.nn.unsupervised;
 
+import libai.common.Precondition;
 import libai.common.Shuffler;
 import libai.common.matrix.Column;
 import libai.common.matrix.Matrix;
@@ -190,7 +191,10 @@ public class Competitive extends UnsupervisedLearning {
 	 */
 	@Override
 	public double error(Column[] patterns, Column[] answers, int offset, int length) {
-		//average of the distances to the closest neuron
+		Precondition.check(patterns.length == answers.length, "There must be the same amount of patterns and answers");
+		Precondition.check(offset >= 0 && offset < patterns.length, "offset must be in the interval [0, %d), found,  %d", patterns.length, offset);
+		Precondition.check(length >= 0 && length <= patterns.length - offset, "length must be in the interval (0, %d], found,  %d", patterns.length - offset, length);
+
 		double[] row;
 		double acum = 0;
 		for (int i = 0; i < length; i++) {

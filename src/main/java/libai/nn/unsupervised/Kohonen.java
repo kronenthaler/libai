@@ -239,7 +239,7 @@ public class Kohonen extends UnsupervisedLearning {
 	 * @param offset   The initial pattern position
 	 * @param length   How many patterns to label.
 	 */
-	private void expandMap(Column[] patterns, Column[] answers, int offset, int length) {
+	public void expandMap(Column[] patterns, Column[] answers, int offset, int length) {
 		//System.out.println("labelling...");
 		for (int k = 0; k < length; k++) {
 			Pair<Integer, Integer> winner = getWinnerCell(patterns[k + offset]);
