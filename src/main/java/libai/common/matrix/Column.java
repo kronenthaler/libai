@@ -12,10 +12,6 @@ public class Column extends Matrix {
 		super(r, 1);
 	}
 
-	public Column(int r, boolean identity) {
-		super(r, 1, true);
-	}
-
 	public Column(int r, double[] data) {
 		super(r, 1, data);
 	}

@@ -24,13 +24,11 @@
 package libai.nn;
 
 import libai.common.matrix.Column;
-import libai.common.matrix.Matrix;
 import libai.common.Plotter;
 import libai.common.Precondition;
 import libai.common.ProgressDisplay;
 
 import java.io.*;
-import java.util.Collections;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -65,16 +63,12 @@ public abstract class NeuralNetwork implements Serializable {
 	public static final <NN extends NeuralNetwork> NN open(File file) throws IOException, ClassNotFoundException {
 		try (FileInputStream fis = new FileInputStream(file)) {
 			return (NN) open(fis);
-		} finally {
-			// nothing to do, raise the exception upwards.
 		}
 	}
 
 	public static final <NN extends NeuralNetwork> NN open(InputStream input) throws IOException, ClassNotFoundException {
 		try (ObjectInputStream in = new ObjectInputStream(input)) {
 			return (NN) in.readObject();
-		} finally {
-			// nothing to do, raise the exception upwards.
 		}
 	}
 

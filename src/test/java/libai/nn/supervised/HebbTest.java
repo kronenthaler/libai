@@ -2,7 +2,6 @@ package libai.nn.supervised;
 
 import libai.common.ProgressDisplay;
 import libai.common.matrix.Column;
-import libai.common.matrix.Matrix;
 import libai.nn.NeuralNetwork;
 import org.junit.Test;
 

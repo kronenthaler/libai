@@ -42,7 +42,6 @@ public class MySQLDataSet implements DataSet {
 	private ResultSetMetaData rsMetaData;
 	private Set<Attribute> classes = new HashSet<>();
 	private HashMap<Triplet<Integer, Integer, Integer>, HashMap<Attribute, Integer>> cacheFrequencies;
-	private HashMap<Triplet<Integer, Integer, Integer>, HashMap<Double, HashMap<Attribute, Integer>>> cacheAccumulatedFrequencies;
 
 	private MetaData metadata = new MetaData() {
 		@Override
@@ -85,7 +84,6 @@ public class MySQLDataSet implements DataSet {
 		outputIndex = output;
 		orderBy = output;
 		cacheFrequencies = new HashMap<>();
-		cacheAccumulatedFrequencies = new HashMap<>();
 	}
 
 	private MySQLDataSet(MySQLDataSet parent, int lo, int hi) {

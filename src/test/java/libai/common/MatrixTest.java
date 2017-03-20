@@ -95,12 +95,6 @@ public class MatrixTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testConstructorFail3() {
-        Matrix m = new Column(0, false);
-        assertNull(m);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
     public void testConstructorFail4() {
         Matrix m = new Matrix(5, 5, null);
         assertNull(m);
@@ -993,10 +987,10 @@ public class MatrixTest {
 
 	@Test
 	public void testToString() {
-		Matrix a = new Column(2, true);
-		assertEquals("1.00000000 \n0.00000000 \n\n", a.toString());
-		a = new Row(2, true);
-		assertEquals("1.00000000 0.00000000 \n\n", a.toString());
+		Matrix a = new Column(2);
+		assertEquals("0.00000000 \n0.00000000 \n\n", a.toString());
+		a = new Row(2);
+		assertEquals("0.00000000 0.00000000 \n\n", a.toString());
 	}
 
     private void assertArrayNotEquals(double[] a, double[] b, double DELTA) {

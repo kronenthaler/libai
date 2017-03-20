@@ -26,7 +26,6 @@ package libai.nn;
 import libai.common.matrix.Column;
 import libai.common.matrix.Matrix;
 import libai.io.MatrixIO;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -172,7 +171,7 @@ public class NeuralNetworkTest {
 	private static class NN extends NeuralNetwork {
 		@Override
 		public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror) {
-
+			// not needed
 		}
 
 		@Override

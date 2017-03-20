@@ -29,7 +29,6 @@ import libai.common.matrix.Matrix;
 import libai.common.functions.SymmetricSign;
 import libai.common.kernels.GaussianKernel;
 import libai.common.kernels.Kernel;
-import libai.nn.NeuralNetwork;
 
 import java.util.Random;
 
@@ -46,10 +45,12 @@ import java.util.Random;
  * @author kronenthaler
  */
 public class SVM extends SupervisedLearning {
+	private static final long serialVersionUID = 5875835056527034341L;
+
 	//static defs.
 	public static final int PARAM_C = 0;
 	public static final int PARAM_EPSILON = 1;
-	private static final long serialVersionUID = 5875835056527034341L;
+
 	protected static SymmetricSign ssign = new SymmetricSign();
 	private Kernel kernel = new GaussianKernel(2.0);    //the default kernel type is a gaussian function
 	private Matrix[] densePoints;            //array with the patterns lo learn or learned...s
@@ -59,9 +60,7 @@ public class SVM extends SupervisedLearning {
 	private double b = 0;                    //threshold
 	private int nSupportVectors = -1;        //last index of the support vector.
 	private double[] errorCache;            //stores the errors to reduce calculations.
-	private double deltaB;
 	//trainning params.
-	private double minerror;                //set in the trainning method.
 	private double C = 0.05;
 	private double epsilon = 0.01;//0.001;
 
@@ -87,8 +86,6 @@ public class SVM extends SupervisedLearning {
 		validatePreconditions(patterns, answers, epochs, offset, length, minerror);
 
 		initializeProgressBar(epochs);
-
-		this.minerror = minerror;
 
 		densePoints = new Matrix[length];
 		for (int i = 0; i < length; i++) {
@@ -119,13 +116,13 @@ public class SVM extends SupervisedLearning {
 			numChanged = 0;
 			if (examineAll) {
 				for (int k = 0; k < length; k++) {
-					numChanged += examineExample(k);
+					numChanged += examineExample(k, minerror);
 				}
 				examineAll = false;
 			} else {
 				for (int k = 0; k < length; k++) {
 					if (alph[k] != 0 && alph[k] != C) {
-						numChanged += examineExample(k);
+						numChanged += examineExample(k, minerror);
 					}
 				}
 				if (numChanged == 0)
@@ -192,7 +189,7 @@ public class SVM extends SupervisedLearning {
 		return error / (double) length;
 	}
 
-	private int examineExample(int i1) {
+	private int examineExample(int i1, double minerror) {
 		double y1 = 0, alph1 = 0, E1 = 0, r1 = 0;
 		y1 = target[i1];
 		alph1 = alph[i1];
@@ -353,7 +350,7 @@ public class SVM extends SupervisedLearning {
 			}
 		}
 
-		deltaB = bnew - b;
+		double deltaB = bnew - b;
 		b = bnew;
 
 		double t1 = y1 * (a1 - alpha1);

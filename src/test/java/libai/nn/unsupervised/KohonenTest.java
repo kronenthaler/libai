@@ -24,7 +24,6 @@
 package libai.nn.unsupervised;
 
 import libai.common.matrix.Column;
-import libai.common.matrix.Matrix;
 import libai.common.ProgressDisplay;
 import org.junit.Test;
 

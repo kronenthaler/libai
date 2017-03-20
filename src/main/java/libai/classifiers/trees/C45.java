@@ -611,12 +611,11 @@ public class C45 implements Comparable<C45> {
 
 	private void setZ(double z) {
 		this.z = z;
-		if (!isLeaf()) {
-			if (childs != null)
-				for (Pair<Attribute, C45> c : childs) {
-					c.second.z = z;
-					c.second.setZ(z);
-				}
+		if (!isLeaf() && childs != null) {
+			for (Pair<Attribute, C45> c : childs) {
+				c.second.z = z;
+				c.second.setZ(z);
+			}
 		}
 	}
 

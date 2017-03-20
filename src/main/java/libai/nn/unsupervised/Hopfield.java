@@ -67,15 +67,13 @@ public class Hopfield extends UnsupervisedLearning {
 	public void train(Column[] patterns, double alpha, int epochs, int offset, int length) {
 		validatePreconditions(patterns, epochs, offset, length);
 
-		epochs = length;
-
 		Row patternT = new Row(patterns[0].getRows());
 		Matrix temp = new Matrix(W.getRows(), W.getColumns());
 
-		initializeProgressBar(epochs);
+		initializeProgressBar(length);
 
 		// W = Sum(p[i]p[i]^t); wii = 0
-		for (int i = 0; i < epochs; i++) {
+		for (int i = 0; i < length; i++) {
 			patterns[i + offset].apply(ssign, patterns[i + offset]);
 			Matrix pattern = patterns[i + offset];
 

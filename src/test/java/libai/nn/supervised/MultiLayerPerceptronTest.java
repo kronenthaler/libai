@@ -24,7 +24,6 @@
 package libai.nn.supervised;
 
 import libai.common.matrix.Column;
-import libai.common.matrix.Matrix;
 import libai.common.MatrixIOTest;
 import libai.common.Plotter;
 import libai.common.ProgressDisplay;

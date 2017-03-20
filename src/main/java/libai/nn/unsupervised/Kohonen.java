@@ -25,7 +25,6 @@ package libai.nn.unsupervised;
 
 import libai.common.Shuffler;
 import libai.common.matrix.Column;
-import libai.common.matrix.Matrix;
 import libai.common.Pair;
 import libai.nn.NeuralNetwork;
 

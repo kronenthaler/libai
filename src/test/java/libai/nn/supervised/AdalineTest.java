@@ -24,7 +24,6 @@
 package libai.nn.supervised;
 
 import libai.common.matrix.Column;
-import libai.common.matrix.Matrix;
 import libai.common.MatrixIOTest;
 import libai.nn.NeuralNetwork;
 import org.junit.Test;
