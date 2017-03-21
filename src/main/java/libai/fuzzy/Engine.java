@@ -61,6 +61,7 @@ public class Engine {
 
 	/**
 	 * Constructor. Creates a Engine with verbose output.
+	 *
 	 * @param _debug {@code _debug}
 	 */
 	public Engine(boolean _debug) {
@@ -161,8 +162,8 @@ public class Engine {
 						if (index >= 0) {
 							allResults.get(action).set(index,
 									allResults.get(action).get(index).second.compareTo(fireResult[i].get(j).second) > 0
-									? allResults.get(action).get(index)
-									: fireResult[i].get(j));
+											? allResults.get(action).get(index)
+											: fireResult[i].get(j));
 						} else {
 							allResults.get(action).add(fireResult[i].get(j));
 							Collections.sort(allResults.get(action));

@@ -72,7 +72,7 @@ public class BinaryChromosome extends Chromosome {
 	 * Split the genes by <i>position</i> and swap lower portion of this with
 	 * the lower portion of b and vice versa to return 2 offsprings.
 	 *
-	 * @param b chromosome to cross
+	 * @param b        chromosome to cross
 	 * @param position Position to split the chromosomes.
 	 * @return A two position array with the new offsprings.
 	 */

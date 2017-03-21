@@ -23,7 +23,8 @@
  */
 package libai.nn.supervised;
 
-import libai.common.Matrix;
+import libai.common.matrix.Column;
+import libai.common.matrix.Matrix;
 import libai.common.functions.Function;
 import libai.nn.NeuralNetwork;
 import libai.nn.supervised.backpropagation.Backpropagation;
@@ -39,10 +40,11 @@ import java.util.Random;
  *
  * @author kronenthaler
  */
-public class MultiLayerPerceptron extends NeuralNetwork {
+public class MultiLayerPerceptron extends SupervisedLearning {
 	private static final long serialVersionUID = 3155220303024711102L;
 
-	private final Matrix W[], Y[], b[], u[]; //WY + b = u
+	private final Matrix W[];
+	private final Column Y[], b[], u[]; //WY + b = u
 
 	private final int nperlayer[]; //number of neurons per layer, including the input layer
 	private final int layers;
@@ -57,7 +59,7 @@ public class MultiLayerPerceptron extends NeuralNetwork {
 	 * must be derivable. The training algorithm is standard backpropagation.
 	 *
 	 * @param nperlayer Number of neurons per layer including the input layer.
-	 * @param funcs Function to apply per layer. The function[0] could be null.
+	 * @param funcs     Function to apply per layer. The function[0] could be null.
 	 */
 	public MultiLayerPerceptron(int[] nperlayer, Function[] funcs) {
 		this(nperlayer, funcs, new StandardBackpropagation());
@@ -73,8 +75,8 @@ public class MultiLayerPerceptron extends NeuralNetwork {
 	 * object.
 	 *
 	 * @param nperlayer Number of neurons per layer including the input layer.
-	 * @param funcs Function to apply per layer. The function[0] could be null.
-	 * @param trainer The backpropagation implementation to be used during training
+	 * @param funcs     Function to apply per layer. The function[0] could be null.
+	 * @param trainer   The backpropagation implementation to be used during training
 	 */
 	public MultiLayerPerceptron(int[] nperlayer, Function[] funcs, Backpropagation trainer) {
 		this(nperlayer, funcs, trainer, getDefaultRandomGenerator());
@@ -90,8 +92,8 @@ public class MultiLayerPerceptron extends NeuralNetwork {
 	 * initialize the matrices.
 	 *
 	 * @param nperlayer Number of neurons per layer including the input layer.
-	 * @param funcs Function to apply per layer. The function[0] could be null.
-	 * @param rand Random generator used for creating matrices
+	 * @param funcs     Function to apply per layer. The function[0] could be null.
+	 * @param rand      Random generator used for creating matrices
 	 */
 	public MultiLayerPerceptron(int[] nperlayer, Function[] funcs, Random rand) {
 		this(nperlayer, funcs, new StandardBackpropagation(), rand);
@@ -106,9 +108,9 @@ public class MultiLayerPerceptron extends NeuralNetwork {
 	 * random generator to initialize the matrices.
 	 *
 	 * @param nperlayer Number of neurons per layer including the input layer.
-	 * @param funcs Function to apply per layer. The function[0] could be null.
-	 * @param trainer The backpropagation implementation to be used during training
-	 * @param rand Random generator used for creating matrices
+	 * @param funcs     Function to apply per layer. The function[0] could be null.
+	 * @param trainer   The backpropagation implementation to be used during training
+	 * @param rand      Random generator used for creating matrices
 	 */
 	public MultiLayerPerceptron(int[] nperlayer, Function[] funcs, Backpropagation trainer, Random rand) {
 		super(rand);
@@ -120,9 +122,9 @@ public class MultiLayerPerceptron extends NeuralNetwork {
 		layers = nperlayer.length;
 
 		W = new Matrix[layers];//position zero reserved
-		b = new Matrix[layers];//position zero reserved
-		Y = new Matrix[layers];//position zero reserved for the input pattern
-		u = new Matrix[layers];//position zero reserved
+		b = new Column[layers];//position zero reserved
+		Y = new Column[layers];//position zero reserved for the input pattern
+		u = new Column[layers];//position zero reserved
 
 		initialize();
 	}
@@ -131,17 +133,17 @@ public class MultiLayerPerceptron extends NeuralNetwork {
 	 * Initialize the matrix and auxiliary buffers.
 	 */
 	private void initialize() {
-		Y[0] = new Matrix(nperlayer[0], 1);
+		Y[0] = new Column(nperlayer[0]);
 
 		for (int i = 1; i < layers; i++) {
 			W[i] = new Matrix(nperlayer[i], nperlayer[i - 1]);
-			b[i] = new Matrix(nperlayer[i], 1);
+			b[i] = new Column(nperlayer[i]);
 
 			W[i].fill(true, random); // fill randomly
 			b[i].fill(true, random); // fill randomly
 
-			u[i] = new Matrix(W[i].getRows(), Y[i - 1].getColumns());
-			Y[i] = new Matrix(u[i].getRows(), u[i].getColumns());
+			u[i] = new Column(W[i].getRows());
+			Y[i] = new Column(u[i].getRows());
 		}
 	}
 
@@ -155,21 +157,19 @@ public class MultiLayerPerceptron extends NeuralNetwork {
 	 * W[i] = W[i] + beta*(W[i]-Wprev[i]) - (1-beta)*alpha.d[i].Y[i-1]^t <br>
 	 * B[i] = B[i] + beta*(B[i]-Bprev[i]) - (1-beta)*alpha.d[i]<br>
 	 *
-	 * @param patterns	The patterns to be learned.
-	 * @param answers The expected answers.
-	 * @param alpha	The learning rate.
-	 * @param epochs	The maximum number of iterations
-	 * @param offset	The first pattern position
-	 * @param length	How many patterns will be used.
+	 * @param patterns The patterns to be learned.
+	 * @param answers  The expected answers.
+	 * @param alpha    The learning rate.
+	 * @param epochs   The maximum number of iterations
+	 * @param offset   The first pattern position
+	 * @param length   How many patterns will be used.
 	 * @param minerror The minimal error expected.
 	 */
 	@Override
-	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
-		if (progress != null) {
-			progress.setMinimum(0);
-			progress.setMaximum(epochs);
-			progress.setValue(0);
-		}
+	public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror) {
+		validatePreconditions(patterns, answers, epochs, offset, length, minerror);
+
+		initializeProgressBar(epochs);
 
 		// initialize the trainer with the set of matrices required
 		trainer.initialize(this, nperlayer, func, W, Y, b, u);
@@ -181,13 +181,13 @@ public class MultiLayerPerceptron extends NeuralNetwork {
 	}
 
 	@Override
-	public Matrix simulate(Matrix pattern) {
+	public Column simulate(Column pattern) {
 		simulate(pattern, null);
 		return Y[layers - 1];
 	}
 
 	@Override
-	public void simulate(Matrix pattern, Matrix result) {
+	public void simulate(Column pattern, Column result) {
 		//Y[0]=x
 		pattern.copy(Y[0]);
 

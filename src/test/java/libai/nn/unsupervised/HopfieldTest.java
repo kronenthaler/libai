@@ -23,7 +23,7 @@
  */
 package libai.nn.unsupervised;
 
-import libai.common.Matrix;
+import libai.common.matrix.Column;
 import libai.common.ProgressDisplay;
 import org.junit.Test;
 
@@ -71,15 +71,15 @@ public class HopfieldTest {
 
 	@Test
 	public void testDemo(){
-		Matrix[] patterns = new Matrix[]{
-				new Matrix(25,1, new double[]{
+		Column[] patterns = new Column[]{
+				new Column(25, new double[]{
 						-1,-1,+1,-1,-1,
 						-1,-1,+1,-1,-1,
 						+1,+1,+1,+1,+1,
 						-1,-1,+1,-1,-1,
 						-1,-1,+1,-1,-1,
 				}),
-				new Matrix(25,1, new double[]{
+				new Column(25, new double[]{
 						+1,-1,-1,-1,+1,
 						-1,+1,-1,+1,-1,
 						-1,-1,+1,-1,-1,
@@ -88,15 +88,15 @@ public class HopfieldTest {
 				}),
 		};
 
-		Matrix[] answers = new Matrix[]{
-				new Matrix(25,1, new double[]{
+		Column[] answers = new Column[]{
+				new Column(25, new double[]{
 						-1,-1,+1,-1,-1,
 						-1,-1,+1,-1,-1,
 						+1,+1,+1,+1,+1,
 						-1,-1,-1,-1,-1,
 						-1,-1,-1,-1,-1,
 				}),
-				new Matrix(25,1, new double[]{
+				new Column(25, new double[]{
 						+1,-1,-1,-1,+1,
 						-1,+1,-1,+1,-1,
 						-1,-1,+1,-1,-1,
@@ -107,9 +107,12 @@ public class HopfieldTest {
 
 		final Hopfield net= new Hopfield(25);
 		net.setProgressBar(progress);
-		net.train(patterns, null, 0, 0, 0, patterns.length);
+		net.train(patterns, null, 0, 1, 0, patterns.length);
 
 		assertTrue(net.error(answers, patterns, 0, patterns.length) < 1.e-5);
+		assertEquals(net.simulate(answers[0]), patterns[0]);
+		assertEquals(net.simulate(answers[1]), patterns[1]);
+
 		assertEquals(net.getProgressBar().getValue(), net.getProgressBar().getMaximum());
 	}
 }

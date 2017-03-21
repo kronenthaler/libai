@@ -26,20 +26,19 @@ package libai.common;
 import java.util.Objects;
 
 /**
- *
  * @author ignacio
  */
-public final class Triplet <V extends Comparable, K extends Comparable, Z extends Comparable>{
+public final class Triplet<V extends Comparable, K extends Comparable, Z extends Comparable> {
 	/**
 	 * First element of the tuple.
 	 */
 	public V first;
-	
+
 	/**
 	 * Second element of the tuple.
 	 */
 	public K second;
-	
+
 	/**
 	 * Third element of the tuple.
 	 */
@@ -62,15 +61,15 @@ public final class Triplet <V extends Comparable, K extends Comparable, Z extend
 	public int hashCode() {
 		return Objects.hash(first, second, third);
 	}
-	
+
 	@Override
-	public boolean equals(Object o){
-		if (o == null || !(o instanceof Triplet)) 
+	public boolean equals(Object o) {
+		if (o == null || !(o instanceof Triplet))
 			return false;
-		
-		Triplet<V,K,Z> b = (Triplet<V, K, Z>)o;
-		return first.equals(b.first) 
-				&& second.equals(b.second) 
+
+		Triplet<V, K, Z> b = (Triplet<V, K, Z>) o;
+		return first.equals(b.first)
+				&& second.equals(b.second)
 				&& third.equals(b.third);
 	}
 

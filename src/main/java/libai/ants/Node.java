@@ -25,13 +25,13 @@ package libai.ants;
 
 /**
  * This class belong to the core classes of the Ant Framework.
- *
+ * <p>
  * Implements a single node of a problem Graph. It stores the graph index,
  * distance relative to other Node and heuristic information It is mainly used
  * as a handy tool to compute candidate list nodes.
  *
- * @version 1
  * @author Enrique Areyan, enrique3 at gmail.com
+ * @version 1
  */
 public class Node implements Comparable<Node> {
 	/**
@@ -50,8 +50,8 @@ public class Node implements Comparable<Node> {
 	/**
 	 * Constructor. Allocates the basic information of a node.
 	 *
-	 * @param index index of the node
-	 * @param distance distance according to another node
+	 * @param index         index of the node
+	 * @param distance      distance according to another node
 	 * @param heuristicInfo heuristic information
 	 */
 	public Node(int index, double distance, double heuristicInfo) {

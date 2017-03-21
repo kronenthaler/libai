@@ -23,19 +23,18 @@
  */
 package libai.ants;
 
-import libai.common.Matrix;
+import libai.common.matrix.Matrix;
 
 import java.io.*;
 
 /**
  * This class belong to the core classes of the Ant Framework.
- *
+ * <p>
  * It represent the problem being solved. It is composed of a Matrix containing
  * the relation between nodes in the graph.
  *
- * @version 1
  * @author Enrique Areyan, enrique3 at gmail.com
- *
+ * @version 1
  */
 public class Graph {
 	/**
@@ -58,12 +57,12 @@ public class Graph {
 	 */
 	public Graph(String fileSource) throws Exception {
 		this.setFileSource(fileSource);
-		
+
 		try (FileInputStream fis = new FileInputStream(fileSource);
 			 ObjectInputStream ois = new ObjectInputStream(fis)) {
 			Matrix m = (Matrix) ois.readObject();
 			this.setM(m);
-		}	
+		}
 	}
 
 	/**

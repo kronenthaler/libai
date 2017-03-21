@@ -24,7 +24,7 @@
 package libai.nn.unsupervised;
 
 import demos.common.SimpleProgressDisplay;
-import libai.common.Matrix;
+import libai.common.matrix.Column;
 import org.junit.Test;
 
 import javax.swing.*;
@@ -44,11 +44,11 @@ public class CompetitiveTest {
 		int n = 6;
 		int m = 2;
 		int l = 3;
-		Matrix[] patterns = new Matrix[n];
-		Matrix[] ans = new Matrix[n];
+		Column[] patterns = new Column[n];
+		Column[] ans = new Column[n];
 		for (int i = 0; i < n; i++) {
-			patterns[i] = new Matrix(m, 1);
-			ans[i] = new Matrix(l, 1);
+			patterns[i] = new Column(m);
+			ans[i] = new Column(l);
 			ans[i].setValue(0);
 		}
 

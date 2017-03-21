@@ -23,7 +23,7 @@
  */
 package libai.common.kernels;
 
-import libai.common.Matrix;
+import libai.common.matrix.Matrix;
 
 /**
  * Implements a linear kernel based on the dot product.
@@ -32,7 +32,7 @@ import libai.common.Matrix;
  */
 public class LinearKernel implements Kernel {
 	private static final long serialVersionUID = 1077977714890090768L;
-	
+
 	@Override
 	public double eval(Matrix A, Matrix B) {
 		return A.dotProduct(B);

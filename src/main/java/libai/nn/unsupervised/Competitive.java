@@ -23,7 +23,11 @@
  */
 package libai.nn.unsupervised;
 
-import libai.common.Matrix;
+import libai.common.Precondition;
+import libai.common.Shuffler;
+import libai.common.matrix.Column;
+import libai.common.matrix.Matrix;
+import libai.common.matrix.Row;
 import libai.nn.NeuralNetwork;
 
 import java.util.Random;
@@ -47,18 +51,17 @@ import java.util.Random;
  *
  * @author kronenthaler
  */
-public class Competitive extends NeuralNetwork {
+public class Competitive extends UnsupervisedLearning {
 	private static final long serialVersionUID = 3792932568798202152L;
 
 	protected Matrix W;
 	protected int ins, outs;
-	protected int winner;
 
 	/**
 	 * Constructor. Creates a network with the specified number of inputs and
 	 * outputs.
 	 *
-	 * @param in Number of inputs.
+	 * @param in  Number of inputs.
 	 * @param out Number of outputs.
 	 */
 	public Competitive(int in, int out) {
@@ -69,8 +72,8 @@ public class Competitive extends NeuralNetwork {
 	 * Constructor. Creates a network with the specified number of inputs and
 	 * outputs.
 	 *
-	 * @param in Number of inputs.
-	 * @param out Number of outputs.
+	 * @param in   Number of inputs.
+	 * @param out  Number of outputs.
 	 * @param rand Random generator used for creating matrices
 	 */
 	public Competitive(int in, int out, Random rand) {
@@ -88,42 +91,34 @@ public class Competitive extends NeuralNetwork {
 	 * position with the lowest distance is updated with the rule:<br>
 	 * Ww = Ww + alpha.(pattern - Ww)<br>
 	 *
-	 * @param patterns	The patterns to be learned.
-	 * @param answers 	The expected answers.
-	 * @param alpha		The learning rate.
-	 * @param epochs	The maximum number of iterations
-	 * @param offset	The first pattern position
-	 * @param length	How many patterns will be used.
-	 * @param minerror The minimal error expected.
+	 * @param patterns The patterns to be learned.
+	 * @param alpha    The learning rate.
+	 * @param epochs   The maximum number of iterations
+	 * @param offset   The first pattern position
+	 * @param length   How many patterns will be used.
 	 */
 	@Override
-	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
-		int[] sort = new int[length]; // [0,length)
-		double error = 1;
+	public void train(Column[] patterns, double alpha, int epochs, int offset, int length) {
+		validatePreconditions(patterns, epochs, offset, length);
 
-		Matrix r = new Matrix(1, ins);
-		Matrix row = new Matrix(1, ins);
-
-		//initialize sort array
 		Matrix[] patternsT = new Matrix[length];
 		for (int i = 0; i < length; i++) {
 			patternsT[i] = patterns[i + offset].transpose();
-			sort[i] = i;
 		}
 
-		if (progress != null) {
-			progress.setMaximum(epochs);
-			progress.setMinimum(0);
-			progress.setValue(0);
-		}
+		Shuffler shuffler = new Shuffler(length, this.random);
+		initializeProgressBar(epochs);
 
-		for(int currentEpoch=0; currentEpoch < epochs && error > minerror; currentEpoch++){
+		Row r = new Row(ins);
+		Row row = new Row(ins);
+
+		for (int currentEpoch = 0; currentEpoch < epochs; currentEpoch++) {
 			//shuffle patterns
-			shuffle(sort);
+			int[] sort = shuffler.shuffle();
 
 			for (int i = 0; i < length; i++) {
 				//calculate the distance of each pattern to each neuron (rows in W), keep the winner
-				simulateNoChange(patterns[sort[i] + offset]);
+				int winner = simulateNoChange(patterns[sort[i] + offset]);
 
 				//Ww = Ww + alpha . (p - Ww); w is the row of winner neuron
 				patternsT[sort[i]].copy(r);
@@ -135,10 +130,6 @@ public class Competitive extends NeuralNetwork {
 				W.setRow(winner, r.getRow(0));
 			}
 
-			error = error(patterns, answers, offset, length);
-
-			if (plotter != null)
-				plotter.setError(currentEpoch, error);
 			if (progress != null)
 				progress.setValue(currentEpoch);
 		}
@@ -148,8 +139,8 @@ public class Competitive extends NeuralNetwork {
 	}
 
 	@Override
-	public Matrix simulate(Matrix pattern) {
-		Matrix ret = new Matrix(W.getRows(), 1);
+	public Column simulate(Column pattern) {
+		Column ret = new Column(W.getRows());
 		simulate(pattern, ret);
 		return ret;
 	}
@@ -161,20 +152,20 @@ public class Competitive extends NeuralNetwork {
 	 * for the winner position.
 	 *
 	 * @param pattern Pattern to use as input.
-	 * @param result The output for the input.
+	 * @param result  The output for the input.
 	 */
 	@Override
-	public void simulate(Matrix pattern, Matrix result) {
-		simulateNoChange(pattern);
+	public void simulate(Column pattern, Column result) {
+		int winner = simulateNoChange(pattern);
 
 		result.setValue(0);
 		result.position(winner, 0, 1);
 	}
 
-	protected void simulateNoChange(Matrix pattern) {
+	protected int simulateNoChange(Matrix pattern) {
 		double[] row;
 		double d = Double.MAX_VALUE;
-		winner = -1;
+		int winner = -1;
 		for (int j = 0; j < W.getRows(); j++) {
 			row = W.getRow(j);
 			double dist = euclideanDistance2(pattern.getCol(0), row);
@@ -183,6 +174,8 @@ public class Competitive extends NeuralNetwork {
 				winner = j;
 			}
 		}
+
+		return winner;
 	}
 
 	/**
@@ -190,15 +183,18 @@ public class Competitive extends NeuralNetwork {
 	 * neuron. Less distance means less error and vice versa.
 	 *
 	 * @param patterns The array with the patterns to test
-	 * @param answers The array with the expected answers for the patterns.
-	 * @param offset The initial position inside the array.
-	 * @param length How many patterns must be taken from the offset.
+	 * @param answers  The array with the expected answers for the patterns.
+	 * @param offset   The initial position inside the array.
+	 * @param length   How many patterns must be taken from the offset.
 	 * @return The average distance between the pattern and the winner for that
 	 * pattern.
 	 */
 	@Override
-	public double error(Matrix[] patterns, Matrix[] answers, int offset, int length) {
-		//average of the distances to the closest neuron
+	public double error(Column[] patterns, Column[] answers, int offset, int length) {
+		Precondition.check(patterns.length == answers.length, "There must be the same amount of patterns and answers");
+		Precondition.check(offset >= 0 && offset < patterns.length, "offset must be in the interval [0, %d), found,  %d", patterns.length, offset);
+		Precondition.check(length >= 0 && length <= patterns.length - offset, "length must be in the interval (0, %d], found,  %d", patterns.length - offset, length);
+
 		double[] row;
 		double acum = 0;
 		for (int i = 0; i < length; i++) {

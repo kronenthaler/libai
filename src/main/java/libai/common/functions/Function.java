@@ -27,7 +27,7 @@ import java.io.Serializable;
 
 /**
  * Interface for real functions F(x): R -&gt; R. If the function has a derivate,
- * the method getDerivate() MUST be implemented and return a new object to 
+ * the method getDerivate() MUST be implemented and return a new object to
  * handle this derivate.
  *
  * @author kronenthaler

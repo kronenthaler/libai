@@ -23,7 +23,7 @@
  */
 package libai.nn.supervised;
 
-import libai.common.Matrix;
+import libai.common.matrix.Column;
 import libai.nn.NeuralNetwork;
 
 import java.util.ArrayList;
@@ -44,10 +44,9 @@ import java.util.Random;
  */
 public class RBF extends Adaline {
 	private static final long serialVersionUID = 6772562276994202439L;
-
-	private Matrix c[];
 	protected int nperlayer[];//{#inputs,#Neurons,#outputs}
 	protected double[] sigma;
+	private Column centers[];
 
 	/**
 	 * Constructor. Receives an array with the information of the number of
@@ -68,7 +67,7 @@ public class RBF extends Adaline {
 	 * output layer.
 	 *
 	 * @param nperlayer Neurons Per Layer.
-	 * @param rand Random generator used for creating matrices
+	 * @param rand      Random generator used for creating matrices
 	 */
 	public RBF(int[] nperlayer, Random rand) {
 		super(nperlayer[1], nperlayer[2], rand); // input, outputs
@@ -85,24 +84,22 @@ public class RBF extends Adaline {
 	 * of inputs. Then the output for the hidden layer are precalculated and
 	 * used as input for the Adaline training.
 	 *
-	 * @param patterns	The patterns to be learned.
-	 * @param answers The expected answers.
-	 * @param alpha	The learning rate.
-	 * @param epochs	The maximum number of iterations
-	 * @param offset	The first pattern position
-	 * @param length	How many patterns will be used.
+	 * @param patterns The patterns to be learned.
+	 * @param answers  The expected answers.
+	 * @param alpha    The learning rate.
+	 * @param epochs   The maximum number of iterations
+	 * @param offset   The first pattern position
+	 * @param length   How many patterns will be used.
 	 * @param minerror The minimal error expected.
 	 */
 	@Override
-	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
-		if (progress != null) {
-			progress.setMaximum(0);
-			progress.setMinimum(-epochs * 2);
-			progress.setValue(-epochs * 2);
-		}
+	public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror) {
+		validatePreconditions(patterns, answers, epochs, offset, length, minerror);
+
+		initializeProgressBar(epochs);
 
 		//apply k-means to the patterns
-		c = kmeans(nperlayer[1], patterns, offset, length);
+		centers = kmeans(nperlayer[1], patterns, offset, length);
 
 		//calculate sigmas. p-closest neighbors, p is the input dimension
 		PriorityQueue<Double>[] neighbors = new PriorityQueue[nperlayer[1]];
@@ -111,7 +108,7 @@ public class RBF extends Adaline {
 
 		for (int i = 0; i < nperlayer[1] - 1; i++) {
 			for (int j = i + 1; j < nperlayer[1]; j++) {
-				double current = Math.sqrt(euclideanDistance2(c[i], c[j]));
+				double current = Math.sqrt(euclideanDistance2(centers[i], centers[j]));
 				neighbors[i].add(-current);
 				neighbors[j].add(-current);
 			}
@@ -126,9 +123,9 @@ public class RBF extends Adaline {
 		}
 
 		//precalculate the ouputs for each pattern in the hidden layer
-		Matrix Y[] = new Matrix[patterns.length];
+		Column Y[] = new Column[patterns.length];
 		for (int j = 0; j < length; j++) {
-			Y[j + offset] = new Matrix(nperlayer[1], 1);
+			Y[j + offset] = new Column(nperlayer[1]);
 			simulateNoChange(patterns[j + offset], Y[j + offset]);
 		}
 
@@ -149,22 +146,22 @@ public class RBF extends Adaline {
 	 * points closest to every point in the cloud. The centroids found probably
 	 * will no be any of the patterns in the cloud.
 	 *
-	 * @param k Number of centroids to find.
+	 * @param k        Number of centroids to find.
 	 * @param patterns The cloud of patterns
-	 * @param offset Initial position of the cloud.
-	 * @param length How many patterns are in the cloud.
+	 * @param offset   Initial position of the cloud.
+	 * @param length   How many patterns are in the cloud.
 	 * @return An array with the centroids.
 	 */
-	private Matrix[] kmeans(int k, Matrix[] patterns, int offset, int length) {
+	private Column[] kmeans(int k, Column[] patterns, int offset, int length) {
 		int i, j, l;
 
-		Matrix[] ctemp = new Matrix[k];
+		Column[] ctemp = new Column[k];
 		ArrayList<Integer>[] partitions = new ArrayList[k];
-		Matrix aux = new Matrix(patterns[0].getRows(), patterns[0].getColumns());
-		Matrix aux1 = new Matrix(patterns[0].getRows(), patterns[0].getColumns());
+		Column aux = new Column(patterns[0].getRows());
+		Column aux1 = new Column(patterns[0].getRows());
 
 		for (i = 0; i < k; i++) {
-			ctemp[i] = new Matrix(patterns[0].getRows(), patterns[0].getColumns());
+			ctemp[i] = new Column(patterns[0].getRows());
 			int index = random.nextInt(length) + offset;//abs((int)(ctemp[i].random(&xzxzx)*npatterns));;
 			patterns[index].copy(ctemp[i]);
 			partitions[i] = new ArrayList<>();
@@ -198,7 +195,7 @@ public class RBF extends Adaline {
 
 				if (total == 0) {
 					//empty partition take a random pattern as centroid
-					ctemp[i] = new Matrix(patterns[0].getRows(), patterns[0].getColumns());
+					ctemp[i] = new Column(patterns[0].getRows());
 					int index = random.nextInt(length) + offset;
 					patterns[index].copy(ctemp[i]);
 
@@ -218,15 +215,15 @@ public class RBF extends Adaline {
 	}
 
 	@Override
-	public Matrix simulate(Matrix pattern) {
-		Matrix y = new Matrix(nperlayer[2], 1);
+	public Column simulate(Column pattern) {
+		Column y = new Column(nperlayer[2]);
 		simulate(pattern, y);
 		return y;
 	}
 
 	@Override
-	public void simulate(Matrix pattern, Matrix result) {
-		Matrix aux = new Matrix(nperlayer[1], 1);
+	public void simulate(Column pattern, Column result) {
+		Column aux = new Column(nperlayer[1]);
 		simulateNoChange(pattern, aux);
 		super.simulate(aux, result);
 	}
@@ -237,11 +234,11 @@ public class RBF extends Adaline {
 	 * <code>result</code>.
 	 *
 	 * @param pattern Pattern to evaluate
-	 * @param result The matrix to put the result.
+	 * @param result  The matrix to put the result.
 	 */
-	private void simulateNoChange(Matrix pattern, Matrix result) {
+	private void simulateNoChange(Column pattern, Column result) {
 		for (int i = 0; i < nperlayer[1]; i++) {
-			double current = euclideanDistance2(pattern, c[i]);
+			double current = euclideanDistance2(pattern, centers[i]);
 			result.position(i, 0, NeuralNetwork.gaussian(current, sigma[i]));
 		}
 	}

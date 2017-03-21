@@ -36,7 +36,7 @@ import java.util.ArrayList;
  * <li>centered triangle a != b != c.</li>
  * <li>right triangle to the right a != b = c.</li>
  * </ul>
- *
+ * <p>
  * In the three cases, the support of the set is the interval [a,c].<br>
  * The kernel is always the single value b.<br>
  *

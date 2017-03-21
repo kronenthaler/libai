@@ -24,8 +24,7 @@
 package libai.nn.supervised;
 
 import demos.common.SimpleProgressDisplay;
-import libai.common.Matrix;
-import libai.nn.unsupervised.Competitive;
+import libai.common.matrix.Column;
 import org.junit.Test;
 
 import javax.swing.*;
@@ -48,11 +47,11 @@ public class LVQTest {
 		int n = 6;
 		int m = 2;
 		int l = 3;
-		Matrix[] patterns = new Matrix[n];
-		Matrix[] ans = new Matrix[n];
+		Column[] patterns = new Column[n];
+		Column[] ans = new Column[n];
 		for (int i = 0; i < n; i++) {
-			patterns[i] = new Matrix(m, 1);
-			ans[i] = new Matrix(l, 1);
+			patterns[i] = new Column(m);
+			ans[i] = new Column(l);
 			ans[i].setValue(0);
 		}
 
@@ -82,7 +81,7 @@ public class LVQTest {
 		ans[5].position(2, 0, 1);
 
 		int magicRand = 4; //Results are perfect
-		Competitive net = new LVQ(m, 2, l, new Random(magicRand));
+		LVQ net = new LVQ(m, 2, l, new Random(magicRand));
 		net.setProgressBar(new SimpleProgressDisplay(new JProgressBar()));
 		net.train(patterns, ans, 0.1, 10000);
 

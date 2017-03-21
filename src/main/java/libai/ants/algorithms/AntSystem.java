@@ -31,7 +31,7 @@ import java.util.Vector;
 
 /**
  * This class belong to the core classes of the Ant Framework.
- *
+ * <p>
  * Implements the Ant System algorithm. First developed by Dorigo, this
  * algorithm introduces a transition probability rule (implemented here in
  * <code>desicionRule()</code>) to include heuristic information. However, this
@@ -39,9 +39,8 @@ import java.util.Vector;
  * problems. Other algorithm, such as AntConolySystem introduce several upgrades
  * which greatly improve performance.
  *
- * @version 1
  * @author Enrique Areyan, enrique3 at gmail.com
- *
+ * @version 1
  */
 public abstract class AntSystem extends Metaheuristic {
 	/**
@@ -142,7 +141,8 @@ public abstract class AntSystem extends Metaheuristic {
 						//add the node selected to this ant's solution
 						a.addSolution(currentNode);
 					}
-				} while (currentNode != localDestinationNode && currentNode > 0);//stop when destination node its reached
+				}
+				while (currentNode != localDestinationNode && currentNode > 0);//stop when destination node its reached
 
 				/* Check if this ant's solution is the best solution */
 				if (f(a.getSolution()) < f(this.bestSolution)) {
@@ -157,7 +157,7 @@ public abstract class AntSystem extends Metaheuristic {
 			//if(AntSystem.debug){
 			//    this.Pheromones.show();
 			//}
-            /* Clear ants' solutions */
+			/* Clear ants' solutions */
 			for (int i = 0; i < this.numberOfAnts; i++) {
 				this.Ants[i].clearSolution();
 			}
@@ -242,8 +242,8 @@ public abstract class AntSystem extends Metaheuristic {
 	/**
 	 * Determine whether a link i,j exists in a Vector
 	 *
-	 * @param i component i of the link
-	 * @param j component j of the link
+	 * @param i        component i of the link
+	 * @param j        component j of the link
 	 * @param solution a Vector
 	 * @return true if link i,j exists in vector otherwise false
 	 */

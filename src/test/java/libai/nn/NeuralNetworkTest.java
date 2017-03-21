@@ -23,7 +23,8 @@
  */
 package libai.nn;
 
-import libai.common.Matrix;
+import libai.common.matrix.Column;
+import libai.common.matrix.Matrix;
 import libai.io.MatrixIO;
 import org.junit.Test;
 
@@ -53,12 +54,12 @@ public class NeuralNetworkTest {
 		//This test is to check that the code an be replaced with
 		//euclideandistance2
 		NN nn = new NN();
-		Matrix[] patterns = new Matrix[10];
-		Matrix[] answers  = new Matrix[10];
+		Column[] patterns = new Column[10];
+		Column[] answers  = new Column[10];
 		Random r = new Random(0);
 		for (int i = 0; i < 10; i++) {
-			patterns[i] = Matrix.random(20, 1, true, r);
-			answers [i] = Matrix.random(10, 1, true, r);
+			patterns[i] = Column.random(20, true, r);
+			answers [i] = Column.random(10, true, r);
 		}
 		//old error -> 7.498344587525985
 		assertEquals(7.498344587525985, nn.error(patterns, answers), 1e-12);
@@ -69,12 +70,12 @@ public class NeuralNetworkTest {
 		//This test is to check that the code an be replaced with
 		//euclideandistance2
 		NN nn = new NN();
-		Matrix[] patterns = new Matrix[10];
-		Matrix[] answers  = new Matrix[10];
+		Column[] patterns = new Column[10];
+		Column[] answers  = new Column[10];
 		Random r = new Random(0);
 		for (int i = 0; i < 10; i++) {
-			patterns[i] = Matrix.random(35, 1, true, r);
-			answers [i] = Matrix.random(25, 1, true, r);
+			patterns[i] = Column.random(35, true, r);
+			answers [i] = Column.random(25, true, r);
 		}
 		//old error -> 17.015311661715778
 		assertEquals(17.015311661715778, nn.error(patterns, answers), 1e-12);
@@ -83,11 +84,11 @@ public class NeuralNetworkTest {
 	@Test
 	public void testErrorZero() {
 		NN nn = new NN();
-		Matrix[] patterns = new Matrix[10];
-		Matrix[] answers  = new Matrix[10];
+		Column[] patterns = new Column[10];
+		Column[] answers  = new Column[10];
 		for (int i = 0; i < 10; i++) {
-			patterns[i] = Matrix.random(20, 1);
-			answers [i] = new Matrix(20,1);
+			patterns[i] = Column.random(20);
+			answers [i] = new Column(20);
 			patterns[i].copy(answers[i]);
 		}
 		assertEquals(0, nn.error(patterns, answers), 1e-12);
@@ -96,11 +97,11 @@ public class NeuralNetworkTest {
 	@Test
 	public void testErrorZeroOffset() {
 		NN nn = new NN();
-		Matrix[] patterns = new Matrix[10];
-		Matrix[] answers  = new Matrix[10];
+		Column[] patterns = new Column[10];
+		Column[] answers  = new Column[10];
 		for (int i = 0; i < 10; i++) {
-			patterns[i] = Matrix.random(20, 1);
-			answers [i] = new Matrix(20,1);
+			patterns[i] = Column.random(20);
+			answers [i] = new Column(20);
 			patterns[i].copy(answers[i]);
 		}
 		assertEquals(0, nn.error(patterns, answers, 2, 7), 1e-12);
@@ -110,8 +111,8 @@ public class NeuralNetworkTest {
 	public void testEuclideanDistanceMatrix() {
 		assumeTrue("Can't use temp dir...", checkTemp());
 		assumeTrue("Can't find Octave...", checkOctaveInstall());
-		Matrix a = Matrix.random(10, 1);
-		Matrix b = Matrix.random(10, 1);
+		Column a = Column.random(10);
+		Column b = Column.random(10);
 
 		String tmp = System.getProperty("java.io.tmpdir") + File.separator;
 		File matFile = new File(tmp + "euclidean.mat");
@@ -150,36 +151,36 @@ public class NeuralNetworkTest {
 		assertEquals(distOct, distLai, 1e-3);
 	}
 
-	@Test
-	public void testShuffle() {
-		int[] arr1 = new int[10];
-		int[] arr2 = new int[10];
-		for (int i = 0; i < 10; i++) arr1[i] = arr2[i] = i;
-		assertArrayEquals(arr1, arr2);
-		new NN().shuffle(arr1);
-		assertFalse(Arrays.equals(arr1, arr2));
-		//No value should be ommited
-		int foo = 0;
-		for (int i = 0; i < arr2.length; i++) {
-			foo ^= arr1[i];
-			foo ^= arr2[i];
-		}
-		assertEquals(0, foo);
-	}
+//	@Test
+//	public void testShuffle() {
+//		int[] arr1 = new int[10];
+//		int[] arr2 = new int[10];
+//		for (int i = 0; i < 10; i++) arr1[i] = arr2[i] = i;
+//		assertArrayEquals(arr1, arr2);
+//		new NN().shuffle(arr1);
+//		assertFalse(Arrays.equals(arr1, arr2));
+//		//No value should be ommited
+//		int foo = 0;
+//		for (int i = 0; i < arr2.length; i++) {
+//			foo ^= arr1[i];
+//			foo ^= arr2[i];
+//		}
+//		assertEquals(0, foo);
+//	}
 
 	private static class NN extends NeuralNetwork {
 		@Override
-		public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
-
+		public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror) {
+			// not needed
 		}
 
 		@Override
-		public Matrix simulate(Matrix pattern) {
+		public Column simulate(Column pattern) {
 			return null;
 		}
 
 		@Override
-		public void simulate(Matrix pattern, Matrix result) {
+		public void simulate(Column pattern, Column result) {
 			//Dummy simulation
 			for (int i = 0; i < result.getRows(); i++) {
 				result.position(i, 0, pattern.position(i, 0));

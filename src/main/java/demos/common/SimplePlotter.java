@@ -29,7 +29,7 @@ import libai.common.Plotter;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class SimplePlotter extends Canvas implements Plotter{
+public class SimplePlotter extends Canvas implements Plotter {
 	private ArrayList<Pair<Integer, Double>> errors;
 	private double min, max;
 	private int pixels = 3;
@@ -52,7 +52,7 @@ public class SimplePlotter extends Canvas implements Plotter{
 		g.fillRect(0, 0, w, h);
 
 		g.setColor(Color.lightGray);
-		g.drawLine(10, 10, 10, h - 20);	  //y-axis
+		g.drawLine(10, 10, 10, h - 20);      //y-axis
 		g.drawLine(10, h - 20, w - 20, h - 20); //zero
 
 		//normalize values to [0-1] according to min and max

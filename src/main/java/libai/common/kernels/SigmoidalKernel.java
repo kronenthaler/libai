@@ -23,15 +23,14 @@
  */
 package libai.common.kernels;
 
-import libai.common.Matrix;
+import libai.common.matrix.Matrix;
 
 /**
- *
  * @author kronenthaler
  */
 public class SigmoidalKernel implements Kernel {
 	private static final long serialVersionUID = 5132845207274843125L;
-	
+
 	private double a, b;
 
 	public SigmoidalKernel(double _a, double _b) {

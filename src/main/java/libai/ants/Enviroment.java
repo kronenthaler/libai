@@ -23,23 +23,22 @@
  */
 package libai.ants;
 
-import libai.common.Matrix;
+import libai.common.matrix.Matrix;
 
 import java.util.Arrays;
 import java.util.Comparator;
 
 /**
  * This class belong to the core classes of the Ant Framework.
- *
+ * <p>
  * It represent the enviroment in which an optimization problem is going to be
  * solved. An enviroment is composed of a problem Graph, a Matrix of pheromones
  * and a number of Ants. This class is highly coupled with the Metaheuristic
  * class, which utilizes this class to obtain all the necesary information to
  * solve a given optimization problem.
  *
- * @version 1
  * @author Enrique Areyan, enrique3 at gmail.com
- *
+ * @version 1
  */
 public class Enviroment {
 	/**
@@ -75,7 +74,7 @@ public class Enviroment {
 	/**
 	 * Constructor. Allocates only the Graph and the pheromone trail
 	 *
-	 * @param G the graph with the problem related information
+	 * @param G                the graph with the problem related information
 	 * @param randomPheromones {@code randomPheromones}
 	 */
 	public Enviroment(Graph G, boolean randomPheromones) {
@@ -103,8 +102,8 @@ public class Enviroment {
 	 * initialize the array of ants and the pheromone trail accoridng to the
 	 * dimension of the graph.
 	 *
-	 * @param numberOfAnts the number of ants to use
-	 * @param G the graph with the problem related information
+	 * @param numberOfAnts     the number of ants to use
+	 * @param G                the graph with the problem related information
 	 * @param randomPheromones {@code randomPheromones}
 	 * @throws AntFrameworkException if numberOfAnts is less or equal to 0
 	 */
@@ -122,8 +121,8 @@ public class Enviroment {
 	 * trail pheromone to a value v.
 	 *
 	 * @param numberOfAnts number of ants
-	 * @param G object Graph
-	 * @param v initial value of the pheromone trail
+	 * @param G            object Graph
+	 * @param v            initial value of the pheromone trail
 	 * @throws libai.ants.AntFrameworkException AntFrameworkException
 	 */
 	public Enviroment(int numberOfAnts, Graph G, double v) throws AntFrameworkException {
@@ -135,7 +134,7 @@ public class Enviroment {
 	/**
 	 * Sets the number of ants of this Enviroment
 	 *
-	 * @param numberOfAnts  {@code numberOfAnts}
+	 * @param numberOfAnts {@code numberOfAnts}
 	 */
 	public void setNumberOfAnts(int numberOfAnts) {
 		this.numberOfAnts = numberOfAnts;
@@ -162,6 +161,7 @@ public class Enviroment {
 
 	/**
 	 * Sets the array of ants of this enviroment.
+	 *
 	 * @throws libai.ants.AntFrameworkException AntFrameworkException
 	 */
 	public void setAnts() throws AntFrameworkException {

@@ -23,7 +23,8 @@
  */
 package libai.nn.unsupervised;
 
-import libai.common.Matrix;
+import libai.common.Shuffler;
+import libai.common.matrix.Column;
 import libai.common.Pair;
 import libai.nn.NeuralNetwork;
 
@@ -42,12 +43,12 @@ import java.util.Random;
  *
  * @author kronenthaler
  */
-public class Kohonen extends NeuralNetwork {
+public class Kohonen extends UnsupervisedLearning {
 	private static final long serialVersionUID = 8918172607912802829L;
 
-	private Matrix W[];					//array of weights ijk, with k positions.
-	private int[][] map;				//map of the outputs
-	private int[] nperlayer;			//array of 3 positions, {#inputs,#rows,#columns}
+	private Column W[];                    //array of weights ijk, with k positions.
+	private int[][] map;                //map of the outputs
+	private int[] nperlayer;            //array of 3 positions, {#inputs,#rows,#columns}
 	private double neighborhood;
 	private int stepsx[], stepsy[];
 
@@ -56,10 +57,10 @@ public class Kohonen extends NeuralNetwork {
 	 * nperlayer[1] rows and nperlayer[2] columns. Additional set the initial
 	 * size of the neighborhood and the way in the neighbors are connected.
 	 *
-	 * @param nperlayer Number of neurons (input, rows and columns)
+	 * @param nperlayer    Number of neurons (input, rows and columns)
 	 * @param neighborhood Initial size of the neighborhood
-	 * @param neighboursX neighbors along the X-axis
-	 * @param neighboursY neighbors along the Y-axis
+	 * @param neighboursX  neighbors along the X-axis
+	 * @param neighboursY  neighbors along the Y-axis
 	 */
 	public Kohonen(int[] nperlayer, double neighborhood, int[] neighboursX, int[] neighboursY) {
 		this(nperlayer, neighborhood, neighboursX, neighboursY, getDefaultRandomGenerator());
@@ -70,24 +71,24 @@ public class Kohonen extends NeuralNetwork {
 	 * nperlayer[1] rows and nperlayer[2] columns. Additional set the initial
 	 * size of the neighborhood and the way in the neighbors are connected.
 	 *
-	 * @param nperlayer Number of neurons (input, rows and columns)
+	 * @param nperlayer    Number of neurons (input, rows and columns)
 	 * @param neighborhood Initial size of the neighborhood
-	 * @param neighboursX neighbors along the X-axis as deltas from origin eg. +1, 0, -1, 2
-	 * @param neighboursY neighbors along the Y-axis as deltas from origin eg. +1, 0, -1, 2
-	 * @param rand Random generator used for creating matrices
+	 * @param neighboursX  neighbors along the X-axis as deltas from origin eg. +1, 0, -1, 2
+	 * @param neighboursY  neighbors along the Y-axis as deltas from origin eg. +1, 0, -1, 2
+	 * @param rand         Random generator used for creating matrices
 	 */
 	public Kohonen(int[] nperlayer, double neighborhood, int[] neighboursX, int[] neighboursY, Random rand) {
 		super(rand);
 		this.nperlayer = nperlayer;
 		this.neighborhood = neighborhood;
 
-		W = new Matrix[nperlayer[1] * nperlayer[2]];
+		W = new Column[nperlayer[1] * nperlayer[2]];
 		stepsx = neighboursX;
 		stepsy = neighboursY;
 
 		for (int i = 0; i < nperlayer[1]; i++) {
 			for (int j = 0; j < nperlayer[2]; j++) {
-				W[(i * nperlayer[2]) + j] = new Matrix(nperlayer[0], 1);
+				W[(i * nperlayer[2]) + j] = new Column(nperlayer[0]);
 				W[(i * nperlayer[2]) + j].fill(true);
 			}
 		}
@@ -101,7 +102,7 @@ public class Kohonen extends NeuralNetwork {
 	 * down, left, right). Alias of Kohonen(nperlayer, _neighborhood, new
 	 * int[]{0,0,1,-1}, new int[]{-1,1,0,0});
 	 *
-	 * @param nperlayer Number of neurons (input, rows and columns)
+	 * @param nperlayer    Number of neurons (input, rows and columns)
 	 * @param neighborhood Initial size of the neighborhood
 	 */
 	public Kohonen(int[] nperlayer, double neighborhood) {
@@ -113,9 +114,9 @@ public class Kohonen extends NeuralNetwork {
 	 * down, left, right). Alias of Kohonen(nperlayer, _neighborhood, new
 	 * int[]{0,0,1,-1}, new int[]{-1,1,0,0});
 	 *
-	 * @param nperlayer Number of neurons (input, rows and columns)
+	 * @param nperlayer    Number of neurons (input, rows and columns)
 	 * @param neighborhood Initial size of the neighborhood
-	 * @param random Random generator used for creating matrices
+	 * @param random       Random generator used for creating matrices
 	 */
 	public Kohonen(int[] nperlayer, double neighborhood, Random random) {
 		this(nperlayer, neighborhood, new int[]{0, 0, 1, -1}, new int[]{-1, 1, 0, 0}, random);
@@ -125,34 +126,28 @@ public class Kohonen extends NeuralNetwork {
 	 * Train the map. The answers are omitted for the training process but are
 	 * necessary for the labeling of the map.
 	 *
-	 * @param patterns	The patterns to be learned.
-	 * @param answers The expected answers.
-	 * @param alpha	The learning rate.
-	 * @param epochs	The maximum number of iterations
-	 * @param offset	The first pattern position
-	 * @param length	How many patterns will be used.
-	 * @param minerror The minimal error expected.
+	 * @param patterns The patterns to be learned.
+	 * @param alpha    The learning rate.
+	 * @param epochs   The maximum number of iterations
+	 * @param offset   The first pattern position
+	 * @param length   How many patterns will be used.
 	 */
 	@Override
-	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
+	public void train(Column[] patterns, double alpha, int epochs, int offset, int length) {
+		validatePreconditions(patterns, epochs, offset, length);
+
 		double lambda = neighborhood;
 		double alpha1 = alpha;
 
-		int[] sort = new int[length];
-		for (int i = 0; i < length; sort[i] = i++);
+		Shuffler shuffler = new Shuffler(length, NeuralNetwork.getDefaultRandomGenerator());
+		initializeProgressBar(epochs);
 
-		Matrix temp = new Matrix(nperlayer[0], 1);
+		Column temp = new Column(nperlayer[0]);
 
-		if (progress != null) {
-			progress.setMaximum(epochs * 2);
-			progress.setMinimum(0);
-			progress.setValue(0);
-		}
-
-		for(int currentEpoch=0; currentEpoch < epochs; currentEpoch++) {
+		for (int currentEpoch = 0; currentEpoch < epochs; currentEpoch++) {
 			//System.out.println("epoch: "+curr_epoch);
 			//shuffle
-			shuffle(sort);
+			int[] sort = shuffler.shuffle();
 
 			for (int k = 0; k < length; k++) {
 				//Who is the winner
@@ -161,9 +156,9 @@ public class Kohonen extends NeuralNetwork {
 				//Update winner and neighbors.
 				for (int i = 0; i < nperlayer[1]; i++) {
 					for (int j = 0; j < nperlayer[2]; j++) {
-						Matrix Mij = getPrototypeAt(i, j);
+						Column Mij = getPrototypeAt(i, j);
 						patterns[sort[k] + offset].subtract(Mij, temp);
-						temp.multiply(alpha1 * neighbor(i, j,  winner.first, winner.second), temp);
+						temp.multiply(alpha1 * neighbor(i, j, winner.first, winner.second), temp);
 						Mij.add(temp, Mij);
 					}
 				}
@@ -181,26 +176,25 @@ public class Kohonen extends NeuralNetwork {
 				progress.setValue(currentEpoch);
 		}
 
-		expandMap(patterns, answers, offset, length);
 		if (progress != null)
 			progress.setValue(progress.getMaximum());
 	}
 
 	@Override
-	public Matrix simulate(Matrix pattern) {
-		Matrix ret = new Matrix(nperlayer[0], 1);
+	public Column simulate(Column pattern) {
+		Column ret = new Column(nperlayer[0]);
 		simulate(pattern, ret);
 		return ret;
 	}
 
 	@Override
-	public void simulate(Matrix pattern, Matrix result) {
+	public void simulate(Column pattern, Column result) {
 		Pair<Integer, Integer> winner = getWinnerCell(pattern);
 		getPrototypeAt(winner.first, winner.second).copy(result);
 	}
 
-	private Pair<Integer, Integer> getWinnerCell(Matrix pattern){
-		Pair<Integer, Integer> winner = new Pair<>(0,0);
+	private Pair<Integer, Integer> getWinnerCell(Column pattern) {
+		Pair<Integer, Integer> winner = new Pair<>(0, 0);
 		double min = Double.MAX_VALUE;
 		for (int i = 0; i < nperlayer[1]; i++) {
 			for (int j = 0; j < nperlayer[2]; j++) {
@@ -215,7 +209,7 @@ public class Kohonen extends NeuralNetwork {
 		return winner;
 	}
 
-	public Matrix getPrototypeAt(int i, int j) {
+	public Column getPrototypeAt(int i, int j) {
 		return W[(i * nperlayer[2]) + j];
 	}
 
@@ -240,11 +234,11 @@ public class Kohonen extends NeuralNetwork {
 	 * standard process but is very helpful to avoid unknown answers.
 	 *
 	 * @param patterns The patterns to label
-	 * @param answers	The expected answer for the patterns
-	 * @param offset	The initial pattern position
-	 * @param length	How many patterns to label.
+	 * @param answers  The expected answer for the patterns
+	 * @param offset   The initial pattern position
+	 * @param length   How many patterns to label.
 	 */
-	private void expandMap(Matrix[] patterns, Matrix[] answers, int offset, int length) {
+	public void expandMap(Column[] patterns, Column[] answers, int offset, int length) {
 		//System.out.println("labelling...");
 		for (int k = 0; k < length; k++) {
 			Pair<Integer, Integer> winner = getWinnerCell(patterns[k + offset]);

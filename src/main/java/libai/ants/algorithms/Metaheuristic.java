@@ -24,7 +24,7 @@
 package libai.ants.algorithms;
 
 import libai.ants.*;
-import libai.common.Matrix;
+import libai.common.matrix.Matrix;
 
 import java.util.Comparator;
 import java.util.Hashtable;
@@ -35,13 +35,12 @@ import java.util.Vector;
  * that any ACO algorithm must implement. This is an abstract class that must be
  * extended by the class that implements a particular ACO algorithm for
  * instance: AntSystem, AntColonySystem, MIX-MAX ACO, ...
- *
+ * <p>
  * This class is composed of an instance of the Enviroment class, which holds
  * the necesary information to solve a given optimization problem
  *
- * @version 1
  * @author Enrique Areyan, enrique3 at gmail.com
- *
+ * @version 1
  */
 abstract public class Metaheuristic implements Comparator<Ant> {
 	/**
@@ -169,7 +168,7 @@ abstract public class Metaheuristic implements Comparator<Ant> {
 	/**
 	 * Sets a parameter
 	 *
-	 * @param key of the parameter
+	 * @param key   of the parameter
 	 * @param param the value of the parameter
 	 */
 	protected void setParam(int key, double param) {
@@ -195,7 +194,7 @@ abstract public class Metaheuristic implements Comparator<Ant> {
 	/**
 	 * Used by ants to decided the next node to visit.
 	 *
-	 * @param i source node
+	 * @param i               source node
 	 * @param currentSolution {@code currentSolution}
 	 * @return destination node
 	 */
@@ -238,7 +237,7 @@ abstract public class Metaheuristic implements Comparator<Ant> {
 	 * the case of the short route, this function returns all adjacents nodes to
 	 * node i.
 	 *
-	 * @param i current node
+	 * @param i               current node
 	 * @param currentSolution ant's current solutin
 	 * @return list of possible nodes to visit
 	 */

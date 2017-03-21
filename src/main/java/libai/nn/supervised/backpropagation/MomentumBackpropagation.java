@@ -1,6 +1,9 @@
 package libai.nn.supervised.backpropagation;
 
-import libai.common.Matrix;
+import libai.common.Shuffler;
+import libai.common.matrix.Column;
+import libai.common.matrix.Matrix;
+import libai.nn.NeuralNetwork;
 
 /**
  * Created by kronenthaler on 18/01/2017.
@@ -8,35 +11,32 @@ import libai.common.Matrix;
 public class MomentumBackpropagation extends StandardBackpropagation {
 	private double beta;
 
-	public MomentumBackpropagation(double beta){
+	public MomentumBackpropagation(double beta) {
 		if (beta < 0 || beta >= 1)
 			throw new IllegalArgumentException("beta should be positive and less than 1");
 		this.beta = beta;
 	}
 
 	@Override
-	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
-		int[] sort = new int[length];
+	public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror) {
+		Shuffler shuffler = new Shuffler(length, NeuralNetwork.getDefaultRandomGenerator());
+
 		double error = nn.error(patterns, answers, offset, length);
 		Matrix e = new Matrix(answers[0].getRows(), answers[0].getColumns());
 		Matrix temp3;
-
-		for (int i = 0; i < length; i++) {
-			sort[i] = i;
-		}
 
 		Matrix Wprev[] = new Matrix[layers];
 		Matrix bprev[] = new Matrix[layers];//momemtum
 		for (int i = 1; i < layers; i++) {
 			Wprev[i] = new Matrix(nperlayer[i], nperlayer[i - 1]);
-			bprev[i] = new Matrix(nperlayer[i], 1);
+			bprev[i] = new Column(nperlayer[i]);
 			W[i].copy(Wprev[i]);
 			b[i].copy(bprev[i]);
 		}
 
-		for(int currentEpoch=0; currentEpoch < epochs && error > minerror; currentEpoch++){
+		for (int currentEpoch = 0; currentEpoch < epochs && error > minerror; currentEpoch++) {
 			//shuffle patterns
-			nn.shuffle(sort);
+			int[] sort = shuffler.shuffle();
 
 			error = 0;
 			for (int i = 0; i < length; i++) {
@@ -68,13 +68,13 @@ public class MomentumBackpropagation extends StandardBackpropagation {
 					Y[l - 1].transpose(Yt[l - 1]);
 					temp3 = new Matrix(d[l].getRows(), Y[l - 1].getRows());
 
-					d[l].multiply(1 - beta, d[l]);			//(1-beta)*alpha.d[i]
-					d[l].multiply(Yt[l - 1], temp3);		//(1-beta)*alpha.d[i].Y[i-1]^t
+					d[l].multiply(1 - beta, d[l]);            //(1-beta)*alpha.d[i]
+					d[l].multiply(Yt[l - 1], temp3);        //(1-beta)*alpha.d[i].Y[i-1]^t
 
 					//W[i]=W[i] + beta*(W[i]-Wprev[i]) - (1-beta)*alpha.d[i].Y[i-1]^t
 					W[l].subtractAndCopy(Wprev[l], M[l], Wprev[l]);//(W[i]-Wprev[i]), WPrev[l]=W[l]
 					M[l].multiplyAndAdd(beta, W[l], W[l]);//W[i] + beta*(W[i]-Wprev[i])
-					W[l].subtract(temp3, W[l]);			//W[i] + beta*(W[i]-Wprev[i]) - (1-beta)*alpha.d[i].Y[i-1]^t
+					W[l].subtract(temp3, W[l]);            //W[i] + beta*(W[i]-Wprev[i]) - (1-beta)*alpha.d[i].Y[i-1]^t
 
 					temp3 = null;
 					temp3 = new Matrix(b[l].getRows(), b[l].getColumns());
@@ -82,7 +82,7 @@ public class MomentumBackpropagation extends StandardBackpropagation {
 					//B[i]=B[i]+ beta*(B[i]-Bprev[i]) - (1-beta)*alpha.d[i];
 					b[l].subtractAndCopy(bprev[l], temp3, bprev[l]);//(B[i]-Bprev[i]), Bprev[l] = B[l]
 					temp3.multiplyAndAdd(beta, b[l], b[l]);//B[i] + beta*(B[i]-Bprev[i])
-					b[l].subtract(d[l], b[l]);		//B[i] + beta*(B[i]-Bprev[i]) - (1-beta)*alpha.d[i]
+					b[l].subtract(d[l], b[l]);        //B[i] + beta*(B[i]-Bprev[i]) - (1-beta)*alpha.d[i]
 
 					temp3 = null;
 				}

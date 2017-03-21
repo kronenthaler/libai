@@ -23,12 +23,11 @@
  */
 package libai.common.kernels;
 
-import libai.common.Matrix;
+import libai.common.matrix.Matrix;
 
 import java.io.Serializable;
 
 /**
- *
  * @author kronenthaler
  */
 public interface Kernel extends Serializable {

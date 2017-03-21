@@ -74,8 +74,8 @@ public class Condition {
 	 * and(), or() &amp; not();
 	 *
 	 * @param op The operator type.
-	 * @param l Left branch condition.
-	 * @param r Right branch condition.
+	 * @param l  Left branch condition.
+	 * @param r  Right branch condition.
 	 */
 	private Condition(int op, Condition l, Condition r) {
 		operator = op;

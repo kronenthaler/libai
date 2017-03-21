@@ -24,6 +24,9 @@
 package libai.common;
 
 import libai.common.functions.Function;
+import libai.common.matrix.Column;
+import libai.common.matrix.Matrix;
+import libai.common.matrix.Row;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -92,14 +95,14 @@ public class MatrixTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testConstructorFail3() {
-        Matrix m = new Matrix(0, 1, false);
+    public void testConstructorFail4() {
+        Matrix m = new Matrix(5, 5, null);
         assertNull(m);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testConstructorFail4() {
-        Matrix m = new Matrix(5, 5, null);
+    @Test(expected = NullPointerException.class)
+    public void testConstructorCopyFail() {
+        Matrix m = new Matrix(null);
         assertNull(m);
     }
 
@@ -271,10 +274,10 @@ public class MatrixTest {
     @Test
     public void testMultiplyMatrixMatrix3() {
         //d2_data was calculated with GNU-Octave 4.0.2 (x86_64-pc-linux-gnu)
-        Matrix a = new Matrix(1, 10, a2_data);
-        Matrix b = new Matrix(10, 1, b2_data);
-        Matrix c = new Matrix(1, 1);
-        Matrix d = new Matrix(1, 1, d2_data);
+        Row a = new Row(10, a2_data);
+        Column b = new Column(10, b2_data);
+        Matrix c = new Column(1);
+        Matrix d = new Column(1, d2_data);
         a.multiply(b, c);
         assertEquals(c, d);
     }
@@ -462,7 +465,7 @@ public class MatrixTest {
     public void testEquals() {
         Matrix a = Matrix.random(10, 10);
         Matrix b = new Matrix(10, 10);
-        Matrix c = new Matrix(1, 10);
+        Row c = new Row(10);
 
         a.copy(b);
         assertEquals(a, b);
@@ -477,8 +480,8 @@ public class MatrixTest {
 
     @Test
     public void testEquals1() {
-        Matrix a = new Matrix(10, 1);
-        Matrix b = new Matrix(1, 10);
+        Matrix a = new Column(10);
+        Matrix b = new Row(10);
 
         assertNotEquals(a, b);
         b = b.transpose();
@@ -796,8 +799,8 @@ public class MatrixTest {
     @Test
     public void testDotProduct() {
         //product was calculated with GNU-Octave 4.0.2 (x86_64-pc-linux-gnu)
-        Matrix a = new Matrix(1, 10, a3_data);
-        Matrix b = new Matrix(1, 10, b3_data);
+        Matrix a = new Row( 10, a3_data);
+        Matrix b = new Row( 10, b3_data);
         double product = a.dotProduct(b);
         assertEquals(result, product, DELTA);
     }
@@ -805,8 +808,8 @@ public class MatrixTest {
     @Test
     public void testDotProduct1() {
         //product was calculated with GNU-Octave 4.0.2 (x86_64-pc-linux-gnu)
-        Matrix a = new Matrix(10, 1, a3_data);
-        Matrix b = new Matrix(10, 1, b3_data);
+        Matrix a = new Column(10, a3_data);
+        Matrix b = new Column(10, b3_data);
         double product = a.dotProduct(b);
         assertEquals(result, product, DELTA);
     }
@@ -814,8 +817,8 @@ public class MatrixTest {
     @Test
     public void testDotProduct2() {
         //product was calculated with GNU-Octave 4.0.2 (x86_64-pc-linux-gnu)
-        Matrix a = new Matrix(1, 10, a3_data);
-        Matrix b = new Matrix(10, 1, b3_data);
+        Matrix a = new Row( 10, a3_data);
+        Matrix b = new Column(10, b3_data);
         double product = a.dotProduct(b);
         assertEquals(result, product, DELTA);
     }
@@ -823,8 +826,8 @@ public class MatrixTest {
     @Test
     public void testDotProduct3() {
         //product was calculated with GNU-Octave 4.0.2 (x86_64-pc-linux-gnu)
-        Matrix a = new Matrix(10, 1, a3_data);
-        Matrix b = new Matrix(1, 10, b3_data);
+        Matrix a = new Column(10, a3_data);
+        Matrix b = new Row( 10, b3_data);
         double product = a.dotProduct(b);
         assertEquals(result, product, DELTA);
     }
@@ -899,7 +902,7 @@ public class MatrixTest {
             @Override public Function getDerivate() {return null;}
         };
         Matrix a = Matrix.random(10, 10);
-        Matrix b = new Matrix(10, 1);
+        Matrix b = new Column(10);
         b.applyInIdentity(f, a);
         for (int i = 0; i < a.getRows(); i++) {
             assertEquals(0, a.position(i, i), DELTA);
@@ -984,10 +987,10 @@ public class MatrixTest {
 
 	@Test
 	public void testToString() {
-		Matrix a = new Matrix(2, 1, true);
-		assertEquals("1.00000000 \n0.00000000 \n\n", a.toString());
-		a = new Matrix(1, 2, true);
-		assertEquals("1.00000000 0.00000000 \n\n", a.toString());
+		Matrix a = new Column(2);
+		assertEquals("0.00000000 \n0.00000000 \n\n", a.toString());
+		a = new Row(2);
+		assertEquals("0.00000000 0.00000000 \n\n", a.toString());
 	}
 
     private void assertArrayNotEquals(double[] a, double[] b, double DELTA) {

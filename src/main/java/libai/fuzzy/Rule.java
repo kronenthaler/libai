@@ -54,7 +54,7 @@ public class Rule {
 	 * sets (actions).
 	 *
 	 * @param _cond The condition tree for this rule.
-	 * @param acts The actions for this rule.
+	 * @param acts  The actions for this rule.
 	 */
 	public Rule(Condition _cond, FuzzySet... acts) {
 		cond = _cond;

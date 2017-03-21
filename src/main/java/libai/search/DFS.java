@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.Stack;
 
 /**
- *
  * @author kronenthaler
  */
 public class DFS implements Search {

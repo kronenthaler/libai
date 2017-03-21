@@ -28,12 +28,12 @@ import libai.common.ProgressDisplay;
 import javax.swing.*;
 
 /**
- *
  * @author kronenthaler
  */
-public class SimpleProgressDisplay implements ProgressDisplay{
+public class SimpleProgressDisplay implements ProgressDisplay {
 	protected JProgressBar progress;
-	public SimpleProgressDisplay(JProgressBar pb){
+
+	public SimpleProgressDisplay(JProgressBar pb) {
 		progress = pb;
 	}
 

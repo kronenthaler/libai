@@ -24,7 +24,6 @@
 package libai.search;
 
 /**
- *
  * @author kronenthaler
  */
 public interface Search {

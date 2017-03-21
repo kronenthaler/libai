@@ -31,7 +31,7 @@ import java.util.Vector;
 
 /**
  * This class belong to the core classes of the Ant Framework.
- *
+ * <p>
  * First introduced by Stutzle and Hoos, this class implements the Min-Max Ant
  * System algorithm. This algorithm was conceived as a fix of the prematurely
  * stagnation behavior of AS for complex problem. Stagnation means that all ants
@@ -41,9 +41,8 @@ import java.util.Vector;
  * restricted within given intervals and initial pheromoes are set to a max
  * allowed value.
  *
- * @version 1
  * @author Enrique Areyan, enrique3 at gmail.com
- *
+ * @version 1
  */
 abstract public class MMAS extends Metaheuristic {
 	/**
@@ -237,8 +236,9 @@ abstract public class MMAS extends Metaheuristic {
 						a.addSolution(currentNode);
 					}
 					//System.out.println("currentNode = " +currentNode);
-				} while (currentNode != localDestinationNode && currentNode > 0);//stop when destination node its reached
-                /* Check if this ant's solution is the best solution */
+				}
+				while (currentNode != localDestinationNode && currentNode > 0);//stop when destination node its reached
+				/* Check if this ant's solution is the best solution */
 				if (f(a.getSolution()) < f(this.bestSolution)) {
 					this.bestSolution = a.copySolution();
 				}

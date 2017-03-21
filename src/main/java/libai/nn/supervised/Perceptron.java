@@ -23,9 +23,11 @@
  */
 package libai.nn.supervised;
 
-import libai.common.Matrix;
+
+import libai.common.Shuffler;
+import libai.common.matrix.Column;
+import libai.common.matrix.Matrix;
 import libai.common.functions.Sign;
-import libai.nn.NeuralNetwork;
 
 import java.util.Random;
 
@@ -37,18 +39,18 @@ import java.util.Random;
  *
  * @author kronenthaler
  */
-public class Perceptron extends NeuralNetwork {
+public class Perceptron extends SupervisedLearning {
 	private static final long serialVersionUID = 2795822735956649552L;
-
-	protected Matrix W, b;
-	protected int ins, outs;
 	protected static Sign signum = new Sign();
+	protected Matrix W;
+	protected Column b;
+	protected int ins, outs;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param in Number of inputs for the network = number of elements in the
-	 * patterns.
+	 * @param in  Number of inputs for the network = number of elements in the
+	 *            patterns.
 	 * @param out Number of outputs for the network.
 	 */
 	public Perceptron(int in, int out) {
@@ -58,9 +60,9 @@ public class Perceptron extends NeuralNetwork {
 	/**
 	 * Constructor.
 	 *
-	 * @param in Number of inputs for the network = number of elements in the
-	 * patterns.
-	 * @param out Number of outputs for the network.
+	 * @param in   Number of inputs for the network = number of elements in the
+	 *             patterns.
+	 * @param out  Number of outputs for the network.
 	 * @param rand Random generator used for creating matrices
 	 */
 	public Perceptron(int in, int out, Random rand) {
@@ -70,7 +72,7 @@ public class Perceptron extends NeuralNetwork {
 		outs = out;
 
 		W = new Matrix(outs, ins);
-		b = new Matrix(out, 1);
+		b = new Column(out);
 
 		W.fill(true, random);
 		b.fill(true, random);
@@ -81,45 +83,41 @@ public class Perceptron extends NeuralNetwork {
 	 * W = W + alpha.e.pattern^t<br>
 	 * b = b + alpha.e
 	 *
-	 * @param patterns	The patterns to be learned.
-	 * @param answers The expected answers.
-	 * @param alpha	The learning rate.
-	 * @param epochs	The maximum number of iterations
-	 * @param offset	The first pattern position
-	 * @param length	How many patterns will be used.
+	 * @param patterns The patterns to be learned.
+	 * @param answers  The expected answers.
+	 * @param alpha    The learning rate.
+	 * @param epochs   The maximum number of iterations
+	 * @param offset   The first pattern position
+	 * @param length   How many patterns will be used.
 	 * @param minerror The minimal error expected.
 	 */
 	@Override
-	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
-		int[] sort = new int[length]; // [0,length)
-		double error = 1;
-		Matrix Y = new Matrix(outs, 1);
-		Matrix E = new Matrix(outs, 1);
-		Matrix aux = new Matrix(outs, ins);
+	public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror) {
+		validatePreconditions(patterns, answers, epochs, offset, length, minerror);
 
-		//initialize sort array
 		Matrix[] patternsT = new Matrix[length];
 		for (int i = 0; i < length; i++) {
 			patternsT[i] = patterns[i + offset].transpose();
-			sort[i] = i;
 		}
 
-		if (progress != null) {
-			progress.setMaximum(epochs);
-			progress.setMinimum(0);
-			progress.setValue(0);
-		}
+		Column Y = new Column(outs);
+		Column E = new Column(outs);
+		Matrix aux = new Matrix(outs, ins);
 
-		for(int currentEpoch=0; currentEpoch < epochs && error > minerror; currentEpoch++){
+		double error = 1;
+		Shuffler shuffler = new Shuffler(length, this.random);
+		initializeProgressBar(epochs);
+
+		for (int currentEpoch = 0; currentEpoch < epochs && error > minerror; currentEpoch++) {
 			//shuffle patterns
-			shuffle(sort);
+			int[] sort = shuffler.shuffle();
 
 			for (int i = 0; i < length; i++) {
 				//F(wx+b)
 				simulate(patterns[sort[i] + offset], Y);
 
 				//e=t-y
-				answers[sort[i] + offset].subtract(Y, E);	//error
+				answers[sort[i] + offset].subtract(Y, E);    //error
 
 				//alpha*e.p^t
 				E.multiply(alpha, E);
@@ -142,8 +140,8 @@ public class Perceptron extends NeuralNetwork {
 	}
 
 	@Override
-	public Matrix simulate(Matrix p) {
-		Matrix Y = new Matrix(outs, 1);
+	public Column simulate(Column p) {
+		Column Y = new Column(outs);
 		simulate(p, Y);
 		return Y;
 	}
@@ -153,12 +151,12 @@ public class Perceptron extends NeuralNetwork {
 	 * result = signum(W * pattern + b)
 	 *
 	 * @param pattern The input pattern
-	 * @param result The output result.
+	 * @param result  The output result.
 	 */
 	@Override
-	public void simulate(Matrix pattern, Matrix result) {
-		W.multiply(pattern, result);	//inner product
-		result.add(b, result);			//bias
-		result.apply(signum, result);	//thresholding
+	public void simulate(Column pattern, Column result) {
+		W.multiply(pattern, result);    //inner product
+		result.add(b, result);            //bias
+		result.apply(signum, result);    //thresholding
 	}
 }

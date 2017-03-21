@@ -25,19 +25,19 @@ package libai.common.functions;
 
 /**
  * Function Sinc.
- * <pre> 
- * Sinc(x)  = {1         for x  = 0 
+ * <pre>
+ * Sinc(x)  = {1         for x  = 0
  *             sin(x)/x  for x != 0}.
- * 
+ *
  * Sinc'(x) = {0                    for x  = 0
  *             cos(x)/x-sin(x)/x^2  for x != 0}
  * </pre>
- * 
+ *
  * @author Federico Vera {@literal <fedevera at unc.edu.ar>}
  */
 public class Sinc implements Function {
 	private static final long serialVersionUID = 5841748521168749702L;
-	
+
 	private static final Function derivate = new Function() {
 		@Override
 		public double eval(double x) {

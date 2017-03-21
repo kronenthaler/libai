@@ -23,7 +23,7 @@
  */
 package libai.common.kernels;
 
-import libai.common.Matrix;
+import libai.common.matrix.Matrix;
 
 /**
  * Implements a Gaussian kernel.
@@ -32,7 +32,7 @@ import libai.common.Matrix;
  */
 public class GaussianKernel implements Kernel {
 	private static final long serialVersionUID = 7002651958563140173L;
-	
+
 	private double sigma;
 
 	public GaussianKernel(double _sigma) {

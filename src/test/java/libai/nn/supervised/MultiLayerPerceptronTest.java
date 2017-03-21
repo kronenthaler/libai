@@ -23,7 +23,7 @@
  */
 package libai.nn.supervised;
 
-import libai.common.Matrix;
+import libai.common.matrix.Column;
 import libai.common.MatrixIOTest;
 import libai.common.Plotter;
 import libai.common.ProgressDisplay;
@@ -56,19 +56,19 @@ public class MultiLayerPerceptronTest {
 				new Identity()
 			}, new Random(0)
 		);
-		Matrix[] ins = new Matrix[4];
-		ins[0] = new Matrix(2, 1, new double[]{0, 0});
-		ins[1] = new Matrix(2, 1, new double[]{0, 1});
-		ins[2] = new Matrix(2, 1, new double[]{1, 0});
-		ins[3] = new Matrix(2, 1, new double[]{1, 1});
-		Matrix[] out = new Matrix[4];
-		out[0] = new Matrix(1, 1, new double[]{0});
-		out[1] = new Matrix(1, 1, new double[]{1});
-		out[2] = new Matrix(1, 1, new double[]{1});
-		out[3] = new Matrix(1, 1, new double[]{0});
+		Column[] ins = new Column[4];
+		ins[0] = new Column(2, new double[]{0, 0});
+		ins[1] = new Column(2, new double[]{0, 1});
+		ins[2] = new Column(2, new double[]{1, 0});
+		ins[3] = new Column(2, new double[]{1, 1});
+		Column[] out = new Column[4];
+		out[0] = new Column(1, new double[]{0});
+		out[1] = new Column(1, new double[]{1});
+		out[2] = new Column(1, new double[]{1});
+		out[3] = new Column(1, new double[]{0});
 		mlp.train(ins, out, 0.05, 100000, 0, 4, 0.1);
 		assumeTrue("MultiLayerPerceptron didn't converge, try again", 0.1 > mlp.error(ins, out));
-		Matrix res = new Matrix(1, 1);
+		Column res = new Column(1);
 		mlp.simulate(ins[0], res);
 		assertEquals(0, round(res.position(0, 0)));
 		mlp.simulate(ins[1], res);
@@ -90,19 +90,19 @@ public class MultiLayerPerceptronTest {
 			}, new MomentumBackpropagation(0.5), new Random(0)
 		);
 
-		Matrix[] ins = new Matrix[4];
-		ins[0] = new Matrix(2, 1, new double[]{0, 0});
-		ins[1] = new Matrix(2, 1, new double[]{0, 1});
-		ins[2] = new Matrix(2, 1, new double[]{1, 0});
-		ins[3] = new Matrix(2, 1, new double[]{1, 1});
-		Matrix[] out = new Matrix[4];
-		out[0] = new Matrix(1, 1, new double[]{0});
-		out[1] = new Matrix(1, 1, new double[]{1});
-		out[2] = new Matrix(1, 1, new double[]{1});
-		out[3] = new Matrix(1, 1, new double[]{0});
+		Column[] ins = new Column[4];
+		ins[0] = new Column(2, new double[]{0, 0});
+		ins[1] = new Column(2, new double[]{0, 1});
+		ins[2] = new Column(2, new double[]{1, 0});
+		ins[3] = new Column(2, new double[]{1, 1});
+		Column[] out = new Column[4];
+		out[0] = new Column(1, new double[]{0});
+		out[1] = new Column(1, new double[]{1});
+		out[2] = new Column(1, new double[]{1});
+		out[3] = new Column(1, new double[]{0});
 		mlp.train(ins, out, 0.05, 100000, 0, 4, 0.1);
 		assumeTrue("MultiLayerPerceptron didn't converge, try again", 0.1 > mlp.error(ins, out));
-		Matrix res = new Matrix(1, 1);
+		Column res = new Column(1);
 		mlp.simulate(ins[0], res);
 		assertEquals(0, round(res.position(0, 0)));
 		mlp.simulate(ins[1], res);
@@ -116,27 +116,27 @@ public class MultiLayerPerceptronTest {
 	@Test
 	public void testTrainNorRProp() {
 		MultiLayerPerceptron mlp = new MultiLayerPerceptron(
-			new int[]{2, 16, 1}, 
+			new int[]{2, 16, 1},
 			new Function[]{
-				new Identity(), 
-				new Sinc(), 
+				new Identity(),
+				new Sinc(),
 				new Identity()
 			}, new ResilientBackpropagation(), new Random(0)
 		);
 
-		Matrix[] ins = new Matrix[4];
-		ins[0] = new Matrix(2, 1, new double[]{0, 0});
-		ins[1] = new Matrix(2, 1, new double[]{0, 1});
-		ins[2] = new Matrix(2, 1, new double[]{1, 0});
-		ins[3] = new Matrix(2, 1, new double[]{1, 1});
-		Matrix[] out = new Matrix[4];
-		out[0] = new Matrix(1, 1, new double[]{1});
-		out[1] = new Matrix(1, 1, new double[]{0});
-		out[2] = new Matrix(1, 1, new double[]{0});
-		out[3] = new Matrix(1, 1, new double[]{0});
+		Column[] ins = new Column[4];
+		ins[0] = new Column(2, new double[]{0, 0});
+		ins[1] = new Column(2, new double[]{0, 1});
+		ins[2] = new Column(2, new double[]{1, 0});
+		ins[3] = new Column(2, new double[]{1, 1});
+		Column[] out = new Column[4];
+		out[0] = new Column(1, new double[]{1});
+		out[1] = new Column(1, new double[]{0});
+		out[2] = new Column(1, new double[]{0});
+		out[3] = new Column(1, new double[]{0});
 		mlp.train(ins, out, 0.01, 1000000, 0, 4, 0.01);
 		assumeTrue("MultiLayerPerceptron didn't converge, try again", 0.01 > mlp.error(ins, out));
-		Matrix res = new Matrix(1, 1);
+		Column res = new Column(1);
 		mlp.simulate(ins[0], res);
 		assertEquals(1, round(res.position(0, 0)));
 		mlp.simulate(ins[1], res);
@@ -160,16 +160,16 @@ public class MultiLayerPerceptronTest {
 			}, new Random(0)
 		);
 
-		Matrix[] ins = new Matrix[4];
-		ins[0] = new Matrix(2, 1, new double[]{0, 0});
-		ins[1] = new Matrix(2, 1, new double[]{0, 1});
-		ins[2] = new Matrix(2, 1, new double[]{1, 0});
-		ins[3] = new Matrix(2, 1, new double[]{1, 1});
-		Matrix[] out = new Matrix[4];
-		out[0] = new Matrix(2, 1, new double[]{0, 1});
-		out[1] = new Matrix(2, 1, new double[]{1, 0});
-		out[2] = new Matrix(2, 1, new double[]{1, 0});
-		out[3] = new Matrix(2, 1, new double[]{0, 1});
+		Column[] ins = new Column[4];
+		ins[0] = new Column(2, new double[]{0, 0});
+		ins[1] = new Column(2, new double[]{0, 1});
+		ins[2] = new Column(2, new double[]{1, 0});
+		ins[3] = new Column(2, new double[]{1, 1});
+		Column[] out = new Column[4];
+		out[0] = new Column(2, new double[]{0, 1});
+		out[1] = new Column(2, new double[]{1, 0});
+		out[2] = new Column(2, new double[]{1, 0});
+		out[3] = new Column(2, new double[]{0, 1});
 		mlp.train(ins, out, 0.01, 1000000, 0, 4, 0.01);
 		assumeTrue("MultiLayerPerceptron didn't converge, try again", 0.01 > mlp.error(ins, out));
 		assumeTrue(0.1 > mlp.error(ins, out));
@@ -209,13 +209,13 @@ public class MultiLayerPerceptronTest {
 		int m = 1;
 		int l = 1;
 		int test = 12;
-		Matrix[] p = new Matrix[n + test];
-		Matrix[] t = new Matrix[n + test];
+		Column[] p = new Column[n + test];
+		Column[] t = new Column[n + test];
 		double delta = 0.1;
 		double x = 0;
 		for (int i = 0; i < n; i++, x += delta) {
-			p[i] = new Matrix(m, 1);
-			t[i] = new Matrix(l, 1);
+			p[i] = new Column(m);
+			t[i] = new Column(l);
 
 			p[i].position(0, 0, x);
 			t[i].position(0, 0, f(x));
@@ -224,8 +224,8 @@ public class MultiLayerPerceptronTest {
 		delta = 0.33;
 		x = 0;
 		for (int i = n; i < n + test && x < 4; i++, x += delta) {
-			p[i] = new Matrix(m, 1);
-			t[i] = new Matrix(l, 1);
+			p[i] = new Column(m);
+			t[i] = new Column(l);
 
 			p[i].position(0, 0, x);
 			t[i].position(0, 0, f(x));
@@ -279,19 +279,19 @@ public class MultiLayerPerceptronTest {
 		);
 		mlp.setProgressBar(progress);
 		mlp.setPlotter(new SimplePlotter());
-		Matrix[] ins = new Matrix[4];
-		ins[0] = new Matrix(2, 1, new double[]{0, 0});
-		ins[1] = new Matrix(2, 1, new double[]{0, 1});
-		ins[2] = new Matrix(2, 1, new double[]{1, 0});
-		ins[3] = new Matrix(2, 1, new double[]{1, 1});
-		Matrix[] out = new Matrix[4];
-		out[0] = new Matrix(1, 1, new double[]{1});
-		out[1] = new Matrix(1, 1, new double[]{0});
-		out[2] = new Matrix(1, 1, new double[]{0});
-		out[3] = new Matrix(1, 1, new double[]{0});
+		Column[] ins = new Column[4];
+		ins[0] = new Column(2, new double[]{0, 0});
+		ins[1] = new Column(2, new double[]{0, 1});
+		ins[2] = new Column(2, new double[]{1, 0});
+		ins[3] = new Column(2, new double[]{1, 1});
+		Column[] out = new Column[4];
+		out[0] = new Column(1, new double[]{1});
+		out[1] = new Column(1, new double[]{0});
+		out[2] = new Column(1, new double[]{0});
+		out[3] = new Column(1, new double[]{0});
 		mlp.train(ins, out, 0.01, 1000000, 0, 4, 0.01);
 		assumeTrue("MultiLayerPerceptron didn't converge, try again", 0.01 > mlp.error(ins, out));
-		Matrix res = new Matrix(1, 1);
+		Column res = new Column(1);
 		mlp.simulate(ins[0], res);
 		assertEquals(1, round(res.position(0, 0)));
 		mlp.simulate(ins[1], res);
@@ -316,19 +316,19 @@ public class MultiLayerPerceptronTest {
 		);
 		mlp.setProgressBar(progress);
 		mlp.setPlotter(new SimplePlotter());
-		Matrix[] ins = new Matrix[4];
-		ins[0] = new Matrix(2, 1, new double[]{0, 0});
-		ins[1] = new Matrix(2, 1, new double[]{0, 1});
-		ins[2] = new Matrix(2, 1, new double[]{1, 0});
-		ins[3] = new Matrix(2, 1, new double[]{1, 1});
-		Matrix[] out = new Matrix[4];
-		out[0] = new Matrix(1, 1, new double[]{1});
-		out[1] = new Matrix(1, 1, new double[]{0});
-		out[2] = new Matrix(1, 1, new double[]{0});
-		out[3] = new Matrix(1, 1, new double[]{0});
+		Column[] ins = new Column[4];
+		ins[0] = new Column(2, new double[]{0, 0});
+		ins[1] = new Column(2, new double[]{0, 1});
+		ins[2] = new Column(2, new double[]{1, 0});
+		ins[3] = new Column(2, new double[]{1, 1});
+		Column[] out = new Column[4];
+		out[0] = new Column(1, new double[]{1});
+		out[1] = new Column(1, new double[]{0});
+		out[2] = new Column(1, new double[]{0});
+		out[3] = new Column(1, new double[]{0});
 		mlp.train(ins, out, 0.01, 1000000, 0, 4, 0.01);
 		assumeTrue("MultiLayerPerceptron didn't converge, try again", 0.01 > mlp.error(ins, out));
-		Matrix res = new Matrix(1, 1);
+		Column res = new Column(1);
 		mlp.simulate(ins[0], res);
 		assertEquals(1, round(res.position(0, 0)));
 		mlp.simulate(ins[1], res);
@@ -353,19 +353,19 @@ public class MultiLayerPerceptronTest {
 		);
 		mlp.setProgressBar(progress);
 		mlp.setPlotter(new SimplePlotter());
-		Matrix[] ins = new Matrix[4];
-		ins[0] = new Matrix(2, 1, new double[]{0, 0});
-		ins[1] = new Matrix(2, 1, new double[]{0, 1});
-		ins[2] = new Matrix(2, 1, new double[]{1, 0});
-		ins[3] = new Matrix(2, 1, new double[]{1, 1});
-		Matrix[] out = new Matrix[4];
-		out[0] = new Matrix(1, 1, new double[]{1});
-		out[1] = new Matrix(1, 1, new double[]{0});
-		out[2] = new Matrix(1, 1, new double[]{0});
-		out[3] = new Matrix(1, 1, new double[]{0});
+		Column[] ins = new Column[4];
+		ins[0] = new Column(2, new double[]{0, 0});
+		ins[1] = new Column(2, new double[]{0, 1});
+		ins[2] = new Column(2, new double[]{1, 0});
+		ins[3] = new Column(2, new double[]{1, 1});
+		Column[] out = new Column[4];
+		out[0] = new Column(1, new double[]{1});
+		out[1] = new Column(1, new double[]{0});
+		out[2] = new Column(1, new double[]{0});
+		out[3] = new Column(1, new double[]{0});
 		mlp.train(ins, out, 0.01, 1000000, 0, 4, 0.01);
 		assumeTrue("MultiLayerPerceptron didn't converge, try again", 0.01 > mlp.error(ins, out));
-		Matrix res = new Matrix(1, 1);
+		Column res = new Column(1);
 		mlp.simulate(ins[0], res);
 		assertEquals(1, round(res.position(0, 0)));
 		mlp.simulate(ins[1], res);

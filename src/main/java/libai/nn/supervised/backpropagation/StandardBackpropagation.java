@@ -1,22 +1,29 @@
 package libai.nn.supervised.backpropagation;
 
-import libai.common.Matrix;
+import libai.common.Shuffler;
+import libai.common.matrix.Column;
+import libai.common.matrix.Matrix;
 import libai.common.functions.Function;
+import libai.common.matrix.Row;
 import libai.nn.NeuralNetwork;
 
 /**
  * Created by kronenthaler on 08/01/2017.
  */
-public class StandardBackpropagation implements Backpropagation{
+public class StandardBackpropagation implements Backpropagation {
 	protected NeuralNetwork nn;
 	protected int[] nperlayer;
 	protected int layers;
 	protected Function[] func;
-	protected Matrix[] W, Y, b, u;
-	protected Matrix[] d,  M, Yt; // auxiliary buffers
+	protected Matrix[] W;
+	protected Column[] Y, b, u;
+	// auxiliary buffers
+	protected Column[] d;
+	protected Row[] Yt;
+	protected Matrix[] M;
 
 	@Override
-	public void initialize(NeuralNetwork nn, int[] nperlayer, Function[] functions, Matrix[]W, Matrix[]Y, Matrix[]b, Matrix[]u){
+	public void initialize(NeuralNetwork nn, int[] nperlayer, Function[] functions, Matrix[] W, Column[] Y, Column[] b, Column[] u) {
 		this.nn = nn;
 		this.nperlayer = nperlayer;
 		this.layers = nperlayer.length;
@@ -29,37 +36,32 @@ public class StandardBackpropagation implements Backpropagation{
 		initialize();
 	}
 
-	private void initialize(){
-		d = new Matrix[layers];//position zero reserved
-		Yt = new Matrix[layers];
+	private void initialize() {
+		d = new Column[layers];//position zero reserved
+		Yt = new Row[layers];
 		M = new Matrix[layers];
 
-		Yt[0] = new Matrix(1, nperlayer[0]);
+		Yt[0] = new Row(nperlayer[0]);
 		for (int i = 1; i < layers; i++) {
-			Y[i] = new Matrix(u[i].getRows(), u[i].getColumns());
-			Yt[i] = new Matrix(u[i].getColumns(), u[i].getRows());
-
+			Yt[i] = new Row(u[i].getRows());
 			M[i] = new Matrix(u[i].getRows(), Y[i - 1].getRows());
 		}
 
-		d[layers - 1] = new Matrix(u[layers - 1].getRows(), 1);
+		d[layers - 1] = new Column(u[layers - 1].getRows());
 		for (int k = layers - 2; k > 0; k--)
-			d[k] = new Matrix(u[k].getRows(), 1);
+			d[k] = new Column(u[k].getRows());
 	}
 
 	@Override
-	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
-		int[] sort = new int[length];
+	public void train(Column[] patterns, Column[] answers, double alpha, int epochs, int offset, int length, double minerror) {
+		Shuffler shuffler = new Shuffler(length, NeuralNetwork.getDefaultRandomGenerator());
+
 		double error = nn.error(patterns, answers, offset, length);
 		Matrix e = new Matrix(answers[0].getRows(), answers[0].getColumns());
 
-		for (int i = 0; i < length; i++) {
-			sort[i] = i;
-		}
-
-		for(int currentEpoch=0; currentEpoch < epochs && error > minerror; currentEpoch++){
+		for (int currentEpoch = 0; currentEpoch < epochs && error > minerror; currentEpoch++) {
 			//shuffle patterns
-			nn.shuffle(sort);
+			int[] sort = shuffler.shuffle();
 
 			error = 0;
 			for (int i = 0; i < length; i++) {

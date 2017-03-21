@@ -23,8 +23,10 @@
  */
 package libai.nn.unsupervised;
 
-import libai.common.Matrix;
+import libai.common.matrix.Column;
+import libai.common.matrix.Matrix;
 import libai.common.functions.SymmetricSign;
+import libai.common.matrix.Row;
 import libai.nn.NeuralNetwork;
 
 /**
@@ -37,16 +39,15 @@ import libai.nn.NeuralNetwork;
  *
  * @author kronenthaler
  */
-public class Hopfield extends NeuralNetwork {
+public class Hopfield extends UnsupervisedLearning {
 	private static final long serialVersionUID = 9081060788269921587L;
-
-	protected Matrix W;
 	protected static SymmetricSign ssign = new SymmetricSign();
+	protected Matrix W;
 
 	/**
 	 * Constructor. Receives the number of input to the network.
 	 *
-	 * @param inputs	The number of input to the network.
+	 * @param inputs The number of input to the network.
 	 */
 	public Hopfield(int inputs) {
 		W = new Matrix(inputs, inputs);
@@ -56,25 +57,20 @@ public class Hopfield extends NeuralNetwork {
 	 * Train the network. The answers, alpha, epochs and minerror are meaningless
 	 * in this algorithm.
 	 *
-	 * @param patterns	The patterns to be learned.
-	 * @param answers	The expected answers. [ignored]
-	 * @param alpha		The learning rate. [ignored]
-	 * @param epochs	The maximum number of iterations. [ignored]
-	 * @param offset	The first pattern position.
-	 * @param length	How many patterns will be used.
-	 * @param minerror The minimal error expected. [ignored]
+	 * @param patterns The patterns to be learned.
+	 * @param alpha    The learning rate. [ignored]
+	 * @param epochs   The maximum number of iterations. [ignored]
+	 * @param offset   The first pattern position.
+	 * @param length   How many patterns will be used.
 	 */
 	@Override
-	public void train(Matrix[] patterns, Matrix[] answers, double alpha, int epochs, int offset, int length, double minerror) {
-		Matrix I = new Matrix(W.getRows(), W.getColumns(), true);
-		Matrix patternT = new Matrix(patterns[0].getColumns(), patterns[0].getRows());
+	public void train(Column[] patterns, double alpha, int epochs, int offset, int length) {
+		validatePreconditions(patterns, epochs, offset, length);
+
+		Row patternT = new Row(patterns[0].getRows());
 		Matrix temp = new Matrix(W.getRows(), W.getColumns());
 
-		if (progress != null) {
-			progress.setMaximum(length - 1);
-			progress.setMinimum(0);
-			progress.setValue(0);
-		}
+		initializeProgressBar(length);
 
 		// W = Sum(p[i]p[i]^t); wii = 0
 		for (int i = 0; i < length; i++) {
@@ -90,7 +86,7 @@ public class Hopfield extends NeuralNetwork {
 				progress.setValue(i);
 		}
 
-		for(int i=0;i<W.getRows();i++)
+		for (int i = 0; i < W.getRows(); i++)
 			W.position(i, i, 0);
 
 		if (progress != null)
@@ -98,19 +94,19 @@ public class Hopfield extends NeuralNetwork {
 	}
 
 	@Override
-	public Matrix simulate(Matrix pattern) {
-		Matrix result = new Matrix(pattern.getRows(), pattern.getColumns());
+	public Column simulate(Column pattern) {
+		Column result = new Column(pattern.getRows());
 		simulate(pattern, result);
 		return result;
 	}
 
 	@Override
-	public void simulate(Matrix pattern, Matrix result) {
+	public void simulate(Column pattern, Column result) {
 		pattern.copy(result);
-		Matrix previous = new Matrix(pattern);
+		Column previous = new Column(pattern);
 		previous.setValue(0);
 
-		while(!result.equals(previous)) {
+		while (!result.equals(previous)) {
 			result.copy(previous);
 
 			for (int col = 0; col < result.getRows(); col++) {
