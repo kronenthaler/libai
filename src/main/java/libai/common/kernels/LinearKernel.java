@@ -37,9 +37,4 @@ public class LinearKernel implements Kernel {
 	public double eval(Matrix A, Matrix B) {
 		return A.dotProduct(B);
 	}
-
-	@Override
-	public double eval(double dotProduct) {
-		return dotProduct;
-	}
 }

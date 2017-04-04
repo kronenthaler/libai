@@ -24,6 +24,7 @@
 package libai.nn.supervised;
 
 import demos.common.SimpleProgressDisplay;
+import libai.common.kernels.GaussianKernel;
 import libai.common.matrix.Column;
 import libai.common.MatrixIOTest;
 import libai.common.kernels.LinearKernel;
@@ -33,7 +34,10 @@ import org.junit.Test;
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Random;
+import java.util.Scanner;
 
 import static org.junit.Assert.*;
 import static org.junit.Assume.assumeTrue;
@@ -64,7 +68,7 @@ public class SVMTest {
 			ans[i] = new Column(1, new double[]{inc % 2 == 0 ? +1 : -1});
 		}
 
-		NeuralNetwork net = new SVM(new LinearKernel(), new Random(0));
+		SVM net = new SVM(new LinearKernel(), new Random(0));
 		net.setProgressBar(new SimpleProgressDisplay(new JProgressBar()));
 		net.train(patterns, ans, 0.001, 10000, 0, n);
 
@@ -73,6 +77,36 @@ public class SVMTest {
 		for (int i = n; i < patterns.length; i++) {
 			assertEquals(ans[i].position(0, 0), net.simulate(patterns[i]).position(0, 0), 1e-12);
 		}
+	}
+
+	@Test
+	public void testTraining() throws Exception {
+		File resourcesDirectory = new File("src/test/resources/tic-tac-toe");
+		String data = new Scanner(resourcesDirectory,"UTF8").useDelimiter("\\Z").next();
+
+
+		String[] lines = data.split("\n");
+
+		Column[] patterns = new Column[lines.length];
+		Column[] answers = new Column[lines.length];
+
+		for(int i = 0; i < lines.length; i++){
+			String[] tokens = lines[i].split(" ");
+			patterns[i] = new Column(tokens.length - 1);
+			answers[i] = new Column(1);
+
+			for (int j = 0; j < tokens.length - 1; j++){
+				patterns[i].position(j, 0, Double.parseDouble(tokens[j]));
+			}
+			answers[i].position(0, 0, Double.parseDouble(tokens[tokens.length-1]));
+		}
+
+		SVM net = new SVM(new GaussianKernel(2), new Random(0));
+		net.setTrainingParam(SVM.PARAM_TOLERANCE, 0.1); // think about this, could be part of the constructors.
+		net.setTrainingParam(SVM.PARAM_C, 0.5);
+		net.train(patterns, answers, 0, 10000000, 0, patterns.length);
+
+		assertTrue(net.error(patterns, answers, 0, patterns.length) == 0.008350730688935281);
 	}
 
 	@Test

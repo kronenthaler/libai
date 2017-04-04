@@ -38,7 +38,5 @@ public interface Kernel extends Serializable {
 	 * @param B The second pattern to calculate the kernel
 	 * @return A double with the value of the calculated kernel
 	 */
-	public double eval(Matrix A, Matrix B);
-
-	public double eval(double dotProduct);
+	double eval(Matrix A, Matrix B);
 }

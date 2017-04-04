@@ -33,10 +33,10 @@ import libai.common.matrix.Matrix;
 public class GaussianKernel implements Kernel {
 	private static final long serialVersionUID = 7002651958563140173L;
 
-	private double sigma;
+	private double sigma; // 2 * sigma ^ 2
 
 	public GaussianKernel(double _sigma) {
-		sigma = _sigma * _sigma * 2;
+		sigma = _sigma;
 	}
 
 	@Override
@@ -46,11 +46,6 @@ public class GaussianKernel implements Kernel {
 		double BB = B.dotProduct(B);
 
 		double s = -2 * AB + AA + BB;
-		return Math.exp((-s / sigma));
-	}
-
-	@Override
-	public double eval(double dotProduct) {
-		throw new UnsupportedOperationException("Not supported yet.");
+		return Math.exp(-s / sigma);
 	}
 }

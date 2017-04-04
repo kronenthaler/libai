@@ -40,11 +40,7 @@ public class PolynomialKernel implements Kernel {
 
 	@Override
 	public double eval(Matrix A, Matrix B) {
-		return Math.pow(A.dotProduct(B) - a, b);
-	}
-
-	@Override
-	public double eval(double dotProduct) {
-		throw new UnsupportedOperationException("Not supported yet.");
+		double dotProduct = A.dotProduct(B);
+		return Math.pow(dotProduct - a, b);
 	}
 }

@@ -40,11 +40,7 @@ public class SigmoidalKernel implements Kernel {
 
 	@Override
 	public double eval(Matrix A, Matrix B) {
-		return Math.tanh(a * A.dotProduct(B) - b);
-	}
-
-	@Override
-	public double eval(double dotProduct) {
+		double dotProduct = A.dotProduct(B);
 		return Math.tanh(a * dotProduct - b);
 	}
 }
