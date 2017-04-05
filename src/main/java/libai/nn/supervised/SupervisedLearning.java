@@ -10,10 +10,6 @@ import java.util.Random;
  * Created by kronenthaler on 19/03/2017.
  */
 public abstract class SupervisedLearning extends NeuralNetwork {
-	public SupervisedLearning() {
-		super();
-	}
-
 	public SupervisedLearning(Random rand) {
 		super(rand);
 	}

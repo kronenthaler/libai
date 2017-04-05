@@ -25,6 +25,8 @@ package libai.nn.supervised;
 
 import demos.common.SimpleProgressDisplay;
 import libai.common.kernels.GaussianKernel;
+import libai.common.kernels.PolynomialKernel;
+import libai.common.kernels.SigmoidalKernel;
 import libai.common.matrix.Column;
 import libai.common.MatrixIOTest;
 import libai.common.kernels.LinearKernel;
@@ -34,8 +36,6 @@ import org.junit.Test;
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -53,29 +53,29 @@ public class SVMTest {
 		int t = 40;
 
 		Column[] patterns = new Column[n + t];
-		Column[] ans = new Column[n + t];
+		Column[] answers = new Column[n + t];
 
 		Random r = new Random(0);
 		for (int i = 0; i < n; i++) {
 			int inc = r.nextInt(10);
 			patterns[i] = new Column(2, new double[]{i + 1, (2 * (i + 1)) + 3 + Math.pow(-1, inc) * inc});
-			ans[i] = new Column(1, new double[]{inc % 2 == 0 ? +1 : -1});
+			answers[i] = new Column(1, new double[]{inc % 2 == 0 ? +1 : -1});
 		}
 
 		for (int i = n; i < n + t; i++) {
 			int inc = r.nextInt(10);
 			patterns[i] = new Column(2, new double[]{i + 1.33, (2 * (i + 1.33)) + 3 + Math.pow(-1, inc) * inc});
-			ans[i] = new Column(1, new double[]{inc % 2 == 0 ? +1 : -1});
+			answers[i] = new Column(1, new double[]{inc % 2 == 0 ? +1 : -1});
 		}
 
 		SVM net = new SVM(new LinearKernel(), new Random(0));
 		net.setProgressBar(new SimpleProgressDisplay(new JProgressBar()));
-		net.train(patterns, ans, 0.001, 10000, 0, n);
+		net.train(patterns, answers, 0.001, 10000, 0, n);
 
-		assumeTrue("SVM didn't converge, try again", 0.001 > net.error(patterns, ans));
+		assumeTrue("SVM didn't converge, try again", 0.001 > net.error(patterns, answers, n, t));
 
 		for (int i = n; i < patterns.length; i++) {
-			assertEquals(ans[i].position(0, 0), net.simulate(patterns[i]).position(0, 0), 1e-12);
+			assertEquals(answers[i].position(0, 0), net.simulate(patterns[i]).position(0, 0), 1e-12);
 		}
 	}
 
@@ -83,7 +83,6 @@ public class SVMTest {
 	public void testTraining() throws Exception {
 		File resourcesDirectory = new File("src/test/resources/tic-tac-toe");
 		String data = new Scanner(resourcesDirectory,"UTF8").useDelimiter("\\Z").next();
-
 
 		String[] lines = data.split("\n");
 
@@ -101,12 +100,72 @@ public class SVMTest {
 			answers[i].position(0, 0, Double.parseDouble(tokens[tokens.length-1]));
 		}
 
-		SVM net = new SVM(new GaussianKernel(2), new Random(0));
-		net.setTrainingParam(SVM.PARAM_TOLERANCE, 0.1); // think about this, could be part of the constructors.
+		SVM net = new SVM(new GaussianKernel(1), new Random(0));
+		net.setTrainingParam(SVM.PARAM_TOLERANCE, 0.1);
 		net.setTrainingParam(SVM.PARAM_C, 0.5);
 		net.train(patterns, answers, 0, 10000000, 0, patterns.length);
 
-		assertTrue(net.error(patterns, answers, 0, patterns.length) == 0.008350730688935281);
+		assertTrue(net.error(patterns, answers) == 0.008350730688935281);
+	}
+
+	@Test
+	public void testPolynomialKernel()  throws Exception {
+		int n = 100;
+		int t = 40;
+
+		Column[] patterns = new Column[n + t];
+		Column[] answers = new Column[n + t];
+
+		Random r = new Random(0);
+		for (int i = 0; i < n; i++) {
+			int inc = r.nextInt(10);
+			patterns[i] = new Column(2, new double[]{i + 1, (2 * (i + 1)) + 3 + Math.pow(-1, inc) * inc});
+			answers[i] = new Column(1, new double[]{inc % 2 == 0 ? +1 : -1});
+		}
+
+		for (int i = n; i < n + t; i++) {
+			int inc = r.nextInt(10);
+			patterns[i] = new Column(2, new double[]{i + 1.33, (2 * (i + 1.33)) + 3 + Math.pow(-1, inc) * inc});
+			answers[i] = new Column(1, new double[]{inc % 2 == 0 ? +1 : -1});
+		}
+
+		SVM net = new SVM(new PolynomialKernel(1,0, 2), new Random(0));
+		net.setTrainingParam(SVM.PARAM_TOLERANCE, 0.01);
+		net.setTrainingParam(SVM.PARAM_C, 0.05);
+		net.setTrainingParam(SVM.PARAM_EPSILON, 0.0001);
+
+		net.train(patterns, answers, 0, 10000, 0, n);
+		assertTrue(net.error(patterns, answers, n, t) < 0.1);
+	}
+
+	@Test
+	public void testSigmoidalKernel()  throws Exception {
+		int n = 100;
+		int t = 40;
+
+		Column[] patterns = new Column[n + t];
+		Column[] answers = new Column[n + t];
+
+		Random r = new Random(0);
+		for (int i = 0; i < n; i++) {
+			int inc = r.nextInt(10);
+			patterns[i] = new Column(2, new double[]{i + 1, Math.tanh(i+1) + inc});
+			answers[i] = new Column(1, new double[]{inc > 0 ? +1 : -1});
+		}
+
+		for (int i = n; i < n + t; i++) {
+			int inc = r.nextInt(10);
+			patterns[i] = new Column(2, new double[]{i + 1.33, Math.tanh(i + 1.33) + inc});
+			answers[i] = new Column(1, new double[]{inc > 0 ? +1 : -1});
+		}
+
+		SVM net = new SVM(new SigmoidalKernel(8,0), new Random(0));
+		net.setTrainingParam(SVM.PARAM_TOLERANCE, 0.001);
+		net.setTrainingParam(SVM.PARAM_C, 0.005);
+		net.setTrainingParam(SVM.PARAM_EPSILON, 0.0001);
+
+		net.train(patterns, answers, 0, 10000, 0, n);
+		assertTrue(net.error(patterns, answers, n, t) < 0.15);
 	}
 
 	@Test

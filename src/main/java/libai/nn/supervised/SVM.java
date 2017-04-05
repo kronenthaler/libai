@@ -32,7 +32,6 @@ import libai.common.kernels.Kernel;
 
 import java.util.Random;
 
-//TODO: review original implementation to check for any discrepancy (especially with the precomputed dot products)
 /**
  * Implementation of the SVM using the SMO algorithm. Based on the original
  * implementation of:<br>
@@ -87,7 +86,7 @@ public class SVM extends SupervisedLearning {
 	}
 
 	@Override
-	protected void validatePreconditions(Column[] patterns, Column[] answers, int epochs, int offset, int length, double minerror){
+	protected void validatePreconditions(Column[] patterns, Column[] answers, int epochs, int offset, int length, double minerror) {
 		super.validatePreconditions(patterns, answers, epochs, offset, length, minerror);
 		Precondition.check(answers[0].getRows() == 1, "Answers can only be one-dimensional elements but %d-dimensions found", answers[0].getRows());
 	}
@@ -114,7 +113,7 @@ public class SVM extends SupervisedLearning {
 
 		boolean changed = false;
 		boolean examineAll = true;
-		for (int currentEpoch = 0 ; currentEpoch < epochs && (changed || examineAll); currentEpoch++) {
+		for (int currentEpoch = 0; currentEpoch < epochs && (changed || examineAll); currentEpoch++) {
 			changed = false;
 			for (int k = 0; k < length; k++) {
 				if (examineAll || (lambda[k] != 0 && lambda[k] != C))
@@ -131,7 +130,6 @@ public class SVM extends SupervisedLearning {
 		if (progress != null)
 			progress.setValue(progress.getMaximum());
 	}
-
 
 
 	@Override
@@ -161,7 +159,7 @@ public class SVM extends SupervisedLearning {
 	}
 
 	// internal methods
-	private double[][] precomputeKernels(){
+	private double[][] precomputeKernels() {
 		double[][] precomputed_kernels = new double[densePoints.length][densePoints.length];
 		for (int i = 0; i < precomputed_kernels.length; i++) {
 			for (int j = 0; j < precomputed_kernels.length; j++) {
@@ -200,20 +198,21 @@ public class SVM extends SupervisedLearning {
 		}
 
 		int i2 = findMaxDifference(E1, errorCache);
-
 		if (i2 >= 0 && takeStep(i1, i2, precomputedKernels, errorCache)) {
 			return true;
 		}
 
 		//first search if it's possible to take a step within the multipliers
-		for (int k = random.nextInt(lambda.length), t = 0; t < lambda.length; k = (k+1)%lambda.length, t++) {
+		int k = random.nextInt(lambda.length);
+		for (int t = 0; t < lambda.length; k = (k + 1) % lambda.length, t++) {
 			if (0 < lambda[k] && lambda[k] < C && takeStep(i1, k, precomputedKernels, errorCache)) {
 				return true;
 			}
 		}
 
 		// if no step is not possible within the multiplier take it from wherever possible.
-		for (int k = random.nextInt(lambda.length), t = 0; t < lambda.length; k = (k+1) % lambda.length, t++) {
+		k = random.nextInt(lambda.length);
+		for (int t = 0; t < lambda.length; k = (k + 1) % lambda.length, t++) {
 			if (takeStep(i1, k, precomputedKernels, errorCache)) {
 				return true;
 			}
@@ -225,7 +224,7 @@ public class SVM extends SupervisedLearning {
 	private double partialError(int i, int y, double lambda, double[] errorCache) {
 		if (0 < lambda && lambda < C)
 			return errorCache[i];
-		return learnedFunction(densePoints[i]) - y; //wrong need the column to evaluate
+		return learnedFunction(densePoints[i]) - y;
 	}
 
 	private boolean takeStep(int i1, int i2, double[][] precomputedKernels, double[] errorCache) {
@@ -253,7 +252,8 @@ public class SVM extends SupervisedLearning {
 		double k22 = precomputedKernels[i2][i2];
 		double eta = 2 * k12 - k11 - k22;
 
-		double l1 = 0, l2 = 0; /* new values of lambda1, lambda2 */
+		double l1 = 0;
+		double l2 = 0; /* new values of lambda1, lambda2 */
 		if (eta < 0) {
 			l2 = lambda2 + y2 * (E2 - E1) / eta;
 			if (l2 < L)
@@ -294,8 +294,9 @@ public class SVM extends SupervisedLearning {
 		return true;
 	}
 
-	private Pair<Double, Double> getRange(double y1, double lambda1, double y2, double lambda2){
-		double L = 0, H = 0;
+	private Pair<Double, Double> getRange(double y1, double lambda1, double y2, double lambda2) {
+		double L = 0;
+		double H = 0;
 		if (y1 == y2) {
 			H = lambda1 + lambda2;
 			L = 0;
