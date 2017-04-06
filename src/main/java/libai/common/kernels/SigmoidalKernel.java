@@ -26,25 +26,23 @@ package libai.common.kernels;
 import libai.common.matrix.Matrix;
 
 /**
+ * Sigmoid Kernel. Follows the form: K(x,y) = tanh(a * xy + b), where a & b are parameters of this kernel.
  * @author kronenthaler
  */
 public class SigmoidalKernel implements Kernel {
 	private static final long serialVersionUID = 5132845207274843125L;
 
-	private double a, b;
+	private double a;
+	private double b;
 
-	public SigmoidalKernel(double _a, double _b) {
-		a = _a;
-		b = _b;
+	public SigmoidalKernel(double a, double b) {
+		this.a = a;
+		this.b = b;
 	}
 
 	@Override
 	public double eval(Matrix A, Matrix B) {
-		return Math.tanh(a * A.dotProduct(B) - b);
-	}
-
-	@Override
-	public double eval(double dotProduct) {
-		return Math.tanh(a * dotProduct - b);
+		double dotProduct = A.dotProduct(B);
+		return Math.tanh(a * dotProduct + b);
 	}
 }
