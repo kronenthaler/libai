@@ -23,6 +23,9 @@
  */
 package libai.fuzzy2.sets;
 
+import libai.fuzzy2.XMLSerializer;
+import org.w3c.dom.Node;
+
 /**
  * Fuzzy set representing a triangular function. Only one point on the function
  * can take the max value of 1. The triangular function can take 3 variations:
@@ -38,10 +41,14 @@ package libai.fuzzy2.sets;
  *
  * @author kronenthaler
  */
-public class Triangular implements FuzzySet {
+public class TriangularShape implements FuzzySet, XMLSerializer {
 	private double a, b, c;
 
-	public Triangular(double _a, double _b, double _c) {
+	public TriangularShape(Node xmlNode) throws Exception {
+		load(xmlNode);
+	}
+
+	public TriangularShape(double _a, double _b, double _c) {
 		a = _a;
 		b = _b;
 		c = _c;
@@ -62,7 +69,14 @@ public class Triangular implements FuzzySet {
 	}
 
 	@Override
-	public String toXMLString(String indent){
+	public String toXMLString(String indent) {
 		return String.format("%s<TriangularShape Param1=\"%f\" Param2=\"%f\" Param3=\"%f\"/>", indent, a, b, c);
+	}
+
+	@Override
+	public void load(Node xmlNode) throws Exception {
+		a = Double.parseDouble(xmlNode.getAttributes().getNamedItem("Param1").getNodeValue());
+		b = Double.parseDouble(xmlNode.getAttributes().getNamedItem("Param2").getNodeValue());
+		c = Double.parseDouble(xmlNode.getAttributes().getNamedItem("Param3").getNodeValue());
 	}
 }
