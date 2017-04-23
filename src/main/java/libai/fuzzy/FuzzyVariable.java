@@ -41,27 +41,33 @@ import java.util.HashSet;
  *
  * @author kronenthaler
  */
-public class FuzzyGroup {
+public class FuzzyVariable {
 	/**
-	 * The members of this group.
+	 * The terms of this group.
 	 */
-	private HashSet<FuzzySet> members;
-	/**
-	 * The variable associated with this group.
-	 */
-	private Variable v;
+	private HashSet<FuzzySet> terms;
 
 	/**
-	 * Constructor. Creates a FuzzyGroup with a list of members.
-	 *
-	 * @param mems List of members for this fuzzy group.
+	 * Name that represents this Fuzzy Value.
 	 */
-	public FuzzyGroup(FuzzySet... mems) {
-		v = new Variable(0);
-		members = new HashSet<>();
+	private String name;
+
+	/**
+	 * The value associated with this group.
+	 */
+	private Value value;
+
+	/**
+	 * Constructor. Creates a FuzzyVariable with a list of terms.
+	 *
+	 * @param mems List of terms for this fuzzy group.
+	 */
+	public FuzzyVariable(FuzzySet... mems) {
+		value = new Value(0);
+		terms = new HashSet<>();
 
 		for (FuzzySet m : mems)
-			members.add(m);
+			terms.add(m);
 	}
 
 	/**
@@ -69,10 +75,10 @@ public class FuzzyGroup {
 	 * context.
 	 *
 	 * @param s Fuzzy set to check
-	 * @return true is this set blong to this group, false otherwise.
+	 * @return true is this set belong to this group, false otherwise.
 	 */
 	public boolean contains(FuzzySet s) {
-		return members.contains(s);
+		return terms.contains(s);
 	}
 
 	/**
@@ -81,16 +87,16 @@ public class FuzzyGroup {
 	 * @param d value to set.
 	 */
 	public void setValue(double d) {
-		v.setValue(d);
+		value.setValue(d);
 	}
 
 	/**
-	 * Return the variable associate with this group, holding the final value of
+	 * Return the value associate with this group, holding the final value of
 	 * the defuzzify process.
 	 *
-	 * @return a variable with the final value.
+	 * @return a value with the final value.
 	 */
-	public Variable getVariable() {
-		return v;
+	public Value getValue() {
+		return value;
 	}
 }

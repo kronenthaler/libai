@@ -23,7 +23,7 @@
  */
 package libai.fuzzy.sets;
 
-import libai.fuzzy.Variable;
+import libai.fuzzy.Value;
 
 import java.util.ArrayList;
 
@@ -34,23 +34,18 @@ import java.util.ArrayList;
  * @author kronenthaler
  */
 public class Singleton implements FuzzySet {
-	private Variable p;
+	private double p;
 	private ArrayList<Double> support;
 
-	public Singleton(Variable _p) {
+	public Singleton(double _p) {
 		p = _p;
 		support = new ArrayList<>();
-		support.add(p.getValue());
-	}
-
-	@Override
-	public double eval(Variable s) {
-		return eval(s.getValue());
+		support.add(p);
 	}
 
 	@Override
 	public double eval(double s) {
-		return s == p.getValue() ? 1.0 : 0.0;
+		return s == p ? 1.0 : 0.0;
 	}
 
 	@Override

@@ -23,7 +23,7 @@
  */
 package libai.fuzzy.sets;
 
-import libai.fuzzy.Variable;
+import libai.fuzzy.Value;
 
 import java.util.ArrayList;
 
@@ -42,7 +42,7 @@ import java.util.ArrayList;
  * @author kronenthaler
  */
 public class Trapezoid implements FuzzySet {
-	private Variable a, b, c, d;
+	private Value a, b, c, d;
 	private ArrayList<Double> support;
 	private ArrayList<Double> kernel;
 	protected double DELTA = 0.1;
@@ -52,10 +52,10 @@ public class Trapezoid implements FuzzySet {
 	}
 
 	public Trapezoid(double _a, double _b, double _c, double _d, double delta) {
-		a = new Variable(_a);
-		b = new Variable(_b);
-		c = new Variable(_c);
-		d = new Variable(_d);
+		a = new Value(_a);
+		b = new Value(_b);
+		c = new Value(_c);
+		d = new Value(_d);
 
 		DELTA = delta;
 
@@ -69,11 +69,6 @@ public class Trapezoid implements FuzzySet {
 					kernel.add(i);
 			}
 		}
-	}
-
-	@Override
-	public double eval(Variable s) {
-		return eval(s.getValue());
 	}
 
 	@Override

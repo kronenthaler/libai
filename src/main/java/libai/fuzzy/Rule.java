@@ -30,10 +30,10 @@ import java.util.ArrayList;
 
 
 /**
- * Implementation of a fuzzy rule. Is contructed with a condition and a set of
+ * Implementation of a fuzzy rule. It is constructed with a condition and a set of
  * one or more "actions". In the bottom line, the actions are fuzzy sets. The
  * important part in this reasoning process is related with the concept of
- * FuzzyGroup. A FuzzyGroup allow creating linguistic variables with a concrete
+ * FuzzyVariable. A FuzzyVariable allow creating linguistic variables with a concrete
  * meaning, therefore, all the fuzzy sets in this actions must belong to one
  * fuzzy group attached to the engine.
  *
@@ -44,6 +44,7 @@ public class Rule {
 	 * Condition tree for this rule.
 	 */
 	private Condition cond;
+
 	/**
 	 * Set of actions to be triggered if the condition is 'fulfill'
 	 */

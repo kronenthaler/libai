@@ -48,7 +48,7 @@ public class Engine {
 	 * List of fuzzy groups associated to the different contexts of the actions
 	 * and rules.
 	 */
-	private ArrayList<FuzzyGroup> groups;
+	private ArrayList<FuzzyVariable> groups;
 	/**
 	 * Flag to print verbose information over the reasoning process.
 	 */
@@ -80,7 +80,7 @@ public class Engine {
 	}
 
 	/**
-	 * Remove the especified rule from the engine.
+	 * Remove the specified rule from the engine.
 	 *
 	 * @param r Rule to be removed.
 	 */
@@ -93,8 +93,8 @@ public class Engine {
 	 *
 	 * @param gs One or more groups to attach.
 	 */
-	public void addGroup(FuzzyGroup... gs) {
-		for (FuzzyGroup g : gs)
+	public void addGroup(FuzzyVariable... gs) {
+		for (FuzzyVariable g : gs)
 			groups.add(g);
 	}
 
@@ -103,20 +103,20 @@ public class Engine {
 	 *
 	 * @param g The group to be removed.
 	 */
-	public void removeGroup(FuzzyGroup g) {
+	public void removeGroup(FuzzyVariable g) {
 		groups.remove(g);
 	}
 
 	/**
-	 * Find the especified set among the groups. If this set belong to any
+	 * Find the specified set among the groups. If this set belong to any
 	 * group, the first group is returned, null otherwise.
 	 *
 	 * @param s FuzzySet to find.
-	 * @return The FuzzyGroup where belongs, otherwise null.
+	 * @return The FuzzyVariable where belongs, otherwise null.
 	 */
-	public FuzzyGroup find(FuzzySet s) {
+	public FuzzyVariable find(FuzzySet s) {
 		//find and return the group where this set belongs
-		for (FuzzyGroup g : groups)
+		for (FuzzyVariable g : groups)
 			if (g.contains(s))
 				return g;
 		return null;
@@ -129,7 +129,7 @@ public class Engine {
 	 * the centroid is calculated.
 	 */
 	public void start() {
-		HashMap<FuzzyGroup, ArrayList<Pair<Double, Double>>> allResults = null;
+		HashMap<FuzzyVariable, ArrayList<Pair<Double, Double>>> allResults = null;
 		for (Rule r : rules) {
 			ArrayList<Pair<Double, Double>>[] fireResult = r.fire();
 
@@ -150,7 +150,7 @@ public class Engine {
 			} else {
 				//merge, just keep the max if is repeated the first value of the pair
 				for (int i = 0; i < fireResult.length; i++) {
-					FuzzyGroup action = find(r.getAction(i));
+					FuzzyVariable action = find(r.getAction(i));
 
 					if (allResults.get(action) == null) {
 						allResults.put(action, fireResult[i]);
@@ -174,7 +174,7 @@ public class Engine {
 		}
 
 		//defuzzify
-		for (FuzzyGroup action : allResults.keySet()) {
+		for (FuzzyVariable action : allResults.keySet()) {
 			double nominator = 0, denominator = 0;
 			for (Pair<Double, Double> d : allResults.get(action)) {
 				nominator += (d.first * d.second);

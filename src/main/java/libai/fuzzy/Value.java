@@ -21,32 +21,62 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package libai.fuzzy.sets;
+package libai.fuzzy;
 
-import libai.fuzzy.Value;
-
-import java.util.ArrayList;
-
-public interface FuzzySet {
+/**
+ * Wrapper around a double value. This implementation allows, change the type of
+ * the double, for other types more precises or maybe any type suitable for
+ * embedded devices without change the structure of the rest of the engine.
+ *
+ * @author kronenthaler
+ */
+public class Value implements Comparable<Value> {
 	/**
-	 * Evaluate the membership of the set with the especified value.
-	 *
-	 * @param s Value to evaluate.
-	 * @return The membership value for the input.
+	 * Value of the variable
 	 */
-	public double eval(double s);
-
-	/**
-	 * Set of values where = {x e X | u(x) &gt; 0}
-	 *
-	 * @return The set of values where the membership is greater than zero.
-	 */
-	public ArrayList<Double> getSupport();
+	private double value;
 
 	/**
-	 * Set of values where = {x e X | u(x) = 1}
+	 * Constructor. Creates a new variable with the value v.
 	 *
-	 * @return The set of values where the membership is exactly one.
+	 * @param v The initial value for the variable.
 	 */
-	public ArrayList<Double> getKernel();
+	public Value(double v) {
+		setValue(v);
+	}
+
+	/**
+	 * Set a new value v for the variable.
+	 *
+	 * @param v The new value for the variable.
+	 */
+	public void setValue(double v) {
+		value = v;
+	}
+
+	/**
+	 * Get the current value for the variable.
+	 *
+	 * @return The current value.
+	 */
+	public double getValue() {
+		return value;
+	}
+
+	/**
+	 * Compare two variables.
+	 *
+	 * @param o the variable to compare.
+	 * @return -1 if this is less than o, 0 if they are equal, 1 if this is
+	 * grater than o
+	 */
+	@Override
+	public int compareTo(Value o) {
+		return (int) (value - o.value);
+	}
+
+	@Override
+	public String toString() {
+		return String.valueOf(value);
+	}
 }

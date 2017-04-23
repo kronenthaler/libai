@@ -25,7 +25,7 @@ package demos.fuzzy;
 
 import libai.fuzzy.Condition;
 import libai.fuzzy.Engine;
-import libai.fuzzy.FuzzyGroup;
+import libai.fuzzy.FuzzyVariable;
 import libai.fuzzy.Rule;
 import libai.fuzzy.sets.FuzzySet;
 import libai.fuzzy.sets.Triangular;
@@ -39,7 +39,7 @@ import java.awt.*;
 public class FuzzyPanel extends javax.swing.JPanel {
 	Engine engine = new Engine();
 	boolean exit = false;
-	FuzzyGroup answers, location, state;
+	FuzzyVariable answers, location, state;
 	FuzzySet left, middle, right, movingLeft, movingRight, standingStill;
 
 	/**
@@ -51,30 +51,30 @@ public class FuzzyPanel extends javax.swing.JPanel {
 		left = new Triangular(-1, -1, 0);
 		middle = new Triangular(-1, 0, 1);
 		right = new Triangular(0, 1, 1);
-		//Variable position = new Variable(.5);
-		location = new FuzzyGroup(left, middle, right);
+		//Value position = new Value(.5);
+		location = new FuzzyVariable(left, middle, right);
 
 
 		movingLeft = new Triangular(-0.5, -0.5, 0);
 		standingStill = new Triangular(-0.5, 0, 0.5);
 		movingRight = new Triangular(0, 0.5, 0.5);
-		//Variable direction = new Variable(0);
-		state = new FuzzyGroup(movingLeft, movingRight, standingStill);
+		//Value direction = new Value(0);
+		state = new FuzzyVariable(movingLeft, movingRight, standingStill);
 
 		FuzzySet pull = new Triangular(-0.6, -0.5, 0, 0.5);
 		FuzzySet none = new Triangular(-0.5, 0, 0.5, 0.5);
 		FuzzySet push = new Triangular(0, 0.5, 0.6, 0.5);
-		answers = new FuzzyGroup(pull, none, push);
+		answers = new FuzzyVariable(pull, none, push);
 
-		Rule r0 = new Rule(new Condition(middle, location.getVariable()).and(standingStill, state.getVariable()), none);
-		Rule r1 = new Rule(new Condition(left, location.getVariable()), push);
-		Rule r2 = new Rule(new Condition(right, location.getVariable()), pull);
-		Rule r3 = new Rule(new Condition(middle, location.getVariable()), none);
-		Rule r4 = new Rule(new Condition(movingLeft, state.getVariable()), push);
-		Rule r5 = new Rule(new Condition(standingStill, state.getVariable()), none);
-		Rule r6 = new Rule(new Condition(movingRight, state.getVariable()), pull);
-		Rule r7 = new Rule(new Condition(left, location.getVariable()).and(movingLeft, state.getVariable()), push);
-		Rule r8 = new Rule(new Condition(right, location.getVariable()).and(movingRight, state.getVariable()), pull);
+		Rule r0 = new Rule(new Condition(middle, location.getValue()).and(standingStill, state.getValue()), none);
+		Rule r1 = new Rule(new Condition(left, location.getValue()), push);
+		Rule r2 = new Rule(new Condition(right, location.getValue()), pull);
+		Rule r3 = new Rule(new Condition(middle, location.getValue()), none);
+		Rule r4 = new Rule(new Condition(movingLeft, state.getValue()), push);
+		Rule r5 = new Rule(new Condition(standingStill, state.getValue()), none);
+		Rule r6 = new Rule(new Condition(movingRight, state.getValue()), pull);
+		Rule r7 = new Rule(new Condition(left, location.getValue()).and(movingLeft, state.getValue()), push);
+		Rule r8 = new Rule(new Condition(right, location.getValue()).and(movingRight, state.getValue()), pull);
 
 		engine.addRule(r0, r1, r2, r3, r4, r5, r6, r7, r8);
 		engine.addGroup(location, state, answers);
@@ -97,8 +97,8 @@ public class FuzzyPanel extends javax.swing.JPanel {
 				super.paint(g);
 				if (location == null || state == null) return;
 
-				double l = location.getVariable().getValue() + 1;
-				double s = state.getVariable().getValue() + 0.5;
+				double l = location.getValue().getValue() + 1;
+				double s = state.getValue().getValue() + 0.5;
 
 				int w = getWidth();
 				int h = getHeight();
@@ -213,8 +213,8 @@ public class FuzzyPanel extends javax.swing.JPanel {
 						engine.start();
 
 						//actualizar la direccion y la posicion
-						location.getVariable().setValue(location.getVariable().getValue() + answers.getVariable().getValue());
-						state.getVariable().setValue(state.getVariable().getValue() - answers.getVariable().getValue());
+						location.getValue().setValue(location.getValue().getValue() + answers.getValue().getValue());
+						state.getValue().setValue(state.getValue().getValue() - answers.getValue().getValue());
 						canvas.repaint();
 
 						//pintar la posicion actual
@@ -230,12 +230,12 @@ public class FuzzyPanel extends javax.swing.JPanel {
 	}//GEN-LAST:event_jButton1ActionPerformed
 
 	private void posSpnStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_posSpnStateChanged
-		location.getVariable().setValue((Double) posSpn.getValue());
+		location.getValue().setValue((Double) posSpn.getValue());
 		canvas.repaint();
 	}//GEN-LAST:event_posSpnStateChanged
 
 	private void dirSpnStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_dirSpnStateChanged
-		state.getVariable().setValue((Double) dirSpn.getValue());
+		state.getValue().setValue((Double) dirSpn.getValue());
 		canvas.repaint();
 	}//GEN-LAST:event_dirSpnStateChanged
 

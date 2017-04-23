@@ -27,10 +27,10 @@ import libai.fuzzy.sets.FuzzySet;
 
 /**
  * Binary tree that evaluates the condition of the fuzzy sets. Each node of the
- * condition need a pair FuzzySet-Variable. The variable to evaluate on the set.
+ * condition need a pair FuzzySet-Value. The value to evaluate on the set.
  * The root nodes could be: FuzzySet or a binary operator (AND, OR, NOT) If the
  * root node is a fuzzy set the evaluation of that node is just get the
- * membership value for the associated variable. If the root node is the
+ * membership value for the associated value. If the root node is the
  * operator NOT, the evaluation of the node is 1 minus evaluate the left branch
  * of the tree. If the root node is the operator AND, the evaluation of the node
  * is the minimum between the evaluation of the left and right branches. If the
@@ -39,34 +39,41 @@ import libai.fuzzy.sets.FuzzySet;
  *
  * @author kronenthaler
  */
+// TODO: refactor to pair explicitly the FuzzySet and the value (the fuzzyset can be bound to the value already!)
 public class Condition {
-	public static final int AND = 0;
-	public static final int OR = 1;
-	public static final int NOT = 2;
+	enum Operator{
+		None,
+		AND,
+		OR,
+		NOT
+	}
+
 	/**
 	 * The fuzzy set to evaluate. Is not-null only in the leaves.
 	 */
 	private FuzzySet root = null;
+
 	/**
-	 * The variable associated with the fuzzy set. Is not-null only in the
+	 * The value associated with the fuzzy set. Is not-null only in the
 	 * leaves.
 	 */
-	private Variable variable = null;
+	private Value value = null;
+
 	/**
 	 * Kind of operator {AND, OR, NOT}
 	 */
-	private int operator = -1;
+	private Operator operator = Operator.None;
 	private Condition left = null, right = null;
 
 	/**
 	 * Constructor. Creates a leaf node.
 	 *
 	 * @param x The fuzzy set for the leaf.
-	 * @param v The variable for the leaf.
+	 * @param v The value for the leaf.
 	 */
-	public Condition(FuzzySet x, Variable v) {
+	public Condition(FuzzySet x, Value v) {
 		root = x;
-		variable = v;
+		value = v;
 	}
 
 	/**
@@ -77,7 +84,7 @@ public class Condition {
 	 * @param l  Left branch condition.
 	 * @param r  Right branch condition.
 	 */
-	private Condition(int op, Condition l, Condition r) {
+	private Condition(Operator op, Condition l, Condition r) {
 		operator = op;
 		left = l;
 		right = r;
@@ -87,11 +94,11 @@ public class Condition {
 	 * Creates a new condition introducing a new node.
 	 *
 	 * @param x The fuzzy set to append.
-	 * @param v The variable for the fuzzy set.
+	 * @param v The value for the fuzzy set.
 	 * @return A new condition tree (this &amp; C(x,v))
 	 */
-	public Condition and(FuzzySet x, Variable v) {
-		return new Condition(AND, this, new Condition(x, v));
+	public Condition and(FuzzySet x, Value v) {
+		return new Condition(Operator.AND, this, new Condition(x, v));
 	}
 
 	/**
@@ -102,9 +109,9 @@ public class Condition {
 	 * @return A new condition tree (this &amp; C(x[0],v[0]) &amp; ... &amp;
 	 * C(x[length-1], v[length-1]))
 	 */
-	public Condition and(FuzzySet[] x, Variable[] v) {
+	public Condition and(FuzzySet[] x, Value[] v) {
 		if (x.length != v.length)
-			throw new IllegalArgumentException("Dimmension mismatch");
+			throw new IllegalArgumentException("Dimension mismatch");
 
 		Condition r = this;
 		for (int i = 0; i < x.length; i++)
@@ -116,11 +123,11 @@ public class Condition {
 	 * Creates a new condition introducing a new node.
 	 *
 	 * @param x The fuzzy set to append.
-	 * @param v The variable for the fuzzy set.
+	 * @param v The value for the fuzzy set.
 	 * @return A new condition tree (this | C(x,v))
 	 */
-	public Condition or(FuzzySet x, Variable v) {
-		return new Condition(OR, this, new Condition(x, v));
+	public Condition or(FuzzySet x, Value v) {
+		return new Condition(Operator.OR, this, new Condition(x, v));
 	}
 
 	/**
@@ -131,9 +138,9 @@ public class Condition {
 	 * @return A new condition tree (this | C(x[0],v[0]) | ... | C(x[length-1],
 	 * v[length-1]))
 	 */
-	public Condition or(FuzzySet[] x, Variable[] v) {
+	public Condition or(FuzzySet[] x, Value[] v) {
 		if (x.length != v.length)
-			throw new IllegalArgumentException("Dimmension mismatch");
+			throw new IllegalArgumentException("Dimension mismatch");
 
 		Condition r = this;
 		for (int i = 0; i < x.length; i++)
@@ -147,35 +154,35 @@ public class Condition {
 	 * @return A new condition tree !(this)
 	 */
 	public Condition not() {
-		return new Condition(NOT, this, null);
+		return new Condition(Operator.NOT, this, null);
 	}
 
 	/**
 	 * Evaluates recursively the condition tree and returns the Tau value for
 	 * the activation of this rule.
 	 *
-	 * @return The tau value of the membershio for this rule.
+	 * @return The tau value of the membership for this rule.
 	 */
-	public double eval() { //retorna el TAU de esta regla
+	public double eval() { //returns TAU of this rule
 		if (left != null && right != null) {
-			if (operator == AND)
+			if (operator == Operator.AND)
 				return Math.min(left.eval(), right.eval());
-			else if (operator == OR)
+			else if (operator == Operator.OR)
 				return Math.max(left.eval(), right.eval());
 			else //NOT
 				return 1.0 - left.eval();
 		} else {
-			return root.eval(variable);
+			return root.eval(value.getValue());
 		}
 	}
 
 	@Override
 	public String toString() {
 		if (left == null && right == null)
-			return "[" + root.toString() + " w/" + variable.toString() + "]";
+			return "[" + root.toString() + " w/" + value.toString() + "]";
 		else if (right == null) {
 			return "!" + left.toString();
 		} else
-			return "(" + left.toString() + " " + (operator == AND ? "&" : "|") + " " + right.toString() + ")";
+			return "(" + left.toString() + " " + (operator == Operator.AND ? "&" : "|") + " " + right.toString() + ")";
 	}
 }

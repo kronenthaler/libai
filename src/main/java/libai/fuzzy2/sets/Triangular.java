@@ -21,62 +21,48 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package libai.fuzzy;
+package libai.fuzzy2.sets;
 
 /**
- * Wrapper around a double value. This implementation allows, change the type of
- * the double, for other types more precises or maybe any type suitable for
- * embedded devices without change the structure of the rest of the engine.
+ * Fuzzy set representing a triangular function. Only one point on the function
+ * can take the max value of 1. The triangular function can take 3 variations:
+ * <br>
+ * <ul>
+ * <li>right triangle to the left. a = b != c.</li>
+ * <li>centered triangle a != b != c.</li>
+ * <li>right triangle to the right a != b = c.</li>
+ * </ul>
+ * <p>
+ * In the three cases, the support of the set is the interval [a,c].<br>
+ * The kernel is always the single value b.<br>
  *
  * @author kronenthaler
  */
-public class Variable implements Comparable<Variable> {
-	/**
-	 * Value of the variable
-	 */
-	private double value;
+public class Triangular implements FuzzySet {
+	private double a, b, c;
 
-	/**
-	 * Constructor. Creates a new variable with the value v.
-	 *
-	 * @param v The initial value for the variable.
-	 */
-	public Variable(double v) {
-		setValue(v);
-	}
-
-	/**
-	 * Set a new value v for the variable.
-	 *
-	 * @param v The new value for the variable.
-	 */
-	public void setValue(double v) {
-		value = v;
-	}
-
-	/**
-	 * Get the current value for the variable.
-	 *
-	 * @return The current value.
-	 */
-	public double getValue() {
-		return value;
-	}
-
-	/**
-	 * Compare two variables.
-	 *
-	 * @param o the variable to compare.
-	 * @return -1 if this is less than o, 0 if they are equal, 1 if this is
-	 * grater than o
-	 */
-	@Override
-	public int compareTo(Variable o) {
-		return (int) (value - o.value);
+	public Triangular(double _a, double _b, double _c) {
+		a = _a;
+		b = _b;
+		c = _c;
 	}
 
 	@Override
-	public String toString() {
-		return String.valueOf(value);
+	public double eval(double s) {
+		if (s <= a || s >= c)
+			return 0;
+
+		if (s == b)
+			return 1;
+
+		if (s > a && s < b)
+			return (s - a) / (b - a);
+
+		return (c - s) / (c - b);
+	}
+
+	@Override
+	public String toXMLString(String indent){
+		return String.format("%s<TriangularShape Param1=\"%f\" Param2=\"%f\" Param3=\"%f\"/>", indent, a, b, c);
 	}
 }

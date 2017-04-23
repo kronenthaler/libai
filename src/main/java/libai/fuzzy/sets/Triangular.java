@@ -23,7 +23,7 @@
  */
 package libai.fuzzy.sets;
 
-import libai.fuzzy.Variable;
+import libai.fuzzy.Value;
 
 import java.util.ArrayList;
 
@@ -43,15 +43,15 @@ import java.util.ArrayList;
  * @author kronenthaler
  */
 public class Triangular implements FuzzySet {
-	private Variable a, b, c;
+	private Value a, b, c;
 	private ArrayList<Double> support;
 	private ArrayList<Double> kernel;
 	protected double DELTA = 0.1;
 
 	public Triangular(double _a, double _b, double _c, double delta) {
-		a = new Variable(_a);
-		b = new Variable(_b);
-		c = new Variable(_c);
+		a = new Value(_a);
+		b = new Value(_b);
+		c = new Value(_c);
 		DELTA = delta;
 
 		kernel = new ArrayList<>();
@@ -66,11 +66,6 @@ public class Triangular implements FuzzySet {
 
 	public Triangular(double _a, double _b, double _c) {
 		this(_a, _b, _c, .5);
-	}
-
-	@Override
-	public double eval(Variable s) {
-		return eval(s.getValue());
 	}
 
 	@Override
