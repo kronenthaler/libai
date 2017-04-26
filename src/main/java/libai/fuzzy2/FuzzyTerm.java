@@ -1,6 +1,7 @@
 package libai.fuzzy2;
 
 import libai.fuzzy2.sets.FuzzySet;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -42,15 +43,17 @@ public class FuzzyTerm implements FuzzySet, XMLSerializer {
 
 	@Override
 	public void load(Node xmlNode) throws Exception {
-		name = xmlNode.getAttributes().getNamedItem("name").getNodeValue();
-		complement = Boolean.parseBoolean(xmlNode.getAttributes().getNamedItem("complement").getNodeValue());
+		NamedNodeMap attributes = xmlNode.getAttributes();
+		name = attributes.getNamedItem("name").getTextContent();
+
+		if(attributes.getNamedItem("complement") != null)
+			complement = Boolean.parseBoolean(attributes.getNamedItem("complement").getTextContent());
 
 		NodeList children = xmlNode.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {
 			Node current = children.item(i);
 			if (current.getNodeType() != Node.ELEMENT_NODE)
 				continue;
-
 
 			String setClass = current.getNodeName();
 			Class<?> clazz = Class.forName("libai.fuzzy2.sets."+setClass);

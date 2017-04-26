@@ -217,7 +217,7 @@
 		<xs:attribute name="defaultValue" type="xs:float" default="0"/>
 		<xs:attribute name="type" fixed="output" use="required"/>
 		</xs:complexType>
-		 <xs:complexType name="TSKTermType">
+	<xs:complexType name="TSKTermType">
 			<xs:sequence>
 				<xs:element name="TSKValue" type="xs:float" maxOccurs="unbounded"/>
 			</xs:sequence>

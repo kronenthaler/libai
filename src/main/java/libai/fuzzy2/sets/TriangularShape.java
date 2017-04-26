@@ -24,6 +24,7 @@
 package libai.fuzzy2.sets;
 
 import libai.fuzzy2.XMLSerializer;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 /**
@@ -75,8 +76,9 @@ public class TriangularShape implements FuzzySet, XMLSerializer {
 
 	@Override
 	public void load(Node xmlNode) throws Exception {
-		a = Double.parseDouble(xmlNode.getAttributes().getNamedItem("Param1").getNodeValue());
-		b = Double.parseDouble(xmlNode.getAttributes().getNamedItem("Param2").getNodeValue());
-		c = Double.parseDouble(xmlNode.getAttributes().getNamedItem("Param3").getNodeValue());
+		NamedNodeMap attributes = xmlNode.getAttributes();
+		a = Double.parseDouble(attributes.getNamedItem("Param1").getTextContent());
+		b = Double.parseDouble(attributes.getNamedItem("Param2").getTextContent());
+		c = Double.parseDouble(attributes.getNamedItem("Param3").getTextContent());
 	}
 }

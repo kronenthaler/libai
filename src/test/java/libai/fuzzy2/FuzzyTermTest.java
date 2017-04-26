@@ -12,8 +12,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
 
-import static org.junit.Assert.*;
-
 /**
  * Created by kronenthaler on 23/04/2017.
  */

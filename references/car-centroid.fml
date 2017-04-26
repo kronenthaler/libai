@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FuzzyController name="car-centroid" ip="127.0.0.1">
+    <KnowledgeBase>
+        <FuzzyVariable name="quality" domainleft="0.0" domainright="10.0" scale="stars" type="input">
+            <FuzzyTerm name="bad" complement="false">
+                <TriangularShape Param1="0.0" Param2="3.333333" Param3="10.0"/>
+            </FuzzyTerm>
+            <FuzzyTerm name="good" complement="false">
+                <TriangularShape Param1="0.0" Param2="6.666667" Param3="10.0"/>
+            </FuzzyTerm>
+        </FuzzyVariable>
+        <FuzzyVariable name="tip" domainleft="0.0" domainright="15.0" scale="percentage" defaultValue="0.0" accumulation="MAX" defuzzifier="COG" type="output">
+            <FuzzyTerm name="cheap" complement="false">
+                <TriangularShape Param1="0.0" Param2="2.5" Param3="5.0"/>
+            </FuzzyTerm>
+            <FuzzyTerm name="generous" complement="false">
+                <TriangularShape Param1="10.0" Param2="12.0" Param3="15.0"/>
+            </FuzzyTerm>
+            <FuzzyTerm name="normal" complement="false">
+                <TriangularShape Param1="0.0" Param2="7.5" Param3="15.0"/>
+            </FuzzyTerm>
+        </FuzzyVariable>
+    </KnowledgeBase>
+    <RuleBase name="RuleBase1" andMethod="MIN" orMethod="MAX" activationMethod="MIN" type="mamdani">
+    </RuleBase>
+</FuzzyController>
