@@ -231,7 +231,6 @@
 		</xs:attribute>
 	</xs:complexType>
 
-
 	<xs:complexType name="RuleBaseType">
 		<xs:attribute name="name" type="xs:string" use="required"/>
 		<xs:attribute name="activationMethod" default="MIN">
@@ -263,7 +262,6 @@
 			</xs:simpleType>
 		</xs:attribute>
 	</xs:complexType>
-
 
 	<xs:complexType name="MamdaniRuleBaseType">
 		<xs:complexContent>

@@ -1,6 +1,7 @@
 package libai.fuzzy2;
 
 import libai.fuzzy2.sets.FuzzySet;
+import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;

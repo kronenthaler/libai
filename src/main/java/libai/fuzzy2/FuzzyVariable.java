@@ -1,5 +1,6 @@
 package libai.fuzzy2;
 
+import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -141,13 +142,9 @@ public class FuzzyVariable implements XMLSerializer {
 			defuzzifier = Defuzzifier.fromString(attributes.getNamedItem("defuzzifier").getTextContent());
 
 		terms = new ArrayList<>();
-		NodeList children = xmlNode.getChildNodes();
+		NodeList children = ((Element)xmlNode).getElementsByTagName("FuzzyTerm");
 		for(int i=0;i<children.getLength();i++){
-			Node current = children.item(i);
-			if (current.getNodeType() != Node.ELEMENT_NODE)
-				continue;
-
-			terms.add(new FuzzyTerm(current));
+			terms.add(new FuzzyTerm(children.item(i)));
 		}
 	}
 }

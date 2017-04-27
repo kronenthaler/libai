@@ -1,5 +1,6 @@
 package libai.fuzzy2;
 
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -37,13 +38,9 @@ public class KnowledgeBase implements XMLSerializer {
 
 	@Override
 	public void load(Node xmlNode) throws Exception {
-		NodeList children = xmlNode.getChildNodes();
+		NodeList children = ((Element)xmlNode).getElementsByTagName("FuzzyVariable");
 		for(int i=0; i < children.getLength(); i++){
-			Node current = children.item(i);
-			if (current.getNodeType() != Node.ELEMENT_NODE)
-				continue;
-
-			FuzzyVariable var = new FuzzyVariable(current);
+			FuzzyVariable var = new FuzzyVariable(children.item(i));
 			variables.put(var.name, var);
 		}
 	}
