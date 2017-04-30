@@ -1,13 +1,11 @@
 package libai.fuzzy2;
 
-import com.sun.javaws.exceptions.InvalidArgumentException;
 import libai.fuzzy2.sets.FuzzySet;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * Created by kronenthaler on 23/04/2017.

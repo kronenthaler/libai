@@ -75,9 +75,9 @@ public class MySQLDataSetTest {
 
 	private static Connection getConnection(String database) {
 		try {
-			Class.forName("com.mysql.cj.jdbc.Driver").newInstance();
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			return DriverManager.getConnection(
-					"jdbc:mysql://127.0.0.1:3306/" + database, "root", ""
+					"jdbc:mysql://127.0.0.1:3306/" + database+"?serverTimezone=Europe/Amsterdam", "root", ""
 			);
 		} catch (ClassNotFoundException |
 				InstantiationException |
