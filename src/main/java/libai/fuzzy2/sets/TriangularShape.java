@@ -75,7 +75,7 @@ public class TriangularShape implements FuzzySet, XMLSerializer {
 	}
 
 	@Override
-	public void load(Node xmlNode) throws Exception {
+	public void load(Node xmlNode) {
 		NamedNodeMap attributes = xmlNode.getAttributes();
 		a = Double.parseDouble(attributes.getNamedItem("Param1").getTextContent());
 		b = Double.parseDouble(attributes.getNamedItem("Param2").getTextContent());

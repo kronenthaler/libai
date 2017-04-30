@@ -37,10 +37,13 @@ import static org.junit.Assert.*;
 import static org.junit.Assume.assumeTrue;
 
 /**
- *
  * @author Federico Vera {@literal <dktcoding [at] gmail>}
  */
 public class RBFTest {
+	public static double f(double x) {
+		return Math.sin(x) + Math.cos(x);
+	}
+
 	@Test
 	public void testDemo() {
 		int n = 40;
@@ -77,7 +80,7 @@ public class RBFTest {
 		assumeTrue("RBF didn't converge, try again", 0.0001 > net.error(p, t));
 
 		for (int i = n; i < p.length; i++) {
-			assertEquals(t[i].position(0, 0),net.simulate(p[i]).position(0, 0), 0.1);
+			assertEquals(t[i].position(0, 0), net.simulate(p[i]).position(0, 0), 0.1);
 		}
 	}
 
@@ -117,7 +120,7 @@ public class RBFTest {
 		assumeTrue("RBF didn't converge, try again", 0.0001 > net.error(p, t));
 
 		for (int i = n; i < p.length; i++) {
-			assertEquals(t[i].position(0, 0),net.simulate(p[i]).position(0, 0), 0.1);
+			assertEquals(t[i].position(0, 0), net.simulate(p[i]).position(0, 0), 0.1);
 		}
 
 		assumeTrue("Can't use temp dir...", MatrixIOTest.checkTemp());
@@ -142,12 +145,8 @@ public class RBFTest {
 
 	}
 
-	@Test(expected=NullPointerException.class)
-	public void testNullPath() throws IOException, ClassNotFoundException{
-		RBF.open((String)null);
-	}
-
-	public static double f(double x) {
-		return Math.sin(x) + Math.cos(x);
+	@Test(expected = NullPointerException.class)
+	public void testNullPath() throws IOException, ClassNotFoundException {
+		RBF.open((String) null);
 	}
 }

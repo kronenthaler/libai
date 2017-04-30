@@ -48,6 +48,25 @@ public class NaiveBayes {
 	protected MetaData metadata;
 	protected HashMap<Attribute, Object[]> params;
 
+	//Factories
+	public static NaiveBayes getInstance(File path) {
+		try {
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			Document doc = db.parse(new FileInputStream(path));
+			Node root = doc.getElementsByTagName("NaiveBayes").item(0);
+
+			return new NaiveBayes().load(root);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public static NaiveBayes getInstance(DataSet ds) {
+		return new NaiveBayes().train(ds);
+	}
+
 	public NaiveBayes train(DataSet ds) {
 		outputIndex = ds.getOutputIndex();
 		totalCount = ds.getItemsCount();
@@ -178,25 +197,6 @@ public class NaiveBayes {
 		double sd = ps.second;
 		double x = xk.getValue();
 		return Math.exp(-(Math.pow(x - mean, 2) / (2 * sd))) * (1 / (Math.sqrt(2 * Math.PI * sd)));
-	}
-
-	//Factories
-	public static NaiveBayes getInstance(File path) {
-		try {
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			DocumentBuilder db = dbf.newDocumentBuilder();
-			Document doc = db.parse(new FileInputStream(path));
-			Node root = doc.getElementsByTagName("NaiveBayes").item(0);
-
-			return new NaiveBayes().load(root);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	public static NaiveBayes getInstance(DataSet ds) {
-		return new NaiveBayes().train(ds);
 	}
 
 	//IO functions

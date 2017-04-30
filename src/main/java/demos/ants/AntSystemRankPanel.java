@@ -33,6 +33,14 @@ import java.util.Vector;
  * @author kronenthaler
  */
 public class AntSystemRankPanel extends javax.swing.JPanel {
+	// Variables declaration - do not modify//GEN-BEGIN:variables
+	private javax.swing.JTextArea answerTxt;
+	private javax.swing.JButton jButton3;
+	private javax.swing.JProgressBar jProgressBar1;
+	private javax.swing.JScrollPane jScrollPane1;
+	private javax.swing.JScrollPane jScrollPane2;
+	private javax.swing.JTextArea jTextArea1;
+	private javax.swing.JComboBox parameterSet;
 	/**
 	 * Creates new form AntSystemPanel
 	 */
@@ -143,15 +151,6 @@ public class AntSystemRankPanel extends javax.swing.JPanel {
 			e.printStackTrace();
 		}
 	}//GEN-LAST:event_jButton3ActionPerformed
-
-	// Variables declaration - do not modify//GEN-BEGIN:variables
-	private javax.swing.JTextArea answerTxt;
-	private javax.swing.JButton jButton3;
-	private javax.swing.JProgressBar jProgressBar1;
-	private javax.swing.JScrollPane jScrollPane1;
-	private javax.swing.JScrollPane jScrollPane2;
-	private javax.swing.JTextArea jTextArea1;
-	private javax.swing.JComboBox parameterSet;
 	// End of variables declaration//GEN-END:variables
 
 	static class SP_ASR extends libai.ants.algorithms.AntSystemRank {

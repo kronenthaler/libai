@@ -29,10 +29,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
- *
  * @author Federico Vera {@literal <fedevera at unc.edu.ar>}
  */
-public class SincTest {	
+public class SincTest {
 	@Test
 	public void testEval() {
 		Sinc sinc = new Sinc();
@@ -40,10 +39,10 @@ public class SincTest {
 		assertEquals(0, sinc.eval(Math.PI), 1e-12);
 		assertEquals(0, sinc.eval(-Math.PI), 1e-12);
 		assertEquals(0, sinc.eval(-2 * Math.PI), 1e-12);
-		assertEquals(0, sinc.eval( 2 * Math.PI), 1e-12);
-		
+		assertEquals(0, sinc.eval(2 * Math.PI), 1e-12);
+
 		double x = Math.random();
-		assertEquals(Math.sin(x)/x, sinc.eval(x), 1e-12);
+		assertEquals(Math.sin(x) / x, sinc.eval(x), 1e-12);
 	}
 
 	@Test
@@ -73,12 +72,12 @@ public class SincTest {
 		assertNotNull(der);
 		assertEquals(0, der.eval(0), 0);
 		double x = Math.random();
-		assertEquals((x*Math.cos(x)-Math.sin(x))/x/x, der.eval(x), 1e-12);
+		assertEquals((x * Math.cos(x) - Math.sin(x)) / x / x, der.eval(x), 1e-12);
 	}
-	
+
 	@Test(expected = UnsupportedOperationException.class)
 	public void testGetGetDerivative() {
 		new Sinc().getDerivate().getDerivate();
 	}
-	
+
 }

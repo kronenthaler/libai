@@ -14,11 +14,11 @@ import java.util.List;
 public class Consequent implements XMLSerializer {
 	protected List<Clause> clauses = new ArrayList<>();
 
-	public Consequent(Node xmlNode) throws Exception {
+	public Consequent(Node xmlNode) {
 		load(xmlNode);
 	}
 
-	public Consequent(Clause... clauses){
+	public Consequent(Clause... clauses) {
 		this.clauses = Arrays.asList(clauses);
 	}
 
@@ -27,8 +27,8 @@ public class Consequent implements XMLSerializer {
 		StringBuilder str = new StringBuilder();
 		str.append(String.format("%s<Consequent>\n", indent));
 
-		for(Clause var : clauses){
-			str.append(String.format("%s\n", var.toXMLString(indent+"\t")));
+		for (Clause var : clauses) {
+			str.append(String.format("%s\n", var.toXMLString(indent + "\t")));
 		}
 
 		str.append(String.format("%s</Consequent>", indent));
@@ -36,9 +36,9 @@ public class Consequent implements XMLSerializer {
 	}
 
 	@Override
-	public void load(Node xmlNode) throws Exception {
-		NodeList children = ((Element)xmlNode).getElementsByTagName("Clause");
-		for(int i=0; i < children.getLength(); i++){
+	public void load(Node xmlNode) {
+		NodeList children = ((Element) xmlNode).getElementsByTagName("Clause");
+		for (int i = 0; i < children.getLength(); i++) {
 			clauses.add(new Clause(children.item(i)));
 		}
 	}

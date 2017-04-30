@@ -29,7 +29,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
- *
  * @author Federico Vera {@literal <fedevera at unc.edu.ar>}
  */
 public class GaussianTest {
@@ -41,7 +40,7 @@ public class GaussianTest {
 		for (int i = 0; i < 100; i++) {
 			double x = Math.random();
 			assertEquals(gauss.eval(x), gauss.eval(-x), 1e-12);
-			assertEquals(-(x*x), Math.log(gauss.eval(x)), 1e-12);
+			assertEquals(-(x * x), Math.log(gauss.eval(x)), 1e-12);
 		}
 	}
 
@@ -56,10 +55,10 @@ public class GaussianTest {
 			assertEquals(-2 * x, der.eval(x) / gauss.eval(x), 1e-12);
 		}
 	}
-	
+
 	@Test(expected = UnsupportedOperationException.class)
 	public void testGetGetDerivative() {
 		new Gaussian().getDerivate().getDerivate();
 	}
-	
+
 }

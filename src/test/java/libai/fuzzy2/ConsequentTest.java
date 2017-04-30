@@ -1,6 +1,5 @@
 package libai.fuzzy2;
 
-import junit.framework.TestCase;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -9,12 +8,14 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
 
+import static org.junit.Assert.assertEquals;
+
 /**
  * Created by kronenthaler on 30/04/2017.
  */
-public class ConsequentTest extends TestCase {
+public class ConsequentTest {
 	@Test
-	public void testXMLGeneration(){
+	public void testXMLGeneration() {
 		Clause a = new Clause("variable1", "good");
 		Clause b = new Clause("variable2", "big");
 		Consequent consequent = new Consequent(a, b);

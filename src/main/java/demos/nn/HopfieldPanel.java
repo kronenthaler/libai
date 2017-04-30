@@ -14,7 +14,64 @@ import javax.swing.*;
  */
 public class HopfieldPanel extends javax.swing.JPanel {
 	Hopfield net;
-
+	// Variables declaration - do not modify//GEN-BEGIN:variables
+	private javax.swing.JButton jButton1;
+	private javax.swing.JLabel jLabel1;
+	private javax.swing.JLabel jLabel2;
+	private javax.swing.JProgressBar jProgressBar1;
+	private javax.swing.JScrollPane jScrollPane1;
+	private javax.swing.JTextPane jTextPane1;
+	private javax.swing.JCheckBox p0;
+	private javax.swing.JCheckBox p1;
+	private javax.swing.JCheckBox p10;
+	private javax.swing.JCheckBox p11;
+	private javax.swing.JCheckBox p12;
+	private javax.swing.JCheckBox p13;
+	private javax.swing.JCheckBox p14;
+	private javax.swing.JCheckBox p15;
+	private javax.swing.JCheckBox p16;
+	private javax.swing.JCheckBox p17;
+	private javax.swing.JCheckBox p18;
+	private javax.swing.JCheckBox p19;
+	private javax.swing.JCheckBox p2;
+	private javax.swing.JCheckBox p20;
+	private javax.swing.JCheckBox p21;
+	private javax.swing.JCheckBox p22;
+	private javax.swing.JCheckBox p23;
+	private javax.swing.JCheckBox p24;
+	private javax.swing.JCheckBox p25;
+	private javax.swing.JCheckBox p26;
+	private javax.swing.JCheckBox p27;
+	private javax.swing.JCheckBox p28;
+	private javax.swing.JCheckBox p29;
+	private javax.swing.JCheckBox p3;
+	private javax.swing.JCheckBox p30;
+	private javax.swing.JCheckBox p31;
+	private javax.swing.JCheckBox p32;
+	private javax.swing.JCheckBox p33;
+	private javax.swing.JCheckBox p34;
+	private javax.swing.JCheckBox p35;
+	private javax.swing.JCheckBox p36;
+	private javax.swing.JCheckBox p37;
+	private javax.swing.JCheckBox p38;
+	private javax.swing.JCheckBox p39;
+	private javax.swing.JCheckBox p4;
+	private javax.swing.JCheckBox p40;
+	private javax.swing.JCheckBox p41;
+	private javax.swing.JCheckBox p42;
+	private javax.swing.JCheckBox p43;
+	private javax.swing.JCheckBox p44;
+	private javax.swing.JCheckBox p45;
+	private javax.swing.JCheckBox p46;
+	private javax.swing.JCheckBox p47;
+	private javax.swing.JCheckBox p48;
+	private javax.swing.JCheckBox p49;
+	private javax.swing.JCheckBox p5;
+	private javax.swing.JCheckBox p6;
+	private javax.swing.JCheckBox p7;
+	private javax.swing.JCheckBox p8;
+	private javax.swing.JCheckBox p9;
+	private javax.swing.JButton testBtn;
 	/**
 	 * Creates new form HebbPanel
 	 */
@@ -462,64 +519,5 @@ public class HopfieldPanel extends javax.swing.JPanel {
 
 
 	}//GEN-LAST:event_testBtnActionPerformed
-
-	// Variables declaration - do not modify//GEN-BEGIN:variables
-	private javax.swing.JButton jButton1;
-	private javax.swing.JLabel jLabel1;
-	private javax.swing.JLabel jLabel2;
-	private javax.swing.JProgressBar jProgressBar1;
-	private javax.swing.JScrollPane jScrollPane1;
-	private javax.swing.JTextPane jTextPane1;
-	private javax.swing.JCheckBox p0;
-	private javax.swing.JCheckBox p1;
-	private javax.swing.JCheckBox p10;
-	private javax.swing.JCheckBox p11;
-	private javax.swing.JCheckBox p12;
-	private javax.swing.JCheckBox p13;
-	private javax.swing.JCheckBox p14;
-	private javax.swing.JCheckBox p15;
-	private javax.swing.JCheckBox p16;
-	private javax.swing.JCheckBox p17;
-	private javax.swing.JCheckBox p18;
-	private javax.swing.JCheckBox p19;
-	private javax.swing.JCheckBox p2;
-	private javax.swing.JCheckBox p20;
-	private javax.swing.JCheckBox p21;
-	private javax.swing.JCheckBox p22;
-	private javax.swing.JCheckBox p23;
-	private javax.swing.JCheckBox p24;
-	private javax.swing.JCheckBox p25;
-	private javax.swing.JCheckBox p26;
-	private javax.swing.JCheckBox p27;
-	private javax.swing.JCheckBox p28;
-	private javax.swing.JCheckBox p29;
-	private javax.swing.JCheckBox p3;
-	private javax.swing.JCheckBox p30;
-	private javax.swing.JCheckBox p31;
-	private javax.swing.JCheckBox p32;
-	private javax.swing.JCheckBox p33;
-	private javax.swing.JCheckBox p34;
-	private javax.swing.JCheckBox p35;
-	private javax.swing.JCheckBox p36;
-	private javax.swing.JCheckBox p37;
-	private javax.swing.JCheckBox p38;
-	private javax.swing.JCheckBox p39;
-	private javax.swing.JCheckBox p4;
-	private javax.swing.JCheckBox p40;
-	private javax.swing.JCheckBox p41;
-	private javax.swing.JCheckBox p42;
-	private javax.swing.JCheckBox p43;
-	private javax.swing.JCheckBox p44;
-	private javax.swing.JCheckBox p45;
-	private javax.swing.JCheckBox p46;
-	private javax.swing.JCheckBox p47;
-	private javax.swing.JCheckBox p48;
-	private javax.swing.JCheckBox p49;
-	private javax.swing.JCheckBox p5;
-	private javax.swing.JCheckBox p6;
-	private javax.swing.JCheckBox p7;
-	private javax.swing.JCheckBox p8;
-	private javax.swing.JCheckBox p9;
-	private javax.swing.JButton testBtn;
 	// End of variables declaration//GEN-END:variables
 }

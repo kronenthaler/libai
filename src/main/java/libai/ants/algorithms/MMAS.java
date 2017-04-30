@@ -253,7 +253,7 @@ abstract public class MMAS extends Metaheuristic {
 			pheromonesUpdate();
 			//print pheromones
 			//this.Pheromones.show();
-            /* Clear ants' solutions */
+			/* Clear ants' solutions */
 			for (int i = 0; i < this.numberOfAnts; i++) {
 				this.Ants[i].clearSolution();
 			}

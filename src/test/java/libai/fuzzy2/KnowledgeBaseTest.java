@@ -1,23 +1,22 @@
 package libai.fuzzy2;
 
-import junit.framework.TestCase;
-import libai.fuzzy2.sets.FuzzySet;
 import libai.fuzzy2.sets.TriangularShape;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
 
+import static org.junit.Assert.assertEquals;
+
 /**
  * Created by kronenthaler on 26/04/2017.
  */
-public class KnowledgeBaseTest extends TestCase{
+public class KnowledgeBaseTest {
 	@Test
-	public void testXMLGeneration(){
+	public void testXMLGeneration() {
 		FuzzyTerm bad = new FuzzyTerm(new TriangularShape(0, 3, 10), "bad");
 		FuzzyTerm good = new FuzzyTerm(new TriangularShape(0, 7, 10), "good");
 		FuzzyVariable var = new FuzzyVariable("quality", 0, 10, "stars", bad, good);

@@ -2,6 +2,8 @@ package libai.fuzzy2;
 
 import org.w3c.dom.Node;
 
+import java.lang.reflect.InvocationTargetException;
+
 /**
  * Created by kronenthaler on 23/04/2017.
  */
@@ -18,5 +20,5 @@ public interface XMLSerializer {
 	 *
 	 * @param xmlNode XML node with the information to load the current object with.
 	 **/
-	public void load(Node xmlNode) throws Exception;
+	public void load(Node xmlNode);
 }

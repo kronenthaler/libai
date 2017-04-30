@@ -41,30 +41,20 @@ import libai.fuzzy.sets.FuzzySet;
  */
 // TODO: refactor to pair explicitly the FuzzySet and the value (the fuzzyset can be bound to the value already!)
 public class Condition {
-	enum Operator{
-		None,
-		AND,
-		OR,
-		NOT
-	}
-
 	/**
 	 * The fuzzy set to evaluate. Is not-null only in the leaves.
 	 */
 	private FuzzySet root = null;
-
 	/**
 	 * The value associated with the fuzzy set. Is not-null only in the
 	 * leaves.
 	 */
 	private Value value = null;
-
 	/**
 	 * Kind of operator {AND, OR, NOT}
 	 */
 	private Operator operator = Operator.None;
 	private Condition left = null, right = null;
-
 	/**
 	 * Constructor. Creates a leaf node.
 	 *
@@ -184,5 +174,12 @@ public class Condition {
 			return "!" + left.toString();
 		} else
 			return "(" + left.toString() + " " + (operator == Operator.AND ? "&" : "|") + " " + right.toString() + ")";
+	}
+
+	enum Operator {
+		None,
+		AND,
+		OR,
+		NOT
 	}
 }

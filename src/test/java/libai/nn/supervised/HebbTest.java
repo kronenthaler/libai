@@ -14,9 +14,10 @@ import static org.junit.Assert.assertTrue;
 public class HebbTest {
 	private static final ProgressDisplay progress = new ProgressDisplay() {
 		int value, min, max;
+
 		@Override
-		public void setMinimum(int v) {
-			min = v;
+		public int getMaximum() {
+			return max;
 		}
 
 		@Override
@@ -25,60 +26,60 @@ public class HebbTest {
 		}
 
 		@Override
-		public void setValue(int v) {
-			value=v;
-			assertTrue(v >= min);
-			assertTrue(v <= max);
-		}
-
-		@Override
-		public int getMaximum() {
-			return max;
-		}
-
-		@Override
 		public int getMinimum() {
 			return min;
+		}
+
+		@Override
+		public void setMinimum(int v) {
+			min = v;
 		}
 
 		@Override
 		public int getValue() {
 			return value;
 		}
+
+		@Override
+		public void setValue(int v) {
+			value = v;
+			assertTrue(v >= min);
+			assertTrue(v <= max);
+		}
 	};
 
 	@Test
-	public void testTrain(){
+	public void testTrain() {
 		NeuralNetwork nn = new Hebb(25, 25, 0.05);
 		Column[] patterns = new Column[]{
 				new Column(25, new double[]{
-						-1, 1, 1, 1,-1,
-						1,-1,-1,-1, 1,
-						1,-1,-1,-1, 1,
-						1,-1,-1,-1, 1,
-						-1, 1, 1, 1,-1}),
+						-1, 1, 1, 1, -1,
+						1, -1, -1, -1, 1,
+						1, -1, -1, -1, 1,
+						1, -1, -1, -1, 1,
+						-1, 1, 1, 1, -1}),
 				new Column(25, new double[]{
-						+1,+1,+1,-1,-1,
-						+1,+1,+1,-1,-1,
-						+1,+1,+1,-1,-1,
-						-1,-1,+1,+1,+1,
-						-1,-1,+1,+1,+1,}),
+						+1, +1, +1, -1, -1,
+						+1, +1, +1, -1, -1,
+						+1, +1, +1, -1, -1,
+						-1, -1, +1, +1, +1,
+						-1, -1, +1, +1, +1,}),
 		};
 
 		Column[] answers = new Column[]{
 				new Column(25, new double[]{
-						-1, 1, 1, 1,-1,
-						1,-1,-1, 1, 1,
-						-1,-1,-1,-1,-1,
-						-1,-1,-1,-1,-1,
-						-1,-1,-1,-1,-1
+						-1, 1, 1, 1, -1,
+						1, -1, -1, 1, 1,
+						-1, -1, -1, -1, -1,
+						-1, -1, -1, -1, -1,
+						-1, -1, -1, -1, -1
 				}),
 				new Column(25, new double[]{
-						+1,+1,+1,-1,-1,
-						+1,+1,+1,-1,-1,
-						+1,+1,+1,-1,-1,
-						-1,-1,-1,-1,-1,
-						-1,-1,-1,-1,-1,}),
+						+1, +1, +1, -1, -1,
+						+1, +1, +1, -1, -1,
+						+1, +1, +1, -1, -1,
+						-1, -1, -1, -1, -1,
+						-1, -1, -1, -1, -1,}),
 		};
 
 		nn.train(patterns, patterns, 0.005, 1000, 0, patterns.length);
@@ -86,22 +87,22 @@ public class HebbTest {
 	}
 
 	@Test
-	public void testClassifier(){
+	public void testClassifier() {
 		// same input as before, just each element is given a different answer vector.
 		NeuralNetwork nn = new Hebb(25, 1, 0.05);
 		Column[] patterns = new Column[]{
 				new Column(25, new double[]{
-						-1, 1, 1, 1,-1,
-						1,-1,-1,-1, 1,
-						1,-1,-1,-1, 1,
-						1,-1,-1,-1, 1,
-						-1, 1, 1, 1,-1}),
+						-1, 1, 1, 1, -1,
+						1, -1, -1, -1, 1,
+						1, -1, -1, -1, 1,
+						1, -1, -1, -1, 1,
+						-1, 1, 1, 1, -1}),
 				new Column(25, new double[]{
-						+1,+1,+1,-1,-1,
-						+1,+1,+1,-1,-1,
-						+1,+1,+1,-1,-1,
-						-1,-1,+1,+1,+1,
-						-1,-1,+1,+1,+1,}),
+						+1, +1, +1, -1, -1,
+						+1, +1, +1, -1, -1,
+						+1, +1, +1, -1, -1,
+						-1, -1, +1, +1, +1,
+						-1, -1, +1, +1, +1,}),
 		};
 
 		Column[] answers = new Column[]{
@@ -113,18 +114,18 @@ public class HebbTest {
 
 		Column[] patterns2 = new Column[]{
 				new Column(25, new double[]{
-						-1, 1, 1, 1,-1,
-						1,-1,-1, 1, 1,
-						-1,-1,-1,-1,-1,
-						-1,-1,-1,-1,-1,
-						-1,-1,-1,-1,-1
+						-1, 1, 1, 1, -1,
+						1, -1, -1, 1, 1,
+						-1, -1, -1, -1, -1,
+						-1, -1, -1, -1, -1,
+						-1, -1, -1, -1, -1
 				}),
 				new Column(25, new double[]{
-						+1,+1,+1,-1,-1,
-						+1,+1,+1,-1,-1,
-						+1,+1,+1,-1,-1,
-						-1,-1,-1,-1,-1,
-						-1,-1,-1,-1,-1,}),
+						+1, +1, +1, -1, -1,
+						+1, +1, +1, -1, -1,
+						+1, +1, +1, -1, -1,
+						-1, -1, -1, -1, -1,
+						-1, -1, -1, -1, -1,}),
 		};
 		assertTrue(nn.error(patterns2, answers, 0, patterns2.length) < 1.e-5);
 		assertEquals(nn.simulate(patterns2[0]), answers[0]);

@@ -116,6 +116,10 @@ public class Engine {
 		initialize(chromosomeSize);
 	}
 
+	public static Random getDefaultRandomGenerator() {
+		return ThreadLocalRandom.current();
+	}
+
 	/**
 	 * Initialize population with size
 	 * <code>chromosomeSize</code>
@@ -239,9 +243,5 @@ public class Engine {
 
 	public void setProgressBar(JProgressBar _progress) {
 		progress = _progress;
-	}
-
-	public static Random getDefaultRandomGenerator() {
-		return ThreadLocalRandom.current();
 	}
 }

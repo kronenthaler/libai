@@ -28,11 +28,50 @@ package demos;
  * @author kronenthaler
  */
 public class Examples extends javax.swing.JFrame {
+	// Variables declaration - do not modify//GEN-BEGIN:variables
+	private demos.search.AStarPanel aStarPanel1;
+	private demos.ants.AntColonySystemPanel antColonySystemPanel1;
+	private demos.ants.AntQPanel antQPanel1;
+	private demos.ants.AntSystemPanel antSystemPanel1;
+	private demos.ants.AntSystemRankPanel antSystemRankPanel1;
+	private demos.search.BFSPanel bFSPanel1;
+	private demos.genetic.BinaryPanel binaryPanel1;
+	private demos.nn.CompetitivePanel competitivePanel1;
+	private demos.search.DFSPanel dFSPanel1;
+	private demos.ants.ElitistAntSystemPanel elitistAntSystemPanel1;
+	private demos.fuzzy.FuzzyPanel fuzzyPanel1;
+	private demos.nn.HopfieldPanel hebbPanel1;
+	private javax.swing.JTabbedPane jTabbedPane1;
+	private javax.swing.JTabbedPane jTabbedPane2;
+	private javax.swing.JTabbedPane jTabbedPane3;
+	private javax.swing.JTabbedPane jTabbedPane4;
+	private javax.swing.JTabbedPane jTabbedPane5;
+	private demos.nn.KohonenPanel kohonenPanel1;
+	private demos.nn.LVQPanel lVQPanel1;
+	private demos.ants.MMASPanel mMASPanel1;
+	private demos.nn.MPLPanel mPLPanel1;
+	private demos.nn.PerceptronPanel perceptronPanel1;
+	private demos.genetic.Permutation permutation1;
+	private demos.nn.RBFPanel rBFPanel1;
+	private demos.nn.SVMPanel sVMPanel1;
+	private demos.trees.TreesPanel treesPanel1;
 	/**
 	 * Creates new form Examples
 	 */
 	public Examples() {
 		initComponents();
+	}
+
+	/**
+	 * @param args the command line arguments
+	 */
+	public static void main(String args[]) {
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				new Examples().setVisible(true);
+			}
+		});
 	}
 
 	/**
@@ -135,45 +174,5 @@ public class Examples extends javax.swing.JFrame {
 
 		pack();
 	}// </editor-fold>//GEN-END:initComponents
-
-	/**
-	 * @param args the command line arguments
-	 */
-	public static void main(String args[]) {
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				new Examples().setVisible(true);
-			}
-		});
-	}
-
-	// Variables declaration - do not modify//GEN-BEGIN:variables
-	private demos.search.AStarPanel aStarPanel1;
-	private demos.ants.AntColonySystemPanel antColonySystemPanel1;
-	private demos.ants.AntQPanel antQPanel1;
-	private demos.ants.AntSystemPanel antSystemPanel1;
-	private demos.ants.AntSystemRankPanel antSystemRankPanel1;
-	private demos.search.BFSPanel bFSPanel1;
-	private demos.genetic.BinaryPanel binaryPanel1;
-	private demos.nn.CompetitivePanel competitivePanel1;
-	private demos.search.DFSPanel dFSPanel1;
-	private demos.ants.ElitistAntSystemPanel elitistAntSystemPanel1;
-	private demos.fuzzy.FuzzyPanel fuzzyPanel1;
-	private demos.nn.HopfieldPanel hebbPanel1;
-	private javax.swing.JTabbedPane jTabbedPane1;
-	private javax.swing.JTabbedPane jTabbedPane2;
-	private javax.swing.JTabbedPane jTabbedPane3;
-	private javax.swing.JTabbedPane jTabbedPane4;
-	private javax.swing.JTabbedPane jTabbedPane5;
-	private demos.nn.KohonenPanel kohonenPanel1;
-	private demos.nn.LVQPanel lVQPanel1;
-	private demos.ants.MMASPanel mMASPanel1;
-	private demos.nn.MPLPanel mPLPanel1;
-	private demos.nn.PerceptronPanel perceptronPanel1;
-	private demos.genetic.Permutation permutation1;
-	private demos.nn.RBFPanel rBFPanel1;
-	private demos.nn.SVMPanel sVMPanel1;
-	private demos.trees.TreesPanel treesPanel1;
 	// End of variables declaration//GEN-END:variables
 }

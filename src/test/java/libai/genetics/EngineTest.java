@@ -34,7 +34,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- *
  * @author Federico Vera {@literal <dktcoding [at] gmail>}
  */
 public class EngineTest {
@@ -74,7 +73,7 @@ public class EngineTest {
 
 		//Test toString()
 		String bStr = best.toString();
-		String oStr = Long.toString(Long.reverse(best.decode()) >>> (64-bStr.length()), 2);
+		String oStr = Long.toString(Long.reverse(best.decode()) >>> (64 - bStr.length()), 2);
 		assertTrue(bStr.endsWith(oStr));
 	}
 
@@ -109,8 +108,8 @@ public class EngineTest {
 
 		//We can't guarantee that it will learn the function, but at least we can check that
 		//the number of misplaced values decreases
-		IntegerChromosome first = (IntegerChromosome)engine.evolve(1);
-		IntegerChromosome last  = (IntegerChromosome)engine.evolve(2000);
+		IntegerChromosome first = (IntegerChromosome) engine.evolve(1);
+		IntegerChromosome last = (IntegerChromosome) engine.evolve(2000);
 		assertTrue(fitnessImpl.fitness(first) > fitnessImpl.fitness(last));
 
 		//Test toString()

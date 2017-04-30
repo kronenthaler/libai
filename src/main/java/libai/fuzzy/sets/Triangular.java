@@ -43,10 +43,10 @@ import java.util.ArrayList;
  * @author kronenthaler
  */
 public class Triangular implements FuzzySet {
+	protected double DELTA = 0.1;
 	private Value a, b, c;
 	private ArrayList<Double> support;
 	private ArrayList<Double> kernel;
-	protected double DELTA = 0.1;
 
 	public Triangular(double _a, double _b, double _c, double delta) {
 		a = new Value(_a);

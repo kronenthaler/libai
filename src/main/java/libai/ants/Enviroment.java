@@ -132,21 +132,21 @@ public class Enviroment {
 	}
 
 	/**
-	 * Sets the number of ants of this Enviroment
-	 *
-	 * @param numberOfAnts {@code numberOfAnts}
-	 */
-	public void setNumberOfAnts(int numberOfAnts) {
-		this.numberOfAnts = numberOfAnts;
-	}
-
-	/**
 	 * Returns the number of ants
 	 *
 	 * @return the number of ants.
 	 */
 	public int getNumberOfAnts() {
 		return Ants.length;
+	}
+
+	/**
+	 * Sets the number of ants of this Enviroment
+	 *
+	 * @param numberOfAnts {@code numberOfAnts}
+	 */
+	public void setNumberOfAnts(int numberOfAnts) {
+		this.numberOfAnts = numberOfAnts;
 	}
 
 	/**
@@ -177,6 +177,15 @@ public class Enviroment {
 	}
 
 	/**
+	 * Returns the array of ants of this enviroment
+	 *
+	 * @return array of Ant
+	 */
+	public Ant[] getAnts() {
+		return this.Ants;
+	}
+
+	/**
 	 * Sets both the number of ants and the array of ants
 	 *
 	 * @param numberOfAnts number of ants
@@ -185,15 +194,6 @@ public class Enviroment {
 	public void setAnts(int numberOfAnts) throws AntFrameworkException {
 		this.setNumberOfAnts(numberOfAnts);
 		this.setAnts();
-	}
-
-	/**
-	 * Returns the array of ants of this enviroment
-	 *
-	 * @return array of Ant
-	 */
-	public Ant[] getAnts() {
-		return this.Ants;
 	}
 
 	/**
@@ -215,24 +215,6 @@ public class Enviroment {
 	}
 
 	/**
-	 * Returns the Graph of the problem
-	 *
-	 * @return Graph
-	 */
-	public Graph getGraph() {
-		return this.Graph;
-	}
-
-	/**
-	 * Set the pheromones trail to something received as parameter
-	 *
-	 * @param Pheromones the Pheromones to set
-	 */
-	public void setPheromones(Matrix Pheromones) {
-		this.Pheromones = Pheromones;
-	}
-
-	/**
 	 * Set the pheromones trail to a fix value received as parameter This
 	 * function must be call only if the graph of the enviroment has already
 	 * been set
@@ -245,10 +227,28 @@ public class Enviroment {
 	}
 
 	/**
+	 * Returns the Graph of the problem
+	 *
+	 * @return Graph
+	 */
+	public Graph getGraph() {
+		return this.Graph;
+	}
+
+	/**
 	 * @param Graph the Graph to set
 	 */
 	public void setGraph(Graph Graph) {
 		this.Graph = Graph;
+	}
+
+	/**
+	 * Set the pheromones trail to something received as parameter
+	 *
+	 * @param Pheromones the Pheromones to set
+	 */
+	public void setPheromones(Matrix Pheromones) {
+		this.Pheromones = Pheromones;
 	}
 
 	public void sortAnts(Comparator<Ant> comparator) {

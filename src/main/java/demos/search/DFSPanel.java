@@ -33,6 +33,15 @@ import java.util.ArrayList;
  * @author kronenthaler
  */
 public class DFSPanel extends javax.swing.JPanel {
+	// End of variables declaration//GEN-END:variables
+	static Node target = new Node("12345678.", null, '\0');
+	// Variables declaration - do not modify//GEN-BEGIN:variables
+	private javax.swing.JTextArea answerTxt;
+	private javax.swing.JTextField inputTxt;
+	private javax.swing.JButton jButton1;
+	private javax.swing.JScrollPane jScrollPane1;
+	private javax.swing.JScrollPane jScrollPane2;
+	private javax.swing.JTextArea jTextArea1;
 	/**
 	 * Creates new form DFSPanel
 	 */
@@ -126,24 +135,14 @@ public class DFSPanel extends javax.swing.JPanel {
 			answerTxt.setText("No solution");
 	}//GEN-LAST:event_jButton1ActionPerformed
 
-	// Variables declaration - do not modify//GEN-BEGIN:variables
-	private javax.swing.JTextArea answerTxt;
-	private javax.swing.JTextField inputTxt;
-	private javax.swing.JButton jButton1;
-	private javax.swing.JScrollPane jScrollPane1;
-	private javax.swing.JScrollPane jScrollPane2;
-	private javax.swing.JTextArea jTextArea1;
-	// End of variables declaration//GEN-END:variables
-	static Node target = new Node("12345678.", null, '\0');
-
 	static class Node extends State {
+		static int stepsx[] = {0, 0, 1, -1};
+		static int stepsy[] = {1, -1, 0, 0};
+		static char dir[] = {'u', 'd', 'l', 'r'};
 		String table = "";
 		Node parent = null;
 		char move = ' ';
 		int point = 0;
-		static int stepsx[] = {0, 0, 1, -1};
-		static int stepsy[] = {1, -1, 0, 0};
-		static char dir[] = {'u', 'd', 'l', 'r'};
 		//down, up, right, left
 
 		Node(String t, Node p, char m) {

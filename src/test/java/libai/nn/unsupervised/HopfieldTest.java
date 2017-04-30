@@ -36,9 +36,10 @@ import static org.junit.Assert.assertTrue;
 public class HopfieldTest {
 	private static final ProgressDisplay progress = new ProgressDisplay() {
 		int value, min, max;
+
 		@Override
-		public void setMinimum(int v) {
-			min = v;
+		public int getMaximum() {
+			return max;
 		}
 
 		@Override
@@ -47,65 +48,65 @@ public class HopfieldTest {
 		}
 
 		@Override
-		public void setValue(int v) {
-			value=v;
-			assertTrue(v >= min);
-			assertTrue(v <= max);
-		}
-
-		@Override
-		public int getMaximum() {
-			return max;
-		}
-
-		@Override
 		public int getMinimum() {
 			return min;
+		}
+
+		@Override
+		public void setMinimum(int v) {
+			min = v;
 		}
 
 		@Override
 		public int getValue() {
 			return value;
 		}
+
+		@Override
+		public void setValue(int v) {
+			value = v;
+			assertTrue(v >= min);
+			assertTrue(v <= max);
+		}
 	};
 
 	@Test
-	public void testDemo(){
+	public void testDemo() {
 		Column[] patterns = new Column[]{
 				new Column(25, new double[]{
-						-1,-1,+1,-1,-1,
-						-1,-1,+1,-1,-1,
-						+1,+1,+1,+1,+1,
-						-1,-1,+1,-1,-1,
-						-1,-1,+1,-1,-1,
+						-1, -1, +1, -1, -1,
+						-1, -1, +1, -1, -1,
+						+1, +1, +1, +1, +1,
+						-1, -1, +1, -1, -1,
+						-1, -1, +1, -1, -1,
 				}),
 				new Column(25, new double[]{
-						+1,-1,-1,-1,+1,
-						-1,+1,-1,+1,-1,
-						-1,-1,+1,-1,-1,
-						-1,+1,-1,+1,-1,
-						+1,-1,-1,-1,+1,
+						+1, -1, -1, -1, +1,
+						-1, +1, -1, +1, -1,
+						-1, -1, +1, -1, -1,
+						-1, +1, -1, +1, -1,
+						+1, -1, -1, -1, +1,
 				}),
 		};
 
 		Column[] answers = new Column[]{
 				new Column(25, new double[]{
-						-1,-1,+1,-1,-1,
-						-1,-1,+1,-1,-1,
-						+1,+1,+1,+1,+1,
-						-1,-1,-1,-1,-1,
-						-1,-1,-1,-1,-1,
+						-1, -1, +1, -1, -1,
+						-1, -1, +1, -1, -1,
+						+1, +1, +1, +1, +1,
+						-1, -1, -1, -1, -1,
+						-1, -1, -1, -1, -1,
 				}),
 				new Column(25, new double[]{
-						+1,-1,-1,-1,+1,
-						-1,+1,-1,+1,-1,
-						-1,-1,+1,-1,-1,
-						-1,-1,-1,-1,-1,
-						-1,-1,-1,-1,+1,
+						+1, -1, -1, -1, +1,
+						-1, +1, -1, +1, -1,
+						-1, -1, +1, -1, -1,
+						-1, -1, -1, -1, -1,
+						-1, -1, -1, -1, +1,
 				}),
 		};
 
-		final Hopfield net= new Hopfield(25);
+		final Hopfield net = new Hopfield(25);
 		net.setProgressBar(progress);
 		net.train(patterns, null, 0, 1, 0, patterns.length);
 

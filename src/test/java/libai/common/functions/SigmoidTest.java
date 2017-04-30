@@ -28,17 +28,16 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- *
  * @author Federico Vera {@literal <fedevera at unc.edu.ar>}
  */
 public class SigmoidTest {
-	
+
 	@Test
 	public void testEval() {
 		Sigmoid sigmoid = new Sigmoid();
 		for (int i = 0; i < 100; i++) {
 			double x = Math.random() * 10 - 5;
-			assertEquals(1-1/(Math.exp(x) + 1), sigmoid.eval(x), 1e-12);
+			assertEquals(1 - 1 / (Math.exp(x) + 1), sigmoid.eval(x), 1e-12);
 		}
 	}
 
@@ -46,10 +45,10 @@ public class SigmoidTest {
 	public void testGetDerivate() {
 		Function der = new Sigmoid().getDerivate();
 		assertNotNull(der);
-		assertEquals(1./4, der.eval(0), 1e-12);
+		assertEquals(1. / 4, der.eval(0), 1e-12);
 		assertEquals(0, der.eval(Double.POSITIVE_INFINITY), 1e-12);
 	}
-	
+
 	@Test
 	public void testGetGetDerivative() {
 		assertNull(new Sigmoid().getDerivate().getDerivate());

@@ -41,7 +41,6 @@ import static org.junit.Assert.*;
 import static org.junit.Assume.assumeTrue;
 
 /**
- *
  * @author Federico Vera {@literal <dktcoding [at] gmail>}
  */
 public class NeuralNetworkTest {
@@ -55,11 +54,11 @@ public class NeuralNetworkTest {
 		//euclideandistance2
 		NN nn = new NN();
 		Column[] patterns = new Column[10];
-		Column[] answers  = new Column[10];
+		Column[] answers = new Column[10];
 		Random r = new Random(0);
 		for (int i = 0; i < 10; i++) {
 			patterns[i] = Column.random(20, true, r);
-			answers [i] = Column.random(10, true, r);
+			answers[i] = Column.random(10, true, r);
 		}
 		//old error -> 7.498344587525985
 		assertEquals(7.498344587525985, nn.error(patterns, answers), 1e-12);
@@ -71,11 +70,11 @@ public class NeuralNetworkTest {
 		//euclideandistance2
 		NN nn = new NN();
 		Column[] patterns = new Column[10];
-		Column[] answers  = new Column[10];
+		Column[] answers = new Column[10];
 		Random r = new Random(0);
 		for (int i = 0; i < 10; i++) {
 			patterns[i] = Column.random(35, true, r);
-			answers [i] = Column.random(25, true, r);
+			answers[i] = Column.random(25, true, r);
 		}
 		//old error -> 17.015311661715778
 		assertEquals(17.015311661715778, nn.error(patterns, answers), 1e-12);
@@ -85,10 +84,10 @@ public class NeuralNetworkTest {
 	public void testErrorZero() {
 		NN nn = new NN();
 		Column[] patterns = new Column[10];
-		Column[] answers  = new Column[10];
+		Column[] answers = new Column[10];
 		for (int i = 0; i < 10; i++) {
 			patterns[i] = Column.random(20);
-			answers [i] = new Column(20);
+			answers[i] = new Column(20);
 			patterns[i].copy(answers[i]);
 		}
 		assertEquals(0, nn.error(patterns, answers), 1e-12);
@@ -98,10 +97,10 @@ public class NeuralNetworkTest {
 	public void testErrorZeroOffset() {
 		NN nn = new NN();
 		Column[] patterns = new Column[10];
-		Column[] answers  = new Column[10];
+		Column[] answers = new Column[10];
 		for (int i = 0; i < 10; i++) {
 			patterns[i] = Column.random(20);
-			answers [i] = new Column(20);
+			answers[i] = new Column(20);
 			patterns[i].copy(answers[i]);
 		}
 		assertEquals(0, nn.error(patterns, answers, 2, 7), 1e-12);
@@ -121,7 +120,8 @@ public class NeuralNetworkTest {
 			mat.put("a", a);
 			mat.put("b", b);
 			MatrixIO.write(os, mat, MatrixIO.Target.OCTAVE);
-		} catch (Exception e) {}
+		} catch (Exception e) {
+		}
 
 		String command = "load " + tmp + "euclidean.mat; sum((a-b).^2)";
 		double distLai = NeuralNetwork.euclideanDistance2(a, b);
@@ -143,7 +143,8 @@ public class NeuralNetworkTest {
 			mat.put("a", a);
 			mat.put("b", b);
 			MatrixIO.write(os, mat, MatrixIO.Target.OCTAVE);
-		} catch (Exception e) {}
+		} catch (Exception e) {
+		}
 
 		String command = "load " + tmp + "euclidean.mat; sum((a-b).^2)";
 		double distLai = NeuralNetwork.euclideanDistance2(a.getCol(0), b.getCol(0));

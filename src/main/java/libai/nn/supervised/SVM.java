@@ -45,13 +45,11 @@ import java.util.Random;
  * @author kronenthaler
  */
 public class SVM extends SupervisedLearning {
-	private static final long serialVersionUID = 5875835056527034341L;
-
 	//static defs.
 	public static final int PARAM_C = 0;
 	public static final int PARAM_EPSILON = 1;
 	public static final int PARAM_TOLERANCE = 2;
-
+	private static final long serialVersionUID = 5875835056527034341L;
 	protected static SymmetricSign ssign = new SymmetricSign();
 
 	// learning constants

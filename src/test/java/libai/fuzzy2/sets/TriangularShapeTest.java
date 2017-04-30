@@ -14,42 +14,42 @@ import java.io.ByteArrayInputStream;
  */
 public class TriangularShapeTest extends TestCase {
 	@Test
-	public void testXMLGeneration(){
+	public void testXMLGeneration() {
 		TriangularShape set = new TriangularShape(0, 5, 10);
 
 		assertEquals("<TriangularShape Param1=\"0.000000\" Param2=\"5.000000\" Param3=\"10.000000\"/>", set.toXMLString(""));
 	}
 
 	@Test
-	public void testEvalBeforeA(){
+	public void testEvalBeforeA() {
 		TriangularShape set = new TriangularShape(0, 5, 10);
 
 		assertTrue(set.eval(-1) == 0);
 	}
 
 	@Test
-	public void testEvalAfterC(){
+	public void testEvalAfterC() {
 		TriangularShape set = new TriangularShape(0, 5, 10);
 
 		assertTrue(set.eval(11) == 0);
 	}
 
 	@Test
-	public void testEvalBetweenAB(){
+	public void testEvalBetweenAB() {
 		TriangularShape set = new TriangularShape(0, 5, 10);
 
 		assertTrue(set.eval(2.5) == 0.5);
 	}
 
 	@Test
-	public void testEvalBetweenBC(){
+	public void testEvalBetweenBC() {
 		TriangularShape set = new TriangularShape(0, 5, 10);
 
 		assertTrue(set.eval(7.5) == 0.5);
 	}
 
 	@Test
-	public void testEvalAtC(){
+	public void testEvalAtC() {
 		TriangularShape set = new TriangularShape(0, 5, 10);
 
 		assertTrue(set.eval(5) == 1);

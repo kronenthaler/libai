@@ -1,7 +1,6 @@
 package libai.fuzzy2;
 
 import libai.fuzzy2.sets.FuzzySet;
-import junit.framework.TestCase;
 import libai.fuzzy2.sets.TriangularShape;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -12,13 +11,16 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+
 /**
  * Created by kronenthaler on 23/04/2017.
  */
-public class FuzzyTermTest extends TestCase {
+public class FuzzyTermTest {
 	@Test
-	public void testEvalWithComplement(){
-		FuzzyTerm term = new FuzzyTerm(new FuzzySet(){
+	public void testEvalWithComplement() {
+		FuzzyTerm term = new FuzzyTerm(new FuzzySet() {
 			@Override
 			public double eval(double s) {
 				return 0;
@@ -30,15 +32,16 @@ public class FuzzyTermTest extends TestCase {
 			}
 
 			@Override
-			public void load(Node xml){}
+			public void load(Node xml) {
+			}
 		}, "term", true);
 
 		assertTrue(term.eval(1) == 1);
 	}
 
 	@Test
-	public void testEvalWithoutComplement(){
-		FuzzyTerm term = new FuzzyTerm(new FuzzySet(){
+	public void testEvalWithoutComplement() {
+		FuzzyTerm term = new FuzzyTerm(new FuzzySet() {
 			@Override
 			public double eval(double s) {
 				return 0;
@@ -50,15 +53,16 @@ public class FuzzyTermTest extends TestCase {
 			}
 
 			@Override
-			public void load(Node xml){}
+			public void load(Node xml) {
+			}
 		}, "term");
 
 		assertTrue(term.eval(1) == 0);
 	}
 
 	@Test
-	public void testXMLGeneration(){
-		FuzzyTerm term = new FuzzyTerm(new FuzzySet(){
+	public void testXMLGeneration() {
+		FuzzyTerm term = new FuzzyTerm(new FuzzySet() {
 			@Override
 			public double eval(double s) {
 				return 0;
@@ -70,7 +74,8 @@ public class FuzzyTermTest extends TestCase {
 			}
 
 			@Override
-			public void load(Node xml){}
+			public void load(Node xml) {
+			}
 		}, "term");
 
 		assertEquals("<FuzzyTerm name=\"term\" complement=\"false\">\n" +
@@ -91,5 +96,18 @@ public class FuzzyTermTest extends TestCase {
 
 		FuzzyTerm newTerm = new FuzzyTerm(root);
 		assertEquals(term.toXMLString(""), newTerm.toXMLString(""));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testUnknownSetClass() throws Exception {
+		String xml = "<FuzzyTerm name=\"term\"><UnknownSet /></FuzzyTerm>";
+
+		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = factory.newDocumentBuilder();
+		Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
+		Element root = doc.getDocumentElement();
+
+		FuzzyTerm newTerm = new FuzzyTerm(root);
 	}
 }

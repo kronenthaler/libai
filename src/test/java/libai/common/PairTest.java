@@ -31,23 +31,22 @@ import java.util.HashMap;
 import static org.junit.Assert.*;
 
 /**
- *
  * @author Federico Vera {@literal <dktcoding [at] gmail>}
  */
 public class PairTest {
 	@Test
 	public void testSort() {
-		Pair[] pairs = new Pair[] {
-			new Pair(-10, 4),
-			new Pair( 10, 6),
-			new Pair(  3, 2),
-			new Pair(  2, 4),
+		Pair[] pairs = new Pair[]{
+				new Pair(-10, 4),
+				new Pair(10, 6),
+				new Pair(3, 2),
+				new Pair(2, 4),
 		};
-		Pair[] pairsSorted = new Pair[] {
-			new Pair(-10, 4),
-			new Pair(  2, 4),
-			new Pair(  3, 2),
-			new Pair( 10, 6),
+		Pair[] pairsSorted = new Pair[]{
+				new Pair(-10, 4),
+				new Pair(2, 4),
+				new Pair(3, 2),
+				new Pair(10, 6),
 		};
 		Arrays.sort(pairs);
 		assertArrayEquals(pairs, pairsSorted);
@@ -57,11 +56,11 @@ public class PairTest {
 	public void testHashCodeEquals() {
 		HashMap<Pair, Pair> map = new HashMap<>();
 
-		Pair[] pairs = new Pair[] {
-			new Pair(-10, 4),
-			new Pair( 10, 6),
-			new Pair(  3, 2),
-			new Pair(  2, 4),
+		Pair[] pairs = new Pair[]{
+				new Pair(-10, 4),
+				new Pair(10, 6),
+				new Pair(3, 2),
+				new Pair(2, 4),
 		};
 
 		for (Pair p : pairs) {

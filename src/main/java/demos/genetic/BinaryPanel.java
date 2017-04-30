@@ -32,6 +32,11 @@ import libai.genetics.chromosomes.Chromosome;
  * @author kronenthaler
  */
 public class BinaryPanel extends javax.swing.JPanel implements Fitness {
+	// Variables declaration - do not modify//GEN-BEGIN:variables
+	private javax.swing.JButton jButton1;
+	private javax.swing.JProgressBar jProgressBar1;
+	private javax.swing.JScrollPane jScrollPane1;
+	private javax.swing.JTextPane jTextPane1;
 	/**
 	 * Creates new form GeneticPanel
 	 */
@@ -114,12 +119,6 @@ public class BinaryPanel extends javax.swing.JPanel implements Fitness {
 			}
 		}).start();
 	}//GEN-LAST:event_jButton1ActionPerformed
-
-	// Variables declaration - do not modify//GEN-BEGIN:variables
-	private javax.swing.JButton jButton1;
-	private javax.swing.JProgressBar jProgressBar1;
-	private javax.swing.JScrollPane jScrollPane1;
-	private javax.swing.JTextPane jTextPane1;
 	// End of variables declaration//GEN-END:variables
 
 	@Override

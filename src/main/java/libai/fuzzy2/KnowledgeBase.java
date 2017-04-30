@@ -13,12 +13,12 @@ import java.util.Map;
 public class KnowledgeBase implements XMLSerializer {
 	protected Map<String, FuzzyVariable> variables = new HashMap<>();
 
-	public KnowledgeBase(Node xmlNode) throws Exception {
+	public KnowledgeBase(Node xmlNode) {
 		load(xmlNode);
 	}
 
-	public KnowledgeBase(FuzzyVariable... variables){
-		for(FuzzyVariable var : variables) {
+	public KnowledgeBase(FuzzyVariable... variables) {
+		for (FuzzyVariable var : variables) {
 			this.variables.put(var.name, var);
 		}
 	}
@@ -28,8 +28,8 @@ public class KnowledgeBase implements XMLSerializer {
 		StringBuilder str = new StringBuilder();
 		str.append(String.format("%s<KnowledgeBase>\n", indent));
 
-		for(FuzzyVariable var : variables.values()){
-			str.append(String.format("%s\n", var.toXMLString(indent+"\t")));
+		for (FuzzyVariable var : variables.values()) {
+			str.append(String.format("%s\n", var.toXMLString(indent + "\t")));
 		}
 
 		str.append(String.format("%s</KnowledgeBase>", indent));
@@ -37,9 +37,9 @@ public class KnowledgeBase implements XMLSerializer {
 	}
 
 	@Override
-	public void load(Node xmlNode) throws Exception {
-		NodeList children = ((Element)xmlNode).getElementsByTagName("FuzzyVariable");
-		for(int i=0; i < children.getLength(); i++){
+	public void load(Node xmlNode) {
+		NodeList children = ((Element) xmlNode).getElementsByTagName("FuzzyVariable");
+		for (int i = 0; i < children.getLength(); i++) {
 			FuzzyVariable var = new FuzzyVariable(children.item(i));
 			variables.put(var.name, var);
 		}

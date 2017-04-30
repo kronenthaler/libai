@@ -41,7 +41,6 @@ import static org.junit.Assert.*;
 import static org.junit.Assume.assumeTrue;
 
 /**
- *
  * @author Federico Vera {@literal <dktcoding [at] gmail>}
  */
 public class TextFileDataSetTest {
@@ -52,6 +51,60 @@ public class TextFileDataSetTest {
 					"[[[0]]=3.0, [[1]]=a, [[2]]=true, [[3]]=-12.0, [[4]]=same]\n" +
 					"[[[0]]=1.0, [[1]]=f, [[2]]=true, [[3]]=4.4, [[4]]=same]\n" +
 					"[[[0]]=5.0, [[1]]=d, [[2]]=true, [[3]]=8.0, [[4]]=same]\n";
+
+	private static boolean writeDummyDataSet(String fname) {
+		assumeTrue("Can't use temp dir...", MatrixIOTest.checkTemp());
+		String tmp = System.getProperty("java.io.tmpdir") + File.separator + fname;
+		new File(tmp).deleteOnExit();
+		try (PrintStream ps = new PrintStream(tmp)) {
+			Random r = ThreadLocalRandom.current();
+			for (int i = 0; i < 100; i++) {
+				ps.append("" + i).append(',');
+				ps.append("" + (r.nextDouble() * 20 - 10)).append(',');
+				ps.append("" + (r.nextGaussian())).append(',');
+				ps.append("" + (r.nextBoolean()));
+				if (i != 99) ps.append('\n');
+			}
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	private static boolean writeDummyDataSetKnown(String fname) {
+		assumeTrue("Can't use temp dir...", MatrixIOTest.checkTemp());
+		String tmp = System.getProperty("java.io.tmpdir") + File.separator + fname;
+		new File(tmp).deleteOnExit();
+		try (PrintStream ps = new PrintStream(tmp)) {
+			ps.append("0,a,true,4.4,same\n");
+			ps.append("4,b,false,1.5,same\n");
+			ps.append("3,a,true,-12.0,same\n");
+			ps.append("1,f,true,4.4,same\n");
+			ps.append("5,d,true,8,same\n");
+			ps.append("2,b,false,12.0,same\n");
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	private static boolean writeDummyDataSetKnown2(String fname) {
+		assumeTrue("Can't use temp dir...", MatrixIOTest.checkTemp());
+		String tmp = System.getProperty("java.io.tmpdir") + File.separator + fname;
+		new File(tmp).deleteOnExit();
+		try (PrintStream ps = new PrintStream(tmp)) {
+			ps.append("1,2,3,same\n");
+			ps.append("1,2,3,same\n");
+			ps.append("1,2,3,same\n");
+			ps.append("1,2,3,same\n");
+			ps.append("1,2,3,same\n");
+			ps.append("1,2,3,same\n");
+			ps.append("1,2,3,same\n");
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
 
 	@Test
 	public void testGetSubset() {
@@ -73,7 +126,7 @@ public class TextFileDataSetTest {
 	public void testGetOutputIndex() {
 		TextFileDataSet ds = new TextFileDataSet(2);
 		assertEquals(2, ds.getOutputIndex());
-		DataSet ds2 = ds.getSubset(0,0);
+		DataSet ds2 = ds.getSubset(0, 0);
 		assertEquals(2, ds2.getOutputIndex());
 		ds.close();
 	}
@@ -88,7 +141,7 @@ public class TextFileDataSetTest {
 		assertFalse(md.isCategorical(0));
 		assertFalse(md.isCategorical(1));
 		assertFalse(md.isCategorical(2));
-		assertTrue (md.isCategorical(3));
+		assertTrue(md.isCategorical(3));
 		assertEquals("[0]", md.getAttributeName(0));
 		assertEquals("[1]", md.getAttributeName(1));
 		assertEquals("[2]", md.getAttributeName(2));
@@ -124,18 +177,18 @@ public class TextFileDataSetTest {
 		assertEquals("true", attribs.next().get(2).getValue());
 		attribs = ds.sortOver(3).iterator();
 		assertEquals(-12.0, attribs.next().get(3).getValue());
-		assertEquals(  1.5, attribs.next().get(3).getValue());
-		assertEquals(  4.4, attribs.next().get(3).getValue());
-		assertEquals(  4.4, attribs.next().get(3).getValue());
-		assertEquals(  8.0, attribs.next().get(3).getValue());
-		assertEquals( 12.0, attribs.next().get(3).getValue());
+		assertEquals(1.5, attribs.next().get(3).getValue());
+		assertEquals(4.4, attribs.next().get(3).getValue());
+		assertEquals(4.4, attribs.next().get(3).getValue());
+		assertEquals(8.0, attribs.next().get(3).getValue());
+		assertEquals(12.0, attribs.next().get(3).getValue());
 		ds.close();
 	}
 
 	@Test
 	public void testSortOver2() {
 		assumeTrue("Couldn't create dummy dataset", writeDummyDataSetKnown("dummy2.csv"));
-        String tmp = System.getProperty("java.io.tmpdir") + File.separator + "dummy2.csv";
+		String tmp = System.getProperty("java.io.tmpdir") + File.separator + "dummy2.csv";
 		TextFileDataSet ds = new TextFileDataSet(new File(tmp), 0);
 		Iterator<List<Attribute>> attribs = ds.sortOver(2, 5, 0).iterator();
 		assertEquals(2.0, attribs.next().get(0).getValue());
@@ -244,60 +297,6 @@ public class TextFileDataSetTest {
 	public void testAttributtesWithNames() {
 		ContinuousAttribute ca = new ContinuousAttribute("name", 3.4);
 		assertEquals("[name]=3.4", ca.toString());
-	}
-
-	private static boolean writeDummyDataSet(String fname) {
-		assumeTrue("Can't use temp dir...", MatrixIOTest.checkTemp());
-		String tmp = System.getProperty("java.io.tmpdir") + File.separator + fname;
-		new File(tmp).deleteOnExit();
-		try (PrintStream ps = new PrintStream(tmp)) {
-			Random r = ThreadLocalRandom.current();
-			for (int i = 0; i < 100; i++) {
-				ps.append("" + i).append(',');
-				ps.append("" + (r.nextDouble()* 20 - 10)).append(',');
-				ps.append("" + (r.nextGaussian())).append(',');
-				ps.append("" + (r.nextBoolean()));
-				if (i != 99) ps.append('\n');
-			}
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
-	}
-
-	private static boolean writeDummyDataSetKnown(String fname) {
-		assumeTrue("Can't use temp dir...", MatrixIOTest.checkTemp());
-		String tmp = System.getProperty("java.io.tmpdir") + File.separator + fname;
-		new File(tmp).deleteOnExit();
-		try (PrintStream ps = new PrintStream(tmp)) {
-			ps.append("0,a,true,4.4,same\n");
-			ps.append("4,b,false,1.5,same\n");
-			ps.append("3,a,true,-12.0,same\n");
-			ps.append("1,f,true,4.4,same\n");
-			ps.append("5,d,true,8,same\n");
-			ps.append("2,b,false,12.0,same\n");
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
-	}
-
-	private static boolean writeDummyDataSetKnown2(String fname) {
-		assumeTrue("Can't use temp dir...", MatrixIOTest.checkTemp());
-		String tmp = System.getProperty("java.io.tmpdir") + File.separator + fname;
-		new File(tmp).deleteOnExit();
-		try (PrintStream ps = new PrintStream(tmp)) {
-			ps.append("1,2,3,same\n");
-			ps.append("1,2,3,same\n");
-			ps.append("1,2,3,same\n");
-			ps.append("1,2,3,same\n");
-			ps.append("1,2,3,same\n");
-			ps.append("1,2,3,same\n");
-			ps.append("1,2,3,same\n");
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
 	}
 
 }

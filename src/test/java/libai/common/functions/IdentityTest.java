@@ -28,16 +28,15 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- *
  * @author Federico Vera {@literal <fedevera at unc.edu.ar>}
  */
 public class IdentityTest {
-	
+
 	@Test
 	public void testEval() {
 		Identity eye = new Identity();
 		for (int i = 0; i < 10; i++) {
-			double x = Math.random() * 10  - 5;
+			double x = Math.random() * 10 - 5;
 			assertEquals(x, eye.eval(x), 0);
 		}
 	}
@@ -47,7 +46,7 @@ public class IdentityTest {
 		Function der = new Identity().getDerivate();
 		assertNotNull(der);
 		for (int i = 0; i < 10; i++) {
-			assertEquals(1, der.eval(Math.random() * 10  - 5), 0);
+			assertEquals(1, der.eval(Math.random() * 10 - 5), 0);
 		}
 	}
 

@@ -1,12 +1,13 @@
 package libai.fuzzy2;
 
+import com.sun.javaws.exceptions.InvalidArgumentException;
 import libai.fuzzy2.sets.FuzzySet;
-import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Created by kronenthaler on 23/04/2017.
@@ -16,7 +17,7 @@ public class FuzzyTerm implements FuzzySet, XMLSerializer {
 	protected String name;
 	protected boolean complement;
 
-	public FuzzyTerm(Node xmlNode) throws Exception {
+	public FuzzyTerm(Node xmlNode) {
 		load(xmlNode);
 	}
 
@@ -43,11 +44,11 @@ public class FuzzyTerm implements FuzzySet, XMLSerializer {
 	}
 
 	@Override
-	public void load(Node xmlNode) throws Exception {
+	public void load(Node xmlNode) {
 		NamedNodeMap attributes = xmlNode.getAttributes();
 		name = attributes.getNamedItem("name").getTextContent();
 
-		if(attributes.getNamedItem("complement") != null)
+		if (attributes.getNamedItem("complement") != null)
 			complement = Boolean.parseBoolean(attributes.getNamedItem("complement").getTextContent());
 
 		NodeList children = xmlNode.getChildNodes();
@@ -57,9 +58,13 @@ public class FuzzyTerm implements FuzzySet, XMLSerializer {
 				continue;
 
 			String setClass = current.getNodeName();
-			Class<?> clazz = Class.forName("libai.fuzzy2.sets."+setClass);
-			Constructor<?> ctor = clazz.getConstructor(Node.class);
-			set = (FuzzySet) ctor.newInstance(new Object[]{current});
+			try {
+				Class<?> clazz = Class.forName("libai.fuzzy2.sets." + setClass);
+				Constructor<?> ctor = clazz.getConstructor(Node.class);
+				set = (FuzzySet) ctor.newInstance(new Object[]{current});
+			} catch (Exception e) {
+				throw new IllegalArgumentException(e.getMessage());
+			}
 		}
 	}
 }

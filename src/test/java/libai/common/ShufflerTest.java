@@ -8,12 +8,12 @@ import static org.junit.Assert.*;
  * Created by kronenthaler on 19/03/2017.
  */
 public class ShufflerTest extends Shuffler {
-	public ShufflerTest(){
+	public ShufflerTest() {
 		super(0);
 	}
 
 	@Test
-	public void testCreateSequentialArray(){
+	public void testCreateSequentialArray() {
 		Shuffler shuffler = new Shuffler(3);
 
 		assertEquals(shuffler.order[0], 0);
@@ -22,7 +22,7 @@ public class ShufflerTest extends Shuffler {
 	}
 
 	@Test
-	public void testShuffleCreatesACopy(){
+	public void testShuffleCreatesACopy() {
 		Shuffler shuffler = new Shuffler(3);
 		int[] sort = shuffler.shuffle();
 
@@ -30,12 +30,12 @@ public class ShufflerTest extends Shuffler {
 	}
 
 	@Test
-	public void testShuffleArray(){
+	public void testShuffleArray() {
 		Shuffler shuffler = new Shuffler(10);
 		int[] sort = shuffler.shuffle();
 
 		int inPlace = 0;
-		for(int i=0;i<sort.length;i++){
+		for (int i = 0; i < sort.length; i++) {
 			if (sort[i] == i)
 				inPlace++;
 		}

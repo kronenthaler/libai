@@ -82,15 +82,6 @@ public class FuzzyVariable {
 	}
 
 	/**
-	 * Set the value for this group. NOT MUST be invoked by the user.
-	 *
-	 * @param d value to set.
-	 */
-	public void setValue(double d) {
-		value.setValue(d);
-	}
-
-	/**
 	 * Return the value associate with this group, holding the final value of
 	 * the defuzzify process.
 	 *
@@ -98,5 +89,14 @@ public class FuzzyVariable {
 	 */
 	public Value getValue() {
 		return value;
+	}
+
+	/**
+	 * Set the value for this group. NOT MUST be invoked by the user.
+	 *
+	 * @param d value to set.
+	 */
+	public void setValue(double d) {
+		value.setValue(d);
 	}
 }

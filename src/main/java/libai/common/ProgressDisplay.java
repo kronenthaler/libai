@@ -27,15 +27,15 @@ package libai.common;
  * @author kronenthaler
  */
 public interface ProgressDisplay {
-	void setMinimum(int v);
+	int getMaximum();
 
 	void setMaximum(int v);
 
-	void setValue(int v);
-
-	int getMaximum();
-
 	int getMinimum();
 
+	void setMinimum(int v);
+
 	int getValue();
+
+	void setValue(int v);
 }

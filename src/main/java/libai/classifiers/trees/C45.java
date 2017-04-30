@@ -62,24 +62,6 @@ public class C45 implements Comparable<C45> {
 	protected double z;
 	protected int good, bad;
 
-	public static class EntropyInformation {
-	}
-
-	public static class DiscreteEntropyInformation extends EntropyInformation {
-		public double maxInfo;
-		public double maxSplitInfo;
-	}
-
-	public static class ContinuousEntropyInformation extends DiscreteEntropyInformation {
-		public double splitValue;
-		public int indexOfSplitValue;
-	}
-
-	public static class GainInformation extends ContinuousEntropyInformation {
-		public double gain;
-		public double ratio;
-	}
-
 	//constructors
 	public C45() {
 		setConfidence(confidence);
@@ -624,9 +606,6 @@ public class C45 implements Comparable<C45> {
 		double e = (f + (z2 * invN * 0.5) + z * Math.sqrt((f * invN) - (f * f * invN) + (z2 * invN * invN * 0.25))) / (1 + (z2 * invN));
 		return e;
 	}
-	//end quinlan's
-
-	//IO functions
 
 	/**
 	 * Load a new C45 tree from the XML node root.
@@ -693,6 +672,9 @@ public class C45 implements Comparable<C45> {
 	public void print() {
 		print("");
 	}
+	//end quinlan's
+
+	//IO functions
 
 	/**
 	 * Print the tree over the standard output using an initial indent string.
@@ -713,7 +695,6 @@ public class C45 implements Comparable<C45> {
 			}
 		}
 	}
-	//end IO functions
 
 	/**
 	 * Dummy function, just needed to be able to use the Pair structure.
@@ -724,5 +705,24 @@ public class C45 implements Comparable<C45> {
 	@Override
 	public int compareTo(C45 o) {
 		return 0;
+	}
+
+	public static class EntropyInformation {
+	}
+
+	public static class DiscreteEntropyInformation extends EntropyInformation {
+		public double maxInfo;
+		public double maxSplitInfo;
+	}
+
+	public static class ContinuousEntropyInformation extends DiscreteEntropyInformation {
+		public double splitValue;
+		public int indexOfSplitValue;
+	}
+	//end IO functions
+
+	public static class GainInformation extends ContinuousEntropyInformation {
+		public double gain;
+		public double ratio;
 	}
 }

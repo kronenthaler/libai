@@ -1,6 +1,5 @@
 package libai.fuzzy2;
 
-import junit.framework.TestCase;
 import libai.fuzzy2.sets.FuzzySet;
 import libai.fuzzy2.sets.TriangularShape;
 import org.junit.Test;
@@ -12,13 +11,15 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
 
+import static org.junit.Assert.assertEquals;
+
 /**
  * Created by kronenthaler on 26/04/2017.
  */
-public class FuzzyVariableTest extends TestCase {
+public class FuzzyVariableTest {
 	@Test
 	public void testXMLGeneration() {
-		FuzzyTerm bad = new FuzzyTerm(new FuzzySet(){
+		FuzzyTerm bad = new FuzzyTerm(new FuzzySet() {
 			@Override
 			public double eval(double s) {
 				return 0;
@@ -30,10 +31,11 @@ public class FuzzyVariableTest extends TestCase {
 			}
 
 			@Override
-			public void load(Node xml){}
+			public void load(Node xml) {
+			}
 		}, "bad");
 
-		FuzzyTerm good = new FuzzyTerm(new FuzzySet(){
+		FuzzyTerm good = new FuzzyTerm(new FuzzySet() {
 			@Override
 			public double eval(double s) {
 				return 0;
@@ -45,7 +47,8 @@ public class FuzzyVariableTest extends TestCase {
 			}
 
 			@Override
-			public void load(Node xml){}
+			public void load(Node xml) {
+			}
 		}, "good");
 
 		FuzzyVariable var = new FuzzyVariable("quality", 0, 10, "stars", bad, good);

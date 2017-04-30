@@ -28,6 +28,7 @@ import libai.common.matrix.Matrix;
 /**
  * Gaussian Kernel or RBF kernel. Follows the form: K(x,y) = e(||x-y||^2 / (2*s^2)), where s is a parameter of this
  * kernel, aka as sigma or standard deviation.
+ *
  * @author kronenthaler
  */
 public class GaussianKernel implements Kernel {
@@ -36,7 +37,7 @@ public class GaussianKernel implements Kernel {
 	private double gamma; // = 1 / (2 * sigma ^ 2)
 
 	public GaussianKernel(double sigma) {
-		this.gamma = 1.0/(sigma * sigma * 2);
+		this.gamma = 1.0 / (sigma * sigma * 2);
 	}
 
 	@Override

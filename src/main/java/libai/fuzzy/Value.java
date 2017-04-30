@@ -46,21 +46,21 @@ public class Value implements Comparable<Value> {
 	}
 
 	/**
-	 * Set a new value v for the variable.
-	 *
-	 * @param v The new value for the variable.
-	 */
-	public void setValue(double v) {
-		value = v;
-	}
-
-	/**
 	 * Get the current value for the variable.
 	 *
 	 * @return The current value.
 	 */
 	public double getValue() {
 		return value;
+	}
+
+	/**
+	 * Set a new value v for the variable.
+	 *
+	 * @param v The new value for the variable.
+	 */
+	public void setValue(double v) {
+		value = v;
 	}
 
 	/**

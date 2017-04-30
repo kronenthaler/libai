@@ -42,10 +42,10 @@ import java.util.ArrayList;
  * @author kronenthaler
  */
 public class Trapezoid implements FuzzySet {
+	protected double DELTA = 0.1;
 	private Value a, b, c, d;
 	private ArrayList<Double> support;
 	private ArrayList<Double> kernel;
-	protected double DELTA = 0.1;
 
 	public Trapezoid(double _a, double _b, double _c, double _d) {
 		this(_a, _b, _c, _d, 0.5);
