@@ -63,7 +63,6 @@ public class RuleTest {
 		Rule rule = new Rule("tipper", 1, Rule.Operator.PROBOR, Rule.Connector.OR, antecedent, consequent);
 		String xml = rule.toXMLString("");
 
-		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));

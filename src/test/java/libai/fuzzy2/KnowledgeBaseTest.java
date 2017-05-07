@@ -59,7 +59,6 @@ public class KnowledgeBaseTest {
 		KnowledgeBase kb = new KnowledgeBase(var, tip);
 		String xml = kb.toXMLString("");
 
-		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));

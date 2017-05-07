@@ -39,7 +39,6 @@ public class ConsequentTest {
 		Consequent consequent = new Consequent(a, b);
 		String xml = consequent.toXMLString("");
 
-		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));

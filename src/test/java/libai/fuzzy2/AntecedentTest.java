@@ -39,7 +39,6 @@ public class AntecedentTest {
 		Antecedent antecedent = new Antecedent(a, b);
 		String xml = antecedent.toXMLString("");
 
-		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));

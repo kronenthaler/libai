@@ -2,8 +2,6 @@ package libai.fuzzy2.sets;
 
 import libai.fuzzy2.XMLSerializer;
 
-import java.util.ArrayList;
-
 /**
  * Created by kronenthaler on 23/04/2017.
  */

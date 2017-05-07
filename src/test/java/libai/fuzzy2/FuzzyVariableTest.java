@@ -70,7 +70,6 @@ public class FuzzyVariableTest {
 		FuzzyVariable var = new FuzzyVariable("quality", 0, 10, "stars", bad, good);
 		String xml = var.toXMLString("");
 
-		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
@@ -87,7 +86,6 @@ public class FuzzyVariableTest {
 		FuzzyVariable var = new FuzzyVariable("quality", 0, 10, 5, "stars", FuzzyVariable.Accumulation.SUM, FuzzyVariable.Defuzzifier.MOM, bad, good);
 		String xml = var.toXMLString("");
 
-		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));

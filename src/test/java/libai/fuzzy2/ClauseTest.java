@@ -28,7 +28,6 @@ public class ClauseTest {
 		Clause clause = new Clause("tip", "good", Clause.Modifier.VERY);
 		String xml = clause.toXMLString("");
 
-		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));

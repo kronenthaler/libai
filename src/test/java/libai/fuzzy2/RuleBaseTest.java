@@ -96,7 +96,6 @@ public class RuleBaseTest {
 		RuleBase ruleBase = new RuleBase("rulebase", RuleBase.ActivationMethod.MIN, RuleBase.AndMethod.PROD, RuleBase.OrMethod.PROBOR, ruleA, ruleB);
 		String xml = ruleBase.toXMLString("");
 
-		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
@@ -110,12 +109,11 @@ public class RuleBaseTest {
 	public void testTSKSupport() throws ParserConfigurationException, IOException, SAXException {
 		String xml = "<RuleBase name=\"x\" type=\"tsk\"/>";
 
-		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
 		Element root = doc.getDocumentElement();
 
-		RuleBase newRuleBase = new RuleBase(root);
+		new RuleBase(root);
 	}
 }

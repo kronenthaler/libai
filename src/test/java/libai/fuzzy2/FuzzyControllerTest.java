@@ -135,10 +135,8 @@ public class FuzzyControllerTest {
 
 		RuleBase rb = new RuleBase("rulebase", RuleBase.ActivationMethod.MIN, RuleBase.AndMethod.PROD, RuleBase.OrMethod.PROBOR, ruleA, ruleB);
 		FuzzyController fc = new FuzzyController("deController", "home.localhost", kb, rb);
-
 		String xml = fc.toXMLString("");
 
-		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));

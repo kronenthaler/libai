@@ -88,7 +88,6 @@ public class FuzzyTermTest {
 		FuzzyTerm term = new FuzzyTerm(new TriangularShape(0, 5, 10), "term", true);
 		String xml = term.toXMLString("");
 
-		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
@@ -102,12 +101,11 @@ public class FuzzyTermTest {
 	public void testUnknownSetClass() throws Exception {
 		String xml = "<FuzzyTerm name=\"term\"><UnknownSet /></FuzzyTerm>";
 
-		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));
 		Element root = doc.getDocumentElement();
 
-		FuzzyTerm newTerm = new FuzzyTerm(root);
+		new FuzzyTerm(root);
 	}
 }
