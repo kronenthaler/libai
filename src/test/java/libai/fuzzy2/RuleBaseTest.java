@@ -1,5 +1,9 @@
 package libai.fuzzy2;
 
+import libai.fuzzy2.operators.ActivationMethod;
+import libai.fuzzy2.operators.AndMethod;
+import libai.fuzzy2.operators.Operator;
+import libai.fuzzy2.operators.OrMethod;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -27,12 +31,12 @@ public class RuleBaseTest {
 		Clause d = new Clause("variable4", "small");
 		Consequent consequent = new Consequent(c, d);
 
-		Rule ruleA = new Rule("tipper", 1, Rule.Operator.PROBOR, Rule.Connector.OR, antecedent, consequent);
-		Rule ruleB = new Rule("whatever", 1, Rule.Operator.MIN, Rule.Connector.AND, antecedent, consequent);
+		Rule ruleA = new Rule("tipper", 1, OrMethod.PROBOR, Rule.Connector.OR, antecedent, consequent);
+		Rule ruleB = new Rule("whatever", 1, AndMethod.MIN, Rule.Connector.AND, antecedent, consequent);
 
-		RuleBase ruleBase = new RuleBase("rulebase", RuleBase.ActivationMethod.MIN, RuleBase.AndMethod.PROD, RuleBase.OrMethod.PROBOR, ruleA, ruleB);
+		RuleBase ruleBase = new RuleBase("rulebase", ActivationMethod.MIN, AndMethod.PROD, OrMethod.PROBOR, ruleA, ruleB);
 
-		assertEquals("<RuleBase name=\"rulebase\" type=\"mandani\" activationMethod=\"MIN\" andMethod=\"PROD\" orMethod=\"PROBOR\">\n" +
+		assertEquals("<RuleBase name=\"rulebase\" type=\"mamdani\" activationMethod=\"MIN\" andMethod=\"PROD\" orMethod=\"PROBOR\">\n" +
 				"\t<Rule name=\"tipper\" weight=\"1.000000\" operator=\"PROBOR\" connector=\"OR\">\n" +
 				"\t\t<Antecedent>\n" +
 				"\t\t\t<Clause>\n" +
@@ -90,10 +94,10 @@ public class RuleBaseTest {
 		Clause d = new Clause("variable4", "small");
 		Consequent consequent = new Consequent(c, d);
 
-		Rule ruleA = new Rule("tipper", 1, Rule.Operator.PROBOR, Rule.Connector.OR, antecedent, consequent);
-		Rule ruleB = new Rule("whatever", 1, Rule.Operator.MIN, Rule.Connector.AND, antecedent, consequent);
+		Rule ruleA = new Rule("tipper", 1, OrMethod.PROBOR, Rule.Connector.OR, antecedent, consequent);
+		Rule ruleB = new Rule("whatever", 1, AndMethod.MIN, Rule.Connector.AND, antecedent, consequent);
 
-		RuleBase ruleBase = new RuleBase("rulebase", RuleBase.ActivationMethod.MIN, RuleBase.AndMethod.PROD, RuleBase.OrMethod.PROBOR, ruleA, ruleB);
+		RuleBase ruleBase = new RuleBase("rulebase", ActivationMethod.MIN, AndMethod.PROD, OrMethod.PROBOR, ruleA, ruleB);
 		String xml = ruleBase.toXMLString("");
 
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

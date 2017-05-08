@@ -1,5 +1,9 @@
 package libai.fuzzy2;
 
+import libai.fuzzy2.operators.ActivationMethod;
+import libai.fuzzy2.operators.AndMethod;
+import libai.fuzzy2.operators.Operator;
+import libai.fuzzy2.operators.OrMethod;
 import libai.fuzzy2.sets.TriangularShape;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -36,10 +40,10 @@ public class FuzzyControllerTest {
 		Clause d = new Clause("variable4", "small");
 		Consequent consequent = new Consequent(c, d);
 
-		Rule ruleA = new Rule("tipper", 1, Rule.Operator.PROBOR, Rule.Connector.OR, antecedent, consequent);
-		Rule ruleB = new Rule("whatever", 1, Rule.Operator.MIN, Rule.Connector.AND, antecedent, consequent);
+		Rule ruleA = new Rule("tipper", 1, OrMethod.PROBOR, Rule.Connector.OR, antecedent, consequent);
+		Rule ruleB = new Rule("whatever", 1, AndMethod.MIN, Rule.Connector.AND, antecedent, consequent);
 
-		RuleBase rb = new RuleBase("rulebase", RuleBase.ActivationMethod.MIN, RuleBase.AndMethod.PROD, RuleBase.OrMethod.PROBOR, ruleA, ruleB);
+		RuleBase rb = new RuleBase("rulebase", ActivationMethod.MIN, AndMethod.PROD, OrMethod.PROBOR, ruleA, ruleB);
 		FuzzyController fc = new FuzzyController("deController", "home.localhost", kb, rb);
 
 		assertEquals("<FuzzyController name=\"deController\" ip=\"home.localhost\">\n" +
@@ -61,7 +65,7 @@ public class FuzzyControllerTest {
 				"\t\t\t</FuzzyTerm>\n" +
 				"\t\t</FuzzyVariable>\n" +
 				"\t</KnowledgeBase>\n" +
-				"\t<RuleBase name=\"rulebase\" type=\"mandani\" activationMethod=\"MIN\" andMethod=\"PROD\" orMethod=\"PROBOR\">\n" +
+				"\t<RuleBase name=\"rulebase\" type=\"mamdani\" activationMethod=\"MIN\" andMethod=\"PROD\" orMethod=\"PROBOR\">\n" +
 				"\t\t<Rule name=\"tipper\" weight=\"1.000000\" operator=\"PROBOR\" connector=\"OR\">\n" +
 				"\t\t\t<Antecedent>\n" +
 				"\t\t\t\t<Clause>\n" +
@@ -130,10 +134,10 @@ public class FuzzyControllerTest {
 		Clause d = new Clause("variable4", "small");
 		Consequent consequent = new Consequent(c, d);
 
-		Rule ruleA = new Rule("tipper", 1, Rule.Operator.PROBOR, Rule.Connector.OR, antecedent, consequent);
-		Rule ruleB = new Rule("whatever", 1, Rule.Operator.MIN, Rule.Connector.AND, antecedent, consequent);
+		Rule ruleA = new Rule("tipper", 1, OrMethod.PROBOR, Rule.Connector.OR, antecedent, consequent);
+		Rule ruleB = new Rule("whatever", 1, AndMethod.MIN, Rule.Connector.AND, antecedent, consequent);
 
-		RuleBase rb = new RuleBase("rulebase", RuleBase.ActivationMethod.MIN, RuleBase.AndMethod.PROD, RuleBase.OrMethod.PROBOR, ruleA, ruleB);
+		RuleBase rb = new RuleBase("rulebase", ActivationMethod.MIN, AndMethod.PROD, OrMethod.PROBOR, ruleA, ruleB);
 		FuzzyController fc = new FuzzyController("deController", "home.localhost", kb, rb);
 		String xml = fc.toXMLString("");
 

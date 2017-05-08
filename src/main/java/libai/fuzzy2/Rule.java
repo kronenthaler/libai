@@ -1,5 +1,6 @@
 package libai.fuzzy2;
 
+import libai.fuzzy2.operators.Operator;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -14,6 +15,7 @@ public class Rule implements XMLSerializer {
 	protected Connector connector = Connector.AND;
 	protected Antecedent antecedent;
 	protected Consequent consequent;
+
 	public Rule(Node xmlNode) {
 		load(xmlNode);
 	}
@@ -33,7 +35,7 @@ public class Rule implements XMLSerializer {
 	@Override
 	public String toXMLString(String indent) {
 		StringBuilder str = new StringBuilder();
-		str.append(String.format("%s<Rule name=\"%s\" weight=\"%f\" operator=\"%s\" connector=\"%s\">\n", indent, name, weight, operator.getText(), connector.getText()));
+		str.append(String.format("%s<Rule name=\"%s\" weight=\"%f\" operator=\"%s\" connector=\"%s\">\n", indent, name, weight, operator, connector.getText()));
 		str.append(String.format("%s\n", antecedent.toXMLString(indent + "\t")));
 		str.append(String.format("%s\n", consequent.toXMLString(indent + "\t")));
 		str.append(String.format("%s</Rule>", indent));
@@ -52,30 +54,6 @@ public class Rule implements XMLSerializer {
 
 		antecedent = new Antecedent(((Element) xmlNode).getElementsByTagName("Antecedent").item(0));
 		consequent = new Consequent(((Element) xmlNode).getElementsByTagName("Consequent").item(0));
-	}
-
-	enum Operator {
-		PROD("PROD"), MIN("MIN"), PROBOR("PROBOR"), MAX("MAX");
-		private String text;
-
-		Operator(String text) {
-			this.text = text;
-		}
-
-		public static Operator fromString(String text) {
-			Operator result = null;
-			for (Operator b : Operator.values()) {
-				if (b.text.equalsIgnoreCase(text)) {
-					result = b;
-					break;
-				}
-			}
-			return result;
-		}
-
-		public String getText() {
-			return this.text;
-		}
 	}
 
 	enum Connector {

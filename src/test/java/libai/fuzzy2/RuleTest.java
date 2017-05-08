@@ -1,5 +1,7 @@
 package libai.fuzzy2;
 
+import libai.fuzzy2.operators.Operator;
+import libai.fuzzy2.operators.OrMethod;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -24,7 +26,7 @@ public class RuleTest {
 		Clause d = new Clause("variable4", "small");
 		Consequent consequent = new Consequent(c, d);
 
-		Rule rule = new Rule("tipper", 1, Rule.Operator.PROBOR, Rule.Connector.OR, antecedent, consequent);
+		Rule rule = new Rule("tipper", 1, OrMethod.PROBOR, Rule.Connector.OR, antecedent, consequent);
 
 		assertEquals("<Rule name=\"tipper\" weight=\"1.000000\" operator=\"PROBOR\" connector=\"OR\">\n" +
 				"\t<Antecedent>\n" +
@@ -60,7 +62,7 @@ public class RuleTest {
 		Clause d = new Clause("variable4", "small");
 		Consequent consequent = new Consequent(c, d);
 
-		Rule rule = new Rule("tipper", 1, Rule.Operator.PROBOR, Rule.Connector.OR, antecedent, consequent);
+		Rule rule = new Rule("tipper", 1, OrMethod.PROBOR, Rule.Connector.OR, antecedent, consequent);
 		String xml = rule.toXMLString("");
 
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

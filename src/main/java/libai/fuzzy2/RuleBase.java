@@ -1,23 +1,27 @@
 package libai.fuzzy2;
 
+import libai.fuzzy2.operators.ActivationMethod;
+import libai.fuzzy2.operators.AndMethod;
+import libai.fuzzy2.operators.Operator;
+import libai.fuzzy2.operators.OrMethod;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by kronenthaler on 30/04/2017.
  */
 public class RuleBase implements XMLSerializer {
 	protected String name;
-	protected ActivationMethod activationMethod = ActivationMethod.MIN;
-	protected AndMethod andMethod = AndMethod.MIN;
-	protected OrMethod orMethod = OrMethod.MAX;
+	// TODO: what's the point of the and/or methods if the rules define what operator to be used?
+	protected Operator activationMethod = ActivationMethod.MIN;
+	protected Operator andMethod = AndMethod.MIN;
+	protected Operator orMethod = OrMethod.MAX;
 	protected List<Rule> rules = new ArrayList<>();
+
 	public RuleBase(Node xmlNode) {
 		load(xmlNode);
 	}
@@ -25,12 +29,12 @@ public class RuleBase implements XMLSerializer {
 		this.name = name;
 		this.rules = Arrays.asList(rules);
 	}
-	public RuleBase(String name, ActivationMethod activationMethod, Rule... rules) {
+	public RuleBase(String name, Operator activationMethod, Rule... rules) {
 		this(name, rules);
 		this.activationMethod = activationMethod;
 	}
 
-	public RuleBase(String name, ActivationMethod activationMethod, AndMethod andMethod, OrMethod orMethod, Rule... rules) {
+	public RuleBase(String name, Operator activationMethod, Operator andMethod, Operator orMethod, Rule... rules) {
 		this(name, activationMethod, rules);
 		this.andMethod = andMethod;
 		this.orMethod = orMethod;
@@ -39,7 +43,7 @@ public class RuleBase implements XMLSerializer {
 	@Override
 	public String toXMLString(String indent) {
 		StringBuilder str = new StringBuilder();
-		str.append(String.format("%s<RuleBase name=\"%s\" type=\"mandani\" activationMethod=\"%s\" andMethod=\"%s\" orMethod=\"%s\">\n", indent, name, activationMethod.getText(), andMethod.getText(), orMethod.getText()));
+		str.append(String.format("%s<RuleBase name=\"%s\" type=\"mamdani\" activationMethod=\"%s\" andMethod=\"%s\" orMethod=\"%s\">\n", indent, name, activationMethod, andMethod, orMethod));
 		for (Rule r : rules) {
 			str.append(String.format("%s\n", r.toXMLString(indent + "\t")));
 		}
@@ -71,75 +75,8 @@ public class RuleBase implements XMLSerializer {
 		}
 	}
 
-	enum ActivationMethod {
-		PROD("PROD"), MIN("MIN");
-		private String text;
-
-		ActivationMethod(String text) {
-			this.text = text;
-		}
-
-		public static ActivationMethod fromString(String text) {
-			ActivationMethod result = null;
-			for (ActivationMethod b : ActivationMethod.values()) {
-				if (b.text.equalsIgnoreCase(text)) {
-					result = b;
-					break;
-				}
-			}
-			return result;
-		}
-
-		public String getText() {
-			return this.text;
-		}
-	}
-
-	enum AndMethod {
-		PROD("PROD"), MIN("MIN");
-		private String text;
-
-		AndMethod(String text) {
-			this.text = text;
-		}
-
-		public static AndMethod fromString(String text) {
-			AndMethod result = null;
-			for (AndMethod b : AndMethod.values()) {
-				if (b.text.equalsIgnoreCase(text)) {
-					result = b;
-					break;
-				}
-			}
-			return result;
-		}
-
-		public String getText() {
-			return this.text;
-		}
-	}
-
-	enum OrMethod {
-		PROBOR("PROBOR"), MAX("MAX");
-		private String text;
-
-		OrMethod(String text) {
-			this.text = text;
-		}
-
-		public static OrMethod fromString(String text) {
-			OrMethod result = null;
-			for (OrMethod b : OrMethod.values()) {
-				if (b.text.equalsIgnoreCase(text)) {
-					result = b;
-					break;
-				}
-			}
-			return result;
-		}
-
-		public String getText() {
-			return this.text;
-		}
+	public Map<String, Double> fire(Map<String, Double> variables, KnowledgeBase knowledgeBase){
+		//has to pass down both operator implementations and the activation method.
+		return new HashMap<>();
 	}
 }

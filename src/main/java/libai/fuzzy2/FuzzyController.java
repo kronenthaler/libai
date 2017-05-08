@@ -4,6 +4,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by kronenthaler on 30/04/2017.
  */
@@ -48,5 +51,14 @@ public class FuzzyController implements XMLSerializer {
 
 		knowledgeBase = new KnowledgeBase(((Element)xmlNode).getElementsByTagName("KnowledgeBase").item(0));
 		ruleBase = new RuleBase(((Element)xmlNode).getElementsByTagName("RuleBase").item(0));
+	}
+
+	/**
+	 * Fires the rule's antecedents, with the given variable values.
+	 * @param variables Map containing the variable name and its current value at the moment the rules are going to be evaluated.
+	 * @return A map with all output variables activated and their corresponding value.
+	 **/
+	public Map<String, Double> fire(Map<String, Double> variables){
+		return ruleBase.fire(variables, knowledgeBase);
 	}
 }
