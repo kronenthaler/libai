@@ -5,6 +5,7 @@ package libai.fuzzy2.operators;
  */
 public abstract class Operator {
 	public abstract double eval(double a, double b);
+	public abstract double neutral();
 
 	public static Operator fromString(String name){
 		try{

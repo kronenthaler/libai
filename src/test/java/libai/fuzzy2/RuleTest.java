@@ -1,5 +1,6 @@
 package libai.fuzzy2;
 
+import libai.fuzzy2.operators.AndMethod;
 import libai.fuzzy2.operators.Operator;
 import libai.fuzzy2.operators.OrMethod;
 import org.junit.Test;
@@ -72,5 +73,15 @@ public class RuleTest {
 
 		Rule newRule = new Rule(root);
 		assertEquals(rule.toXMLString(""), newRule.toXMLString(""));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testInvalidOperatorToOrConnector(){
+		new Rule("tipper", 1, AndMethod.MIN, Rule.Connector.OR, null, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testInvalidOperatorToAndConnector(){
+		new Rule("tipper", 1, OrMethod.MAX, Rule.Connector.AND, null, null);
 	}
 }

@@ -1,5 +1,6 @@
 package libai.fuzzy2;
 
+import libai.fuzzy2.modifiers.Modifier;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -7,9 +8,10 @@ import org.w3c.dom.Node;
  * Created by kronenthaler on 27/04/2017.
  */
 public class Clause implements XMLSerializer {
-	protected Modifier modifier;
-	protected String variable; //variable name
-	protected String term; //term name
+	private Modifier modifier;
+	private String variable; //variable name
+	private String term; //term name
+
 	public Clause(Node xmlNode) {
 		load(xmlNode);
 	}
@@ -27,7 +29,7 @@ public class Clause implements XMLSerializer {
 	@Override
 	public String toXMLString(String indent) {
 		StringBuffer str = new StringBuffer();
-		str.append(String.format("%s<Clause%s>\n", indent, modifier == null ? "" : " modifier=\"" + modifier.getText() + "\""));
+		str.append(String.format("%s<Clause%s>\n", indent, modifier == null ? "" : " modifier=\"" + modifier + "\""));
 		str.append(String.format("%s\t<Variable>%s</Variable>\n", indent, variable));
 		str.append(String.format("%s\t<Term>%s</Term>\n", indent, term));
 		str.append(String.format("%s</Clause>", indent));
@@ -45,29 +47,21 @@ public class Clause implements XMLSerializer {
 		}
 	}
 
-	enum Modifier {
-		ABOVE("above"), BELOW("below"), EXTREMELY("extremely"), INTENSIFY("intensify"), MORE_OR_LESS("more_or_less"),
-		NORM("norm"), NOT("not"), PLUS("plus"), SLIGHTLY("slightly"), SOMEWHAT("somewhat"), VERY("very");
+	public String getVariableName() {
+		return variable;
+	}
 
-		private String text;
+	public String getTermName() {
+		return term;
+	}
 
-		Modifier(String text) {
-			this.text = text;
-		}
+	public double eval(double input, KnowledgeBase knowledgeBase){
+		FuzzyTerm term = knowledgeBase.getTerm(getVariableName(), getTermName());
 
-		public static Modifier fromString(String text) {
-			Modifier result = null;
-			for (Modifier b : Modifier.values()) {
-				if (b.text.equalsIgnoreCase(text)) {
-					result = b;
-					break;
-				}
-			}
-			return result;
-		}
+		double value = term.eval(input);
+		if (modifier != null)
+			value = modifier.eval(value);
 
-		public String getText() {
-			return this.text;
-		}
+		return  value;
 	}
 }

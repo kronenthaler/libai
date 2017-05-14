@@ -6,13 +6,14 @@ import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 /**
  * Created by kronenthaler on 30/04/2017.
  */
-public class Consequent implements XMLSerializer {
-	protected List<Clause> clauses = new ArrayList<>();
+public class Consequent implements XMLSerializer, Iterable<Clause> {
+	private List<Clause> clauses = new ArrayList<>();
 
 	public Consequent(Node xmlNode) {
 		load(xmlNode);
@@ -41,5 +42,10 @@ public class Consequent implements XMLSerializer {
 		for (int i = 0; i < children.getLength(); i++) {
 			clauses.add(new Clause(children.item(i)));
 		}
+	}
+
+	@Override
+	public Iterator<Clause> iterator() {
+		return clauses.iterator();
 	}
 }

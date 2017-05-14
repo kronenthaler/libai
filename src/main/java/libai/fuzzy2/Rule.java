@@ -1,34 +1,46 @@
 package libai.fuzzy2;
 
+import com.sun.org.apache.xpath.internal.operations.And;
+import libai.common.Pair;
+import libai.fuzzy2.operators.AndMethod;
 import libai.fuzzy2.operators.Operator;
+import libai.fuzzy2.operators.OrMethod;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+
+import java.util.Map;
 
 /**
  * Created by kronenthaler on 30/04/2017.
  */
 public class Rule implements XMLSerializer {
-	protected Operator operator;
-	protected String name;
-	protected double weight;
-	protected Connector connector = Connector.AND;
-	protected Antecedent antecedent;
-	protected Consequent consequent;
+	private Operator operator;
+	private String name;
+	private double weight;
+	private Connector connector = Connector.AND;
+	private Antecedent antecedent;
+	private Consequent consequent;
 
 	public Rule(Node xmlNode) {
 		load(xmlNode);
 	}
 	public Rule(String name, double weight, Operator operator, Antecedent antecedent, Consequent consequent) {
+		this(name, weight, operator, Connector.AND, antecedent, consequent);
+	}
+
+	public Rule(String name, double weight, Operator operator, Connector connector, Antecedent antecedent, Consequent consequent) {
+		if(connector == Connector.AND && !(operator instanceof AndMethod))
+			throw new IllegalArgumentException("Operator must be an instance of AndMethod");
+
+		if(connector == Connector.OR && !(operator instanceof OrMethod))
+			throw new IllegalArgumentException("Operator must be an instance of OrMethod");
+
 		this.name = name;
 		this.weight = weight;
 		this.operator = operator;
 		this.antecedent = antecedent;
 		this.consequent = consequent;
-	}
-
-	public Rule(String name, double weight, Operator operator, Connector connector, Antecedent antecedent, Consequent consequent) {
-		this(name, weight, operator, antecedent, consequent);
 		this.connector = connector;
 	}
 
@@ -54,6 +66,14 @@ public class Rule implements XMLSerializer {
 
 		antecedent = new Antecedent(((Element) xmlNode).getElementsByTagName("Antecedent").item(0));
 		consequent = new Consequent(((Element) xmlNode).getElementsByTagName("Consequent").item(0));
+	}
+
+	public double getActivationValue(Map<String, Double> variables, KnowledgeBase knowledgeBase){
+		return antecedent.activate(variables, knowledgeBase, operator);
+	}
+
+	public Iterable<Clause> getConsequentClauses() {
+		return consequent;
 	}
 
 	enum Connector {

@@ -1,6 +1,7 @@
 package libai.fuzzy2;
 
-import libai.fuzzy2.operators.ActivationMethod;
+import libai.common.Pair;
+import libai.fuzzy2.operators.activation.ActivationMethod;
 import libai.fuzzy2.operators.AndMethod;
 import libai.fuzzy2.operators.Operator;
 import libai.fuzzy2.operators.OrMethod;
@@ -15,12 +16,11 @@ import java.util.*;
  * Created by kronenthaler on 30/04/2017.
  */
 public class RuleBase implements XMLSerializer {
-	protected String name;
-	// TODO: what's the point of the and/or methods if the rules define what operator to be used?
-	protected Operator activationMethod = ActivationMethod.MIN;
-	protected Operator andMethod = AndMethod.MIN;
-	protected Operator orMethod = OrMethod.MAX;
-	protected List<Rule> rules = new ArrayList<>();
+	private String name;
+	private ActivationMethod activationMethod = ActivationMethod.MIN; // implication method
+	private Operator andMethod = AndMethod.MIN; //operator to be used as default (mostly for systems that edit the files)
+	private Operator orMethod = OrMethod.MAX; //operator to be used as default (mostly for systems that edit the files)
+	private List<Rule> rules = new ArrayList<>();
 
 	public RuleBase(Node xmlNode) {
 		load(xmlNode);
@@ -29,12 +29,12 @@ public class RuleBase implements XMLSerializer {
 		this.name = name;
 		this.rules = Arrays.asList(rules);
 	}
-	public RuleBase(String name, Operator activationMethod, Rule... rules) {
+	public RuleBase(String name, ActivationMethod activationMethod, Rule... rules) {
 		this(name, rules);
 		this.activationMethod = activationMethod;
 	}
 
-	public RuleBase(String name, Operator activationMethod, Operator andMethod, Operator orMethod, Rule... rules) {
+	public RuleBase(String name, ActivationMethod activationMethod, Operator andMethod, Operator orMethod, Rule... rules) {
 		this(name, activationMethod, rules);
 		this.andMethod = andMethod;
 		this.orMethod = orMethod;
@@ -76,7 +76,30 @@ public class RuleBase implements XMLSerializer {
 	}
 
 	public Map<String, Double> fire(Map<String, Double> variables, KnowledgeBase knowledgeBase){
-		//has to pass down both operator implementations and the activation method.
-		return new HashMap<>();
+		Map<String, List<Pair<Double, Clause>>> outputVariables = new HashMap<>();
+
+		for(Rule r : rules){
+			double tau = r.getActivationValue(variables, knowledgeBase);
+
+			for(Clause clause : r.getConsequentClauses()){
+				String variableName = clause.getVariableName();
+				if (outputVariables.get(variableName) == null)
+					outputVariables.put(variableName, new ArrayList<>());
+				outputVariables.get(variableName).add(new Pair<>(tau, clause));
+			}
+		}
+
+		Map<String, Double> result = new HashMap<>();
+		for(String variableName : outputVariables.keySet()){ // for each
+			FuzzyVariable variable = knowledgeBase.getVariable(variableName);
+			double value = variable.defuzzify(activationMethod, knowledgeBase, outputVariables.get(variableName));
+			result.put(variableName, value);
+		}
+
+		return result;
+	}
+
+	public String getName() {
+		return name;
 	}
 }

@@ -11,10 +11,10 @@ import java.util.Map;
  * Created by kronenthaler on 30/04/2017.
  */
 public class FuzzyController implements XMLSerializer {
-	protected String name;
-	protected String ip = "127.0.0.1"; // ip address
-	protected KnowledgeBase knowledgeBase;
-	protected RuleBase ruleBase;
+	private String name;
+	private String ip = "127.0.0.1"; // ip address
+	private KnowledgeBase knowledgeBase;
+	private RuleBase ruleBase;
 
 	public FuzzyController(Node xmlNode){
 		load(xmlNode);
@@ -60,5 +60,13 @@ public class FuzzyController implements XMLSerializer {
 	 **/
 	public Map<String, Double> fire(Map<String, Double> variables){
 		return ruleBase.fire(variables, knowledgeBase);
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getIpAddress() {
+		return ip;
 	}
 }

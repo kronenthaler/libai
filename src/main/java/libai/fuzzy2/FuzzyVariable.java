@@ -1,5 +1,10 @@
 package libai.fuzzy2;
 
+import libai.common.Pair;
+import libai.fuzzy2.defuzzifiers.Defuzzifier;
+import libai.fuzzy2.operators.Operator;
+import libai.fuzzy2.operators.accumulation.Accumulation;
+import libai.fuzzy2.operators.activation.ActivationMethod;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -48,7 +53,7 @@ public class FuzzyVariable implements XMLSerializer {
 		str.append(String.format("%s<FuzzyVariable name=\"%s\" domainLeft=\"%f\" domainRight=\"%f\" scale=\"%s\" type=\"%s\"", indent, name, domainLeft, domainRight, scale, type.getText()));
 
 		if (type == Type.OUTPUT)
-			str.append(String.format(" defaultValue=\"%f\" defuzzifier=\"%s\" accumulation=\"%s\"", defaultValue, defuzzifier.getText(), accumulation.getText()));
+			str.append(String.format(" defaultValue=\"%f\" defuzzifier=\"%s\" accumulation=\"%s\"", defaultValue, defuzzifier, accumulation));
 
 		str.append(">\n"); // close tag
 		for (FuzzyTerm t : terms) {
@@ -88,52 +93,15 @@ public class FuzzyVariable implements XMLSerializer {
 		}
 	}
 
-	enum Accumulation {
-		MAX("MAX"), SUM("SUM");
-		private String text;
-
-		Accumulation(String text) {
-			this.text = text;
-		}
-
-		public static Accumulation fromString(String text) {
-			Accumulation result = null;
-			for (Accumulation b : Accumulation.values()) {
-				if (b.text.equalsIgnoreCase(text)) {
-					result = b;
-					break;
-				}
-			}
-			return result;
-		}
-
-		public String getText() {
-			return this.text;
-		}
+	public FuzzyTerm getTerm(String name){
+		for(FuzzyTerm term : terms)
+			if (term.getName().equals(name))
+				return term;
+		return null;
 	}
 
-	enum Defuzzifier {
-		MOM("MOM"), COG("COG"), COA("COA"), WA("WA"), Custom("Custom");
-		private String text;
-
-		Defuzzifier(String text) {
-			this.text = text;
-		}
-
-		public static Defuzzifier fromString(String text) {
-			Defuzzifier result = null;
-			for (Defuzzifier b : Defuzzifier.values()) {
-				if (b.text.equalsIgnoreCase(text)) {
-					result = b;
-					break;
-				}
-			}
-			return result;
-		}
-
-		public String getText() {
-			return this.text;
-		}
+	public double defuzzify(ActivationMethod activationMethod, KnowledgeBase knowledgeBase, List<Pair<Double, Clause>> terms){
+		return 0;
 	}
 
 	enum Type {

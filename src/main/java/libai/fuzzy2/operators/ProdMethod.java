@@ -10,5 +10,8 @@ public class ProdMethod extends AndMethod {
 	}
 
 	@Override
+	public double neutral() { return 1; }
+
+	@Override
 	public String toString(){ return "PROD"; }
 }

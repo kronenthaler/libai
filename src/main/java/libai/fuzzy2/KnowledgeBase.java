@@ -11,7 +11,7 @@ import java.util.Map;
  * Created by kronenthaler on 26/04/2017.
  */
 public class KnowledgeBase implements XMLSerializer {
-	protected Map<String, FuzzyVariable> variables = new HashMap<>();
+	private Map<String, FuzzyVariable> variables = new HashMap<>();
 
 	public KnowledgeBase(Node xmlNode) {
 		load(xmlNode);
@@ -43,5 +43,14 @@ public class KnowledgeBase implements XMLSerializer {
 			FuzzyVariable var = new FuzzyVariable(children.item(i));
 			variables.put(var.name, var);
 		}
+	}
+
+	public FuzzyVariable getVariable(String name) {
+		return variables.get(name);
+	}
+
+	public FuzzyTerm getTerm(String variableName, String termName){
+		FuzzyVariable variable = getVariable(variableName);
+		return variable.getTerm(termName);
 	}
 }

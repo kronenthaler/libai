@@ -1,5 +1,6 @@
 package libai.fuzzy2;
 
+import libai.fuzzy2.modifiers.Modifier;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -16,7 +17,7 @@ import static org.junit.Assert.assertEquals;
 public class ClauseTest {
 	@Test
 	public void testXMLGeneration() {
-		Clause clause = new Clause("tip", "good", Clause.Modifier.VERY);
+		Clause clause = new Clause("tip", "good", Modifier.VERY);
 		assertEquals("<Clause modifier=\"very\">\n" +
 				"\t<Variable>tip</Variable>\n" +
 				"\t<Term>good</Term>\n" +
@@ -25,7 +26,7 @@ public class ClauseTest {
 
 	@Test
 	public void testXMLConstructor() throws Exception {
-		Clause clause = new Clause("tip", "good", Clause.Modifier.VERY);
+		Clause clause = new Clause("tip", "good", Modifier.VERY);
 		String xml = clause.toXMLString("");
 
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

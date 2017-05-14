@@ -1,9 +1,10 @@
 package libai.fuzzy2;
 
-import libai.fuzzy2.operators.ActivationMethod;
+import libai.fuzzy2.defuzzifiers.Defuzzifier;
+import libai.fuzzy2.operators.activation.ActivationMethod;
 import libai.fuzzy2.operators.AndMethod;
-import libai.fuzzy2.operators.Operator;
 import libai.fuzzy2.operators.OrMethod;
+import libai.fuzzy2.operators.accumulation.Accumulation;
 import libai.fuzzy2.sets.TriangularShape;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -28,7 +29,7 @@ public class FuzzyControllerTest {
 
 		FuzzyTerm cheap = new FuzzyTerm(new TriangularShape(0, 3, 10), "cheap");
 		FuzzyTerm generous = new FuzzyTerm(new TriangularShape(0, 7, 10), "generous");
-		FuzzyVariable tip = new FuzzyVariable("tip", 0, 10, 5, "percentage", FuzzyVariable.Accumulation.SUM, FuzzyVariable.Defuzzifier.MOM, cheap, generous);
+		FuzzyVariable tip = new FuzzyVariable("tip", 0, 10, 5, "percentage", Accumulation.SUM, Defuzzifier.MOM, cheap, generous);
 
 		KnowledgeBase kb = new KnowledgeBase(var, tip);
 
@@ -122,7 +123,7 @@ public class FuzzyControllerTest {
 
 		FuzzyTerm cheap = new FuzzyTerm(new TriangularShape(0, 3, 10), "cheap");
 		FuzzyTerm generous = new FuzzyTerm(new TriangularShape(0, 7, 10), "generous");
-		FuzzyVariable tip = new FuzzyVariable("tip", 0, 10, 5, "percentage", FuzzyVariable.Accumulation.SUM, FuzzyVariable.Defuzzifier.MOM, cheap, generous);
+		FuzzyVariable tip = new FuzzyVariable("tip", 0, 10, 5, "percentage", Accumulation.SUM, Defuzzifier.MOM, cheap, generous);
 
 		KnowledgeBase kb = new KnowledgeBase(var, tip);
 

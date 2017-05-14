@@ -31,7 +31,7 @@ import java.util.Objects;
  *
  * @author kronenthaler
  */
-public final class Pair<V extends Comparable<V>, K extends Comparable<K>> implements Comparable<Pair<V, K>> {
+public final class Pair<V extends Comparable<V>, K> implements Comparable<Pair<V, K>> {
 	/**
 	 * First element of the pair (the 'key').
 	 */

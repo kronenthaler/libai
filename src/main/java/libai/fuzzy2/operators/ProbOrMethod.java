@@ -10,5 +10,8 @@ public class ProbOrMethod extends OrMethod {
 	}
 
 	@Override
+	public double neutral() { return 0; }
+
+	@Override
 	public String toString(){ return "PROBOR"; }
 }

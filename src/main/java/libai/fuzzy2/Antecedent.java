@@ -1,18 +1,17 @@
 package libai.fuzzy2;
 
+import libai.fuzzy2.operators.Operator;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by kronenthaler on 30/04/2017.
  */
-public class Antecedent implements XMLSerializer {
-	protected List<Clause> clauses = new ArrayList<>();
+public class Antecedent implements XMLSerializer, Iterable<Clause> {
+	private List<Clause> clauses = new ArrayList<>();
 
 	public Antecedent(Node xmlNode) {
 		load(xmlNode);
@@ -41,5 +40,22 @@ public class Antecedent implements XMLSerializer {
 		for (int i = 0; i < children.getLength(); i++) {
 			clauses.add(new Clause(children.item(i)));
 		}
+	}
+
+	public double activate(Map<String, Double> variables, KnowledgeBase knowledgeBase, Operator connector){
+		double result = connector.neutral();
+
+		for(Clause clause : clauses) {
+			String variableName = clause.getVariableName();
+			double value = clause.eval(variables.get(variableName), knowledgeBase);
+			result = connector.eval(result, value);
+		}
+
+		return result;
+	}
+
+	@Override
+	public Iterator<Clause> iterator() {
+		return clauses.iterator();
 	}
 }

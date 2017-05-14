@@ -1,5 +1,7 @@
 package libai.fuzzy2;
 
+import libai.fuzzy2.defuzzifiers.Defuzzifier;
+import libai.fuzzy2.operators.accumulation.Accumulation;
 import libai.fuzzy2.sets.FuzzySet;
 import libai.fuzzy2.sets.TriangularShape;
 import org.junit.Test;
@@ -83,7 +85,7 @@ public class FuzzyVariableTest {
 	public void testXMLConstructorOutput() throws Exception {
 		FuzzyTerm bad = new FuzzyTerm(new TriangularShape(0, 3, 10), "bad");
 		FuzzyTerm good = new FuzzyTerm(new TriangularShape(0, 7, 10), "good");
-		FuzzyVariable var = new FuzzyVariable("quality", 0, 10, 5, "stars", FuzzyVariable.Accumulation.SUM, FuzzyVariable.Defuzzifier.MOM, bad, good);
+		FuzzyVariable var = new FuzzyVariable("quality", 0, 10, 5, "stars", Accumulation.SUM, Defuzzifier.MOM, bad, good);
 		String xml = var.toXMLString("");
 
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

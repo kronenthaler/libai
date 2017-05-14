@@ -11,9 +11,9 @@ import java.lang.reflect.Constructor;
  * Created by kronenthaler on 23/04/2017.
  */
 public class FuzzyTerm implements FuzzySet, XMLSerializer {
-	protected FuzzySet set;
-	protected String name;
-	protected boolean complement;
+	private FuzzySet set;
+	private String name;
+	private boolean complement;
 
 	public FuzzyTerm(Node xmlNode) {
 		load(xmlNode);
@@ -64,5 +64,9 @@ public class FuzzyTerm implements FuzzySet, XMLSerializer {
 				throw new IllegalArgumentException(e.getMessage());
 			}
 		}
+	}
+
+	public String getName() {
+		return name;
 	}
 }
