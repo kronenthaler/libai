@@ -2,7 +2,6 @@ package libai.fuzzy2;
 
 import libai.common.Pair;
 import libai.fuzzy2.defuzzifiers.Defuzzifier;
-import libai.fuzzy2.operators.Operator;
 import libai.fuzzy2.operators.accumulation.Accumulation;
 import libai.fuzzy2.operators.activation.ActivationMethod;
 import org.w3c.dom.Element;
@@ -101,6 +100,10 @@ public class FuzzyVariable implements XMLSerializer {
 	}
 
 	public double defuzzify(ActivationMethod activationMethod, KnowledgeBase knowledgeBase, List<Pair<Double, Clause>> terms){
+		// iterate over the variable domain, with small intervals.
+		// evaluate each term using the activation method with the Double
+		// take the value and accumulate it on a list of points (x, y) to be passed to the defuzzify operator
+
 		return 0;
 	}
 

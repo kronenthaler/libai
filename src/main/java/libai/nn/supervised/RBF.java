@@ -153,14 +153,12 @@ public class RBF extends Adaline {
 	 * @return An array with the centroids.
 	 */
 	private Column[] kmeans(int k, Column[] patterns, int offset, int length) {
-		int i, j, l;
-
 		Column[] ctemp = new Column[k];
 		ArrayList<Integer>[] partitions = new ArrayList[k];
 		Column aux = new Column(patterns[0].getRows());
 		Column aux1 = new Column(patterns[0].getRows());
 
-		for (i = 0; i < k; i++) {
+		for (int i = 0; i < k; i++) {
 			ctemp[i] = new Column(patterns[0].getRows());
 			int index = random.nextInt(length) + offset;//abs((int)(ctemp[i].random(&xzxzx)*npatterns));;
 			patterns[index].copy(ctemp[i]);
@@ -168,13 +166,15 @@ public class RBF extends Adaline {
 		}
 
 		while (true) {
-			double min, current;
-			for (l = 0; l < k; l++)
+			double min;
+			double current;
+			for (int l = 0; l < k; l++)
 				partitions[l].clear();
-			j = 0;
-			for (i = 0; i < length; i++) {
+
+			for (int i = 0; i < length; i++) {
+				int j = 0;
 				min = Double.MAX_VALUE;
-				for (l = 0; l < k; l++) {
+				for (int l = 0; l < k; l++) {
 					current = euclideanDistance2(patterns[i + offset], ctemp[l]);
 					if (current < min) {
 						min = current;
@@ -185,10 +185,10 @@ public class RBF extends Adaline {
 			}
 
 			boolean exit = true;
-			for (i = 0; i < k; i++) {
+			for (int i = 0; i < k; i++) {
 				int total = 0;
 				aux1.setValue(0);
-				for (j = 0; j < partitions[i].size(); j++) {
+				for (int j = 0; j < partitions[i].size(); j++) {
 					aux1.add(patterns[partitions[i].get(j)], aux1);
 					total++;
 				}

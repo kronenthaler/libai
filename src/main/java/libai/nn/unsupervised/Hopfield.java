@@ -27,7 +27,6 @@ import libai.common.matrix.Column;
 import libai.common.matrix.Matrix;
 import libai.common.functions.SymmetricSign;
 import libai.common.matrix.Row;
-import libai.nn.NeuralNetwork;
 
 /**
  * Hopfield's networks are the most important and most applicable recurrent

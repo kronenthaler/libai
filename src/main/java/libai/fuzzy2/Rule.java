@@ -1,7 +1,5 @@
 package libai.fuzzy2;
 
-import com.sun.org.apache.xpath.internal.operations.And;
-import libai.common.Pair;
 import libai.fuzzy2.operators.AndMethod;
 import libai.fuzzy2.operators.Operator;
 import libai.fuzzy2.operators.OrMethod;

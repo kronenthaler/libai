@@ -184,10 +184,6 @@ public class MySQLDataSetTest {
 	}
 
 	@Test
-	public void testGetItemsCount() {
-	}
-
-	@Test
 	public void testGetMetaData() {
 		Connection c = writeDummyDataSet();
 		assumeNotNull(c);
@@ -206,7 +202,7 @@ public class MySQLDataSetTest {
 	}
 
 	@Test
-	public void testSortOver_int() {
+	public void testSortOverInt() {
 		Connection c = writeDummyDataSetKnown();
 		assumeNotNull(c);
 		MySQLDataSet ds = new MySQLDataSet(c, "tbl2", 0);

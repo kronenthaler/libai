@@ -417,19 +417,17 @@ public class MultiLayerPerceptronTest {
 		return Math.sin(x) + Math.cos(x);
 	}
 
-	;
-
 	class SimplePlotter implements Plotter {
 		public boolean called = false;
 
 		@Override
 		public void paint(Graphics g2) {
-
+			throw new UnsupportedOperationException("");
 		}
 
 		@Override
 		public void update(Graphics g2) {
-
+			throw new UnsupportedOperationException("");
 		}
 
 		@Override

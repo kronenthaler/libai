@@ -1,7 +1,6 @@
 package libai.fuzzy2;
 
 import libai.fuzzy2.operators.AndMethod;
-import libai.fuzzy2.operators.Operator;
 import libai.fuzzy2.operators.OrMethod;
 import org.junit.Test;
 import org.w3c.dom.Document;

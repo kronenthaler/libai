@@ -150,7 +150,7 @@ public class TextFileDataSetTest {
 	}
 
 	@Test
-	public void testSortOver_int() {
+	public void testSortOverInt() {
 		assumeTrue("Couldn't create dummy dataset", writeDummyDataSetKnown("dummy1.csv"));
 		String tmp = System.getProperty("java.io.tmpdir") + File.separator + "dummy1.csv";
 		TextFileDataSet ds = new TextFileDataSet(new File(tmp), 0);

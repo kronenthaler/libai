@@ -34,6 +34,7 @@ public class FuzzyVariableTest {
 
 			@Override
 			public void load(Node xml) {
+				throw new UnsupportedOperationException("");
 			}
 		}, "bad");
 
@@ -50,6 +51,7 @@ public class FuzzyVariableTest {
 
 			@Override
 			public void load(Node xml) {
+				throw new UnsupportedOperationException("");
 			}
 		}, "good");
 

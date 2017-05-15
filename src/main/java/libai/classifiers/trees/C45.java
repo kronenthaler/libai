@@ -253,7 +253,8 @@ public class C45 implements Comparable<C45> {
 			Iterator<List<Attribute>> records = sortedRecords.iterator();
 			records.hasNext(); //just to move the pointer.
 
-			Attribute prev = records.next().get(index), current = null;
+			Attribute prev = records.next().get(index);
+			Attribute current;
 			int nlo, i = 0;
 			while (prev != null) {
 				current = null;
@@ -328,7 +329,8 @@ public class C45 implements Comparable<C45> {
 
 		prev = records.next().get(fieldIndex);
 
-		int nlo, i = lo;
+		int nlo;
+		int i = lo;
 		while (prev != null) {
 			current = null;
 			nlo = i;
@@ -620,14 +622,15 @@ public class C45 implements Comparable<C45> {
 			int currentChild = 0;
 			for (int i = 0, n = aux.getLength(); i < n; i++) {
 				Node current = aux.item(i);
-				if (current.getNodeName().equals("split")) {
-					Attribute att = Attribute.load(current);
-					for (; i < n; i++)
-						if ((current = aux.item(i)).getNodeName().equals("leaf")
-								|| current.getNodeName().equals("node"))
-							break;
-					childs[currentChild++] = new Pair<>(att, load(current));
-				}
+				if (!current.getNodeName().equals("split"))
+					continue;
+
+				Attribute att = Attribute.load(current);
+				for (; i < n; i++)
+					if ((current = aux.item(i)).getNodeName().equals("leaf")
+							|| current.getNodeName().equals("node"))
+						break;
+				childs[currentChild++] = new Pair<>(att, load(current));
 			}
 			return new C45(childs);
 		} else if (root.getNodeName().equals("leaf")) {

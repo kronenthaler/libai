@@ -27,7 +27,6 @@ import libai.common.Shuffler;
 import libai.common.matrix.Column;
 import libai.common.matrix.Matrix;
 import libai.common.functions.SymmetricSign;
-import libai.nn.NeuralNetwork;
 
 import java.util.Random;
 

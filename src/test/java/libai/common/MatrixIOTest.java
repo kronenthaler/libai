@@ -52,7 +52,8 @@ public class MatrixIOTest {
 
 			try (InputStreamReader isr = new InputStreamReader(process.getInputStream());
 				 BufferedReader ov = new BufferedReader(isr)) {
-				String line, output = "";
+				String line;
+				String output = "";
 
 				while ((line = ov.readLine()) != null) {
 					output = line;

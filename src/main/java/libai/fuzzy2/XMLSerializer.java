@@ -2,8 +2,6 @@ package libai.fuzzy2;
 
 import org.w3c.dom.Node;
 
-import java.lang.reflect.InvocationTargetException;
-
 /**
  * Created by kronenthaler on 23/04/2017.
  */

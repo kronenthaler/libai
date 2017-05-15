@@ -78,9 +78,6 @@ public class MatrixTest {
 	};
 	public double result = 1.7274931467510147E-4;
 
-	public MatrixTest() {
-	}
-
 	@Test(expected = IllegalArgumentException.class)
 	public void testConstructorFail1() {
 		Matrix m = new Matrix(-5, 5, false);

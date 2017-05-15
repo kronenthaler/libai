@@ -1,6 +1,5 @@
 package libai.fuzzy2.operators.activation;
 
-import libai.fuzzy2.operators.AndMethod;
 import libai.fuzzy2.operators.Operator;
 
 /**

@@ -31,7 +31,6 @@ import org.junit.Test;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -44,10 +43,6 @@ import static org.junit.Assume.assumeTrue;
  * @author Federico Vera {@literal <dktcoding [at] gmail>}
  */
 public class NeuralNetworkTest {
-
-	public NeuralNetworkTest() {
-	}
-
 	@Test
 	public void testErrorRegression() {
 		//This test is to check that the code an be replaced with

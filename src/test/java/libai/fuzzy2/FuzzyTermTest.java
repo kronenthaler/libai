@@ -33,6 +33,7 @@ public class FuzzyTermTest {
 
 			@Override
 			public void load(Node xml) {
+				throw new UnsupportedOperationException("");
 			}
 		}, "term", true);
 
@@ -54,6 +55,7 @@ public class FuzzyTermTest {
 
 			@Override
 			public void load(Node xml) {
+				throw new UnsupportedOperationException("");
 			}
 		}, "term");
 
@@ -75,6 +77,7 @@ public class FuzzyTermTest {
 
 			@Override
 			public void load(Node xml) {
+				throw new UnsupportedOperationException("");
 			}
 		}, "term");
 

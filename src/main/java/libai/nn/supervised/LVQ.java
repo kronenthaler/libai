@@ -28,7 +28,6 @@ import libai.common.Shuffler;
 import libai.common.matrix.Column;
 import libai.common.matrix.Matrix;
 import libai.common.matrix.Row;
-import libai.nn.unsupervised.Competitive;
 
 import java.util.Random;
 
@@ -87,7 +86,9 @@ public class LVQ extends SupervisedLearning {
 		W2.setValue(0);
 
 		//fill W2 with 1 per row
-		for (int i = 0, j = 0, k = 0; i < W2.getColumns(); i++) {
+		int j = 0;
+		int k = 0;
+		for (int i = 0; i < W2.getColumns(); i++) {
 			W2.position(j, i, 1);
 			if (k++ == subclasses - 1) {
 				j++;

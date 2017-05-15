@@ -38,9 +38,6 @@ import static org.junit.Assert.assertTrue;
  */
 public class EngineTest {
 
-	public EngineTest() {
-	}
-
 	@Test
 	public void testDemoBinary() {
 		int MaxVal = 1;

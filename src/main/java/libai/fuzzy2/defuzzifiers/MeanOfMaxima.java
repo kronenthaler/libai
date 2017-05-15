@@ -1,10 +1,6 @@
 package libai.fuzzy2.defuzzifiers;
 
 import libai.common.Pair;
-import libai.fuzzy2.Clause;
-import libai.fuzzy2.KnowledgeBase;
-import libai.fuzzy2.operators.activation.ActivationMethod;
-
 import java.util.List;
 
 /**

@@ -60,7 +60,6 @@ public class TriangularShapeTest extends TestCase {
 		TriangularShape set = new TriangularShape(0, 5, 10);
 		String xml = set.toXMLString("");
 
-		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes()));

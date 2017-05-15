@@ -38,9 +38,6 @@ import static org.junit.Assert.assertTrue;
  */
 public class LVQTest {
 
-	public LVQTest() {
-	}
-
 	@Test
 	public void testDemo() {
 		int n = 6;

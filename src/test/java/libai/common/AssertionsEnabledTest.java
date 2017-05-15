@@ -28,7 +28,7 @@ import org.junit.Test;
 /**
  * @author Federico Vera {@literal <dktcoding [at] gmail>}
  */
-public class testAssertionsEnabled {
+public class AssertionsEnabledTest {
 	@Test(expected = AssertionError.class)
 	public void testAssertionsEnabled() {
 		assert false;
