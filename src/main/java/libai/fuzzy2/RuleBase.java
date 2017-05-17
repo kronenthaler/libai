@@ -90,7 +90,7 @@ public class RuleBase implements XMLSerializer {
 		}
 
 		Map<String, Double> result = new HashMap<>();
-		for(String variableName : outputVariables.keySet()){ // for each
+		for(String variableName : outputVariables.keySet()){
 			FuzzyVariable variable = knowledgeBase.getVariable(variableName);
 			double value = variable.defuzzify(activationMethod, knowledgeBase, outputVariables.get(variableName));
 			result.put(variableName, value);

@@ -46,6 +46,18 @@ public class CenterOfGravityTest {
 	}
 
 	@Test
+	public void testRiemannTriangle(){
+		TriangularShape a = new TriangularShape(0, 1, 2);
+		TriangularShape b = new TriangularShape(1, 2, 3);
+		ArrayList<Pair<Double, Double>> points = new ArrayList<>();
+		for(double x=0; x < 4; x+=0.01){
+			points.add(new Pair<>(x, Math.max(Math.min(0.25, a.eval(x)), Math.min(0.5, b.eval(x)))));
+		}
+
+		assertEquals(1, new CenterOfGravity().riemmanSum(points), 1.e-8);
+	}
+
+	@Test
 	public void testCompoundedTriangle(){
 		TriangularShape a = new TriangularShape(0, 1, 2);
 		TriangularShape b = new TriangularShape(1, 2, 3);

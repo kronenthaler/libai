@@ -149,7 +149,7 @@ public class NaiveBayes {
 		Attribute winner = null;
 		double max = -Double.MAX_VALUE;
 		for (Attribute c : params.keySet()) {
-			double tmp = P(c, x);
+			double tmp = probability(c, x);
 			if (tmp > max) {
 				max = tmp;
 				winner = c;
@@ -161,11 +161,11 @@ public class NaiveBayes {
 	//P(H|x) = P(x|H)P(H) / P(x)
 	//relaxed calculation of P(H|x). the exact value is not necessary, just to know which class
 	//has the highest value.
-	private double P(Attribute h, List<Attribute> x) {
-		return P(x, h) * P(h);
+	private double probability(Attribute h, List<Attribute> x) {
+		return probability(x, h) * probability(h);
 	}
 
-	private double P(List<Attribute> x, Attribute h) {
+	private double probability(List<Attribute> x, Attribute h) {
 		double p = 1;
 		//look for all records in ds with class h.
 		for (int k = 0, n = x.size(); k < n; k++) {
@@ -180,7 +180,7 @@ public class NaiveBayes {
 	}
 
 	//laplace's correction. x+1 / |d|+|c|
-	private double P(Attribute h) {
+	private double probability(Attribute h) {
 		return (((Integer) params.get(h)[outputIndex]) + 1) / (double) (totalCount + params.size());
 	}
 
