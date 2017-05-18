@@ -4,13 +4,16 @@ services:
 
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get install -y octave
+  - sudo apt-get install -y octave jq
+  - wget -O ~/codacy-coverage-reporter-assembly-latest.jar $(curl https://api.github.com/repos/codacy/codacy-coverage-reporter/releases/latest | jq -r .assets[0].browser_download_url)
 
 language: java
-script: mvn test 
+script: mvn test
 
 after_success:
   - mvn clean test jacoco:report coveralls:report
+  - java -cp ~/codacy-coverage-reporter-assembly-latest.jar com.codacy.CodacyCoverageReporter -l Java -r target/site/jacoco/jacoco.xml
 
-# add later on a deploy section to place this somewhere so it can be used as a
-# dependency
+env:
+  global:
+    secure: SANCGahKaQKz+pwc3I4Ah9Eu5NhAvF/eTRkzZ7eceA5FMsQ+D639MBIL0CxWSdN7BgdEEB/Et1U7StO34wHW1Q9j7Pg+nGaWfRsowISUTpXHP/IJyDre0I8MpADwps0BKzO3YPIqy7yD3bjYx+HRQLOtQRcNJLIK2ewH2qXKqDQ=
