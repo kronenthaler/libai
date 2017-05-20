@@ -1,6 +1,5 @@
 package libai.fuzzy2.defuzzifiers;
 
-import libai.common.Pair;
 import libai.fuzzy2.sets.TriangularShape;
 import org.junit.Test;
 

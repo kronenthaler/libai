@@ -1,9 +1,6 @@
 package libai.fuzzy2.defuzzifiers;
 
-import libai.common.Pair;
-
 import java.awt.*;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;

@@ -1,7 +1,6 @@
 package libai.fuzzy2;
 
 import libai.fuzzy2.defuzzifiers.Defuzzifier;
-import libai.fuzzy2.operators.Operator;
 import libai.fuzzy2.operators.accumulation.Accumulation;
 import libai.fuzzy2.operators.activation.ActivationMethod;
 import libai.fuzzy2.operators.AndMethod;
