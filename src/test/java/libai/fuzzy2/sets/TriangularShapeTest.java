@@ -56,6 +56,20 @@ public class TriangularShapeTest extends TestCase {
 	}
 
 	@Test
+	public void testRightLeftTriangle(){
+		TriangularShape set = new TriangularShape(0, 0, 10);
+
+		assertTrue(set.eval(0) == 1);
+	}
+
+	@Test
+	public void testRightRightTriangle(){
+		TriangularShape set = new TriangularShape(0, 10, 10);
+
+		assertTrue(set.eval(10) == 1);
+	}
+
+	@Test
 	public void testXMLConstructor() throws Exception {
 		TriangularShape set = new TriangularShape(0, 5, 10);
 		String xml = set.toXMLString("");

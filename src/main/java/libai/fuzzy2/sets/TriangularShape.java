@@ -43,20 +43,25 @@ import org.w3c.dom.Node;
  * @author kronenthaler
  */
 public class TriangularShape implements FuzzySet, XMLSerializer {
-	private double a, b, c;
+	private double a;
+	private double b;
+	private double c;
 
-	public TriangularShape(Node xmlNode) throws Exception {
+	public TriangularShape(Node xmlNode) {
 		load(xmlNode);
 	}
 
-	public TriangularShape(double _a, double _b, double _c) {
-		a = _a;
-		b = _b;
-		c = _c;
+	public TriangularShape(double a, double b, double c){
+		this.a = a;
+		this.b = b;
+		this.c = c;
 	}
 
 	@Override
 	public double eval(double s) {
+		if ((a == b && s == a) || (b == c && s == b))
+			return 1;
+
 		if (s <= a || s >= c)
 			return 0;
 

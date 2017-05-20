@@ -13,6 +13,8 @@ import org.w3c.dom.Element;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
@@ -149,5 +151,56 @@ public class FuzzyControllerTest {
 
 		FuzzyController newFc = new FuzzyController(root);
 		assertEquals(fc.toXMLString(""), newFc.toXMLString(""));
+	}
+
+	@Test
+	public void testFireRules(){
+		FuzzyTerm dry = new FuzzyTerm(new TriangularShape(0,2.5, 5), "dry");
+		FuzzyTerm normal = new FuzzyTerm(new TriangularShape(2.5,5, 7.5), "normal");
+		FuzzyTerm wet = new FuzzyTerm(new TriangularShape(5,7.5, 10), "wet");
+		FuzzyVariable dryness = new FuzzyVariable("dryness", 0, 10, "", dry, normal, wet);
+
+		FuzzyTerm dark = new FuzzyTerm(new TriangularShape(2,4, 6), "dark");
+		FuzzyTerm light = new FuzzyTerm(new TriangularShape(0,2,4), "light");
+		FuzzyVariable lighting = new FuzzyVariable("lighting", 0, 6, "", dark, light);
+
+		FuzzyTerm off = new FuzzyTerm(new TriangularShape(1,2,3), "off");
+		FuzzyTerm on = new FuzzyTerm(new TriangularShape(0,1,2), "on");
+		FuzzyVariable alarm = new FuzzyVariable("alarm", 0, 3, 0, "", Accumulation.SUM, Defuzzifier.COG, on, off);
+
+		FuzzyTerm _long = new FuzzyTerm(new TriangularShape(2,4,6), "long");
+		FuzzyTerm none = new FuzzyTerm(new TriangularShape(0,0,3), "none");
+		FuzzyTerm _short = new FuzzyTerm(new TriangularShape(0,2,4), "short");
+		FuzzyVariable sprinkles = new FuzzyVariable("sprinkles", 0, 6, 0, "", Accumulation.MAX, Defuzzifier.MOM, _long, none, _short);
+
+		KnowledgeBase kb = new KnowledgeBase(dryness, lighting, alarm, sprinkles);
+
+		Antecedent a1 = new Antecedent(new Clause("lighting", "dark"), new Clause("dryness", "normal"));
+		Consequent c1 = new Consequent(new Clause("sprinkles", "short"), new Clause("alarm", "off"));
+		Rule r1 = new Rule("rule1", 1, AndMethod.PROD, a1, c1);
+
+		Antecedent a2 = new Antecedent(new Clause("lighting", "dark"), new Clause("dryness", "dry"));
+		Consequent c2 = new Consequent(new Clause("sprinkles", "long"), new Clause("alarm", "on"));
+		Rule r2 = new Rule("rule2", 1, AndMethod.MIN, a2, c2);
+
+		Antecedent a3 = new Antecedent(new Clause("lighting", "light"), new Clause("dryness", "wet"));
+		Consequent c3 = new Consequent(new Clause("sprinkles", "none"), new Clause("alarm", "off"));
+		Rule r3 = new Rule("rule3", 1, OrMethod.MAX, Rule.Connector.OR, a3, c3);
+
+		Antecedent a4 = new Antecedent(new Clause("lighting", "light"), new Clause("dryness", "dry"));
+		Consequent c4 = new Consequent(new Clause("sprinkles", "long"), new Clause("alarm", "on"));
+		Rule r4 = new Rule("rule4", 1, AndMethod.MIN, a4, c4);
+
+		RuleBase rb = new RuleBase("RB1", ActivationMethod.PROD, r1, r2, r3, r4);
+
+		FuzzyController controller = new FuzzyController("system", kb, rb);
+
+		Map<String, Double> vars = new HashMap<>();
+		vars.put("lighting", 3.);
+		vars.put("dryness", 4.35);
+		Map<String, Double> adjusment = controller.fire(vars);
+
+		assertEquals(1.625, adjusment.get("alarm"), 1.e-3);
+		assertEquals(0, adjusment.get("sprinkles"), 1.e-3);
 	}
 }

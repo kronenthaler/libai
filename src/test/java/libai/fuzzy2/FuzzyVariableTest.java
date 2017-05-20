@@ -132,6 +132,6 @@ public class FuzzyVariableTest {
 		clauses.add(new Pair<>(0.375, new Clause("sprinkles", "short")));
 
 		double sprinklesValue = sprinkles.defuzzify(ActivationMethod.MIN, kb, clauses);
-		assertEquals(0.75, sprinklesValue, 1.e-3);
+		assertEquals(0.745, sprinklesValue, 1.e-3);
 	}
 }

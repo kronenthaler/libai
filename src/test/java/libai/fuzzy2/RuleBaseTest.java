@@ -172,6 +172,6 @@ public class RuleBaseTest {
 		Map<String, Double> adjusment = rb.fire(vars, kb);
 
 		assertEquals(1.625, adjusment.get("alarm"), 1.e-3);
-		assertEquals(0.01, adjusment.get("sprinkles"), 1.e-3);
+		assertEquals(0, adjusment.get("sprinkles"), 1.e-3);
 	}
 }

@@ -60,6 +60,6 @@ public class Singleton implements FuzzySet {
 
 	@Override
 	public String toString() {
-		return "Singleton(" + p + ")";
+		return "SingletonShape(" + p + ")";
 	}
 }
