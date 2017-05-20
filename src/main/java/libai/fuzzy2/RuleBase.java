@@ -43,7 +43,7 @@ public class RuleBase implements XMLSerializer {
 	@Override
 	public String toXMLString(String indent) {
 		StringBuilder str = new StringBuilder();
-		str.append(String.format("%s<RuleBase name=\"%s\" type=\"mamdani\" activationMethod=\"%s\" andMethod=\"%s\" orMethod=\"%s\">\n", indent, name, activationMethod, andMethod, orMethod));
+		str.append(String.format("%s<RuleBase name=\"%s\" type=\"mamdani\" activationMethod=\"%s\" andMethod=\"%s\" orMethod=\"%s\">\n", indent, getName(), activationMethod, andMethod, orMethod));
 		for (Rule r : rules) {
 			str.append(String.format("%s\n", r.toXMLString(indent + "\t")));
 		}

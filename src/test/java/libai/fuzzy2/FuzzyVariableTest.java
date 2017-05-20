@@ -1,7 +1,9 @@
 package libai.fuzzy2;
 
+import libai.common.Pair;
 import libai.fuzzy2.defuzzifiers.Defuzzifier;
 import libai.fuzzy2.operators.accumulation.Accumulation;
+import libai.fuzzy2.operators.activation.ActivationMethod;
 import libai.fuzzy2.sets.FuzzySet;
 import libai.fuzzy2.sets.TriangularShape;
 import org.junit.Test;
@@ -12,6 +14,8 @@ import org.w3c.dom.Node;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -97,5 +101,37 @@ public class FuzzyVariableTest {
 
 		FuzzyVariable newVar = new FuzzyVariable(root);
 		assertEquals(var.toXMLString(""), newVar.toXMLString(""));
+	}
+
+	@Test
+	public void testDeffuzify(){
+		FuzzyTerm off = new FuzzyTerm(new TriangularShape(1,2,3), "off");
+		FuzzyTerm on = new FuzzyTerm(new TriangularShape(0,1,2), "on");
+		FuzzyVariable alarm = new FuzzyVariable("alarm", 0, 3, 0, "", Accumulation.SUM, Defuzzifier.COG, on, off);
+
+		FuzzyTerm _long = new FuzzyTerm(new TriangularShape(2,4,6), "long");
+		FuzzyTerm none = new FuzzyTerm(new TriangularShape(0,0,3), "none");
+		FuzzyTerm _short = new FuzzyTerm(new TriangularShape(0,2,4), "short");
+		FuzzyVariable sprinkles = new FuzzyVariable("sprinkles", 0, 6, 0, "", Accumulation.MAX, Defuzzifier.MOM, _long, none, _short);
+
+		KnowledgeBase kb = new KnowledgeBase(alarm, sprinkles);
+
+		List<Pair<Double, Clause>> clauses = new ArrayList<>();
+		clauses.add(new Pair<>(0.25, new Clause("alarm", "on")));
+		clauses.add(new Pair<>(0.5, new Clause("alarm", "off")));
+		clauses.add(new Pair<>(0.25, new Clause("alarm", "on")));
+		clauses.add(new Pair<>(0.375, new Clause("alarm", "off")));
+
+		double alarmValue = alarm.defuzzify(ActivationMethod.MIN, kb, clauses);
+		assertEquals(1.608, alarmValue, 1.e-3);
+
+		clauses = new ArrayList<>();
+		clauses.add(new Pair<>(0.25, new Clause("sprinkles", "long")));
+		clauses.add(new Pair<>(0.5, new Clause("sprinkles", "none")));
+		clauses.add(new Pair<>(0.25, new Clause("sprinkles", "long")));
+		clauses.add(new Pair<>(0.375, new Clause("sprinkles", "short")));
+
+		double sprinklesValue = sprinkles.defuzzify(ActivationMethod.MIN, kb, clauses);
+		assertEquals(0.75, sprinklesValue, 1.e-3);
 	}
 }

@@ -2,8 +2,11 @@ package libai.fuzzy2.defuzzifiers;
 
 import libai.common.Pair;
 
+import java.awt.*;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -15,40 +18,45 @@ public class CenterOfGravity extends Defuzzifier {
 	 * It assumes the x points are equally spaced across the whole domain of the function.
 	 **/
 	@Override
-	public double getValue(List<Pair<Double, Double>> function) {
-		Collections.sort(function);
+	public double getValue(List<Point.Double> function) {
+		Collections.sort(function, new Comparator<Point.Double>() {
+			@Override
+			public int compare(Point.Double o1, Point.Double o2) {
+				return (int)(o1.x - o2.x);
+			}
+		});
 
 		double denominator = riemmanSum(function);
 
 		// copy the points but applying th x.f(x)
-		List<Pair<Double, Double>> xFunction = new ArrayList<>();
-		for(Pair<Double, Double> point : function) {
-			xFunction.add(new Pair<>(point.first, point.first * point.second));
+		List<Point.Double> xFunction = new ArrayList<>();
+		for(Point.Double point : function) {
+			xFunction.add(new Point.Double(point.x, point.x * point.y));
 		}
 		double nominator = riemmanSum(xFunction);
 
 		return nominator / denominator;
 	}
 
-	protected double riemmanSum(List<Pair<Double, Double>> function){
-		return riemmanSum(function, function.get(function.size() - 1).first);
+	protected double riemmanSum(List<Point.Double> function){
+		return riemmanSum(function, function.get(function.size() - 1).x);
 	}
 
-	protected double riemmanSum(List<Pair<Double, Double>> function, double maxX){
+	protected double riemmanSum(List<Point.Double> function, double maxX){
 		double result = 0;
 		for(int i=0;i<function.size() - 1;i++){
-			Pair<Double, Double> point =  function.get(i);
-			Pair<Double, Double> point1 =  function.get(i+1);
-			double delta = point1.first - point.first;
+			Point.Double point =  function.get(i);
+			Point.Double point1 =  function.get(i+1);
+			double delta = point1.x - point.x;
 
-			if(point.first < maxX && point1.first > maxX){
-				double t = (maxX - point.first) / delta;
-				double y = point.second + (t * delta);
-				result += ((point.second + y)/2.) * Math.abs(maxX - point.first);
+			if(point.x < maxX && point1.x > maxX){
+				double t = (maxX - point.x) / delta;
+				double y = point.y + (t * delta);
+				result += ((point.y + y)/2.) * Math.abs(maxX - point.x);
 				break;
 			}
 
-			result += ((point.second + point1.second)/2.) * delta;
+			result += ((point.y + point1.y)/2.) * delta;
 		}
 		return result;
 	}

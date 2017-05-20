@@ -33,7 +33,7 @@ public class FuzzyController implements XMLSerializer {
 	@Override
 	public String toXMLString(String indent) {
 		StringBuilder str = new StringBuilder();
-		str.append(String.format("%s<FuzzyController name=\"%s\" ip=\"%s\">\n", indent, name, ip));
+		str.append(String.format("%s<FuzzyController name=\"%s\" ip=\"%s\">\n", indent, getName(), getIpAddress()));
 		str.append(String.format("%s\n", knowledgeBase.toXMLString(indent + "\t")));
 		str.append(String.format("%s\n", ruleBase.toXMLString(indent + "\t")));
 		str.append(String.format("%s</FuzzyController>", indent));

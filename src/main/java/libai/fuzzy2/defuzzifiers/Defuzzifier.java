@@ -1,6 +1,8 @@
 package libai.fuzzy2.defuzzifiers;
 
 import libai.common.Pair;
+
+import java.awt.*;
 import java.util.List;
 
 /**
@@ -11,7 +13,7 @@ public abstract class Defuzzifier {
 	public static final Defuzzifier COG = new CenterOfGravity();
 	public static final Defuzzifier COA = new CenterOfArea();
 
-	public abstract double getValue(List<Pair<Double, Double>> function);
+	public abstract double getValue(List<Point.Double> function);
 
 	public static Defuzzifier fromString(String name){
 		if (MOM.toString().equalsIgnoreCase(name))

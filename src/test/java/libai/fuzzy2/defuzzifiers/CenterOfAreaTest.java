@@ -3,6 +3,8 @@ package libai.fuzzy2.defuzzifiers;
 import libai.common.Pair;
 import libai.fuzzy2.sets.TriangularShape;
 import org.junit.Test;
+
+import java.awt.*;
 import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
@@ -15,9 +17,9 @@ public class CenterOfAreaTest {
 	public void testCompoundTriangles(){
 		TriangularShape a = new TriangularShape(0, 4, 4);
 		TriangularShape b = new TriangularShape(4, 5, 10);
-		ArrayList<Pair<Double, Double>> points = new ArrayList<>();
+		ArrayList<Point.Double> points = new ArrayList<>();
 		for(double x=0; x < 10; x+=0.001){
-			points.add(new Pair<>(x, Math.max(a.eval(x), b.eval(x))));
+			points.add(new Point.Double(x, Math.max(a.eval(x), b.eval(x))));
 		}
 
 		// area of first triangle = 2,
@@ -30,9 +32,9 @@ public class CenterOfAreaTest {
 	@Test
 	public void testSimpleTriangle(){
 		TriangularShape a = new TriangularShape(0, 3, 6);
-		ArrayList<Pair<Double, Double>> points = new ArrayList<>();
+		ArrayList<Point.Double> points = new ArrayList<>();
 		for(double x=0; x < 10; x+=0.001){
-			points.add(new Pair<>(x, a.eval(x)));
+			points.add(new Point.Double(x, a.eval(x)));
 		}
 
 		assertEquals(3, Defuzzifier.COA.getValue(points), 1.e-3);

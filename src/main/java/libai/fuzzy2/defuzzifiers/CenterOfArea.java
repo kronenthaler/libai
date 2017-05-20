@@ -2,7 +2,10 @@ package libai.fuzzy2.defuzzifiers;
 
 import libai.common.Pair;
 
+import java.awt.*;
+import java.awt.geom.Point2D;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -10,12 +13,17 @@ import java.util.List;
  */
 public class CenterOfArea extends CenterOfGravity {
 	@Override
-	public double getValue(List<Pair<Double, Double>> function) {
-		Collections.sort(function);
+	public double getValue(List<Point.Double> function) {
+		Collections.sort(function, new Comparator<Point.Double>() {
+			@Override
+			public int compare(Point.Double o1, Point.Double o2) {
+				return (int)(o1.x - o2.x);
+			}
+		});
 
 		double total = riemmanSum(function);
-		double lo = function.get(0).first;
-		double hi = function.get(function.size()-1).first;
+		double lo = function.get(0).x;
+		double hi = function.get(function.size()-1).x;
 
 
 		while(lo < hi){

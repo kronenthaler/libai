@@ -9,6 +9,8 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.awt.*;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -100,11 +102,21 @@ public class FuzzyVariable implements XMLSerializer {
 	}
 
 	public double defuzzify(ActivationMethod activationMethod, KnowledgeBase knowledgeBase, List<Pair<Double, Clause>> terms){
-		// iterate over the variable domain, with small intervals.
-		// evaluate each term using the activation method with the Double
-		// take the value and accumulate it on a list of points (x, y) to be passed to the defuzzify operator
+		List<Point.Double> function = new ArrayList<>();
+		double delta = 0.01;
+		for(double x = domainLeft; x <= domainRight ; x += delta){
+			Point.Double p = new Point.Double(x, 0);
 
-		return 0;
+			for (Pair<Double, Clause> term : terms){
+				double y = term.second.eval(x, knowledgeBase); //evaluate the term in the x
+				y = activationMethod.eval(term.first, y); // result after calculate the activation of the rule.
+				p.y = accumulation.eval(p.y, y); // accumulate the result of this term.
+			}
+
+			function.add(p);
+		}
+
+		return defuzzifier.getValue(function);
 	}
 
 	enum Type {

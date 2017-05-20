@@ -10,7 +10,7 @@ import java.util.*;
 /**
  * Created by kronenthaler on 30/04/2017.
  */
-public class Antecedent implements XMLSerializer, Iterable<Clause> {
+public class Antecedent implements XMLSerializer {
 	private List<Clause> clauses = new ArrayList<>();
 
 	public Antecedent(Node xmlNode) {
@@ -52,10 +52,5 @@ public class Antecedent implements XMLSerializer, Iterable<Clause> {
 		}
 
 		return result;
-	}
-
-	@Override
-	public Iterator<Clause> iterator() {
-		return clauses.iterator();
 	}
 }
