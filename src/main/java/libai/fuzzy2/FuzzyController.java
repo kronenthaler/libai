@@ -57,8 +57,8 @@ public class FuzzyController implements XMLSerializer {
 	 * @param variables Map containing the variable name and its current value at the moment the rules are going to be evaluated.
 	 * @return A map with all output variables activated and their corresponding value.
 	 **/
-	public Map<String, Double> fire(Map<String, Double> variables){
-		return ruleBase.fire(variables, knowledgeBase);
+	public Map<String, Double> fire(Map<String, Double> variables, double delta){
+		return ruleBase.fire(variables, knowledgeBase, delta);
 	}
 
 	public String getName() {

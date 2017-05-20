@@ -75,7 +75,7 @@ public class RuleBase implements XMLSerializer {
 		}
 	}
 
-	public Map<String, Double> fire(Map<String, Double> variables, KnowledgeBase knowledgeBase){
+	public Map<String, Double> fire(Map<String, Double> variables, KnowledgeBase knowledgeBase, double delta){
 		Map<String, List<Pair<Double, Clause>>> outputVariables = new HashMap<>();
 
 		for(Rule r : rules){
@@ -92,7 +92,7 @@ public class RuleBase implements XMLSerializer {
 		Map<String, Double> result = new HashMap<>();
 		for(String variableName : outputVariables.keySet()){
 			FuzzyVariable variable = knowledgeBase.getVariable(variableName);
-			double value = variable.defuzzify(activationMethod, knowledgeBase, outputVariables.get(variableName));
+			double value = variable.defuzzify(activationMethod, knowledgeBase, delta, outputVariables.get(variableName));
 			result.put(variableName, value);
 		}
 

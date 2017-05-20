@@ -122,7 +122,7 @@ public class FuzzyVariableTest {
 		clauses.add(new Pair<>(0.25, new Clause("alarm", "on")));
 		clauses.add(new Pair<>(0.375, new Clause("alarm", "off")));
 
-		double alarmValue = alarm.defuzzify(ActivationMethod.MIN, kb, clauses);
+		double alarmValue = alarm.defuzzify(ActivationMethod.MIN, kb, 0.01, clauses);
 		assertEquals(1.608, alarmValue, 1.e-3);
 
 		clauses = new ArrayList<>();
@@ -131,7 +131,7 @@ public class FuzzyVariableTest {
 		clauses.add(new Pair<>(0.25, new Clause("sprinkles", "long")));
 		clauses.add(new Pair<>(0.375, new Clause("sprinkles", "short")));
 
-		double sprinklesValue = sprinkles.defuzzify(ActivationMethod.MIN, kb, clauses);
+		double sprinklesValue = sprinkles.defuzzify(ActivationMethod.MIN, kb, 0.01, clauses);
 		assertEquals(0.745, sprinklesValue, 1.e-3);
 	}
 }

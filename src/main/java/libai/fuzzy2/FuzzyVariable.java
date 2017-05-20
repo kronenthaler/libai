@@ -101,9 +101,9 @@ public class FuzzyVariable implements XMLSerializer {
 		return null;
 	}
 
-	public double defuzzify(ActivationMethod activationMethod, KnowledgeBase knowledgeBase, List<Pair<Double, Clause>> terms){
+	public double defuzzify(ActivationMethod activationMethod, KnowledgeBase knowledgeBase, double delta, List<Pair<Double, Clause>> terms){
 		List<Point.Double> function = new ArrayList<>();
-		double delta = 0.01;
+
 		for(double x = domainLeft; x <= domainRight ; x += delta){
 			Point.Double p = new Point.Double(x, 0);
 

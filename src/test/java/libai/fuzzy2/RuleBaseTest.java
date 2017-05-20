@@ -169,7 +169,7 @@ public class RuleBaseTest {
 		Map<String, Double> vars = new HashMap<>();
 		vars.put("lighting", 3.);
 		vars.put("dryness", 4.35);
-		Map<String, Double> adjusment = rb.fire(vars, kb);
+		Map<String, Double> adjusment = rb.fire(vars, kb, 0.01);
 
 		assertEquals(1.625, adjusment.get("alarm"), 1.e-3);
 		assertEquals(0, adjusment.get("sprinkles"), 1.e-3);
