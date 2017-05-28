@@ -23,14 +23,14 @@
  */
 package demos.fuzzy;
 
-import libai.fuzzy2.*;
-import libai.fuzzy2.defuzzifiers.Defuzzifier;
-import libai.fuzzy2.operators.AndMethod;
-import libai.fuzzy2.operators.accumulation.Accumulation;
-import libai.fuzzy2.operators.activation.ActivationMethod;
-import libai.fuzzy2.sets.LeftLinearShape;
-import libai.fuzzy2.sets.RightLinearShape;
-import libai.fuzzy2.sets.TriangularShape;
+import libai.fuzzy.*;
+import libai.fuzzy.defuzzifiers.Defuzzifier;
+import libai.fuzzy.operators.AndMethod;
+import libai.fuzzy.operators.accumulation.Accumulation;
+import libai.fuzzy.operators.activation.ActivationMethod;
+import libai.fuzzy.sets.LeftLinearShape;
+import libai.fuzzy.sets.RightLinearShape;
+import libai.fuzzy.sets.TriangularShape;
 
 import javax.swing.*;
 import java.awt.*;
@@ -45,7 +45,7 @@ public class FuzzyPanel extends javax.swing.JPanel {
 	FuzzyTerm left = new FuzzyTerm(new RightLinearShape(-1,0), "left");
 	FuzzyTerm middle = new FuzzyTerm(new TriangularShape(-1,0,1), "middle");
 	FuzzyTerm right = new FuzzyTerm(new LeftLinearShape(0, 1), "right");
-	FuzzyVariable position = new libai.fuzzy2.FuzzyVariable("position", -2,2,"meters", left, middle, right);
+	FuzzyVariable position = new libai.fuzzy.FuzzyVariable("position", -2,2,"meters", left, middle, right);
 
 	FuzzyTerm movingLeft = new FuzzyTerm(new RightLinearShape(-0.5,0), "movingLeft");
 	FuzzyTerm standingStill = new FuzzyTerm(new TriangularShape(-0.5,0,1), "standingStill");
@@ -69,7 +69,7 @@ public class FuzzyPanel extends javax.swing.JPanel {
 	Rule r9 = new Rule("r9", 1, AndMethod.MIN, new Antecedent(new Clause("position", "right"), new Clause("velocity", "movingRight")), new Consequent(new Clause("force", "pull")));
 	RuleBase rb = new RuleBase("rules", ActivationMethod.MIN, r1, r2, r3, r4, r5, r6, r7, r8, r9);
 
-	FuzzyController controller = new FuzzyController("car-controll", kb, rb);
+	FuzzyController controller = new FuzzyController("car-control", kb, rb);
 
 	class Car {
 		double position; // m

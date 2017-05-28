@@ -1,101 +1,100 @@
-/*
- * MIT License
- *
- * Copyright (c) 2009-2016 Ignacio Calderon <https://github.com/kronenthaler>
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
 package libai.fuzzy;
 
-import libai.common.Pair;
-import libai.fuzzy.sets.FuzzySet;
+import libai.fuzzy.operators.AndMethod;
+import libai.fuzzy.operators.Operator;
+import libai.fuzzy.operators.OrMethod;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 
-import java.util.ArrayList;
-
+import java.util.Map;
 
 /**
- * Implementation of a fuzzy rule. It is constructed with a condition and a set of
- * one or more "actions". In the bottom line, the actions are fuzzy sets. The
- * important part in this reasoning process is related with the concept of
- * FuzzyVariable. A FuzzyVariable allow creating linguistic variables with a concrete
- * meaning, therefore, all the fuzzy sets in this actions must belong to one
- * fuzzy group attached to the engine.
- *
- * @author kronenthaler
+ * Created by kronenthaler on 30/04/2017.
  */
-public class Rule {
-	/**
-	 * Condition tree for this rule.
-	 */
-	private Condition cond;
+public class Rule implements XMLSerializer {
+	private Operator operator;
+	private String name;
+	private double weight;
+	private Connector connector = Connector.AND;
+	private Antecedent antecedent;
+	private Consequent consequent;
 
-	/**
-	 * Set of actions to be triggered if the condition is 'fulfill'
-	 */
-	private ArrayList<FuzzySet> actions;
-
-	/**
-	 * Constructor. Create a new rule with a condition tree and a list of fuzzy
-	 * sets (actions).
-	 *
-	 * @param _cond The condition tree for this rule.
-	 * @param acts  The actions for this rule.
-	 */
-	public Rule(Condition _cond, FuzzySet... acts) {
-		cond = _cond;
-		actions = new ArrayList<>();
-		for (FuzzySet a : acts)
-			actions.add(a);
+	public Rule(Node xmlNode) {
+		load(xmlNode);
+	}
+	public Rule(String name, double weight, Operator operator, Antecedent antecedent, Consequent consequent) {
+		this(name, weight, operator, Connector.AND, antecedent, consequent);
 	}
 
-	/**
-	 * Fire the rule. Evaluate the condition, calculate the respective tau, and
-	 * make the combination process over the actions. Returning a support set
-	 * for each action in the rule. This results are combined in the engine to
-	 * the defuzzify process.
-	 *
-	 * @return An array of ArrayLists of pairs double-double, containing each
-	 * one the support calculated for the specific set of the action.
-	 */
-	public ArrayList<Pair<Double, Double>>[] fire() {
-		ArrayList<Pair<Double, Double>> ret[] = new ArrayList[actions.size()];
-		double tau = cond.eval();
-		int i = 0;
-		for (FuzzySet set : actions) {
-			ret[i] = new ArrayList<>();
-			ArrayList<Double> support = set.getSupport();
+	public Rule(String name, double weight, Operator operator, Connector connector, Antecedent antecedent, Consequent consequent) {
+		if(connector == Connector.AND && !(operator instanceof AndMethod))
+			throw new IllegalArgumentException("Operator must be an instance of AndMethod");
 
-			for (Double d : support)
-				ret[i].add(new Pair<>(d, set.eval(d) * tau));
+		if(connector == Connector.OR && !(operator instanceof OrMethod))
+			throw new IllegalArgumentException("Operator must be an instance of OrMethod");
 
-			i++;
+		this.name = name;
+		this.weight = weight;
+		this.operator = operator;
+		this.antecedent = antecedent;
+		this.consequent = consequent;
+		this.connector = connector;
+	}
+
+	@Override
+	public String toXMLString(String indent) {
+		StringBuilder str = new StringBuilder();
+		str.append(String.format("%s<Rule name=\"%s\" weight=\"%f\" operator=\"%s\" connector=\"%s\">\n", indent, name, weight, operator, connector.getText()));
+		str.append(String.format("%s\n", antecedent.toXMLString(indent + "\t")));
+		str.append(String.format("%s\n", consequent.toXMLString(indent + "\t")));
+		str.append(String.format("%s</Rule>", indent));
+		return str.toString();
+	}
+
+	@Override
+	public void load(Node xmlNode) {
+		NamedNodeMap attributes = xmlNode.getAttributes();
+		name = attributes.getNamedItem("name").getTextContent();
+		weight = Double.parseDouble(attributes.getNamedItem("weight").getTextContent());
+		operator = Operator.fromString(attributes.getNamedItem("operator").getTextContent());
+
+		if (attributes.getNamedItem("connector") != null)
+			connector = Connector.fromString(attributes.getNamedItem("connector").getTextContent());
+
+		antecedent = new Antecedent(((Element) xmlNode).getElementsByTagName("Antecedent").item(0));
+		consequent = new Consequent(((Element) xmlNode).getElementsByTagName("Consequent").item(0));
+	}
+
+	public double getActivationValue(Map<String, Double> variables, KnowledgeBase knowledgeBase){
+		return antecedent.activate(variables, knowledgeBase, operator);
+	}
+
+	public Iterable<Clause> getConsequentClauses() {
+		return consequent;
+	}
+
+	enum Connector {
+		AND("AND"), OR("OR");
+		private String text;
+
+		Connector(String text) {
+			this.text = text;
 		}
-		return ret;
-	}
 
-	/**
-	 * Get the action for at index.
-	 *
-	 * @param index The index for the action.
-	 * @return The fuzzy set associated to that action.
-	 */
-	public FuzzySet getAction(int index) {
-		return actions.get(index);
+		public static Connector fromString(String text) {
+			Connector result = null;
+			for (Connector b : Connector.values()) {
+				if (b.text.equalsIgnoreCase(text)) {
+					result = b;
+					break;
+				}
+			}
+			return result;
+		}
+
+		public String getText() {
+			return this.text;
+		}
 	}
 }

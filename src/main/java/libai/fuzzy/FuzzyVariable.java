@@ -1,102 +1,145 @@
-/*
- * MIT License
- *
- * Copyright (c) 2009-2016 Ignacio Calderon <https://github.com/kronenthaler>
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
 package libai.fuzzy;
 
-import libai.fuzzy.sets.FuzzySet;
+import libai.common.Pair;
+import libai.fuzzy.defuzzifiers.Defuzzifier;
+import libai.fuzzy.operators.accumulation.Accumulation;
+import libai.fuzzy.operators.activation.ActivationMethod;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
-import java.util.HashSet;
-
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
- * Represent a set of fuzzy set with a common meaning. By example, the sets big,
- * medium, small by themselves doesn't mean anything, but if you group this
- * three set under the concept of height, their values may represents inches or
- * meters. This class is vital for the process of reasoning because this class
- * provide the way to get a coherent result of the defuzzify process. Besides,
- * this class hold the final value of this process.
- * <p>
- * So far, this is the only use of this class, but can be useful for other
- * purposes in the future.
- *
- * @author kronenthaler
+ * Created by kronenthaler on 23/04/2017.
  */
-public class FuzzyVariable {
-	/**
-	 * The terms of this group.
-	 */
-	private HashSet<FuzzySet> terms;
+public class FuzzyVariable implements XMLSerializer {
+	protected List<FuzzyTerm> terms; // group of fuzzy terms that this variable can take.
+	protected String name; //name of the linguistic variable that represents
+	protected double domainLeft;
+	protected double domainRight;
+	protected String scale; //label
+	protected Type type = Type.INPUT;
+	// for output variables
+	protected double defaultValue = 0;
+	protected Accumulation accumulation = Accumulation.MAX;
+	protected Defuzzifier defuzzifier = Defuzzifier.COG; //defuzzifier interface?
 
-	/**
-	 * Name that represents this Fuzzy Value.
-	 */
-	private String name;
-
-	/**
-	 * The value associated with this group.
-	 */
-	private Value value;
-
-	/**
-	 * Constructor. Creates a FuzzyVariable with a list of terms.
-	 *
-	 * @param mems List of terms for this fuzzy group.
-	 */
-	public FuzzyVariable(FuzzySet... mems) {
-		value = new Value(0);
-		terms = new HashSet<>();
-
-		for (FuzzySet m : mems)
-			terms.add(m);
+	public FuzzyVariable(Node xmlNode) {
+		load(xmlNode);
+	}
+	public FuzzyVariable(String name, double domainLeft, double domainRight, String scale, FuzzyTerm... terms) {
+		this.name = name;
+		this.domainLeft = domainLeft;
+		this.domainRight = domainRight;
+		this.scale = scale;
+		this.terms = Arrays.asList(terms);
+	}
+	public FuzzyVariable(String name, double domainLeft, double domainRight, double defaultValue, String scale, Accumulation accumulation, Defuzzifier defuzzifier, FuzzyTerm... terms) {
+		this(name, domainLeft, domainRight, scale, terms);
+		this.type = Type.OUTPUT;
+		this.defaultValue = defaultValue;
+		this.accumulation = accumulation;
+		this.defuzzifier = defuzzifier;
 	}
 
-	/**
-	 * Evaluate if a fuzzy set belongs to this group, ie, is in the same
-	 * context.
-	 *
-	 * @param s Fuzzy set to check
-	 * @return true is this set belong to this group, false otherwise.
-	 */
-	public boolean contains(FuzzySet s) {
-		return terms.contains(s);
+	@Override
+	public String toXMLString(String indent) {
+		StringBuffer str = new StringBuffer();
+		str.append(String.format("%s<FuzzyVariable name=\"%s\" domainLeft=\"%f\" domainRight=\"%f\" scale=\"%s\" type=\"%s\"", indent, name, domainLeft, domainRight, scale, type.getText()));
+
+		if (type == Type.OUTPUT)
+			str.append(String.format(" defaultValue=\"%f\" defuzzifier=\"%s\" accumulation=\"%s\"", defaultValue, defuzzifier, accumulation));
+
+		str.append(">\n"); // close tag
+		for (FuzzyTerm t : terms) {
+			str.append(String.format("%s\n", t.toXMLString(indent + "\t")));
+		}
+		str.append(String.format("%s</FuzzyVariable>", indent, name));
+		return str.toString();
 	}
 
-	/**
-	 * Return the value associate with this group, holding the final value of
-	 * the defuzzify process.
-	 *
-	 * @return a value with the final value.
-	 */
-	public Value getValue() {
-		return value;
+	@Override
+	public void load(Node xmlNode) {
+		NamedNodeMap attributes = xmlNode.getAttributes();
+		name = attributes.getNamedItem("name").getTextContent();
+		domainLeft = Double.parseDouble(attributes.getNamedItem("domainLeft").getTextContent());
+		domainRight = Double.parseDouble(attributes.getNamedItem("domainRight").getTextContent());
+
+		// load optional parameters
+		if (attributes.getNamedItem("defaultValue") != null)
+			defaultValue = Double.parseDouble(attributes.getNamedItem("defaultValue").getTextContent());
+
+		if (attributes.getNamedItem("scale") != null)
+			scale = attributes.getNamedItem("scale").getTextContent();
+
+		if (attributes.getNamedItem("type") != null)
+			type = Type.fromString(attributes.getNamedItem("type").getTextContent());
+
+		if (attributes.getNamedItem("accumulation") != null)
+			accumulation = Accumulation.fromString(attributes.getNamedItem("accumulation").getTextContent());
+
+		if (attributes.getNamedItem("defuzzifier") != null)
+			defuzzifier = Defuzzifier.fromString(attributes.getNamedItem("defuzzifier").getTextContent());
+
+		terms = new ArrayList<>();
+		NodeList children = ((Element) xmlNode).getElementsByTagName("FuzzyTerm");
+		for (int i = 0; i < children.getLength(); i++) {
+			terms.add(new FuzzyTerm(children.item(i)));
+		}
 	}
 
-	/**
-	 * Set the value for this group. NOT MUST be invoked by the user.
-	 *
-	 * @param d value to set.
-	 */
-	public void setValue(double d) {
-		value.setValue(d);
+	public FuzzyTerm getTerm(String name){
+		for(FuzzyTerm term : terms)
+			if (term.getName().equals(name))
+				return term;
+		return null;
+	}
+
+	public double defuzzify(ActivationMethod activationMethod, KnowledgeBase knowledgeBase, double delta, List<Pair<Double, Clause>> terms){
+		List<Point.Double> function = new ArrayList<>();
+
+		for(double x = domainLeft; x <= domainRight ; x += delta){
+			Point.Double p = new Point.Double(x, 0);
+
+			for (Pair<Double, Clause> term : terms){
+				double y = term.second.eval(x, knowledgeBase); //evaluate the term in the x
+				y = activationMethod.eval(term.first, y); // result after calculate the activation of the rule.
+				p.y = accumulation.eval(p.y, y); // accumulate the result of this term.
+			}
+
+			function.add(p);
+		}
+
+		return defuzzifier.getValue(function);
+	}
+
+	enum Type {
+		INPUT("input"), OUTPUT("output");
+
+		private String text;
+
+		Type(String text) {
+			this.text = text;
+		}
+
+		public static Type fromString(String text) {
+			Type result = null;
+			for (Type b : Type.values()) {
+				if (b.text.equalsIgnoreCase(text)) {
+					result = b;
+					break;
+				}
+			}
+			return result;
+		}
+
+		public String getText() {
+			return this.text;
+		}
 	}
 }
