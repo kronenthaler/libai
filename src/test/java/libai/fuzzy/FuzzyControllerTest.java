@@ -9,14 +9,19 @@ import libai.fuzzy.sets.TriangularShape;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by kronenthaler on 30/04/2017.
@@ -203,4 +208,69 @@ public class FuzzyControllerTest {
 		assertEquals(1.625, adjusment.get("alarm"), 1.e-3);
 		assertEquals(0, adjusment.get("sprinkles"), 1.e-3);
 	}
+
+	@Test
+	public void testSave() throws IOException {
+		FuzzyTerm bad = new FuzzyTerm(new TriangularShape(0, 3, 10), "bad");
+		FuzzyTerm good = new FuzzyTerm(new TriangularShape(0, 7, 10), "good");
+		FuzzyVariable var = new FuzzyVariable("quality", 0, 10, "stars", bad, good);
+
+		FuzzyTerm cheap = new FuzzyTerm(new TriangularShape(0, 3, 10), "cheap");
+		FuzzyTerm generous = new FuzzyTerm(new TriangularShape(0, 7, 10), "generous");
+		FuzzyVariable tip = new FuzzyVariable("tip", 0, 10, 5, "percentage", Accumulation.SUM, Defuzzifier.MOM, cheap, generous);
+
+		KnowledgeBase kb = new KnowledgeBase(var, tip);
+
+		Clause a = new Clause("variable1", "good");
+		Clause b = new Clause("variable2", "big");
+		Antecedent antecedent = new Antecedent(a, b);
+
+		Clause c = new Clause("variable3", "bad");
+		Clause d = new Clause("variable4", "small");
+		Consequent consequent = new Consequent(c, d);
+
+		Rule ruleA = new Rule("tipper", 1, OrMethod.PROBOR, Rule.Connector.OR, antecedent, consequent);
+		Rule ruleB = new Rule("whatever", 1, AndMethod.MIN, Rule.Connector.AND, antecedent, consequent);
+
+		RuleBase rb = new RuleBase("rulebase", ActivationMethod.MIN, AndMethod.PROD, OrMethod.PROBOR, ruleA, ruleB);
+		FuzzyController fc = new FuzzyController("deController", "home.localhost", kb, rb);
+
+		File file = File.createTempFile("fc__", "fml");
+		assertTrue(fc.save(file.getAbsolutePath()));
+	}
+
+	@Test
+	public void testOpen() throws IOException, ParserConfigurationException, SAXException {
+		FuzzyTerm bad = new FuzzyTerm(new TriangularShape(0, 3, 10), "bad");
+		FuzzyTerm good = new FuzzyTerm(new TriangularShape(0, 7, 10), "good");
+		FuzzyVariable var = new FuzzyVariable("quality", 0, 10, "stars", bad, good);
+
+		FuzzyTerm cheap = new FuzzyTerm(new TriangularShape(0, 3, 10), "cheap");
+		FuzzyTerm generous = new FuzzyTerm(new TriangularShape(0, 7, 10), "generous");
+		FuzzyVariable tip = new FuzzyVariable("tip", 0, 10, 5, "percentage", Accumulation.SUM, Defuzzifier.MOM, cheap, generous);
+
+		KnowledgeBase kb = new KnowledgeBase(var, tip);
+
+		Clause a = new Clause("variable1", "good");
+		Clause b = new Clause("variable2", "big");
+		Antecedent antecedent = new Antecedent(a, b);
+
+		Clause c = new Clause("variable3", "bad");
+		Clause d = new Clause("variable4", "small");
+		Consequent consequent = new Consequent(c, d);
+
+		Rule ruleA = new Rule("tipper", 1, OrMethod.PROBOR, Rule.Connector.OR, antecedent, consequent);
+		Rule ruleB = new Rule("whatever", 1, AndMethod.MIN, Rule.Connector.AND, antecedent, consequent);
+
+		RuleBase rb = new RuleBase("rulebase", ActivationMethod.MIN, AndMethod.PROD, OrMethod.PROBOR, ruleA, ruleB);
+		FuzzyController fc = new FuzzyController("deController", "home.localhost", kb, rb);
+
+		File file = File.createTempFile("fc__", "fml");
+		assertTrue(fc.save(file.getAbsolutePath()));
+
+		FuzzyController fc2 = FuzzyController.open(file.getAbsolutePath());
+		assertEquals(fc.toXMLString(""), fc2.toXMLString(""));
+	}
+
+
 }

@@ -1,9 +1,15 @@
 package libai.fuzzy;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.*;
 import java.util.Map;
 
 /**
@@ -67,5 +73,33 @@ public class FuzzyController implements XMLSerializer {
 
 	public String getIpAddress() {
 		return ip;
+	}
+
+	public static final FuzzyController open(String path) throws IOException, ParserConfigurationException, SAXException {
+		return open(new File(path));
+	}
+
+	public static final FuzzyController open(File file) throws IOException, ParserConfigurationException, SAXException {
+		return open(new FileInputStream(file));
+	}
+
+	public static final FuzzyController open(InputStream inputStream) throws IOException, ParserConfigurationException, SAXException {
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = factory.newDocumentBuilder();
+		Document doc = builder.parse(inputStream);
+		Element root = doc.getDocumentElement();
+
+		return new FuzzyController(root);
+	}
+
+	public boolean save(String path) {
+		try (FileOutputStream fos = new FileOutputStream(path);
+			PrintStream bos = new PrintStream(fos)) {
+			bos.println("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
+			bos.println(toXMLString(""));
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
 	}
 }
