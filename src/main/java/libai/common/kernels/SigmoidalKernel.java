@@ -27,6 +27,7 @@ import libai.common.matrix.Matrix;
 
 /**
  * Sigmoid Kernel. Follows the form: K(x,y) = tanh(a * xy + b), where a & b are parameters of this kernel.
+ *
  * @author kronenthaler
  */
 public class SigmoidalKernel implements Kernel {

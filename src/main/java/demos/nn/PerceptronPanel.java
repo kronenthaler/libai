@@ -33,6 +33,11 @@ import libai.nn.supervised.Adaline;
  * @author kronenthaler
  */
 public class PerceptronPanel extends javax.swing.JPanel {
+	// Variables declaration - do not modify//GEN-BEGIN:variables
+	private javax.swing.JButton jButton1;
+	private javax.swing.JProgressBar jProgressBar1;
+	private javax.swing.JScrollPane jScrollPane1;
+	private javax.swing.JTextPane jTextPane1;
 	/**
 	 * Creates new form PerceptronPanel
 	 */
@@ -130,11 +135,5 @@ public class PerceptronPanel extends javax.swing.JPanel {
 		}).start();
 
 	}//GEN-LAST:event_jButton1ActionPerformed
-
-	// Variables declaration - do not modify//GEN-BEGIN:variables
-	private javax.swing.JButton jButton1;
-	private javax.swing.JProgressBar jProgressBar1;
-	private javax.swing.JScrollPane jScrollPane1;
-	private javax.swing.JTextPane jTextPane1;
 	// End of variables declaration//GEN-END:variables
 }

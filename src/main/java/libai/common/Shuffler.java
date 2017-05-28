@@ -11,19 +11,19 @@ public class Shuffler {
 	protected int[] order;
 	protected Random random;
 
-	public Shuffler(int length){
+	public Shuffler(int length) {
 		this(length, ThreadLocalRandom.current());
 	}
 
-	public Shuffler(int length, Random random){
+	public Shuffler(int length, Random random) {
 		order = new int[length];
-		for(int i=0;i<length;i++)
+		for (int i = 0; i < length; i++)
 			order[i] = i;
 
 		this.random = random;
 	}
 
-	public int[] shuffle(){
+	public int[] shuffle() {
 		for (int i = 0; i < order.length; i++) {
 			int j = random.nextInt(order.length);
 			int aux = order[i];

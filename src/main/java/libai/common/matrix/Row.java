@@ -20,17 +20,6 @@ public class Row extends Matrix {
 		super(copy);
 	}
 
-	@Override
-	public Column transpose() {
-		Column result = new Column(columns);
-		transpose(result);
-		return result;
-	}
-
-	public void transpose(Column result) {
-		System.arraycopy(matrix, 0, result.matrix, 0, matrix.length);
-	}
-
 	public static Row random(int c) {
 		return random(c, true);
 	}
@@ -43,5 +32,16 @@ public class Row extends Matrix {
 		Row ret = new Row(c);
 		ret.fill(signed, rand);
 		return ret;
+	}
+
+	@Override
+	public Column transpose() {
+		Column result = new Column(columns);
+		transpose(result);
+		return result;
+	}
+
+	public void transpose(Column result) {
+		System.arraycopy(matrix, 0, result.matrix, 0, matrix.length);
 	}
 }

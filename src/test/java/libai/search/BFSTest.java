@@ -29,7 +29,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 /**
- *
  * @author Federico Vera {@literal <dktcoding [at] gmail>}
  */
 public class BFSTest {
@@ -40,12 +39,12 @@ public class BFSTest {
 	@Test
 	public void testDemo() {
 		BFS bfs = new BFS();
-		
+
 		State init = new GemPuzzleState(".87654321", null, '-');
 		GemPuzzleState ans = (GemPuzzleState) bfs.search(init);
 		StringBuilder sb = new StringBuilder(DEMO_STEPS.length());
 		ans.printSolutionMoves(sb);
-		
+
 		assertFalse(sb.length() == 0);
 		assertEquals(DEMO_STEPS, sb.toString());
 	}
@@ -53,7 +52,7 @@ public class BFSTest {
 	@Test
 	public void testDemo2() {
 		BFS bfs = new BFS();
-		
+
 		State init = new GemPuzzleState("1234567.8", null, '-');
 		GemPuzzleState ans = (GemPuzzleState) bfs.search(init);
 		StringBuilder sb = new StringBuilder(DEMO_STEPS_2.length());
@@ -64,11 +63,11 @@ public class BFSTest {
 		ans.printSolutionMoves(sb2);
 		assertEquals("-l", sb2.toString());
 	}
-	
+
 	@Test
 	public void testDemo3() {
 		BFS bfs = new BFS();
-		
+
 		State init = new GemPuzzleState("12345.786", null, '-');
 		GemPuzzleState ans = (GemPuzzleState) bfs.search(init);
 		StringBuilder sb = new StringBuilder(DEMO_STEPS_3.length());
@@ -79,7 +78,7 @@ public class BFSTest {
 		ans.printSolutionMoves(sb2);
 		assertEquals("-u", sb2.toString());
 	}
-	
+
 	@Test
 	public void testImpossible() {
 		BFS bfs = new BFS();

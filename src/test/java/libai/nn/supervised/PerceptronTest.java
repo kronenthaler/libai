@@ -35,7 +35,6 @@ import static org.junit.Assert.*;
 import static org.junit.Assume.assumeTrue;
 
 /**
- *
  * @author Federico Vera {@literal <dktcoding [at] gmail>}
  */
 public class PerceptronTest {
@@ -93,7 +92,7 @@ public class PerceptronTest {
 
 	@Test
 	public void testIO() {
-        assumeTrue("Can't use temp dir...", MatrixIOTest.checkTemp());
+		assumeTrue("Can't use temp dir...", MatrixIOTest.checkTemp());
 		Perceptron p = new Perceptron(2, 2, new Random(0));
 		Column[] ins = new Column[4];
 		ins[0] = new Column(2, new double[]{0, 0});
@@ -116,7 +115,7 @@ public class PerceptronTest {
 		assertEquals(1, p.simulate(ins[3]).position(1, 0), 0);
 
 		String foo = System.getProperty("java.io.tmpdir")
-				   + File.separator + "perceptron.tmp";
+				+ File.separator + "perceptron.tmp";
 		new File(foo).deleteOnExit();
 
 		assertTrue(p.save(foo));
@@ -129,9 +128,9 @@ public class PerceptronTest {
 			assertEquals(p.simulate(ins[1]), p2.simulate(ins[1]));
 			assertEquals(p.simulate(ins[2]), p2.simulate(ins[2]));
 			assertEquals(p.simulate(ins[3]), p2.simulate(ins[3]));
-		} catch(IOException e) {
+		} catch (IOException e) {
 			fail();
-		} catch(ClassNotFoundException e1) {
+		} catch (ClassNotFoundException e1) {
 			fail();
 		}
 	}

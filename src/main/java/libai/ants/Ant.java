@@ -96,21 +96,21 @@ public class Ant {
 	}
 
 	/**
-	 * Returns a copy of the Vector with the ant's current solution
-	 *
-	 * @return a copy of the Vector with the ant's current solution
-	 */
-	public Vector<Integer> copySolution() {
-		return new Vector<>(this.solution);
-	}
-
-	/**
 	 * Sets a Vector to be the ant's current solution
 	 *
 	 * @param solution a Vector with a solution
 	 */
 	public void setSolution(Vector<Integer> solution) {
 		this.solution = solution;
+	}
+
+	/**
+	 * Returns a copy of the Vector with the ant's current solution
+	 *
+	 * @return a copy of the Vector with the ant's current solution
+	 */
+	public Vector<Integer> copySolution() {
+		return new Vector<>(this.solution);
 	}
 
 	/**

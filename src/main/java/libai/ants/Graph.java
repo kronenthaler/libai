@@ -38,15 +38,15 @@ import java.io.*;
  */
 public class Graph {
 	/**
-	 * The most important piece of information of this class: the matrix which
-	 * represent the problem graph
-	 */
-	private Matrix M;
-	/**
 	 * If the graph is loaded from a file, this will be a holder for the file's
 	 * source location
 	 */
 	protected String fileSource = "";
+	/**
+	 * The most important piece of information of this class: the matrix which
+	 * represent the problem graph
+	 */
+	private Matrix M;
 
 	/**
 	 * Constructor. Creates a matrix from file

@@ -38,8 +38,8 @@ public class SimpleProgressDisplay implements ProgressDisplay {
 	}
 
 	@Override
-	public void setMinimum(int v) {
-		progress.setMinimum(v);
+	public int getMaximum() {
+		return progress.getMaximum();
 	}
 
 	@Override
@@ -48,23 +48,23 @@ public class SimpleProgressDisplay implements ProgressDisplay {
 	}
 
 	@Override
-	public void setValue(int v) {
-		progress.setValue(v);
-	}
-
-	@Override
-	public int getMaximum() {
-		return progress.getMaximum();
-	}
-
-	@Override
 	public int getMinimum() {
 		return progress.getMinimum();
 	}
 
 	@Override
+	public void setMinimum(int v) {
+		progress.setMinimum(v);
+	}
+
+	@Override
 	public int getValue() {
 		return progress.getValue();
+	}
+
+	@Override
+	public void setValue(int v) {
+		progress.setValue(v);
 	}
 
 }

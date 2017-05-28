@@ -29,7 +29,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 /**
- *
  * @author kronenthaler
  */
 public class AStarTest {
@@ -40,20 +39,20 @@ public class AStarTest {
 	@Test
 	public void testDemo() {
 		AStar bfs = new AStar();
-		
+
 		State init = new GemPuzzleState(".87654321", null, '-');
 		GemPuzzleState ans = (GemPuzzleState) bfs.search(init);
 		StringBuilder sb = new StringBuilder(100);
 		ans.printSolutionMoves(sb);
-		
+
 		assertFalse(sb.length() == 0);
 		assertEquals(DEMO_STEPS, sb.toString());
 	}
-	
+
 	@Test
 	public void testDemo2() {
 		AStar bfs = new AStar();
-		
+
 		State init = new GemPuzzleState("1234567.8", null, '-');
 		GemPuzzleState ans = (GemPuzzleState) bfs.search(init);
 		StringBuilder sb = new StringBuilder(DEMO_STEPS_2.length());
@@ -64,11 +63,11 @@ public class AStarTest {
 		ans.printSolutionMoves(sb2);
 		assertEquals("-l", sb2.toString());
 	}
-	
+
 	@Test
 	public void testDemo3() {
 		AStar bfs = new AStar();
-		
+
 		State init = new GemPuzzleState("12345.786", null, '-');
 		GemPuzzleState ans = (GemPuzzleState) bfs.search(init);
 		StringBuilder sb = new StringBuilder(DEMO_STEPS_3.length());
@@ -79,13 +78,13 @@ public class AStarTest {
 		ans.printSolutionMoves(sb2);
 		assertEquals("-u", sb2.toString());
 	}
-	
+
 	@Test
-	public void testImpossible(){
+	public void testImpossible() {
 		AStar bfs = new AStar();
 
 		State init = new GemPuzzleState("21345678.", null, '\0');
-		GemPuzzleState ans = (GemPuzzleState)bfs.search(init);
+		GemPuzzleState ans = (GemPuzzleState) bfs.search(init);
 
 		assertEquals(ans, null);
 	}

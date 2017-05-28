@@ -43,7 +43,6 @@ import static org.junit.Assert.*;
 import static org.junit.Assume.assumeTrue;
 
 /**
- *
  * @author Federico Vera {@literal <fedevera at unc.edu.ar>}
  */
 public class SVMTest {
@@ -82,22 +81,22 @@ public class SVMTest {
 	@Test
 	public void testTraining() throws Exception {
 		File resourcesDirectory = new File("src/test/resources/tic-tac-toe");
-		String data = new Scanner(resourcesDirectory,"UTF8").useDelimiter("\\Z").next();
+		String data = new Scanner(resourcesDirectory, "UTF8").useDelimiter("\\Z").next();
 
 		String[] lines = data.split("\n");
 
 		Column[] patterns = new Column[lines.length];
 		Column[] answers = new Column[lines.length];
 
-		for(int i = 0; i < lines.length; i++){
+		for (int i = 0; i < lines.length; i++) {
 			String[] tokens = lines[i].split(" ");
 			patterns[i] = new Column(tokens.length - 1);
 			answers[i] = new Column(1);
 
-			for (int j = 0; j < tokens.length - 1; j++){
+			for (int j = 0; j < tokens.length - 1; j++) {
 				patterns[i].position(j, 0, Double.parseDouble(tokens[j]));
 			}
-			answers[i].position(0, 0, Double.parseDouble(tokens[tokens.length-1]));
+			answers[i].position(0, 0, Double.parseDouble(tokens[tokens.length - 1]));
 		}
 
 		SVM net = new SVM(new GaussianKernel(1), new Random(0));
@@ -109,7 +108,7 @@ public class SVMTest {
 	}
 
 	@Test
-	public void testPolynomialKernel()  throws Exception {
+	public void testPolynomialKernel() throws Exception {
 		int n = 100;
 		int t = 40;
 
@@ -129,7 +128,7 @@ public class SVMTest {
 			answers[i] = new Column(1, new double[]{inc % 2 == 0 ? +1 : -1});
 		}
 
-		SVM net = new SVM(new PolynomialKernel(1,0, 2), new Random(0));
+		SVM net = new SVM(new PolynomialKernel(1, 0, 2), new Random(0));
 		net.setTrainingParam(SVM.PARAM_TOLERANCE, 0.01);
 		net.setTrainingParam(SVM.PARAM_C, 0.05);
 		net.setTrainingParam(SVM.PARAM_EPSILON, 0.0001);
@@ -139,7 +138,7 @@ public class SVMTest {
 	}
 
 	@Test
-	public void testSigmoidalKernel()  throws Exception {
+	public void testSigmoidalKernel() throws Exception {
 		int n = 100;
 		int t = 40;
 
@@ -149,7 +148,7 @@ public class SVMTest {
 		Random r = new Random(0);
 		for (int i = 0; i < n; i++) {
 			int inc = r.nextInt(10);
-			patterns[i] = new Column(2, new double[]{i + 1, Math.tanh(i+1) + inc});
+			patterns[i] = new Column(2, new double[]{i + 1, Math.tanh(i + 1) + inc});
 			answers[i] = new Column(1, new double[]{inc > 0 ? +1 : -1});
 		}
 
@@ -159,7 +158,7 @@ public class SVMTest {
 			answers[i] = new Column(1, new double[]{inc > 0 ? +1 : -1});
 		}
 
-		SVM net = new SVM(new SigmoidalKernel(8,0), new Random(0));
+		SVM net = new SVM(new SigmoidalKernel(8, 0), new Random(0));
 		net.setTrainingParam(SVM.PARAM_TOLERANCE, 0.001);
 		net.setTrainingParam(SVM.PARAM_C, 0.005);
 		net.setTrainingParam(SVM.PARAM_EPSILON, 0.0001);
@@ -207,16 +206,16 @@ public class SVMTest {
 			for (int i = n; i < patterns.length; i++) {
 				assertEquals(net.simulate(patterns[i]).position(0, 0), net2.simulate(patterns[i]).position(0, 0), 0);
 			}
-		} catch(IOException e) {
+		} catch (IOException e) {
 			fail();
-		} catch(ClassNotFoundException e1) {
+		} catch (ClassNotFoundException e1) {
 			fail();
 		}
 
 	}
 
-	@Test(expected=NullPointerException.class)
-	public void testNullPath() throws IOException, ClassNotFoundException{
-		SVM.open((String)null);
+	@Test(expected = NullPointerException.class)
+	public void testNullPath() throws IOException, ClassNotFoundException {
+		SVM.open((String) null);
 	}
 }

@@ -48,6 +48,25 @@ public class NaiveBayes {
 	protected MetaData metadata;
 	protected HashMap<Attribute, Object[]> params;
 
+	//Factories
+	public static NaiveBayes getInstance(File path) {
+		try {
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			Document doc = db.parse(new FileInputStream(path));
+			Node root = doc.getElementsByTagName("NaiveBayes").item(0);
+
+			return new NaiveBayes().load(root);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public static NaiveBayes getInstance(DataSet ds) {
+		return new NaiveBayes().train(ds);
+	}
+
 	public NaiveBayes train(DataSet ds) {
 		outputIndex = ds.getOutputIndex();
 		totalCount = ds.getItemsCount();
@@ -130,7 +149,7 @@ public class NaiveBayes {
 		Attribute winner = null;
 		double max = -Double.MAX_VALUE;
 		for (Attribute c : params.keySet()) {
-			double tmp = P(c, x);
+			double tmp = probability(c, x);
 			if (tmp > max) {
 				max = tmp;
 				winner = c;
@@ -142,11 +161,11 @@ public class NaiveBayes {
 	//P(H|x) = P(x|H)P(H) / P(x)
 	//relaxed calculation of P(H|x). the exact value is not necessary, just to know which class
 	//has the highest value.
-	private double P(Attribute h, List<Attribute> x) {
-		return P(x, h) * P(h);
+	private double probability(Attribute h, List<Attribute> x) {
+		return probability(x, h) * probability(h);
 	}
 
-	private double P(List<Attribute> x, Attribute h) {
+	private double probability(List<Attribute> x, Attribute h) {
 		double p = 1;
 		//look for all records in ds with class h.
 		for (int k = 0, n = x.size(); k < n; k++) {
@@ -161,7 +180,7 @@ public class NaiveBayes {
 	}
 
 	//laplace's correction. x+1 / |d|+|c|
-	private double P(Attribute h) {
+	private double probability(Attribute h) {
 		return (((Integer) params.get(h)[outputIndex]) + 1) / (double) (totalCount + params.size());
 	}
 
@@ -178,25 +197,6 @@ public class NaiveBayes {
 		double sd = ps.second;
 		double x = xk.getValue();
 		return Math.exp(-(Math.pow(x - mean, 2) / (2 * sd))) * (1 / (Math.sqrt(2 * Math.PI * sd)));
-	}
-
-	//Factories
-	public static NaiveBayes getInstance(File path) {
-		try {
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			DocumentBuilder db = dbf.newDocumentBuilder();
-			Document doc = db.parse(new FileInputStream(path));
-			Node root = doc.getElementsByTagName("NaiveBayes").item(0);
-
-			return new NaiveBayes().load(root);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	public static NaiveBayes getInstance(DataSet ds) {
-		return new NaiveBayes().train(ds);
 	}
 
 	//IO functions

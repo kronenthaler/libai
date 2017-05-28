@@ -29,10 +29,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 /**
- *
  * @author kronenthaler
  */
-public class DFSTest{
+public class DFSTest {
 	private final String DEMO_MOVES =
 			"-llurrdllurrdllurrdllurrdllurdrulldrrulldrruulldrrdllurrdllurrdllurrdl"
 					+ "lurrdlurdllurrdllurrulldrrdllurrdllurrdllurrdllurrdlurdllurrdllurru"
@@ -72,7 +71,7 @@ public class DFSTest{
 	@Test
 	public void testDemo() {
 		DFS bfs = new DFS();
-		
+
 		State init = new GemPuzzleState(".87654321", null, '-');
 		GemPuzzleState ans = (GemPuzzleState) bfs.search(init);
 		StringBuilder sb = new StringBuilder(DEMO_MOVES.length());
@@ -80,11 +79,11 @@ public class DFSTest{
 		assertFalse(sb.length() == 0);
 		assertEquals(DEMO_MOVES, sb.toString());
 	}
-	
+
 	@Test
 	public void testDemo2() {
 		DFS bfs = new DFS();
-		
+
 		State init = new GemPuzzleState("1234567.8", null, '\0');
 		GemPuzzleState ans = (GemPuzzleState) bfs.search(init);
 		StringBuilder sb = new StringBuilder(DEMO_STEPS_2.length());
@@ -95,11 +94,11 @@ public class DFSTest{
 		ans.printSolutionMoves(sb2);
 		assertEquals("\0l", sb2.toString());
 	}
-	
+
 	@Test
 	public void testDemo3() {
 		DFS bfs = new DFS();
-		
+
 		State init = new GemPuzzleState("12345.786", null, '\0');
 		GemPuzzleState ans = (GemPuzzleState) bfs.search(init);
 		StringBuilder sb = new StringBuilder(DEMO_STEPS_3.length());
@@ -110,7 +109,7 @@ public class DFSTest{
 		ans.printSolutionMoves(sb2);
 		assertEquals("\0u", sb2.toString());
 	}
-	
+
 	@Test
 	public void testImpossible() {
 		DFS bfs = new DFS();

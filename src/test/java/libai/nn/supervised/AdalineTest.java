@@ -37,7 +37,6 @@ import static org.junit.Assert.*;
 import static org.junit.Assume.assumeTrue;
 
 /**
- *
  * @author Federico Vera {@literal <dktcoding [at] gmail>}
  */
 public class AdalineTest {
@@ -88,7 +87,7 @@ public class AdalineTest {
 
 	@Test
 	public void testIO() {
-        assumeTrue("Can't use temp dir...", MatrixIOTest.checkTemp());
+		assumeTrue("Can't use temp dir...", MatrixIOTest.checkTemp());
 		Adaline ada = new Adaline(2, 1, new Random(0));
 		Column[] ins = new Column[4];
 		ins[0] = new Column(2, new double[]{0, 0});
@@ -108,12 +107,12 @@ public class AdalineTest {
 		assertEquals(0, round(ada.simulate(ins[3]).position(0, 0)));
 
 		String foo = System.getProperty("java.io.tmpdir")
-				   + File.separator + "adaline.tmp";
+				+ File.separator + "adaline.tmp";
 		new File(foo).deleteOnExit();
 
 		assertTrue(ada.save(foo));
 
-		try{ 
+		try {
 			Adaline a2 = Adaline.open(foo);
 			assertNotNull(a2);
 			assertNotEquals(ada, a2);
@@ -122,9 +121,9 @@ public class AdalineTest {
 			assertEquals(ada.simulate(ins[1]), a2.simulate(ins[1]));
 			assertEquals(ada.simulate(ins[2]), a2.simulate(ins[2]));
 			assertEquals(ada.simulate(ins[3]), a2.simulate(ins[3]));
-		} catch(IOException e) {
+		} catch (IOException e) {
 			fail();
-		} catch(ClassNotFoundException e1) {
+		} catch (ClassNotFoundException e1) {
 			fail();
 		}
 	}

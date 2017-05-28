@@ -38,9 +38,10 @@ import static org.junit.Assert.assertTrue;
 public class KohonenTest {
 	private static final ProgressDisplay progress = new ProgressDisplay() {
 		int value, min, max;
+
 		@Override
-		public void setMinimum(int v) {
-			min = v;
+		public int getMaximum() {
+			return max;
 		}
 
 		@Override
@@ -49,48 +50,48 @@ public class KohonenTest {
 		}
 
 		@Override
-		public void setValue(int v) {
-			value=v;
-			assertTrue(v >= min);
-			assertTrue(v <= max);
-		}
-
-		@Override
-		public int getMaximum() {
-			return max;
-		}
-
-		@Override
 		public int getMinimum() {
 			return min;
+		}
+
+		@Override
+		public void setMinimum(int v) {
+			min = v;
 		}
 
 		@Override
 		public int getValue() {
 			return value;
 		}
+
+		@Override
+		public void setValue(int v) {
+			value = v;
+			assertTrue(v >= min);
+			assertTrue(v <= max);
+		}
 	};
 
 	@Test
-	public void testDemo(){
+	public void testDemo() {
 		Column[] p = new Column[100];
 		Column[] c = new Column[100];
 		Column[] test = new Column[20];
 		Column[] ctest = new Column[20];
 		Random r = new Random(0);
 
-		for(int i=0;i<p.length;i++){
+		for (int i = 0; i < p.length; i++) {
 			p[i] = new Column(2);
-			c[i] = new Column(1, new double[]{ i/(int)(p.length/2) });
+			c[i] = new Column(1, new double[]{i / (int) (p.length / 2)});
 			p[i].fill(true, r);
-			p[i].add(new Column(2, new double[]{i > p.length/2 ? 10 : -10, i > p.length/2 ? 10 : -10}), p[i]);
+			p[i].add(new Column(2, new double[]{i > p.length / 2 ? 10 : -10, i > p.length / 2 ? 10 : -10}), p[i]);
 		}
 
-		for(int i=0;i<test.length;i++){
+		for (int i = 0; i < test.length; i++) {
 			test[i] = new Column(2);
-			ctest[i] = new Column(2, new double[]{i > p.length/2 ? 10 : -10, i > p.length/2 ? 10 : -10});
+			ctest[i] = new Column(2, new double[]{i > p.length / 2 ? 10 : -10, i > p.length / 2 ? 10 : -10});
 			test[i].fill(true, r);
-			test[i].add(new Column(2, new double[]{i > p.length/2 ? 10 : -10, i > p.length/2 ? 10 : -10}), test[i]);
+			test[i].add(new Column(2, new double[]{i > p.length / 2 ? 10 : -10, i > p.length / 2 ? 10 : -10}), test[i]);
 		}
 
 		int nperlayer[] = {2, 20, 20};

@@ -29,7 +29,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
- *
  * @author Federico Vera {@literal <dktcoding [at] gmail>}
  */
 public class ArcTangentTest {
@@ -43,15 +42,16 @@ public class ArcTangentTest {
 		x = Math.random();
 		assertEquals(atan.eval(-x), -atan.eval(x), 1e-12);
 		x = Math.random();
-		assertEquals(atan.eval(1/x), Math.PI / 2 -atan.eval(x), 1e-12);
+		assertEquals(atan.eval(1 / x), Math.PI / 2 - atan.eval(x), 1e-12);
 	}
+
 	@Test
 	public void testEval2() {
 		ArcTangent atan = new ArcTangent();
 		double x = Math.random();
 		double accum = 0;
-		for (int i = 0; i < 100000; i ++) {
-			accum += (Math.pow(x, 2*i+1) * Math.pow(-1, i))/(2*i+1);
+		for (int i = 0; i < 100000; i++) {
+			accum += (Math.pow(x, 2 * i + 1) * Math.pow(-1, i)) / (2 * i + 1);
 		}
 		assertEquals(accum, atan.eval(x), 1e-6);
 	}
@@ -63,15 +63,15 @@ public class ArcTangentTest {
 		double x = Math.random();
 		assertEquals(der.eval(x), der.eval(-x), 1e-12);
 		x = Math.random();
-		
+
 		double accum = 0;
 		for (int i = 0; i < 10000; i++) {
-			accum += Math.pow(-1, i) * Math.pow(x, 2*i);			
+			accum += Math.pow(-1, i) * Math.pow(x, 2 * i);
 		}
-		
+
 		assertEquals(accum, der.eval(x), 1e-6);
 	}
-	
+
 	@Test(expected = UnsupportedOperationException.class)
 	public void testGetGetDerivative() {
 		new ArcTangent().getDerivate().getDerivate();

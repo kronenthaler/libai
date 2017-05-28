@@ -44,27 +44,6 @@ import java.util.Vector;
  */
 abstract public class Metaheuristic implements Comparator<Ant> {
 	/**
-	 * Instance of an Enviroment which holds all of the necesary information to
-	 * solve an optimizacion problem
-	 */
-	protected Enviroment E;
-	/**
-	 * Hashtable that holds the parameters
-	 */
-	protected Hashtable<Integer, Double> Parameters = new Hashtable<>();
-	/**
-	 * Vector that holds the global best solution found
-	 */
-	protected Vector<Integer> bestSolution = new Vector<>();
-	/**
-	 * Vector that holds the candidate list
-	 */
-	protected Hashtable<Integer, Vector<Node>> candidates = new Hashtable<>();
-	/**
-	 * current iteration number
-	 */
-	protected int currentIterationNumber;
-	/**
 	 * initial node of the search
 	 */
 	protected static final int initialNode = 0;
@@ -88,6 +67,27 @@ abstract public class Metaheuristic implements Comparator<Ant> {
 	 * <code>decisionRule()</code> method
 	 */
 	protected static final int beta = 4;
+	/**
+	 * Instance of an Enviroment which holds all of the necesary information to
+	 * solve an optimizacion problem
+	 */
+	protected Enviroment E;
+	/**
+	 * Hashtable that holds the parameters
+	 */
+	protected Hashtable<Integer, Double> Parameters = new Hashtable<>();
+	/**
+	 * Vector that holds the global best solution found
+	 */
+	protected Vector<Integer> bestSolution = new Vector<>();
+	/**
+	 * Vector that holds the candidate list
+	 */
+	protected Hashtable<Integer, Vector<Node>> candidates = new Hashtable<>();
+	/**
+	 * current iteration number
+	 */
+	protected int currentIterationNumber;
 	/**
 	 * Enviroment's pheromones matrix local copy
 	 */

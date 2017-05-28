@@ -41,50 +41,6 @@ import java.util.Map;
  * @author Federico Vera {@literal <dktcoding [at] gmail>}
  */
 public class MatrixIO {
-	/**
-	 * Serialization target
-	 */
-	public static enum Target {
-		/**
-		 * Saves the matrix using the JVM serialization algorithm.
-		 */
-		SERIAL,
-		/**
-		 * Saves the matrix in {@code csv} (comma separated values) format.
-		 */
-		CSV,
-		/**
-		 * Saves the matrix in {@code tsv} (tab separated values) format.
-		 */
-		TSV,
-		/**
-		 * Saves the matrix in GNU Octave's binary ({@code mat}) format.
-		 * <p>The specification for Octave's {@code mat} format can be found a bit
-		 * <a href="http://octave.1599824.n4.nabble.com/Octave-binary-format-td1607907.html"> here
-		 * </a> and another bit
-		 * <a href="http://octave.org/doxygen/4.0/de/d2d/ls-oct-binary_8cc_source.html"> here</a>
-		 * and yet another bit
-		 * <a href="https://lists.gnu.org/archive/html/help-octave/1995-03/msg00056.html">here</a>
-		 * </p><p>About this implementation:</p><ul>
-		 * <li>GNU Octave supports different matrix types (diagonal matrix, sparse
-		 * matrix, etc), this method will always output a full/dense matrix format.
-		 * You will be able to read it with GNU Octave, but there's a chance that if
-		 * you <i>re-save</i> the matrix using GNU Octave the file won't be the same,
-		 * since {@code libai} won't support the special cases.</li>
-		 * <li>Even though Java's default endianness is {@link ByteOrder#BIG_ENDIAN},
-		 * this matrices are saved with {@link ByteOrder#LITTLE_ENDIAN}.</li>
-		 * <li>This matrices will NOT be Matlab&reg; compatible (never).</li>
-		 * <li>Files will not be {@code gzipped} since not all versions of GNU Octave
-		 * support it</li></ul>
-		 */
-		OCTAVE,
-		/**
-		 * Saves the matrix in a format that's compatible with the formula format of
-		 * OpenOffice and LibreOffice.
-		 */
-		OPENOFFICE,
-	}
-
 	public static void write(OutputStream output,
 							 Matrix m) throws IllegalArgumentException, IOException {
 		write(output, m, Target.SERIAL);
@@ -249,5 +205,49 @@ public class MatrixIO {
 			}
 			ps.println("} right ]newLine");
 		}
+	}
+
+	/**
+	 * Serialization target
+	 */
+	public static enum Target {
+		/**
+		 * Saves the matrix using the JVM serialization algorithm.
+		 */
+		SERIAL,
+		/**
+		 * Saves the matrix in {@code csv} (comma separated values) format.
+		 */
+		CSV,
+		/**
+		 * Saves the matrix in {@code tsv} (tab separated values) format.
+		 */
+		TSV,
+		/**
+		 * Saves the matrix in GNU Octave's binary ({@code mat}) format.
+		 * <p>The specification for Octave's {@code mat} format can be found a bit
+		 * <a href="http://octave.1599824.n4.nabble.com/Octave-binary-format-td1607907.html"> here
+		 * </a> and another bit
+		 * <a href="http://octave.org/doxygen/4.0/de/d2d/ls-oct-binary_8cc_source.html"> here</a>
+		 * and yet another bit
+		 * <a href="https://lists.gnu.org/archive/html/help-octave/1995-03/msg00056.html">here</a>
+		 * </p><p>About this implementation:</p><ul>
+		 * <li>GNU Octave supports different matrix types (diagonal matrix, sparse
+		 * matrix, etc), this method will always output a full/dense matrix format.
+		 * You will be able to read it with GNU Octave, but there's a chance that if
+		 * you <i>re-save</i> the matrix using GNU Octave the file won't be the same,
+		 * since {@code libai} won't support the special cases.</li>
+		 * <li>Even though Java's default endianness is {@link ByteOrder#BIG_ENDIAN},
+		 * this matrices are saved with {@link ByteOrder#LITTLE_ENDIAN}.</li>
+		 * <li>This matrices will NOT be Matlab&reg; compatible (never).</li>
+		 * <li>Files will not be {@code gzipped} since not all versions of GNU Octave
+		 * support it</li></ul>
+		 */
+		OCTAVE,
+		/**
+		 * Saves the matrix in a format that's compatible with the formula format of
+		 * OpenOffice and LibreOffice.
+		 */
+		OPENOFFICE,
 	}
 }

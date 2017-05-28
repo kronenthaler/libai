@@ -31,30 +31,6 @@ import org.w3c.dom.Node;
 public abstract class Attribute implements Comparable<Attribute> {
 	protected String name;
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String n) {
-		name = n;
-	}
-
-	public abstract Object getValue();
-
-	@Override
-	public int hashCode() {
-		return getValue().hashCode();
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		return o instanceof Attribute && this.compareTo(((Attribute) o)) == 0;
-	}
-
-	public boolean isCategorical() {
-		return this instanceof DiscreteAttribute;
-	}
-
 	public static Attribute load(Node root) {
 		Attribute att = null;
 		String type = root.getAttributes().getNamedItem("type").getTextContent();
@@ -91,7 +67,6 @@ public abstract class Attribute implements Comparable<Attribute> {
 		return new ContinuousAttribute(value);
 	}
 
-
 	public static Attribute getInstance(int value, String name) {
 		Attribute attr = getInstance(value);
 		attr.setName(name);
@@ -100,5 +75,29 @@ public abstract class Attribute implements Comparable<Attribute> {
 
 	public static Attribute getInstance(int value) {
 		return new ContinuousAttribute(value);
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String n) {
+		name = n;
+	}
+
+	public abstract Object getValue();
+
+	@Override
+	public int hashCode() {
+		return getValue().hashCode();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		return o instanceof Attribute && this.compareTo(((Attribute) o)) == 0;
+	}
+
+	public boolean isCategorical() {
+		return this instanceof DiscreteAttribute;
 	}
 }

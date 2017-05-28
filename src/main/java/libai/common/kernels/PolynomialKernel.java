@@ -27,6 +27,7 @@ import libai.common.matrix.Matrix;
 
 /**
  * Polynomial Kernel. Follows the form: K(x,y) = (a * xy + c)^p, where a, b & p are parameters of this kernel.
+ *
  * @author kronenthaler
  */
 public class PolynomialKernel implements Kernel {

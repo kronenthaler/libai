@@ -116,6 +116,10 @@ public class Engine {
 		initialize(chromosomeSize);
 	}
 
+	public static Random getDefaultRandomGenerator() {
+		return ThreadLocalRandom.current();
+	}
+
 	/**
 	 * Initialize population with size
 	 * <code>chromosomeSize</code>
@@ -166,19 +170,18 @@ public class Engine {
 	 * Cross population. Elitist style.
 	 */
 	private void cross() {
-		int a = 0, b = 0, pos = 0, j = 0, i = 0;
+		int a = 0;
+		int j = 0;
 		boolean wait = false;
-		for (i = 0; i < population.length; i++) {
+		for (int i = 0; i < population.length; i++) {
 			if (toCross[i].getChance() < pc && !wait) {
 				a = i;
 				wait = true;
-				pos = Math.abs(random.nextInt(chromosomeSize));
 			} else if (toCross[i].getChance() < pc && wait) {
-				b = i;
 				wait = false;
-				Chromosome childs[] = toCross[a].cross(toCross[b], pos);
-				newpopulation[j++] = childs[0];//toCross[a].cross(toCross[b],pos);
-				newpopulation[j++] = childs[1];//toCross[b].cross(toCross[a],pos);
+				Chromosome children[] = toCross[a].cross(toCross[i], Math.abs(random.nextInt(chromosomeSize)));
+				newpopulation[j++] = children[0];//toCross[a].cross(toCross[b],pos);
+				newpopulation[j++] = children[1];//toCross[b].cross(toCross[a],pos);
 			} else
 				newpopulation[j++] = toCross[i].getCopy();
 		}
@@ -239,9 +242,5 @@ public class Engine {
 
 	public void setProgressBar(JProgressBar _progress) {
 		progress = _progress;
-	}
-
-	public static Random getDefaultRandomGenerator() {
-		return ThreadLocalRandom.current();
 	}
 }

@@ -62,24 +62,6 @@ public class C45 implements Comparable<C45> {
 	protected double z;
 	protected int good, bad;
 
-	public static class EntropyInformation {
-	}
-
-	public static class DiscreteEntropyInformation extends EntropyInformation {
-		public double maxInfo;
-		public double maxSplitInfo;
-	}
-
-	public static class ContinuousEntropyInformation extends DiscreteEntropyInformation {
-		public double splitValue;
-		public int indexOfSplitValue;
-	}
-
-	public static class GainInformation extends ContinuousEntropyInformation {
-		public double gain;
-		public double ratio;
-	}
-
 	//constructors
 	public C45() {
 		setConfidence(confidence);
@@ -271,7 +253,8 @@ public class C45 implements Comparable<C45> {
 			Iterator<List<Attribute>> records = sortedRecords.iterator();
 			records.hasNext(); //just to move the pointer.
 
-			Attribute prev = records.next().get(index), current = null;
+			Attribute prev = records.next().get(index);
+			Attribute current;
 			int nlo, i = 0;
 			while (prev != null) {
 				current = null;
@@ -346,7 +329,8 @@ public class C45 implements Comparable<C45> {
 
 		prev = records.next().get(fieldIndex);
 
-		int nlo, i = lo;
+		int nlo;
+		int i = lo;
 		while (prev != null) {
 			current = null;
 			nlo = i;
@@ -624,9 +608,6 @@ public class C45 implements Comparable<C45> {
 		double e = (f + (z2 * invN * 0.5) + z * Math.sqrt((f * invN) - (f * f * invN) + (z2 * invN * invN * 0.25))) / (1 + (z2 * invN));
 		return e;
 	}
-	//end quinlan's
-
-	//IO functions
 
 	/**
 	 * Load a new C45 tree from the XML node root.
@@ -641,14 +622,15 @@ public class C45 implements Comparable<C45> {
 			int currentChild = 0;
 			for (int i = 0, n = aux.getLength(); i < n; i++) {
 				Node current = aux.item(i);
-				if (current.getNodeName().equals("split")) {
-					Attribute att = Attribute.load(current);
-					for (; i < n; i++)
-						if ((current = aux.item(i)).getNodeName().equals("leaf")
-								|| current.getNodeName().equals("node"))
-							break;
-					childs[currentChild++] = new Pair<>(att, load(current));
-				}
+				if (!current.getNodeName().equals("split"))
+					continue;
+
+				Attribute att = Attribute.load(current);
+				for (; i < n; i++)
+					if ((current = aux.item(i)).getNodeName().equals("leaf")
+							|| current.getNodeName().equals("node"))
+						break;
+				childs[currentChild++] = new Pair<>(att, load(current));
 			}
 			return new C45(childs);
 		} else if (root.getNodeName().equals("leaf")) {
@@ -693,6 +675,9 @@ public class C45 implements Comparable<C45> {
 	public void print() {
 		print("");
 	}
+	//end quinlan's
+
+	//IO functions
 
 	/**
 	 * Print the tree over the standard output using an initial indent string.
@@ -713,7 +698,6 @@ public class C45 implements Comparable<C45> {
 			}
 		}
 	}
-	//end IO functions
 
 	/**
 	 * Dummy function, just needed to be able to use the Pair structure.
@@ -724,5 +708,24 @@ public class C45 implements Comparable<C45> {
 	@Override
 	public int compareTo(C45 o) {
 		return 0;
+	}
+
+	public static class EntropyInformation {
+	}
+
+	public static class DiscreteEntropyInformation extends EntropyInformation {
+		public double maxInfo;
+		public double maxSplitInfo;
+	}
+
+	public static class ContinuousEntropyInformation extends DiscreteEntropyInformation {
+		public double splitValue;
+		public int indexOfSplitValue;
+	}
+	//end IO functions
+
+	public static class GainInformation extends ContinuousEntropyInformation {
+		public double gain;
+		public double ratio;
 	}
 }

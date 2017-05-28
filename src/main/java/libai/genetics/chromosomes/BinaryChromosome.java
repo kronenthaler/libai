@@ -103,9 +103,9 @@ public class BinaryChromosome extends Chromosome {
 	@Override
 	public Chromosome mutate(double pm) {
 		BitSet ret = genes.get(0, length);
-		for (int i = 0, n = length; i < n; i++) {
+		for (int i = 0; i < length; i++) {
 			if (random.nextDouble() < pm)
-				ret.flip(random.nextInt(n));
+				ret.flip(random.nextInt(length));
 		}
 		return getInstance(ret);
 	}

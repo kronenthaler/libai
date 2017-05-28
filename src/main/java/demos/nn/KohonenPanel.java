@@ -36,17 +36,22 @@ import java.util.Random;
  * @author kronenthaler
  */
 public class KohonenPanel extends javax.swing.JPanel {
-	static double f(double x) {
-		return Math.sin(x) + Math.cos(x);
-	}
-
 	int map[][], map2[][];
-
+	// Variables declaration - do not modify//GEN-BEGIN:variables
+	private javax.swing.JPanel canvas;
+	private javax.swing.JButton jButton1;
+	private javax.swing.JProgressBar jProgressBar1;
+	private javax.swing.JScrollPane jScrollPane1;
+	private javax.swing.JTextPane jTextPane1;
 	/**
 	 * Creates new form MPLPPanel
 	 */
 	public KohonenPanel() {
 		initComponents();
+	}
+
+	static double f(double x) {
+		return Math.sin(x) + Math.cos(x);
 	}
 
 	/**
@@ -202,12 +207,5 @@ public class KohonenPanel extends javax.swing.JPanel {
 			}
 		}).start();
 	}//GEN-LAST:event_jButton1ActionPerformed
-
-	// Variables declaration - do not modify//GEN-BEGIN:variables
-	private javax.swing.JPanel canvas;
-	private javax.swing.JButton jButton1;
-	private javax.swing.JProgressBar jProgressBar1;
-	private javax.swing.JScrollPane jScrollPane1;
-	private javax.swing.JTextPane jTextPane1;
 	// End of variables declaration//GEN-END:variables
 }

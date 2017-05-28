@@ -42,19 +42,54 @@ import static org.junit.Assert.*;
 import static org.junit.Assume.assumeTrue;
 
 /**
- *
  * @author Federico Vera {@literal <dktcoding [at] gmail>}
  */
 public class MultiLayerPerceptronTest {
+	private static final ProgressDisplay progress = new ProgressDisplay() {
+		int value, min, max;
+
+		@Override
+		public int getMaximum() {
+			return max;
+		}
+
+		@Override
+		public void setMaximum(int v) {
+			max = v;
+		}
+
+		@Override
+		public int getMinimum() {
+			return min;
+		}
+
+		@Override
+		public void setMinimum(int v) {
+			min = v;
+		}
+
+		@Override
+		public int getValue() {
+			return value;
+		}
+
+		@Override
+		public void setValue(int v) {
+			value = v;
+			assertTrue(v >= min);
+			assertTrue(v <= max);
+		}
+	};
+
 	@Test
 	public void testTrainXOrStandardBackProp() {
 		MultiLayerPerceptron mlp = new MultiLayerPerceptron(
-			new int[]{2, 3, 1}, 
-			new Function[]{
-				new Identity(), 
-				new Sigmoid(), 
-				new Identity()
-			}, new Random(0)
+				new int[]{2, 3, 1},
+				new Function[]{
+						new Identity(),
+						new Sigmoid(),
+						new Identity()
+				}, new Random(0)
 		);
 		Column[] ins = new Column[4];
 		ins[0] = new Column(2, new double[]{0, 0});
@@ -78,16 +113,16 @@ public class MultiLayerPerceptronTest {
 		mlp.simulate(ins[3], res);
 		assertEquals(0, round(res.position(0, 0)));
 	}
-	
+
 	@Test
 	public void testTrainXOrMomentumBackProp() {
 		MultiLayerPerceptron mlp = new MultiLayerPerceptron(
-			new int[]{2, 3, 1}, 
-			new Function[]{
-				new Identity(), 
-				new Sigmoid(), 
-				new Identity()
-			}, new MomentumBackpropagation(0.5), new Random(0)
+				new int[]{2, 3, 1},
+				new Function[]{
+						new Identity(),
+						new Sigmoid(),
+						new Identity()
+				}, new MomentumBackpropagation(0.5), new Random(0)
 		);
 
 		Column[] ins = new Column[4];
@@ -112,16 +147,16 @@ public class MultiLayerPerceptronTest {
 		mlp.simulate(ins[3], res);
 		assertEquals(0, round(res.position(0, 0)));
 	}
-	
+
 	@Test
 	public void testTrainNorRProp() {
 		MultiLayerPerceptron mlp = new MultiLayerPerceptron(
-			new int[]{2, 16, 1},
-			new Function[]{
-				new Identity(),
-				new Sinc(),
-				new Identity()
-			}, new ResilientBackpropagation(), new Random(0)
+				new int[]{2, 16, 1},
+				new Function[]{
+						new Identity(),
+						new Sinc(),
+						new Identity()
+				}, new ResilientBackpropagation(), new Random(0)
 		);
 
 		Column[] ins = new Column[4];
@@ -146,18 +181,18 @@ public class MultiLayerPerceptronTest {
 		mlp.simulate(ins[3], res);
 		assertEquals(0, round(res.position(0, 0)));
 	}
-	
+
 	@Test
 	public void testIO() {
-        assumeTrue("Can't use temp dir...", MatrixIOTest.checkTemp());
+		assumeTrue("Can't use temp dir...", MatrixIOTest.checkTemp());
 		MultiLayerPerceptron mlp = new MultiLayerPerceptron(
-			new int[]{2, 3, 3, 2}, 
-			new Function[]{
-				new Identity(), 
-				new Sigmoid(), 
-				new HyperbolicTangent(), 
-				new Identity()
-			}, new Random(0)
+				new int[]{2, 3, 3, 2},
+				new Function[]{
+						new Identity(),
+						new Sigmoid(),
+						new HyperbolicTangent(),
+						new Identity()
+				}, new Random(0)
 		);
 
 		Column[] ins = new Column[4];
@@ -181,11 +216,11 @@ public class MultiLayerPerceptronTest {
 		assertEquals(0, round(mlp.simulate(ins[1]).position(1, 0)));
 		assertEquals(0, round(mlp.simulate(ins[2]).position(1, 0)));
 		assertEquals(1, round(mlp.simulate(ins[3]).position(1, 0)));
-		
+
 		String foo = System.getProperty("java.io.tmpdir")
-				   + File.separator + "perceptron.tmp";
+				+ File.separator + "perceptron.tmp";
 		new File(foo).deleteOnExit();
-		
+
 		assertTrue(mlp.save(foo));
 		try {
 			MultiLayerPerceptron mlp2 = MultiLayerPerceptron.open(foo);
@@ -196,9 +231,9 @@ public class MultiLayerPerceptronTest {
 			assertEquals(mlp.simulate(ins[1]), mlp2.simulate(ins[1]));
 			assertEquals(mlp.simulate(ins[2]), mlp2.simulate(ins[2]));
 			assertEquals(mlp.simulate(ins[3]), mlp2.simulate(ins[3]));
-		} catch(IOException e) {
+		} catch (IOException e) {
 			fail();
-		} catch(ClassNotFoundException e1) {
+		} catch (ClassNotFoundException e1) {
 			fail();
 		}
 	}
@@ -233,28 +268,28 @@ public class MultiLayerPerceptronTest {
 
 		int nperlayer[] = {m, 4, l};
 		MultiLayerPerceptron net = new MultiLayerPerceptron(
-			nperlayer, 
-			new Function[]{
-				new Identity(), 
-				new Sigmoid(), 
-				new Identity()
-			}, new Random(0)
+				nperlayer,
+				new Function[]{
+						new Identity(),
+						new Sigmoid(),
+						new Identity()
+				}, new Random(0)
 		);
 
 		net.train(p, t, 0.2, 50000, 0, n);
 
 		assertTrue(1e-3 > net.error(p, t, 0, n));
 		assertTrue(1e-3 > net.error(p, t, n, test));
-		
+
 		for (int i = n; i < p.length; i++) {
 			double res = net.simulate(p[i]).position(0, 0);
 			assertEquals(t[i].position(0, 0), res, 0.1);
 		}
 	}
 
-	@Test(expected=NullPointerException.class)
-	public void testNullPath() throws IOException, ClassNotFoundException{
-		MultiLayerPerceptron.open((String)null);
+	@Test(expected = NullPointerException.class)
+	public void testNullPath() throws IOException, ClassNotFoundException {
+		MultiLayerPerceptron.open((String) null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -270,12 +305,12 @@ public class MultiLayerPerceptronTest {
 	@Test
 	public void testWithProgressBarStandard() {
 		MultiLayerPerceptron mlp = new MultiLayerPerceptron(
-			new int[]{2, 16, 1},
-			new Function[]{
-				new Identity(),
-				new Sinc(),
-				new Identity()
-			}, new Random(0)
+				new int[]{2, 16, 1},
+				new Function[]{
+						new Identity(),
+						new Sinc(),
+						new Identity()
+				}, new Random(0)
 		);
 		mlp.setProgressBar(progress);
 		mlp.setPlotter(new SimplePlotter());
@@ -301,18 +336,18 @@ public class MultiLayerPerceptronTest {
 		mlp.simulate(ins[3], res);
 		assertEquals(0, round(res.position(0, 0)));
 
-		assertTrue(((SimplePlotter)mlp.getPlotter()).called);
+		assertTrue(((SimplePlotter) mlp.getPlotter()).called);
 	}
 
 	@Test
 	public void testWithProgressBarResilient() {
 		MultiLayerPerceptron mlp = new MultiLayerPerceptron(
-			new int[]{2, 16, 1},
-			new Function[]{
-				new Identity(),
-				new Sinc(),
-				new Identity()
-			}, new ResilientBackpropagation(), new Random(0)
+				new int[]{2, 16, 1},
+				new Function[]{
+						new Identity(),
+						new Sinc(),
+						new Identity()
+				}, new ResilientBackpropagation(), new Random(0)
 		);
 		mlp.setProgressBar(progress);
 		mlp.setPlotter(new SimplePlotter());
@@ -338,18 +373,18 @@ public class MultiLayerPerceptronTest {
 		mlp.simulate(ins[3], res);
 		assertEquals(0, round(res.position(0, 0)));
 
-		assertTrue(((SimplePlotter)mlp.getPlotter()).called);
+		assertTrue(((SimplePlotter) mlp.getPlotter()).called);
 	}
 
 	@Test
 	public void testWithProgressBarMomentum() {
 		MultiLayerPerceptron mlp = new MultiLayerPerceptron(
-			new int[]{2, 16, 1},
-			new Function[]{
-				new Identity(),
-				new Sinc(),
-				new Identity()
-			}, new MomentumBackpropagation(0.5), new Random(0)
+				new int[]{2, 16, 1},
+				new Function[]{
+						new Identity(),
+						new Sinc(),
+						new Identity()
+				}, new MomentumBackpropagation(0.5), new Random(0)
 		);
 		mlp.setProgressBar(progress);
 		mlp.setPlotter(new SimplePlotter());
@@ -375,64 +410,29 @@ public class MultiLayerPerceptronTest {
 		mlp.simulate(ins[3], res);
 		assertEquals(0, round(res.position(0, 0)));
 
-		assertTrue(((SimplePlotter)mlp.getPlotter()).called);
+		assertTrue(((SimplePlotter) mlp.getPlotter()).called);
 	}
 
-	private static final ProgressDisplay progress = new ProgressDisplay() {
-		int value, min, max;
-		@Override
-		public void setMinimum(int v) {
-			min = v;
-		}
-
-		@Override
-		public void setMaximum(int v) {
-			max = v;
-		}
-
-		@Override
-		public void setValue(int v) {
-			value=v;
-			assertTrue(v >= min);
-			assertTrue(v <= max);
-		}
-
-		@Override
-		public int getMaximum() {
-			return max;
-		}
-
-		@Override
-		public int getMinimum() {
-			return min;
-		}
-
-		@Override
-		public int getValue() {
-			return value;
-		}
-	};
+	private double f(double x) {
+		return Math.sin(x) + Math.cos(x);
+	}
 
 	class SimplePlotter implements Plotter {
 		public boolean called = false;
 
 		@Override
 		public void paint(Graphics g2) {
-
+			throw new UnsupportedOperationException("");
 		}
 
 		@Override
 		public void update(Graphics g2) {
-
+			throw new UnsupportedOperationException("");
 		}
 
 		@Override
 		public void setError(int epoch, double error) {
 			called = true;
 		}
-	};
-
-	private double f(double x) {
-		return Math.sin(x) + Math.cos(x);
 	}
 }

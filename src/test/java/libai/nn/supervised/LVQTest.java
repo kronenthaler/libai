@@ -34,13 +34,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- *
  * @author Federico Vera {@literal <dktcoding [at] gmail>}
  */
 public class LVQTest {
-
-	public LVQTest() {
-	}
 
 	@Test
 	public void testDemo() {
@@ -88,8 +84,8 @@ public class LVQTest {
 		assertTrue(net.error(patterns, ans, 0, n) < 5);
 
 		for (int i = 0; i < patterns.length; i++) {
-			for (int j = 0; j < ans[i].getRows(); j++){
-			    assertEquals(ans[i].position(j, 0), net.simulate(patterns[i]).position(j, 0), 1e-8);
+			for (int j = 0; j < ans[i].getRows(); j++) {
+				assertEquals(ans[i].position(j, 0), net.simulate(patterns[i]).position(j, 0), 1e-8);
 			}
 		}
 	}

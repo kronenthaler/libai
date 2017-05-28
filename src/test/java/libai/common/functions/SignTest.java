@@ -29,11 +29,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 /**
- *
  * @author Federico Vera {@literal <fedevera at unc.edu.ar>}
  */
 public class SignTest {
-	
+
 	@Test
 	public void testEval() {
 		Sign sign = new Sign();

@@ -26,7 +26,6 @@ package libai.nn.supervised;
 import libai.common.matrix.Column;
 import libai.common.matrix.Matrix;
 import libai.common.functions.Function;
-import libai.nn.NeuralNetwork;
 import libai.nn.supervised.backpropagation.Backpropagation;
 import libai.nn.supervised.backpropagation.StandardBackpropagation;
 
