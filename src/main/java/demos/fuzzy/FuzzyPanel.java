@@ -23,27 +23,86 @@
  */
 package demos.fuzzy;
 
-import libai.fuzzy.Condition;
-import libai.fuzzy.Engine;
-import libai.fuzzy.FuzzyVariable;
-import libai.fuzzy.Rule;
-import libai.fuzzy.sets.FuzzySet;
-import libai.fuzzy.sets.Triangular;
+import libai.fuzzy2.*;
+import libai.fuzzy2.defuzzifiers.Defuzzifier;
+import libai.fuzzy2.operators.AndMethod;
+import libai.fuzzy2.operators.accumulation.Accumulation;
+import libai.fuzzy2.operators.activation.ActivationMethod;
+import libai.fuzzy2.sets.LeftLinearShape;
+import libai.fuzzy2.sets.RightLinearShape;
+import libai.fuzzy2.sets.TriangularShape;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author kronenthaler
  */
 public class FuzzyPanel extends javax.swing.JPanel {
-	Engine engine = new Engine();
 	boolean exit = false;
-	FuzzyVariable answers, location, state;
-	FuzzySet left, middle, right, movingLeft, movingRight, standingStill;
+	FuzzyTerm left = new FuzzyTerm(new RightLinearShape(-1,0), "left");
+	FuzzyTerm middle = new FuzzyTerm(new TriangularShape(-1,0,1), "middle");
+	FuzzyTerm right = new FuzzyTerm(new LeftLinearShape(0, 1), "right");
+	FuzzyVariable position = new libai.fuzzy2.FuzzyVariable("position", -2,2,"meters", left, middle, right);
+
+	FuzzyTerm movingLeft = new FuzzyTerm(new RightLinearShape(-0.5,0), "movingLeft");
+	FuzzyTerm standingStill = new FuzzyTerm(new TriangularShape(-0.5,0,1), "standingStill");
+	FuzzyTerm movingRight = new FuzzyTerm(new LeftLinearShape(0, 1), "movingRight");
+	FuzzyVariable velocity = new FuzzyVariable("velocity", -1, 2, "m/s", movingLeft, standingStill, movingRight);
+
+	FuzzyTerm pull = new FuzzyTerm(new RightLinearShape(-0.5,0), "pull");
+	FuzzyTerm none = new FuzzyTerm(new TriangularShape(-0.5,0,0.5), "none");
+	FuzzyTerm push = new FuzzyTerm(new LeftLinearShape(0, 0.5), "push");
+	FuzzyVariable force = new FuzzyVariable("force", -1, 1, 0, "Newtons", Accumulation.MAX, Defuzzifier.COG, pull, none, push);
+	KnowledgeBase kb = new KnowledgeBase(position, velocity, force);
+
+	Rule r1 = new Rule("r1", 1, AndMethod.MIN, new Antecedent(new Clause("position", "middle"), new Clause("velocity", "standingStill")), new Consequent(new Clause("force", "none")));
+	Rule r2 = new Rule("r2", 1, AndMethod.MIN, new Antecedent(new Clause("position", "left")), new Consequent(new Clause("force", "push")));
+	Rule r3 = new Rule("r3", 1, AndMethod.MIN, new Antecedent(new Clause("position", "right")), new Consequent(new Clause("force", "pull")));
+	Rule r4 = new Rule("r4", 1, AndMethod.MIN, new Antecedent(new Clause("position", "middle")), new Consequent(new Clause("force", "none")));
+	Rule r5 = new Rule("r5", 1, AndMethod.MIN, new Antecedent(new Clause("velocity", "movingLeft")), new Consequent(new Clause("force", "push")));
+	Rule r6 = new Rule("r6", 1, AndMethod.MIN, new Antecedent(new Clause("velocity", "standingStill")), new Consequent(new Clause("force", "none")));
+	Rule r7 = new Rule("r7", 1, AndMethod.MIN, new Antecedent(new Clause("velocity", "movingRight")), new Consequent(new Clause("force", "pull")));
+	Rule r8 = new Rule("r8", 1, AndMethod.MIN, new Antecedent(new Clause("position", "left"), new Clause("velocity", "movingLeft")), new Consequent(new Clause("force", "push")));
+	Rule r9 = new Rule("r9", 1, AndMethod.MIN, new Antecedent(new Clause("position", "right"), new Clause("velocity", "movingRight")), new Consequent(new Clause("force", "pull")));
+	RuleBase rb = new RuleBase("rules", ActivationMethod.MIN, r1, r2, r3, r4, r5, r6, r7, r8, r9);
+
+	FuzzyController controller = new FuzzyController("car-controll", kb, rb);
+
+	class Car {
+		double position; // m
+		double velocity; // m/s
+		double mass; // kg
+
+		Car(double position, double mass){
+			this.position = position;
+			this.mass = mass;
+		}
+
+		void applyForce(double force, double frameRate){ //kg m / s^2
+			velocity += force / (mass * frameRate);
+		}
+
+		void updateVelocity(double frictionCoefficient){ // coeffiecient is usually small and non-zero
+			velocity *= (1 - frictionCoefficient);
+			if (Math.abs(velocity) < 1.e-2)
+				velocity = 0;
+		}
+
+		// this method should be called every frame
+		void updatePosition(double frameRate, double friction) {
+			position += (velocity / frameRate); // update the position proportionally to the time spend between frames
+			updateVelocity(friction / frameRate); //update the velocity proportionally to the framerate.
+		}
+	}
+
+	private Car car = new Car(-0.5, 1);
+
 	// Variables declaration - do not modify//GEN-BEGIN:variables
 	private javax.swing.JPanel canvas;
-	private javax.swing.JSpinner dirSpn;
+	private javax.swing.JSpinner frictionsSpn;
 	private javax.swing.JButton jButton1;
 	private javax.swing.JLabel jLabel1;
 	private javax.swing.JLabel jLabel2;
@@ -55,37 +114,6 @@ public class FuzzyPanel extends javax.swing.JPanel {
 	 */
 	public FuzzyPanel() {
 		initComponents();
-
-		left = new Triangular(-1, -1, 0);
-		middle = new Triangular(-1, 0, 1);
-		right = new Triangular(0, 1, 1);
-		//Value position = new Value(.5);
-		location = new FuzzyVariable(left, middle, right);
-
-
-		movingLeft = new Triangular(-0.5, -0.5, 0);
-		standingStill = new Triangular(-0.5, 0, 0.5);
-		movingRight = new Triangular(0, 0.5, 0.5);
-		//Value direction = new Value(0);
-		state = new FuzzyVariable(movingLeft, movingRight, standingStill);
-
-		FuzzySet pull = new Triangular(-0.6, -0.5, 0, 0.5);
-		FuzzySet none = new Triangular(-0.5, 0, 0.5, 0.5);
-		FuzzySet push = new Triangular(0, 0.5, 0.6, 0.5);
-		answers = new FuzzyVariable(pull, none, push);
-
-		Rule r0 = new Rule(new Condition(middle, location.getValue()).and(standingStill, state.getValue()), none);
-		Rule r1 = new Rule(new Condition(left, location.getValue()), push);
-		Rule r2 = new Rule(new Condition(right, location.getValue()), pull);
-		Rule r3 = new Rule(new Condition(middle, location.getValue()), none);
-		Rule r4 = new Rule(new Condition(movingLeft, state.getValue()), push);
-		Rule r5 = new Rule(new Condition(standingStill, state.getValue()), none);
-		Rule r6 = new Rule(new Condition(movingRight, state.getValue()), pull);
-		Rule r7 = new Rule(new Condition(left, location.getValue()).and(movingLeft, state.getValue()), push);
-		Rule r8 = new Rule(new Condition(right, location.getValue()).and(movingRight, state.getValue()), pull);
-
-		engine.addRule(r0, r1, r2, r3, r4, r5, r6, r7, r8);
-		engine.addGroup(location, state, answers);
 	}
 
 	/**
@@ -103,32 +131,31 @@ public class FuzzyPanel extends javax.swing.JPanel {
 		canvas = new JPanel() {
 			public void paint(Graphics g) {
 				super.paint(g);
-				if (location == null || state == null) return;
 
-				double l = location.getValue().getValue() + 1;
-				double s = state.getValue().getValue() + 0.5;
-
+				double l = (car.position + 2) / 4; //interpolation seems weird.
 				int w = getWidth();
 				int h = getHeight();
-
-				int x = (int) (l * w) >> 1;
+				int x = (int) (l * w);
 				int y = h - 10;
-				//g.drawLine(x,0,x,10);
-				g.drawLine(0, y, w, y);
 
-				g.setColor(Color.blue);
-				g.drawRect(x - 10, y - 10, 20, 10);
+				g.drawLine(0, y, w, y); // base line
 
 				g.setColor(Color.red);
-				g.drawLine(x, y - 5, x + (int) (s * 20), y - 5 - (int) (Math.cos(s) * 20));
+				g.drawLine(w/2, 0, w/2, h);
+
+				int carH = h/10;
+
+				g.setColor(Color.blue);
+				g.drawRect(x - carH, y - carH, 2*carH, carH);
 			}
 		};
 		posSpn = new javax.swing.JSpinner();
 		jLabel1 = new javax.swing.JLabel();
 		jLabel2 = new javax.swing.JLabel();
-		dirSpn = new javax.swing.JSpinner();
+		frictionsSpn = new javax.swing.JSpinner();
 
-		jTextPane1.setText("This fuzzy example is about the classical problem of balancing a pole over a car.  The car has two variables: direction and position. The direction can be: moving left, standing still or moving right and the position can be: \nleft, middle or right inside the platform.\nTo keep the pole balanced the car has the following rules:\nr0 = if(position is middle AND direction is standingStill) then none;\nr1 = if(position is left) then push;\nr2 = if(position is right) then pull;\nr3 = if(position is middle) then none;\nr4 = if(direction is movingLeft) then push;\nr5 = if(direction is standingStill) then none;\nr6 = if(direction is movingRight) then pull;\nr7 = if(position is left AND direction is movingLeft) then push;\nr8 = if(position is right AND direction is movingRight) then pull;\n\nThe fuzzy sets pull, none and push forms a fuzzy group (a contextually equal fuzzy sets). And the result of the inference is a quantity of energy to apply in one direction or another.");
+		jTextPane1.setText("This fuzzy example is about the classical problem of controlling a car to stop in the middle of a track, the track is 4 meters long, [-2, 2] are the possible starting positions for the car." +
+				"The car has two variables: direction and position. The direction can be: moving left, standing still or moving right and the position can be: \nleft, middle or right inside the platform.\nTo make the car to stop in the center, it has the following rules:\nr0 = if(position is middle AND direction is standingStill) then none;\nr1 = if(position is left) then push;\nr2 = if(position is right) then pull;\nr3 = if(position is middle) then none;\nr4 = if(direction is movingLeft) then push;\nr5 = if(direction is standingStill) then none;\nr6 = if(direction is movingRight) then pull;\nr7 = if(position is left AND direction is movingLeft) then push;\nr8 = if(position is right AND direction is movingRight) then pull;\n\nThe fuzzy sets pull, none and push forms a fuzzy variable. And the result of the inference is a quantity of force to apply in one direction or another.");
 		jScrollPane1.setViewportView(jTextPane1);
 
 		jButton1.setText("Simulate");
@@ -151,7 +178,7 @@ public class FuzzyPanel extends javax.swing.JPanel {
 						.addGap(0, 100, Short.MAX_VALUE)
 		);
 
-		posSpn.setModel(new javax.swing.SpinnerNumberModel(-0.5d, -1.0d, 1.0d, 0.1d));
+		posSpn.setModel(new javax.swing.SpinnerNumberModel(0d, -2.0d, 2.0d, 0.1d));
 		posSpn.addChangeListener(new javax.swing.event.ChangeListener() {
 			public void stateChanged(javax.swing.event.ChangeEvent evt) {
 				posSpnStateChanged(evt);
@@ -160,10 +187,10 @@ public class FuzzyPanel extends javax.swing.JPanel {
 
 		jLabel1.setText("Position:");
 
-		jLabel2.setText("Direction:");
+		jLabel2.setText("Friction:");
 
-		dirSpn.setModel(new javax.swing.SpinnerNumberModel(-0.5d, -0.5d, 0.5d, 0.1d));
-		dirSpn.addChangeListener(new javax.swing.event.ChangeListener() {
+		frictionsSpn.setModel(new javax.swing.SpinnerNumberModel(0.5d, 0.d, 1.d, 0.1d));
+		frictionsSpn.addChangeListener(new javax.swing.event.ChangeListener() {
 			public void stateChanged(javax.swing.event.ChangeEvent evt) {
 				dirSpnStateChanged(evt);
 			}
@@ -185,7 +212,7 @@ public class FuzzyPanel extends javax.swing.JPanel {
 												.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 												.addComponent(jLabel2)
 												.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-												.addComponent(dirSpn, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+												.addComponent(frictionsSpn, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
 												.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 101, Short.MAX_VALUE)
 												.addComponent(jButton1)))
 								.addContainerGap())
@@ -202,48 +229,70 @@ public class FuzzyPanel extends javax.swing.JPanel {
 										.addComponent(jButton1)
 										.addComponent(posSpn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
 										.addComponent(jLabel1)
-										.addComponent(dirSpn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+										.addComponent(frictionsSpn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
 										.addComponent(jLabel2))
 								.addContainerGap())
 		);
 	}// </editor-fold>//GEN-END:initComponents
 
 	private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+		// car position
+		// car velocity = exact value. it decreases with friction
+		// friction factor.
+		// car mass.
+
 		if (!jButton1.getText().equalsIgnoreCase("simulate")) {
 			jButton1.setText("Simulate");
 			exit = true;
 		} else {
 			jButton1.setText("Stop");
+
+			double fps = 15;
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
+					car.velocity = 0;
+					double force = 0;
+					int frames = 0;
+					long start = System.currentTimeMillis();
+					long lastFrame = System.currentTimeMillis();
 					while (!exit) {
-						engine.start();
+						// update the frame.
+						Map<String, Double> variables = new HashMap<>();
+						variables.put("position", car.position);
+						variables.put("velocity", car.velocity);
 
-						//actualizar la direccion y la posicion
-						location.getValue().setValue(location.getValue().getValue() + answers.getValue().getValue());
-						state.getValue().setValue(state.getValue().getValue() - answers.getValue().getValue());
+						Map<String, Double> adjustments = controller.fire(variables, 0.01);
+						force = adjustments.get("force");
+						car.applyForce(force, fps);
+
+						car.updatePosition(fps, (Double) frictionsSpn.getValue());
 						canvas.repaint();
 
-						//pintar la posicion actual
-						try {
-							Thread.sleep(100);
-						} catch (Exception e) {
-						}
+						// keep the framerate in sync to give context to the rest of the units on the system (meters, seconds, etc)
+						try{
+							long currentFrame = System.currentTimeMillis();
+
+							if (currentFrame - lastFrame < 1000/fps)
+								Thread.sleep((long)((1000/fps) - (currentFrame - lastFrame)));
+						}catch(Exception e){}
+
+						lastFrame = System.currentTimeMillis();
+						frames++;
 					}
 					exit = false;
 				}
+
 			}).start();
 		}
 	}//GEN-LAST:event_jButton1ActionPerformed
 
 	private void posSpnStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_posSpnStateChanged
-		location.getValue().setValue((Double) posSpn.getValue());
+		car.position = (Double) posSpn.getValue();
 		canvas.repaint();
 	}//GEN-LAST:event_posSpnStateChanged
 
 	private void dirSpnStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_dirSpnStateChanged
-		state.getValue().setValue((Double) dirSpn.getValue());
 		canvas.repaint();
 	}//GEN-LAST:event_dirSpnStateChanged
 	// End of variables declaration//GEN-END:variables
