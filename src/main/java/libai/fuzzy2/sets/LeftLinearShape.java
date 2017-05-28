@@ -7,10 +7,7 @@ import org.w3c.dom.Node;
 /**
  * Created by kronenthaler on 28/05/2017.
  */
-public class LeftLinearShape implements FuzzySet, XMLSerializer {
-	private double a;
-	private double b;
-
+public class LeftLinearShape extends TwoParameterSet {
 	public LeftLinearShape(Node xmlNode) {
 		load(xmlNode);
 	}
@@ -21,25 +18,13 @@ public class LeftLinearShape implements FuzzySet, XMLSerializer {
 	}
 
 	@Override
-	public double eval(double s) {
-		if (s >= b)
+	public double eval(double x) {
+		if (x >= b)
 			return 1;
 
-		if (s <= a)
+		if (x <= a)
 			return 0;
 
-		return (s - a) / (b - a);
-	}
-
-	@Override
-	public String toXMLString(String indent) {
-		return String.format("%s<LeftLinearShape Param1=\"%f\" Param2=\"%f\"/>", indent, a, b);
-	}
-
-	@Override
-	public void load(Node xmlNode) {
-		NamedNodeMap attributes = xmlNode.getAttributes();
-		a = Double.parseDouble(attributes.getNamedItem("Param1").getTextContent());
-		b = Double.parseDouble(attributes.getNamedItem("Param2").getTextContent());
+		return (x - a) / (b - a);
 	}
 }

@@ -7,7 +7,7 @@ import org.w3c.dom.Node;
 /**
  * Created by kronenthaler on 20/05/2017.
  */
-public class SingletonShape implements FuzzySet, XMLSerializer {
+public class SingletonShape implements FuzzySet {
 	private double a;
 
 	public SingletonShape(Node xmlNode) {
@@ -19,8 +19,8 @@ public class SingletonShape implements FuzzySet, XMLSerializer {
 	}
 
 	@Override
-	public double eval(double s) {
-		return s == a ? 1 : 0;
+	public double eval(double x) {
+		return x == a ? 1 : 0;
 	}
 
 	@Override

@@ -42,7 +42,7 @@ import org.w3c.dom.Node;
  *
  * @author kronenthaler
  */
-public class TriangularShape implements FuzzySet, XMLSerializer {
+public class TriangularShape implements FuzzySet {
 	private double a;
 	private double b;
 	private double c;
@@ -58,20 +58,20 @@ public class TriangularShape implements FuzzySet, XMLSerializer {
 	}
 
 	@Override
-	public double eval(double s) {
-		if ((a == b && s == a) || (b == c && s == b))
+	public double eval(double x) {
+		if ((a == b && x == a) || (b == c && x == b))
 			return 1;
 
-		if (s <= a || s >= c)
+		if (x <= a || x >= c)
 			return 0;
 
-		if (s == b)
+		if (x == b)
 			return 1;
 
-		if (s > a && s < b)
-			return (s - a) / (b - a);
+		if (x > a && x < b)
+			return (x - a) / (b - a);
 
-		return (c - s) / (c - b);
+		return (c - x) / (c - b);
 	}
 
 	@Override

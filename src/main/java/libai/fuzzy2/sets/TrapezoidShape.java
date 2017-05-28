@@ -7,7 +7,7 @@ import org.w3c.dom.Node;
 /**
  * Created by kronenthaler on 20/05/2017.
  */
-public class TrapezoidShape implements FuzzySet, XMLSerializer {
+public class TrapezoidShape implements FuzzySet {
 	private double a;
 	private double b;
 	private double c;
@@ -25,17 +25,17 @@ public class TrapezoidShape implements FuzzySet, XMLSerializer {
 	}
 
 	@Override
-	public double eval(double s) {
-		if ((a == b && s == a) || (d == c && s == c) || (b <= s && s <= c))
+	public double eval(double x) {
+		if ((a == b && x == a) || (d == c && x == c) || (b <= x && x <= c))
 			return 1;
 
-		if (s <= a || s >= d)
+		if (x <= a || x >= d)
 			return 0;
 
-		if (a < s && s < b)
-			return (s - a) / (b - a);
+		if (a < x && x < b)
+			return (x - a) / (b - a);
 
-		return (d - s) / (d - c);
+		return (d - x) / (d - c);
 	}
 
 	@Override

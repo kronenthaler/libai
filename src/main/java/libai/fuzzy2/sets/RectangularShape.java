@@ -7,9 +7,7 @@ import org.w3c.dom.Node;
 /**
  * Created by kronenthaler on 20/05/2017.
  */
-public class RectangularShape implements FuzzySet, XMLSerializer{
-	private double a;
-	private double b;
+public class RectangularShape extends TwoParameterSet {
 
 	public RectangularShape(Node xmlNode){
 		load(xmlNode);
@@ -21,19 +19,7 @@ public class RectangularShape implements FuzzySet, XMLSerializer{
 	}
 
 	@Override
-	public double eval(double s) {
-		return a <= s && s <= b ? 1 : 0;
-	}
-
-	@Override
-	public String toXMLString(String indent) {
-		return String.format("%s<RectangularShape Param1=\"%f\" Param2=\"%f\"/>", indent, a, b);
-	}
-
-	@Override
-	public void load(Node xmlNode) {
-		NamedNodeMap attributes = xmlNode.getAttributes();
-		a = Double.parseDouble(attributes.getNamedItem("Param1").getTextContent());
-		b = Double.parseDouble(attributes.getNamedItem("Param2").getTextContent());
+	public double eval(double x) {
+		return a <= x && x <= b ? 1 : 0;
 	}
 }

@@ -9,15 +9,12 @@ public interface FuzzySet extends XMLSerializer {
 	/**
 	 * Evaluate the membership of the set with the especified value.
 	 *
-	 * @param s Value to evaluate.
+	 * @param x Value to evaluate.
 	 * @return The membership value for the input.
 	 */
-	public double eval(double s);
+	public double eval(double x);
 }
 
 
 //TODO:
-// https://nl.mathworks.com/help/fuzzy/pimf.html
-// https://nl.mathworks.com/help/fuzzy/smf.html
-// https://nl.mathworks.com/help/fuzzy/zmf.html
 // https://nl.mathworks.com/help/fuzzy/gaussmf.html
