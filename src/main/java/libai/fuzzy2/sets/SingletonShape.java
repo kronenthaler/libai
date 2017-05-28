@@ -1,11 +1,12 @@
 package libai.fuzzy2.sets;
 
-import libai.fuzzy2.XMLSerializer;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 /**
- * Created by kronenthaler on 20/05/2017.
+ * Fuzzy set with only one value not equal to zero.
+ *
+ * @author kronenthaler
  */
 public class SingletonShape implements FuzzySet {
 	private double a;
@@ -14,6 +15,10 @@ public class SingletonShape implements FuzzySet {
 		load(xmlNode);
 	}
 
+	/**
+	 * Constructor.
+	 * @param a Point where the singleton is non-zero.
+	 **/
 	public SingletonShape(double a) {
 		this.a = a;
 	}

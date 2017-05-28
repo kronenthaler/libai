@@ -7,12 +7,18 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Created by kronenthaler on 14/05/2017.
+ * Defuzzifier method that calculates the center of gravity of given function.
+ * Formally the center of gravity is Integral(x.f(x)) / Integral(f(x)) for the whole interval.
+ * This implementation uses Riemann's sums to calculate the integrals of both functions.
+ *
+ * @author kronenthaler
  */
 public class CenterOfGravity extends Defuzzifier {
 	/**
 	 * Implements the center of gravity by calculating the Riemann's sums of the area using the trapezoidal rule.
 	 * It assumes the x points are equally spaced across the whole domain of the function.
+	 * @param function the list of points [x, f(x)] representing the function to analyze.
+	 * @return the center of gravity of the function.
 	 **/
 	@Override
 	public double getValue(List<Point.Double> function) {

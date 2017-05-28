@@ -4,7 +4,8 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 /**
- * Created by kronenthaler on 28/05/2017.
+ * Abstraction of a 2-parameter set.
+ * @author kronenthaler
  */
 public abstract class TwoParameterSet implements FuzzySet {
 	protected double a;

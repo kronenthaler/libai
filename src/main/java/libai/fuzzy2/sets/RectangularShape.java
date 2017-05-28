@@ -1,18 +1,23 @@
 package libai.fuzzy2.sets;
 
-import libai.fuzzy2.XMLSerializer;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 /**
- * Created by kronenthaler on 20/05/2017.
+ * Fuzzy set representing a constant function, in the [a, b] interval. This function becomes 1 only during the [a, b]
+ * interval.
+ *
+ * @author kronenthaler
  */
 public class RectangularShape extends TwoParameterSet {
-
 	public RectangularShape(Node xmlNode){
 		load(xmlNode);
 	}
 
+	/**
+	 * Constructor.
+	 * @param a Left vertex of the rectangle.
+	 * @param b Right vertex of the rectangle.
+	 **/
 	public RectangularShape(double a, double b){
 		this.a = a;
 		this.b = b;

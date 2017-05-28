@@ -23,7 +23,6 @@
  */
 package libai.fuzzy2.sets;
 
-import libai.fuzzy2.XMLSerializer;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
@@ -36,9 +35,6 @@ import org.w3c.dom.Node;
  * <li>centered triangle a != b != c.</li>
  * <li>right triangle to the right a != b = c.</li>
  * </ul>
- * <p>
- * In the three cases, the support of the set is the interval [a,c].<br>
- * The kernel is always the single value b.<br>
  *
  * @author kronenthaler
  */
@@ -51,6 +47,12 @@ public class TriangularShape implements FuzzySet {
 		load(xmlNode);
 	}
 
+	/**
+	 * Constructor.
+	 * @param a Left vertex of the triangle.
+	 * @param b Middle vertex of the triangle.
+	 * @param c Right vertex of the triangle.
+	 **/
 	public TriangularShape(double a, double b, double c){
 		this.a = a;
 		this.b = b;

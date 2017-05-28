@@ -6,7 +6,9 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Created by kronenthaler on 14/05/2017.
+ * Defuzzifier method that calculates the center (mean) where the function reaches a maximum.
+ *
+ * @author kronenthaler
  */
 public class MeanOfMaxima extends Defuzzifier {
 	public double getValue(List<Point.Double> function){

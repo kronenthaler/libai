@@ -1,7 +1,5 @@
 package libai.fuzzy2.defuzzifiers;
 
-import libai.common.Pair;
-
 import java.awt.*;
 import java.util.List;
 

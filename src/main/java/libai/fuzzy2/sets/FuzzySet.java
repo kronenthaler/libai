@@ -14,7 +14,3 @@ public interface FuzzySet extends XMLSerializer {
 	 */
 	public double eval(double x);
 }
-
-
-//TODO:
-// https://nl.mathworks.com/help/fuzzy/gaussmf.html

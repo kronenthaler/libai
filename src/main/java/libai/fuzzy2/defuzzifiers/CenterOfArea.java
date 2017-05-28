@@ -6,7 +6,11 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Created by kronenthaler on 14/05/2017.
+ * Defuzzifier method that calculates the value of x where the areas become equal in the aggregated function.
+ * Formally, CoA = Area(f, x0, CoA) = Area(f, CoA, xn)
+ * This implementation uses Riemann's sums and Binary search to locate the value of CoA, to a precision of 1.e-8
+ *
+ * @author kronenthaler
  */
 public class CenterOfArea extends CenterOfGravity {
 	@Override

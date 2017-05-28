@@ -1,11 +1,18 @@
 package libai.fuzzy2.sets;
 
-import libai.fuzzy2.XMLSerializer;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 /**
- * Created by kronenthaler on 20/05/2017.
+ * Fuzzy set representing a trapezoid function. The trapezoid function can take
+ * 3 variations: <br>
+ * <ul>
+ * <li>right trapezoid to the left. a = b != c != d.</li>
+ * <li>centered trapezoid a != b != c != d.</li>
+ * <li>right trapezoid to the right a != b != c = d.</li>
+ * </ul>
+ *
+ * @author kronenthaler
  */
 public class TrapezoidShape implements FuzzySet {
 	private double a;
@@ -17,6 +24,13 @@ public class TrapezoidShape implements FuzzySet {
 		load(xmlNode);
 	}
 
+	/**
+	 * Constructor.
+	 * @param a Left vertex of the trapezoid.
+	 * @param b Middle-left vertex of the trapezoid.
+	 * @param c Middle-right vertex of the trapezoid.
+	 * @param d Right vertex of the trapezoid.
+	 **/
 	public TrapezoidShape(double a, double b, double c, double d){
 		this.a = a;
 		this.b = b;

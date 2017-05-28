@@ -3,13 +3,21 @@ package libai.fuzzy2.sets;
 import org.w3c.dom.Node;
 
 /**
- * Created by kronenthaler on 28/05/2017.
+ * Fuzzy set representing a S-shape function. This function will equal 0 for any value to the left of a, and 1 for any
+ * value to the right of b. This function is a mirror of the Z-shape.
+ *
+ * @author kronenthaler
  */
 public class SShape extends TwoParameterSet{
 	public SShape(Node xmlNode) {
 		load(xmlNode);
 	}
 
+	/**
+	 * Constructor.
+	 * @param a Left value of the S-shape.
+	 * @param b Right value of the S-shape.
+	 **/
 	public SShape(double a, double b){
 		this.a = a;
 		this.b = b;
