@@ -1,15 +1,10 @@
 package libai.classifiers.trees;
 
 import libai.classifiers.dataset.DataSet;
-import libai.classifiers.dataset.MySQLDataSet;
 import libai.classifiers.dataset.TextFileDataSet;
-import org.junit.Ignore;
-import org.junit.Test;
-
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
 
+import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
