@@ -44,11 +44,14 @@ import java.util.*;
  * @author kronenthaler
  */
 public class C45 implements Comparable<C45> {
-	public static final int NO_PRUNE = 0;
-	public static final int QUINLANS_PRUNE = 1;
-	public static final int LAPLACE_PRUNE = 2;
+	enum PruneType {
+		NO_PRUNE,
+		QUINLANS_PRUNE,
+		LAPLACE_PRUNE
+	}
+
 	protected Attribute output;
-	protected Pair<Attribute, C45> childs[];
+	protected Pair<Attribute, C45> children[];
 	protected double error;
 	protected double backedUpError;
 	//prune variables
@@ -74,14 +77,14 @@ public class C45 implements Comparable<C45> {
 
 	protected C45(Pair<Attribute, C45>[] c) {
 		this();
-		childs = c;
+		children = c;
 	}
 
 	protected C45(ArrayList<Pair<Attribute, C45>> c) {
 		this();
-		childs = new Pair[c.size()];
-		for (int i = 0, n = childs.length; i < n; i++)
-			childs[i] = c.get(i);
+		children = new Pair[c.size()];
+		for (int i = 0, n = children.length; i < n; i++)
+			children[i] = c.get(i);
 	}
 
 	//Factories
@@ -123,7 +126,7 @@ public class C45 implements Comparable<C45> {
 	 * @param type {@code type}
 	 * @return pruned tree from the given dataset using the standard confidence
 	 */
-	public static C45 getInstancePrune(DataSet ds, int type) {
+	public static C45 getInstancePrune(DataSet ds, PruneType type) {
 		return new C45().train(ds).prune(ds, type);
 	}
 
@@ -139,12 +142,12 @@ public class C45 implements Comparable<C45> {
 		C45 ret = new C45();
 		ret = ret.train(ds);
 		ret.setConfidence(confidence);
-		return ret.prune(ds, QUINLANS_PRUNE);
+		return ret.prune(ds, PruneType.QUINLANS_PRUNE);
 	}
 
 	//Tree related
 	public boolean isLeaf() {
-		return (childs == null || childs.length == 0) && output != null;
+		return (children == null || children.length == 0) && output != null;
 	}
 
 	public Attribute eval(List<Attribute> record, DataSet ds) {
@@ -170,26 +173,26 @@ public class C45 implements Comparable<C45> {
 		if (isLeaf()) {
 			if (keeptrack) {
 				//quinlan pruning
-				if (output.compareTo(expected) == 0)
+				if (output.equals(expected))
 					good++;
 				else
 					bad++;
 			}
 			return output;
 		} else {
-			if (childs[0].first.isCategorical()) {
-				for (Pair<Attribute, C45> p : childs) {
+			if (children[0].first.isCategorical()) {
+				for (Pair<Attribute, C45> p : children) {
 					if (record.contains(p.first))
 						return p.second.eval(record, keeptrack, expected, ds);
 				}
 			} else {
 				try {
 					for (int i = 0; i < ds.getMetaData().getAttributeCount(); i++) {
-						if (ds.getMetaData().getAttributeName(i).equals(childs[0].first.getName())) {
-							if (record.get(i).compareTo(childs[0].first) <= 0)
-								return childs[0].second.eval(record, keeptrack, expected, ds);
+						if (ds.getMetaData().getAttributeName(i).equals(children[0].first.getName())) {
+							if (record.get(i).compareTo(children[0].first) <= 0)
+								return children[0].second.eval(record, keeptrack, expected, ds);
 							else
-								return childs[1].second.eval(record, keeptrack, expected, ds);
+								return children[1].second.eval(record, keeptrack, expected, ds);
 						}
 					}
 				} catch (Exception ex) {
@@ -233,7 +236,7 @@ public class C45 implements Comparable<C45> {
 		double splitValue = Double.MIN_VALUE;
 		for (int i = 0; i < attributeCount; i++) {
 			if (!visited.contains(i)) {
-				GainInformation gain = gain(ds, 0, itemsCount, i); //get the maximun gain ratio.
+				GainInformation gain = gain(ds, 0, itemsCount, i); //get the maximum gain ratio.
 				if (gain.ratio > max) {
 					max = gain.ratio;
 					index = i; //split attribute
@@ -500,7 +503,7 @@ public class C45 implements Comparable<C45> {
 		return errorCount / (double) ds.getItemsCount();
 	}
 
-	public C45 prune(DataSet ds, int type) {
+	public C45 prune(DataSet ds, PruneType type) {
 		//first of all, evaluate all the data set over the tree, and keep track of the results.
 		int outputIndex = ds.getOutputIndex();
 		for (List<Attribute> record : ds)
@@ -511,35 +514,36 @@ public class C45 implements Comparable<C45> {
 		return this;
 	}
 
-	private void prune(int prunningType) {
+	// TODO: candidate to extraction. Create an interface for Pruning.
+	private void prune(PruneType prunningType) {
 		if (isLeaf()) {
-			if (prunningType == QUINLANS_PRUNE)
+			if (prunningType == PruneType.QUINLANS_PRUNE)
 				error = confidenceError(1.0 / (double) (bad + good), good / (double) (bad + good));
-			else if (prunningType == LAPLACE_PRUNE)
+			else if (prunningType == PruneType.LAPLACE_PRUNE)
 				error = laplaceError(samplesCount, mostCommonLeafFreq, samplesFreq.size());
 		} else {
 			backedUpError = 0;
-			for (Pair<Attribute, C45> c : childs) {
+			for (Pair<Attribute, C45> c : children) {
 				c.second.prune(prunningType);
-				if (prunningType == QUINLANS_PRUNE) {
+				if (prunningType == PruneType.QUINLANS_PRUNE) {
 					good += c.second.good;
 					bad += c.second.bad;
 					backedUpError += c.second.error * (c.second.good + c.second.bad);
-				} else if (prunningType == LAPLACE_PRUNE) {
+				} else if (prunningType == PruneType.LAPLACE_PRUNE) {
 					backedUpError += c.second.error * c.second.samplesCount;
 				}
 			}
 
-			if (prunningType == QUINLANS_PRUNE) {
+			if (prunningType == PruneType.QUINLANS_PRUNE) {
 				error = confidenceError(1.0 / (double) (bad + good), good / (double) (bad + good));
 				backedUpError /= (double) (good + bad);
-			} else if (prunningType == LAPLACE_PRUNE) {
+			} else if (prunningType == PruneType.LAPLACE_PRUNE) {
 				error = laplaceError(samplesCount, mostCommonLeafFreq, samplesFreq.size());
 				backedUpError /= (double) samplesCount;
 			}
 
 			if (error < backedUpError) {
-				childs = null;
+				children = null;
 				output = mostCommonLeaf;
 			}
 
@@ -595,8 +599,8 @@ public class C45 implements Comparable<C45> {
 
 	private void setZ(double z) {
 		this.z = z;
-		if (!isLeaf() && childs != null) {
-			for (Pair<Attribute, C45> c : childs) {
+		if (!isLeaf() && children != null) {
+			for (Pair<Attribute, C45> c : children) {
 				c.second.z = z;
 				c.second.setZ(z);
 			}
@@ -656,12 +660,13 @@ public class C45 implements Comparable<C45> {
 		}
 	}
 
+	// TODO: research if there is standard format to represent decision trees.
 	private void save(PrintStream out, String indent) throws IOException {
 		if (isLeaf()) {
 			out.println(indent + "<leaf type=\"" + output.getClass().getName() + "\" name=\"" + output.getName() + "\"><![CDATA[" + output.getValue() + "]]></leaf>");
 		} else {
-			out.println(indent + "<node splits=\"" + childs.length + "\">");
-			for (Pair<Attribute, C45> p : childs) {
+			out.println(indent + "<node splits=\"" + children.length + "\">");
+			for (Pair<Attribute, C45> p : children) {
 				out.println(indent + "\t<split type=\"" + p.first.getClass().getName() + "\" name=\"" + p.first.getName() + "\"><![CDATA[" + p.first.getValue() + "]]></split>");
 				p.second.save(out, indent + "\t");
 			}
@@ -669,35 +674,25 @@ public class C45 implements Comparable<C45> {
 		}
 	}
 
-	/**
-	 * Print the tree over the standard output. Alias for <code>print("")</code>
-	 */
-	public void print() {
-		print("");
-	}
-	//end quinlan's
-
-	//IO functions
-
-	/**
-	 * Print the tree over the standard output using an initial indent string.
-	 * With each new level, an \t is appended to the indent string.
-	 *
-	 * @params indent Initial string for indentation.
-	 */
-	private void print(String indent) {
+	@Override
+	public String toString() { return toString(""); }
+	private String toString(String indent) {
 		if (isLeaf()) {
-			System.out.println(indent + "[" + output + " " + samplesFreq + " e: " + error + "]");
+			return indent + "[" + output + " " + samplesFreq + " e: " + error + "]\n";
 		} else {
-			for (Pair<Attribute, C45> p : childs) {
+			StringBuffer buffer = new StringBuffer();
+			for (Pair<Attribute, C45> p : children) {
 				if (p.first.isCategorical())
-					System.out.println(indent + "[" + p.first.getName() + " = " + ((DiscreteAttribute) p.first).getValue() + " " + samplesFreq + " e: " + error + " be: " + backedUpError + "]");
+					buffer.append(indent + "[" + p.first.getName() + " = " + ((DiscreteAttribute) p.first).getValue() + " " + samplesFreq + " e: " + error + " be: " + backedUpError + "]\n");
 				else
-					System.out.println(indent + "[" + p.first.getName() + (childs[0] == p ? " <= " : " > ") + ((ContinuousAttribute) p.first).getValue() + " " + samplesFreq + " be: " + backedUpError + "]");
-				p.second.print(indent + "\t");
+					buffer.append(indent + "[" + p.first.getName() + (children[0] == p ? " <= " : " > ") + ((ContinuousAttribute) p.first).getValue() + " " + samplesFreq + " be: " + backedUpError + "]\n");
+				buffer.append(p.second.toString(indent + "\t"));
 			}
+
+			return buffer.toString();
 		}
 	}
+	//end quinlan's
 
 	/**
 	 * Dummy function, just needed to be able to use the Pair structure.
