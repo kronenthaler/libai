@@ -36,8 +36,9 @@ import java.util.*;
  * @author kronenthaler
  */
 public class TextFileDataSet implements DataSet {
-	private List<List<Attribute>> data = new ArrayList<>();
+	private List<List<Attribute>> data = Collections.synchronizedList(new ArrayList<>());
 	private Set<Attribute> classes = new HashSet<>();
+	private String[] names;
 	private int outputIndex;
 	private int orderBy;
 	private HashMap<Triplet<Integer, Integer, Integer>, HashMap<Attribute, Integer>> cache;
@@ -60,7 +61,7 @@ public class TextFileDataSet implements DataSet {
 
 		@Override
 		public String getAttributeName(int fieldIndex) {
-			return "[" + fieldIndex + "]";
+			return names[fieldIndex];
 		}
 	};
 
@@ -72,10 +73,15 @@ public class TextFileDataSet implements DataSet {
 
 	private TextFileDataSet(TextFileDataSet parent, int lo, int hi) {
 		this(parent.outputIndex);
-		addRecords(parent.data.subList(lo, hi));
+		this.names = parent.names;
+		addRecords(new ArrayList<>(parent.data.subList(lo, hi)));
 	}
 
 	public TextFileDataSet(File dataSource, int output) {
+		this(dataSource, null, output);
+	}
+
+	public TextFileDataSet(File dataSource, String[] names, int output) {
 		this(output);
 		try (FileReader fr = new FileReader(dataSource);
 			 BufferedReader in = new BufferedReader(fr)) {
@@ -85,6 +91,15 @@ public class TextFileDataSet implements DataSet {
 					break;
 				String[] tokens = line.split(",");
 				ArrayList<Attribute> record = new ArrayList<>();
+
+				if(names == null) {
+					this.names = new String[tokens.length];
+					for(int i=0;i<this.names.length;i++)
+						this.names[i]=Integer.toString(i);
+				} else {
+					this.names = names;
+				}
+
 				for (int i = 0; i < tokens.length; i++) {
 					String token = tokens[i];
 					Attribute attr = Attribute.getInstance(token, metadata.getAttributeName(i));
@@ -127,7 +142,7 @@ public class TextFileDataSet implements DataSet {
 	@Override
 	public Iterable<List<Attribute>> sortOver(final int lo, final int hi, final int fieldIndex) {
 		orderBy = fieldIndex;
-		Collections.sort(data, new Comparator<List<Attribute>>() {
+		data.sort(new Comparator<List<Attribute>>() {
 			@Override
 			public int compare(List<Attribute> o1, List<Attribute> o2) {
 				int ret = o1.get(fieldIndex).compareTo(o2.get(fieldIndex));
@@ -136,7 +151,7 @@ public class TextFileDataSet implements DataSet {
 				return ret;
 			}
 		});
-		return data.subList(lo, hi);
+		return new ArrayList<>(data.subList(lo, hi));
 	}
 
 	@Override

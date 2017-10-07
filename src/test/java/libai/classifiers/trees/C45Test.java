@@ -3,31 +3,26 @@ package libai.classifiers.trees;
 import libai.classifiers.dataset.DataSet;
 import libai.classifiers.dataset.MySQLDataSet;
 import libai.classifiers.dataset.TextFileDataSet;
+import org.junit.Ignore;
 import org.junit.Test;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.PrintStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
 import static org.junit.Assert.*;
-import static org.junit.Assume.assumeNotNull;
 
 /**
  * Created by kronenthaler on 30/09/2017.
  */
 public class C45Test {
-	// TODO: Basic tests: create a tree, prune it with both strategies. hardcode the results for future changes.
+	private DataSet irisDataSet = new TextFileDataSet(new File("src/test/resources/iris.data"),
+												new String[]{"sepal_length","sepal_width","petal_length","petal_width","class"},
+												4);
+
 	@Test
 	public void loadTest() throws Exception {
-		Class.forName("com.mysql.jdbc.Driver").newInstance();
-		Connection connection =  DriverManager.getConnection(
-				"jdbc:mysql://127.0.0.1:3306/iris?serverTimezone=Europe/Amsterdam", "root", ""
-		);
-
-		DataSet dataset = new MySQLDataSet(connection, "iris_set", 4);  //new TextFileDataSet(new File("src/test/resources/iris.data"), 4);
-		C45 tree = C45.getInstance(dataset);
+		C45 tree = C45.getInstance(irisDataSet);
 
 		String output = tree.toString();
 		assertEquals(output.trim(), "[petal_width <= 1.35 {} be: 0.0]\n" +
@@ -80,13 +75,7 @@ public class C45Test {
 
 	@Test
 	public void loadAndQuilanPruneTest() throws Exception {
-		Class.forName("com.mysql.jdbc.Driver").newInstance();
-		Connection connection =  DriverManager.getConnection(
-				"jdbc:mysql://127.0.0.1:3306/iris?serverTimezone=Europe/Amsterdam", "root", ""
-		);
-
-		DataSet dataset = new MySQLDataSet(connection, "iris_set", 4);  //new TextFileDataSet(new File("src/test/resources/iris.data"), 4);
-		C45 tree = C45.getInstancePrune(dataset, C45.PruneType.QUINLANS_PRUNE);
+		C45 tree = C45.getInstancePrune(irisDataSet, C45.PruneType.QUINLANS_PRUNE);
 
 		String output = tree.toString();
 		assertEquals(output.trim(), "[petal_width <= 1.35 {[class]=Iris-versicolor=50, [class]=Iris-virginica=50, [class]=Iris-setosa=50} be: NaN]\n" +
@@ -121,13 +110,7 @@ public class C45Test {
 
 	@Test
 	public void loadAndLaplacePruneTest() throws Exception {
-		Class.forName("com.mysql.jdbc.Driver").newInstance();
-		Connection connection =  DriverManager.getConnection(
-				"jdbc:mysql://127.0.0.1:3306/iris?serverTimezone=Europe/Amsterdam", "root", ""
-		);
-
-		DataSet dataset = new MySQLDataSet(connection, "iris_set", 4);  //new TextFileDataSet(new File("src/test/resources/iris.data"), 4);
-		C45 tree = C45.getInstancePrune(dataset, C45.PruneType.LAPLACE_PRUNE);
+		C45 tree = C45.getInstancePrune(irisDataSet, C45.PruneType.LAPLACE_PRUNE);
 
 		String output = tree.toString();
 		assertEquals(output.trim(), "[petal_width <= 1.35 {[class]=Iris-versicolor=50, [class]=Iris-virginica=50, [class]=Iris-setosa=50} be: NaN]\n" +
