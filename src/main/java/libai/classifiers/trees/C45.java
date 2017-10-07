@@ -675,7 +675,10 @@ public class C45 implements Comparable<C45> {
 	}
 
 	@Override
-	public String toString() { return toString(""); }
+	public String toString() {
+		return toString("");
+	}
+
 	private String toString(String indent) {
 		if (isLeaf()) {
 			return indent + "[" + output + " " + samplesFreq + " e: " + error + "]\n";

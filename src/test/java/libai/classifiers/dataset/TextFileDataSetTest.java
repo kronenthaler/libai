@@ -45,12 +45,12 @@ import static org.junit.Assume.assumeTrue;
  */
 public class TextFileDataSetTest {
 	private static final String toString =
-			"[[[0]]=4.0, [[1]]=b, [[2]]=false, [[3]]=1.5, [[4]]=same]\n" +
-					"[[[0]]=2.0, [[1]]=b, [[2]]=false, [[3]]=12.0, [[4]]=same]\n" +
-					"[[[0]]=0.0, [[1]]=a, [[2]]=true, [[3]]=4.4, [[4]]=same]\n" +
-					"[[[0]]=3.0, [[1]]=a, [[2]]=true, [[3]]=-12.0, [[4]]=same]\n" +
-					"[[[0]]=1.0, [[1]]=f, [[2]]=true, [[3]]=4.4, [[4]]=same]\n" +
-					"[[[0]]=5.0, [[1]]=d, [[2]]=true, [[3]]=8.0, [[4]]=same]\n";
+			"[[0]=4.0, [1]=b, [2]=false, [3]=1.5, [4]=same]\n" +
+					"[[0]=2.0, [1]=b, [2]=false, [3]=12.0, [4]=same]\n" +
+					"[[0]=0.0, [1]=a, [2]=true, [3]=4.4, [4]=same]\n" +
+					"[[0]=3.0, [1]=a, [2]=true, [3]=-12.0, [4]=same]\n" +
+					"[[0]=1.0, [1]=f, [2]=true, [3]=4.4, [4]=same]\n" +
+					"[[0]=5.0, [1]=d, [2]=true, [3]=8.0, [4]=same]\n";
 
 	private static boolean writeDummyDataSet(String fname) {
 		assumeTrue("Can't use temp dir...", MatrixIOTest.checkTemp());
@@ -142,10 +142,10 @@ public class TextFileDataSetTest {
 		assertFalse(md.isCategorical(1));
 		assertFalse(md.isCategorical(2));
 		assertTrue(md.isCategorical(3));
-		assertEquals("[0]", md.getAttributeName(0));
-		assertEquals("[1]", md.getAttributeName(1));
-		assertEquals("[2]", md.getAttributeName(2));
-		assertEquals("[3]", md.getAttributeName(3));
+		assertEquals("0", md.getAttributeName(0));
+		assertEquals("1", md.getAttributeName(1));
+		assertEquals("2", md.getAttributeName(2));
+		assertEquals("3", md.getAttributeName(3));
 		ds.close();
 	}
 
