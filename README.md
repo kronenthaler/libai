@@ -8,17 +8,17 @@ A library compiling Artificial Intelligence algorithms:
 
 ### Neural Networks
 * Supervised: 
- - Perceptron (Single and Multilayer)
- - Adaline
- - Learning Vector Quantization
- - Radial Basis Function
- - Support Vector Machines.
- - Hebb
+  * Perceptron (Single and Multilayer)
+  * Adaline
+  * Learning Vector Quantization
+  * Radial Basis Function
+  * Support Vector Machines.
+  * Hebb
 
 * Unsupervised: 
- - Competitive
- - Hopfield
- - Kohonen
+  * Competitive
+  * Hopfield
+  * Kohonen
 	
 ### Fuzzy Logic
 Inference engine, rules and set.
