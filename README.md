@@ -43,5 +43,9 @@ Binary & permutation chromosomes, elitism algorithm.
 * Ant System Rank
 * Elistist Ant System.
 
+###Which Java library is used for machine learning?
+
+Java Machine Learning Library (Java-ML) Java-ML is an open-source Java framework that provides various machine learning algorithms specifically for programmers
+
 More things to come!
 	
